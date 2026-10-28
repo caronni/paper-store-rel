@@ -1,0 +1,35 @@
+=== START refine-on-w4-clean (run_decode_ab.py, refine=on, W=4) Mon Aug 17 00:28:24 CEST 2026 ===
+[refine] batched_refine forced ON in <checkout>
+format   c2-r0700@3392x2368 · codec k-v1 · 1 page domain · streams main · PROVISIONAL
+capture  1 ingested · cf29e165ebe4… · done coverage 69.0% (5543171/8034771 cells)
+queue    ready 170[payload:69,place:101] · running 0 · sleeping 340 · retired 1359 · declined 0 (re-offerable 0) · pool 4/free
+work     commits 1924 (scheduled 1923) · fires 2337 · wakes/commit 0.71 · useful 0.68 · peak 4 · stale 18
+tiles    UNKNOWN 0 · ADDRESSED 395 · ATTEMPTED 7 · CERTIFIED 1359 · crc exposure 1366 spends/1366 attempts
+close    verified · certified 1359 · K 1359/1356 · metadata rank 24/24 · blocks 1/1
+[refine-on-w4-clean] RESULT VERIFIED certified=1359 commits=1923 fires=2337 wall=515s workers=4
+[refine-on-w4-clean] payload 465580 B sha e5021f8d099587c3
+[refine-on-w4-clean] vs w1a-gc-serial.bin: BYTE-IDENTICAL
+[refine-on-w4-clean] FIRES 2356 busy 1834.4s wall*W 2061.0s utilisation 89.0% (residual = idle + main-thread phases)
+[refine-on-w4-clean]   fire wall: median 54.8ms p90 449.2ms max 14121.5ms
+[refine-on-w4-clean] ROUNDS none (continuous admission)
+[refine] batched scans 590 (scalar 0); sites per scan min 958 median 982 max 988
+      515.64 real       549.10 user         7.70 sys
+          2716844032  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              191650  page reclaims
+               94307  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   4  messages sent
+                   4  messages received
+                   0  signals received
+               12480  voluntary context switches
+             1496218  involuntary context switches
+       8368053261309  instructions retired
+       1771782351847  cycles elapsed
+          1041581664  peak memory footprint
+EXIT_CODE=0
+=== END refine-on-w4-clean Mon Aug 17 00:36:59 CEST 2026 ===

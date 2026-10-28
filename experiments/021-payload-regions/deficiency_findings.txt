@@ -1,0 +1,285 @@
+E021 DEFICIENCY FINDINGS
+========================
+
+Review date: 2026-07-13
+
+Scope
+-----
+
+This review compared e019, e020, and e021; inspected their design records,
+implementations, qualification scripts, reports, and generated PNGs; and read
+the related Claude and Cursor transcripts.
+
+The central finding is that e021 optimizes for a persuasive "9/9" result more
+than for the stated deliverable: exact, independent areas containing
+probably-valid payload. The coarse tensor survey -> pitch estimate ->
+pitch-scale refinement architecture remains promising, but the current
+implementation and evidence do not justify promotion as a completed stage-0
+receiver.
+
+
+1. THE QUALIFICATION IS WEAKER THAN ITS CLAIMS
+----------------------------------------------
+
+The document says "9/9 rows measured, all design claims hold," but several
+rows test only existence or bbox overlap rather than the stated property.
+
+* Q4 ribbons passes when any returned bbox overlaps a ribbon. It does not
+  check pitch, c, angle, tier, mask accuracy, one-to-one ownership, or false
+  regions.
+
+  experiments/021-payload-regions/qualify_e021.py:221
+
+* Q6 reports successful separation at gaps of 2.0, 1.0, 0.6, and 0.4 mm, but
+  the actual pass condition checks only rows with gap >= 1.0 mm. The 0.6 and
+  0.4 mm claims cannot make the battery fail.
+
+  experiments/021-payload-regions/qualify_e021.py:261
+
+* Q9 is called a head-to-head comparison, but its pass condition requires
+  only that e021 overlap the healthy and faint boxes. It does not require
+  correct boundaries, one-to-one regions, acceptable false positives, or an
+  advantage over e019/e020.
+
+  experiments/021-payload-regions/qualify_e021.py:379
+
+* The direct e017 cross-format row records "found": True without invoking
+  detect_payload_regions. It tests a private pitch function on a hand-picked
+  crop, not platen region detection.
+
+  experiments/021-payload-regions/qualify_e021.py:170
+
+* The weak-line unit test is vacuous if no region overlaps the noise blob: its
+  loop executes zero times and all([]) is true. It does not prove the claimed
+  weak-line contract.
+
+  tests/test_e021.py:135
+
+* Most tests check that at least one bbox overlaps truth. They generally do
+  not reject extra regions, splits, merges, poor masks, or incorrect ownership.
+
+Consequently, "9/9" is not a reliable summary of segmentation correctness.
+
+
+2. THE REAL OUTPUT DOES NOT MATCH "INDEPENDENT PROBABLE PAYLOAD REGIONS"
+----------------------------------------------------------------------------
+
+The documented real runs return these total region counts:
+
+  scan                         physical pieces    returned regions
+  confetti-1                         17                  29
+  confetti-2                         10                  26
+  confetti-3                          7                  16
+  confetti-1-2ndtake                 17                  35
+  confetti-2-2ndtake                 10                  31
+  confetti-3-2ndtake                  8                  17
+
+The excess is relabeled "marginal" and described as downstream's problem.
+However, confident and marginal entries are returned together as
+PayloadRegion objects. The API therefore does not return probable payload
+regions; it returns a mixture of payload, scanner-border artifacts, paper
+corners, dust, shreds, and other texture candidates.
+
+  experiments/021-payload-regions.md:245
+  src/paperholo/platen.py:273
+
+The assertion that each false region costs only about one second and will be
+rejected by downstream gates is not validated in e021. No pilot-lock or decode
+qualification is run over all emitted real candidates.
+
+
+3. THE ADVERTISED TWO-TIER DETECTOR IS NOT THE IMPLEMENTED ONE
+----------------------------------------------------------------
+
+The module description says confident texture is above max(noise floor, Otsu)
+and marginal texture is above the lower floor. In the implementation:
+
+* thr_conf is calculated;
+* admission uses only thr_marg;
+* tier is assigned later from pitch availability and contrast >= 30;
+* the candidate's relation to thr_conf is not used to assign its tier.
+
+  src/paperholo/platen.py:303
+  src/paperholo/platen.py:326
+
+Thus the code does not implement the documented two-tier texture semantics.
+Otsu mostly does not participate in confidence classification.
+
+
+4. E020'S CLEAN MODEL ACCUMULATED FAILURE-SPECIFIC RULES
+---------------------------------------------------------
+
+E021 claims to avoid arbitrary print-event-dependent constants, but currently
+contains at least the following decisions:
+
+* 340 um survey scale;
+* four work pixels per assumed cell;
+* 0.22-cell derivative sigma;
+* 0.30-cell tensor sigma;
+* 6-sigma and 12-sigma score floors;
+* 5-of-9 density support;
+* 9 mm2 component rejection and hole filling;
+* 4 mm scanner-border demotion;
+* spectral contrast threshold 30;
+* absolute crop standard-deviation threshold 1.5;
+* dominance threshold 0.7;
+* refinement threshold 0.25 * field median;
+* 256--1024 px pitch-window half-width;
+* 1.5 mm refinement halo;
+* 6 percent c-snap tolerance;
+* default print_dpi=600 for c_dots.
+
+Some may prove valid, but physical or dimensionless units do not make a
+constant non-arbitrary. Many were introduced after observing failures on the
+same scanner and scan set. Several do not appear in the design's constants
+table.
+
+The result is a substantial heuristic system rather than a clean consequence
+of the structure-tensor model.
+
+
+5. GEOMETRY AND SCOPE CONTRADICTIONS
+-------------------------------------
+
+Pitch window
+~~~~~~~~~~~~
+
+The code says the pitch-measurement window "stays INSIDE the piece" by using
+the interior depth, but clamps the half-width to at least 256 native pixels.
+
+  src/paperholo/platen.py:318
+
+At 4800 dpi, the advertised 0.5 mm ribbon is about 94 pixels wide. A 512-pixel
+full window cannot remain inside that ribbon and will mostly contain backing
+or other material. Q4 checks only bbox overlap and therefore does not expose
+this contradiction.
+
+Dominance path
+~~~~~~~~~~~~~~
+
+When the dominance score exceeds 0.7, e021 abandons independent-region
+segmentation and emits one largest footprint component.
+
+  src/paperholo/platen.py:291
+
+The design admits that separate pieces next to a dominating sheet are absorbed
+into that one region.
+
+  experiments/021-payload-regions.md:350
+
+That is a documented violation of the primary "independent areas" contract,
+not merely a minor limitation.
+
+Hidden configuration
+~~~~~~~~~~~~~~~~~~~~
+
+The API advertises dpi as the only required configuration, but c_dots assumes
+print_dpi=600 unless overridden. Physical pitch can be configuration-free;
+the c_dots interpretation cannot be unless print pitch is part of the format
+contract or independently inferred.
+
+
+6. "EXACT BOUNDARIES" WERE TRADED FOR TOPOLOGICAL CLEANUP
+-----------------------------------------------------------
+
+The refined structure-tensor masks contained many enclosed flat regions.
+E021 now fills all enclosed holes below 9 mm2 and declares their pixels to be
+payload.
+
+  src/paperholo/platen.py:220
+
+Enclosure is useful evidence that a hole lies inside a broader field, but it
+is not evidence that modulation exists in that hole. The operation may make
+the PNG and crop more convenient while contradicting the stronger claim that
+the mask denotes exact signal-bearing area. It also reverses the earlier e019
+principle that locally absent modulation should remain an honest erasure.
+
+The real PNGs still show paper-margin excursions, border components, and
+occasional regions whose bboxes reflect scrap geometry rather than only the
+printed field. There is no exact annotation of the real masks against which
+"true boundary" can be asserted.
+
+
+7. THERE IS NO INDEPENDENT FINAL EVALUATION
+-------------------------------------------
+
+E020 explicitly separated calibration seeds 100--107 from held-out seeds
+200--207. E021 repeatedly changed after inspecting the same qualification
+fixtures and the same six real e018 scans:
+
+* full-page failure produced the dominance branch;
+* border artifacts produced border demotion and revised tier semantics;
+* a flat crop produced the absolute std guard;
+* mask speckles produced bounded hole fill;
+* radial-pitch junk produced fallback deletion.
+
+The same scans were then rerun and treated as validation. There is no held-out
+real scanner, paper stock, backing, contrast level, or independently annotated
+mask set.
+
+Cursor's later removal of _radial_pitch is particularly informative: the
+original 9/9-certified implementation had assigned confident tiers to eight
+junk regions. The user had to question why two pitch methods existed before
+the active hazard was measured and removed.
+
+
+8. TEST AND ARTIFACT GAPS
+--------------------------
+
+* Tests do not consistently assert absence of extra regions.
+* Most synthetic truth is bbox truth rather than exact payload-mask truth.
+* There is no one-to-one assignment metric for split and merged regions.
+* There is no real mask precision/recall or IoU annotation set.
+* There is no end-to-end pilot-lock validation of confident and marginal
+  candidates.
+* The documented deliverable
+  experiments/021-payload-regions/gen_fixture.py does not exist.
+* The qualification report contains pass booleans and selected headline
+  numbers, not the raw distributions needed to audit thresholds and errors.
+
+
+10. WHAT REMAINS SOUND
+-----------------------
+
+The following ideas remain technically promising:
+
+* a rotation-invariant structure-tensor survey;
+* deliberate acquisition-footing decimation;
+* coarse survey followed by local pitch estimation;
+* pitch-matched boundary refinement;
+* honest refusal when pitch evidence is weak;
+* emitting physical pitch and an approximate angle as evidence rather than
+  requiring c as detector configuration.
+
+These are a good research direction. The deficiency is the gap between that
+core and the present claims, API semantics, heuristic accumulation, and
+qualification strength.
+
+
+11. MINIMUM BAR BEFORE PRODUCTION PROMOTION
+--------------------------------------------
+
+1. Freeze the region semantics: distinguish survey candidates from
+   probably-valid payload rather than returning both under one type/list.
+2. Annotate real payload masks across multiple scans, stocks, backings, and
+   contrast conditions.
+3. Measure mask precision, recall, and IoU; one-to-one candidate precision and
+   recall; split rate; merge rate; and false regions per platen for each tier.
+4. Use held-out physical scans after all thresholds and branches are fixed.
+5. Run downstream pilot/lattice lock over every emitted real candidate to
+   validate the claimed false-candidate cost and confidence semantics.
+6. Correct the pitch-window geometry for thin and small regions.
+7. Remove, ablate, or independently justify every special branch and constant.
+8. Align the design document, module contract, and actual tier implementation.
+9. Keep e021 labeled as an experiment until these conditions are met.
+
+
+Bottom line
+-----------
+
+E021 is not worthless and its central architecture may be the right one. It is
+currently an overfit research prototype presented as a completed receiver
+stage. Its scorecard does not measure the full stated objective, its real
+output contains substantial admitted junk, and its documentation frequently
+rationalizes those discrepancies rather than treating them as unresolved
+engineering work.

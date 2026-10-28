@@ -1,0 +1,33 @@
+=== START h4card-real-serial Mon Aug 17 11:56:39 CEST 2026 ===
+format   c2-r0700@3392x2368 · codec k-v1 · 1 page domain · streams main · PROVISIONAL
+capture  1 ingested · 57a261454cc0… · done coverage 69.3% (5574371/8048178 cells)
+queue    ready 804[payload:801,place:3] · running 0 · sleeping 16 · retired 1358 · declined 0 (re-offerable 0) · pool 1/free
+work     commits 1920 (scheduled 1919) · fires 1930 · wakes/commit 0.82 · useful 0.99 · peak 0 · stale 0
+tiles    UNKNOWN 0 · ADDRESSED 383 · ATTEMPTED 217 · CERTIFIED 1358 · crc exposure 1575 spends/1575 attempts
+close    verified · certified 1358 · K 1358/1356 · metadata rank 24/24 · blocks 1/1
+[h4card-real-serial] RESULT VERIFIED certified=1358 commits=1919 fires=1930 wall=125s workers=1
+[h4card-real-serial] payload 465580 B sha e5021f8d099587c3
+[h4card-real-serial] vs c2bw-waved.bin: BYTE-IDENTICAL
+[h4card-real-serial] FIRES 1930 busy 101.0s wall*W 124.9s utilisation 80.9% (residual = idle + main-thread phases)
+[h4card-real-serial]   fire wall: median 3.9ms p90 142.4ms max 31755.1ms
+[h4card-real-serial] ROUNDS none (continuous admission)
+      125.42 real       106.21 user         9.01 sys
+         32126009344  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+             1752530  page reclaims
+             1517802  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   4  messages sent
+                   4  messages received
+                   0  signals received
+               37086  voluntary context switches
+               62248  involuntary context switches
+       1581465842380  instructions retired
+        365836483678  cycles elapsed
+          5017454304  peak memory footprint
+EXIT_CODE=0
+=== END h4card-real-serial Mon Aug 17 11:58:44 CEST 2026 ===

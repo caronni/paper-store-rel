@@ -1,0 +1,518 @@
+{
+ "argv": [
+  "decode",
+  "<checkout>/_distill/verify/sim/sim-k-1200dpi.tiff",
+  "--dpi",
+  "1200",
+  "--format",
+  "c3-k-r0550@7x7",
+  "--out",
+  "<checkout>/_distill/d6-baseline/runs/k-w8/payload.bin",
+  "--workers",
+  "8",
+  "--run-dir",
+  "<checkout>/_distill/d6-baseline/runs/k-w8/run",
+  "--complete"
+ ],
+ "certificate_addresses": [
+  [
+   0,
+   0,
+   0,
+   "main"
+  ],
+  [
+   0,
+   0,
+   1,
+   "main"
+  ],
+  [
+   0,
+   0,
+   2,
+   "main"
+  ],
+  [
+   0,
+   0,
+   3,
+   "main"
+  ],
+  [
+   0,
+   0,
+   4,
+   "main"
+  ],
+  [
+   0,
+   0,
+   5,
+   "main"
+  ],
+  [
+   0,
+   0,
+   6,
+   "main"
+  ],
+  [
+   0,
+   1,
+   0,
+   "main"
+  ],
+  [
+   0,
+   1,
+   1,
+   "main"
+  ],
+  [
+   0,
+   1,
+   2,
+   "main"
+  ],
+  [
+   0,
+   1,
+   3,
+   "main"
+  ],
+  [
+   0,
+   1,
+   4,
+   "main"
+  ],
+  [
+   0,
+   1,
+   5,
+   "main"
+  ],
+  [
+   0,
+   1,
+   6,
+   "main"
+  ],
+  [
+   0,
+   2,
+   0,
+   "main"
+  ],
+  [
+   0,
+   2,
+   1,
+   "main"
+  ],
+  [
+   0,
+   2,
+   2,
+   "main"
+  ],
+  [
+   0,
+   2,
+   3,
+   "main"
+  ],
+  [
+   0,
+   2,
+   4,
+   "main"
+  ],
+  [
+   0,
+   2,
+   5,
+   "main"
+  ],
+  [
+   0,
+   2,
+   6,
+   "main"
+  ],
+  [
+   0,
+   3,
+   0,
+   "main"
+  ],
+  [
+   0,
+   3,
+   1,
+   "main"
+  ],
+  [
+   0,
+   3,
+   2,
+   "main"
+  ],
+  [
+   0,
+   3,
+   3,
+   "main"
+  ],
+  [
+   0,
+   3,
+   4,
+   "main"
+  ],
+  [
+   0,
+   3,
+   5,
+   "main"
+  ],
+  [
+   0,
+   3,
+   6,
+   "main"
+  ],
+  [
+   0,
+   4,
+   0,
+   "main"
+  ],
+  [
+   0,
+   4,
+   1,
+   "main"
+  ],
+  [
+   0,
+   4,
+   2,
+   "main"
+  ],
+  [
+   0,
+   4,
+   3,
+   "main"
+  ],
+  [
+   0,
+   4,
+   4,
+   "main"
+  ],
+  [
+   0,
+   4,
+   5,
+   "main"
+  ],
+  [
+   0,
+   4,
+   6,
+   "main"
+  ],
+  [
+   0,
+   5,
+   0,
+   "main"
+  ],
+  [
+   0,
+   5,
+   1,
+   "main"
+  ],
+  [
+   0,
+   5,
+   2,
+   "main"
+  ],
+  [
+   0,
+   5,
+   3,
+   "main"
+  ],
+  [
+   0,
+   5,
+   4,
+   "main"
+  ],
+  [
+   0,
+   5,
+   5,
+   "main"
+  ],
+  [
+   0,
+   5,
+   6,
+   "main"
+  ],
+  [
+   0,
+   6,
+   0,
+   "main"
+  ],
+  [
+   0,
+   6,
+   1,
+   "main"
+  ],
+  [
+   0,
+   6,
+   2,
+   "main"
+  ],
+  [
+   0,
+   6,
+   3,
+   "main"
+  ],
+  [
+   0,
+   6,
+   4,
+   "main"
+  ],
+  [
+   0,
+   6,
+   5,
+   "main"
+  ],
+  [
+   0,
+   6,
+   6,
+   "main"
+  ]
+ ],
+ "certificate_bits_sha256": {
+  "0,0,0,main": "4a1b6673bdf2b12c731a208678387c4259e38c1831b2387a4db85aac1acf8773",
+  "0,0,1,main": "2966367176c3bf3b59743a928e992af3d1f905b0d0c6e885e52b4950f04fc832",
+  "0,0,2,main": "e59465f8efdd2e8e4a83f8e61c83073b6163127d599f2ec886958e6882320ccc",
+  "0,0,3,main": "b0e99ad66f8ce181b14d4cfe1084acc9acfa871b4b6c05738aa9e63d366b6c0f",
+  "0,0,4,main": "e8ccdb67b53de68fce07bfa7dba4cea44bf5a17e2c15414ac824abfbbcba1013",
+  "0,0,5,main": "de656b579f26b1935462d81aa252ddc79287ecc87cb76fdd2398ee6c3c1d95bd",
+  "0,0,6,main": "970f0f73c418b11463431eccc40cb0b5b79e4bafd74f5e32d8a5e804a0bc0281",
+  "0,1,0,main": "64781cc1a2a5cf1452da5da4b27c6a174ac4cb3ba248a0f9b3c71219a9b6d012",
+  "0,1,1,main": "d0a395d23a4ac9893b97d612680812958e5cbdc669fa21c29aecca7808d19bb9",
+  "0,1,2,main": "afffa80cd23f4ecd026e9d7a464c3416f4ddc80e43146f58d10f172ac0f23cc6",
+  "0,1,3,main": "1fa625a98c0f92b01a40f3d1c23b8e18e08be7af45c7f023fd116c58fb763420",
+  "0,1,4,main": "a2ac0d6426b02b2fda9ddab01c6a9069cc5f7dbe3889f15cfbf30c7fc21f413d",
+  "0,1,5,main": "fa3e1f1a04a422a196892b44ee3672ef9e589468720757f987d5995de785ff8b",
+  "0,1,6,main": "1457480dfb009c3e1b0bb3eeb1ae8a15263ca21de684eb21bcfe401913bdb976",
+  "0,2,0,main": "3c0a96d6e8b2571f399017be78df065e1411f6658de602c0ad475c41a54a0afe",
+  "0,2,1,main": "73ad95d81267ef5f99bd5931ef11d435d9a25982febf005d0b8e6d0add236475",
+  "0,2,2,main": "3a7e86875bcbb2e5b24281d8de182371c11670cef5adc3029e2b3fe2e9f27e65",
+  "0,2,3,main": "06aaf0cb32dbc4da73d323d93963cb758c20ffda6e7b5f1c644920af261b9adb",
+  "0,2,4,main": "e2c2dd69a00cb7e22277a730d70bea524f2ee145481506bfd9ce9b698058cd32",
+  "0,2,5,main": "333a2d00219ecd9acb5329b4497975091589f2c64da09684cc69a35889cc22df",
+  "0,2,6,main": "2ef20af29b5de65478f5cc8d0380bd4a0964b62a6b062d1ab880174a077fcad1",
+  "0,3,0,main": "0facfc9827e3bc507a3dfb27d89389698d178b74044f1d36941233e1dc421b8f",
+  "0,3,1,main": "f374088cdb66e758e4f60568478d104828e721c3fe8d9a2722c12f0ad2578a7b",
+  "0,3,2,main": "7a977abcbf52b52a077e731f9be24a45f018d5789975798c45416a270c591c59",
+  "0,3,3,main": "70afb8c17dcd4c7072af2b17f74ec7c7807e1fc6bde5052cec7c763fc2cb9941",
+  "0,3,4,main": "eaf7f296801b4691d8fd66e2483a4fd870919d4ca6652b7be92474c306bc651b",
+  "0,3,5,main": "0ae8b732bc115c90e12aad42f0db620f960e5e80fd51f046b2395fa3424e273f",
+  "0,3,6,main": "2ed3e03551bd7edd08ef1d1edabefe741a570fb43db63aa52a138d5a034619ca",
+  "0,4,0,main": "03270d18decd60dc26f59bd3a478346174dbbc4d1845a4e6f4f8ce52e53f517a",
+  "0,4,1,main": "40f35b32c8bd1ec1796a450d6324fb3af6fb1a9750e3dcb498297e2d67a30c63",
+  "0,4,2,main": "58dc826cccc5e52eaa200cb6b99f42957bebcb59d904a2c14a0752c293dcb49b",
+  "0,4,3,main": "e7a0e82c078f124f098fd022caf3ff7d24cdfc05ff8676edd4dc1ef1624a0e92",
+  "0,4,4,main": "266485a9da11ea01443d20a9b6f2d1d7038da017f089c8150cd93828378052cc",
+  "0,4,5,main": "0a74bdf77445ac2917765bd5290c38b3e3f696474323dbada5bb22fe9122468f",
+  "0,4,6,main": "7913ec014cc5e5cbd57b2ea097ce88e54dae85e4aa3e8fab3390f72f7bedd5fc",
+  "0,5,0,main": "0b7af3dd957602a8e79d3ad3ba53c832a5d7df1fc3eab3834875a5f5400c34d9",
+  "0,5,1,main": "f687d354eb4ab1e991b531aec2f611a379f5c753d76e99f73b73d23e84b79452",
+  "0,5,2,main": "9ceb8088164060e07876cd452cf7617f48dc388f7e8cdc1a988303f3ac7901a3",
+  "0,5,3,main": "889bc58efc176275e54716950f36227800ce16f4c9ed34c11a7af9bae190b03c",
+  "0,5,4,main": "9b6b755cb9dbefee0e2e20dc536d05fbd9908f3204f1523f59f2bc9c006de0c6",
+  "0,5,5,main": "8b77f88950eab36113a5ab2c461fa4a66a320e5b43be3b32d5a1cd853751435f",
+  "0,5,6,main": "90dc7fc638173bec999b18d879916a52c5603258a1c77d5bba54d815034f07d5",
+  "0,6,0,main": "4323327cfe366bf4e3449cc42bdde6e764e03f0b373433e56183b4a3025eb808",
+  "0,6,1,main": "a5edc063409b6d379681be9ef007d775e660133af85b8033a02637aa4efbb61b",
+  "0,6,2,main": "999b2e970afcd154e9022b117564c3f89c94cc565515796683d150fd7533735a",
+  "0,6,3,main": "e88a5066ca847065e845549278b8972bbc1a342f8d9a2ca199a54a8083c00186",
+  "0,6,4,main": "f638acebfa04ab3fb00e9db588df2809d858bda37a69e2b0f152b00d5442b6b6",
+  "0,6,5,main": "34c184a5f0e28e09cb038f669bc67fa7a14e62942a922bece22a6ec7bbacb095",
+  "0,6,6,main": "f10f2370029f54cf8b98cc3176d61bf2f5d8fa72859e4fefbcf21e66ec1185c9"
+ },
+ "certificate_signature_sha256": "028cee2647bdd0ba68976559f69993a6a6182853c2e537130e14ddea92c45c36",
+ "certified": 49,
+ "event_counts": {
+  "CalibrateAdopted": 33,
+  "CaptureOpen": 1,
+  "CloseCheck": 46,
+  "JobDone": 199,
+  "PoseCommitted": 18,
+  "RunDone": 1,
+  "RunOpen": 1,
+  "SurveyDone": 1,
+  "TileOutcome": 71,
+  "WindowSettled": 69
+ },
+ "exit_code": 0,
+ "job_counts_per_row": {
+  "calibrate": 27,
+  "ctx": 6,
+  "place": 87,
+  "survey": 1,
+  "tiles.freeze": 7,
+  "tiles.retry": 7,
+  "tiles.scan": 64
+ },
+ "label": "k-w8",
+ "n_events": 440,
+ "payload_bytes": 6000,
+ "payload_matches_source": true,
+ "payload_sha256": "59495601d00fa78145f5400e97eb53ee31424c57d6be905f00f2f62a7699848f",
+ "plugin_rows": {
+  "calibrate": {
+   "certificates": 0,
+   "cpu_seconds": 0.253,
+   "jobs": 27,
+   "poses": 0,
+   "words": 0
+  },
+  "ctx": {
+   "certificates": 0,
+   "cpu_seconds": 0.531,
+   "jobs": 6,
+   "poses": 0,
+   "words": 0
+  },
+  "place": {
+   "certificates": 0,
+   "cpu_seconds": 11.187,
+   "jobs": 87,
+   "poses": 18,
+   "words": 6
+  },
+  "survey": {
+   "certificates": 0,
+   "cpu_seconds": 1.209,
+   "jobs": 1,
+   "poses": 0,
+   "words": 0
+  },
+  "tiles.freeze": {
+   "certificates": 0,
+   "cpu_seconds": 0.152,
+   "jobs": 7,
+   "poses": 0,
+   "words": 0
+  },
+  "tiles.retry": {
+   "certificates": 0,
+   "cpu_seconds": 1.055,
+   "jobs": 7,
+   "poses": 0,
+   "words": 0
+  },
+  "tiles.scan": {
+   "certificates": 49,
+   "cpu_seconds": 0.535,
+   "jobs": 64,
+   "poses": 0,
+   "words": 0
+  }
+ },
+ "report_close": {
+  "blocks": [
+   {
+    "block": 0,
+    "have": 49,
+    "needed": 23,
+    "rank": 23,
+    "solved": true,
+    "stream_id": null,
+    "type": "CloseBlockRow"
+   }
+  ],
+  "certified": 49,
+  "k_total": 23,
+  "metadata_n_unique": 49,
+  "metadata_rank": 24,
+  "status": "verified",
+  "symbols_used": 49,
+  "type": "CloseCheck"
+ },
+ "report_fold_errors": 0,
+ "report_run_done": {
+  "certified": 49,
+  "n_bytes": 6000,
+  "payload_sha256": "59495601d00fa78145f5400e97eb53ee31424c57d6be905f00f2f62a7699848f",
+  "status": "verified",
+  "type": "RunDone"
+ },
+ "report_tier_jobs": {
+  "10": 1,
+  "100": 7,
+  "120": 4,
+  "125": 6,
+  "140": 5,
+  "145": 6,
+  "15": 3,
+  "17": 14,
+  "19": 12,
+  "20": 19,
+  "22": 46,
+  "24": 2,
+  "42": 4,
+  "44": 8,
+  "45": 6,
+  "60": 10,
+  "62": 5,
+  "90": 17,
+  "92": 6,
+  "94": 7,
+  "95": 9,
+  "97": 1,
+  "99": 1
+ },
+ "status": "verified",
+ "stderr_tail": [
+  "format   c3-k-r0550@7x7 \u00b7 7x7 tiles \u00b7 1 pages \u00b7 streams main \u00b7 PROVISIONAL",
+  "capture  1 ingested \u00b7 7f56e7e2b9dfd5bb7d6fe5faf46af9186383895d292b8a1a007bb78e01090534 \u00b7 regions 1 \u00b7 support 201097 cells",
+  "frontier jobs 199 by tier [10:1,15:3,17:14,19:12,20:19,22:46,24:2,42:4,44:8,45:6,60:10,62:5,90:17,92:6,94:7,95:9,97:1,99:1,100:7,120:4,125:6,140:5,145:6] \u00b7 in flight unavailable (event-fed) \u00b7 workers 8",
+  "work     jobs 199 \u00b7 cpu 14.9s \u00b7 certs by plugin [calibrate:0,ctx:0,place:0,survey:0,tiles.freeze:0,tiles.retry:0,tiles.scan:49]",
+  "tiles    UNKNOWN 0 \u00b7 ADDRESSED 0 \u00b7 ATTEMPTED 0 \u00b7 CERTIFIED 49",
+  "close    VERIFIED sha 59495601d00fa781\u2026 \u00b7 K 49/23 \u00b7 metadata rank 24/24 \u00b7 blocks 1/1",
+  "plugin         jobs     cpu_s  certs  poses  words",
+  "calibrate        27      0.25      0      0      0",
+  "ctx               6      0.53      0      0      0",
+  "place            87     11.19      0     18      6",
+  "survey            1      1.21      0      0      0",
+  "tiles.freeze      7      0.15      0      0      0",
+  "tiles.retry       7      1.06      0      0      0",
+  "tiles.scan       64      0.53     49      0      0",
+  "run dir: <checkout>/_distill/d6-baseline/runs/k-w8/run"
+ ],
+ "stdout": "VERIFIED 6000 bytes sha256 59495601d00fa78145f5400e97eb53ee31424c57d6be905f00f2f62a7699848f\n",
+ "wall_s": 3.744,
+ "workers": 8
+}

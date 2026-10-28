@@ -1,0 +1,89 @@
+# Experiment 020: structure-tensor lattice acquisition
+
+This experiment asks whether e019's local-standard-deviation detector can be
+replaced by a signal that more directly describes a payload lattice.
+
+See [DESIGN.md](DESIGN.md) for the reasoning trail, rejected alternatives,
+failed intermediate versions, calibration procedure, and promotion criteria.
+
+## Hypothesis
+
+The payload is sustained **two-dimensional texture** at roughly the code-cell
+scale. Blank paper and backing have no gradients; a paper/backing boundary has
+mostly one-dimensional gradients. The smaller eigenvalue of a local structure
+tensor therefore separates these cases directly:
+
+```
+J = G_sigma * [[Ix^2, Ix Iy], [Ix Iy, Iy^2]]
+score = sqrt(lambda_min(J))
+```
+
+This is rotation invariant and phase independent. It replaces e019's raw
+local-variance signal plus strict/loose absolute thresholds, seed erosion,
+hysteresis propagation, opening, and median-strength rejection with:
+
+1. one adaptive threshold: a robust low-score noise floor plus log-space Otsu
+   separation of real paper texture from toner modulation;
+2. one 5-of-9 density condition, to reject isolated corners and dust;
+3. the existing physical minimum-area condition.
+
+The tensor is computed after block averaging to about four pixels per cell by
+default (the real-scan run uses two). At 4800 dpi c3, four pixels is a 6x
+linear reduction, so the detector's main arrays are 1/36 the native pixel
+count. Acquisition does not need native print-dot samples; lattice lock and
+decoding downstream still do.
+
+## Run
+
+```
+env/bin/python experiments/020-structure-tensor-segment/run_e020.py
+env/bin/python experiments/020-structure-tensor-segment/run_real.py
+env/bin/pytest -q experiments/020-structure-tensor-segment/test_detector.py
+```
+
+The synthetic runner creates exact pixel ground truth for dark-backing/white-
+margin, white-lid, faint and blurred, torn plus quiet-hole, blank-paper-only,
+and high-occupancy scenes. Seeds 100--107 were used for parameter selection;
+the table below is the untouched 200--207 range.
+
+## Results
+
+| scene | detector | IoU | precision | recall | false image area | candidates |
+|---|---:|---:|---:|---:|---:|---:|
+| dark backing + margins | e019 | .801 | .803 | .997 | .0458 | 3 |
+| | **e020** | **.887** | **.940** | .940 | **.0111** | 3 |
+| white lid | e019 | .858 | .861 | .997 | .0302 | 3 |
+| | **e020** | **.889** | **.941** | .941 | **.0110** | 3 |
+| faint + blurred | e019 | .000 | .000 | .000 | .0000 | 0 |
+| | **e020** | **.879** | **.948** | **.924** | .0095 | 3 |
+| torn + quiet hole | e019 | .796 | .798 | .997 | .0453 | 3 |
+| | **e020** | **.880** | **.933** | .940 | **.0121** | 3 |
+| blank paper only | e019 | .000 | .000 | .000 | .0000 | 0 |
+| | e020 | .000 | .000 | .000 | .0000 | 0 |
+| dense, nearby fields | e019 | .755 | .757 | .997 | .1010 | 1 (merged) |
+| | **e020** | **.907** | **.962** | .941 | **.0118** | 2 |
+
+E020 gives up about six points of boundary recall to avoid e019's growth
+beyond the data field. Its precision gain is larger, and the faint case shows
+the main benefit of a scan-adaptive rather than absolute 8-bit threshold.
+
+On all six existing e018 white-lid scans, evaluated at the same 400 dpi / two
+pixels-per-cell acquisition footing, e019 and e020 found exactly the same
+components: 17/17, 17/17, 10/10, 10/10, 8/8, and 8/8. No bounding box was
+unmatched. E020's selected thresholds were tightly grouped at 2.336--2.440.
+
+## Interpretation
+
+This is a cleaner acquisition model than e019: the statistic itself rejects a
+one-dimensional paper edge, and the threshold follows each scan. There is no
+strict/loose threshold pair, seed erosion, propagation, opening, or component-
+median contrast gate. Decimation is part of the design rather than an
+emergency memory option.
+
+It is not yet a production replacement. The real scans are all the same white
+lid, paper, printer, and payload contrast, and they have no exact ground-truth
+masks; agreement with e019 is evidence, not truth. The dark-backing and faint
+results are synthetic. Otsu can also be confused by a platen dominated by a
+second highly textured material or almost entirely covered by payload. E020
+still assumes the nominal cell pitch. The next decisive run is exact annotation
+on real dark-backing, varied-stock, and deliberately faint scans.

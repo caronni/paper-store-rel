@@ -1,0 +1,1774 @@
+{
+  "dual_footing_context_union": {
+    "after_each_only": [],
+    "after_each_prefix_bits_sha256": "2c462b6e9fda47c77e25b903bb1fc760a750a456c561932fa33bb285aa76e444",
+    "after_each_prefix_count": 769,
+    "after_each_prefix_set_sha256": "a910cce60403edd5f01a31a30aa4cf4226a78e29ecde246c59086524b65125b5",
+    "changed_common": [],
+    "end_only_bits_sha256": "2c462b6e9fda47c77e25b903bb1fc760a750a456c561932fa33bb285aa76e444",
+    "end_only_count": 769,
+    "end_only_only": [],
+    "end_only_set_sha256": "a910cce60403edd5f01a31a30aa4cf4226a78e29ecde246c59086524b65125b5",
+    "profile": "ctx-pava-v1",
+    "within_schedule_cross_footing_conflicts": {
+      "after_each_prefix": [],
+      "end_only": []
+    }
+  },
+  "experiment": "E023b BP scheduling: end-only vs every prefix",
+  "footings": {
+    "decimated": {
+      "profiles": {
+        "ctx-pava-v1": {
+          "after_each_final_repeat": {
+            "attempted": 0,
+            "certified": 0,
+            "eligible": 0,
+            "frontier": 36,
+            "noop": true,
+            "total_certified": 757
+          },
+          "after_each_prefix": {
+            "bp_iterations": 101340,
+            "certificate_bits_sha256": "d04d51fef4cf2dca8424b294cbc0d464ec640d495400ac702a2068b5561e12cd",
+            "certificate_set_sha256": "6f4a786aa48c6a6342a5c9550a7f3f4d5a9c9b5bdbbbbb3633f22d5bc5bab103",
+            "certified": 757,
+            "crc_calls": 1241,
+            "fatal": [],
+            "ledger_records": 1750,
+            "retry_stage": {
+              "bp_iterations": 57311,
+              "certified_new": 15,
+              "crc_calls": 197,
+              "ledger_records": 197
+            },
+            "tile_states": {
+              "attempted_failed": 36,
+              "below_attempt_floor": 12,
+              "certified": 757,
+              "degenerate": 35
+            }
+          },
+          "comparison": {
+            "after_each_only": [],
+            "after_each_wrong": [],
+            "bp_iteration_delta": 43796,
+            "certificate_delta": 0,
+            "changed_common": [],
+            "crc_call_delta": 140,
+            "end_only_only": [],
+            "end_only_wrong": []
+          },
+          "end_only": {
+            "bp_iterations": 57544,
+            "certificate_bits_sha256": "d04d51fef4cf2dca8424b294cbc0d464ec640d495400ac702a2068b5561e12cd",
+            "certificate_set_sha256": "6f4a786aa48c6a6342a5c9550a7f3f4d5a9c9b5bdbbbbb3633f22d5bc5bab103",
+            "certified": 757,
+            "crc_calls": 1101,
+            "fatal": [],
+            "ledger_records": 1614,
+            "retry_stage": {
+              "bp_iterations": 12400,
+              "certified_new": 8,
+              "crc_calls": 44,
+              "ledger_records": 44
+            },
+            "tile_states": {
+              "attempted_failed": 36,
+              "below_attempt_floor": 12,
+              "certified": 757,
+              "degenerate": 35
+            }
+          },
+          "end_only_before_retry": {
+            "bp_iterations": 45144,
+            "certificate_bits_sha256": "daa71427e90de224eea1af7063f3d29679f6bb19c370a15702018139a2b73d65",
+            "certificate_set_sha256": "0db6bdb570c3286d1990855dafcd9c85f2f2467d10049338fc126c7869dabdc9",
+            "certified": 749,
+            "crc_calls": 1057,
+            "fatal": [],
+            "ledger_records": 1570,
+            "retry_stage": {
+              "bp_iterations": 0,
+              "certified_new": 0,
+              "crc_calls": 0,
+              "ledger_records": 0
+            },
+            "tile_states": {
+              "attempted_failed": 44,
+              "below_attempt_floor": 12,
+              "certified": 749,
+              "degenerate": 35
+            }
+          },
+          "end_only_retry": {
+            "attempted": 44,
+            "certified": 8,
+            "eligible": 44,
+            "frontier": 44,
+            "noop": false,
+            "total_certified": 757
+          },
+          "prefixes": [
+            {
+              "after_retry_certified": 188,
+              "append": {
+                "newly_certified": 184,
+                "noop": false,
+                "stage1": {
+                  "attempted": 236,
+                  "certified": 184,
+                  "evaluated": 343
+                },
+                "total_certified": 184,
+                "union": {
+                  "attempted": 0,
+                  "certified": 0,
+                  "evaluated": 0
+                }
+              },
+              "before_retry_certified": 184,
+              "cumulative_bp_iterations": 22814,
+              "cumulative_crc_calls": 288,
+              "retry": {
+                "attempted": 52,
+                "certified": 4,
+                "eligible": 52,
+                "frontier": 52,
+                "noop": false,
+                "total_certified": 188
+              },
+              "retry_changed": [],
+              "retry_gained": [
+                [
+                  0,
+                  34,
+                  19
+                ],
+                [
+                  0,
+                  34,
+                  20
+                ],
+                [
+                  0,
+                  34,
+                  21
+                ],
+                [
+                  0,
+                  34,
+                  22
+                ]
+              ],
+              "retry_gained_absent_from_end_only_final": [],
+              "scan_id": "s000",
+              "scan_index": 0
+            },
+            {
+              "after_retry_certified": 205,
+              "append": {
+                "newly_certified": 15,
+                "noop": false,
+                "stage1": {
+                  "attempted": 48,
+                  "certified": 12,
+                  "evaluated": 140
+                },
+                "total_certified": 203,
+                "union": {
+                  "attempted": 43,
+                  "certified": 3,
+                  "evaluated": 124
+                }
+              },
+              "before_retry_certified": 203,
+              "cumulative_bp_iterations": 44171,
+              "cumulative_crc_calls": 419,
+              "retry": {
+                "attempted": 40,
+                "certified": 2,
+                "eligible": 40,
+                "frontier": 40,
+                "noop": false,
+                "total_certified": 205
+              },
+              "retry_changed": [],
+              "retry_gained": [
+                [
+                  0,
+                  2,
+                  3
+                ],
+                [
+                  0,
+                  34,
+                  6
+                ]
+              ],
+              "retry_gained_absent_from_end_only_final": [],
+              "scan_id": "s001",
+              "scan_index": 1
+            },
+            {
+              "after_retry_certified": 334,
+              "append": {
+                "newly_certified": 129,
+                "noop": false,
+                "stage1": {
+                  "attempted": 132,
+                  "certified": 109,
+                  "evaluated": 184
+                },
+                "total_certified": 334,
+                "union": {
+                  "attempted": 27,
+                  "certified": 20,
+                  "evaluated": 36
+                }
+              },
+              "before_retry_certified": 334,
+              "cumulative_bp_iterations": 54929,
+              "cumulative_crc_calls": 597,
+              "retry": {
+                "attempted": 19,
+                "certified": 0,
+                "eligible": 19,
+                "frontier": 47,
+                "noop": false,
+                "total_certified": 334
+              },
+              "retry_changed": [],
+              "retry_gained": [],
+              "retry_gained_absent_from_end_only_final": [],
+              "scan_id": "s002",
+              "scan_index": 2
+            },
+            {
+              "after_retry_certified": 340,
+              "append": {
+                "newly_certified": 5,
+                "noop": false,
+                "stage1": {
+                  "attempted": 18,
+                  "certified": 5,
+                  "evaluated": 55
+                },
+                "total_certified": 339,
+                "union": {
+                  "attempted": 19,
+                  "certified": 0,
+                  "evaluated": 50
+                }
+              },
+              "before_retry_certified": 339,
+              "cumulative_bp_iterations": 64517,
+              "cumulative_crc_calls": 653,
+              "retry": {
+                "attempted": 19,
+                "certified": 1,
+                "eligible": 19,
+                "frontier": 47,
+                "noop": false,
+                "total_certified": 340
+              },
+              "retry_changed": [],
+              "retry_gained": [
+                [
+                  0,
+                  25,
+                  11
+                ]
+              ],
+              "retry_gained_absent_from_end_only_final": [],
+              "scan_id": "s003",
+              "scan_index": 3
+            },
+            {
+              "after_retry_certified": 741,
+              "append": {
+                "newly_certified": 395,
+                "noop": false,
+                "stage1": {
+                  "attempted": 388,
+                  "certified": 342,
+                  "evaluated": 463
+                },
+                "total_certified": 735,
+                "union": {
+                  "attempted": 74,
+                  "certified": 53,
+                  "evaluated": 81
+                }
+              },
+              "before_retry_certified": 735,
+              "cumulative_bp_iterations": 87822,
+              "cumulative_crc_calls": 1157,
+              "retry": {
+                "attempted": 42,
+                "certified": 6,
+                "eligible": 42,
+                "frontier": 55,
+                "noop": false,
+                "total_certified": 741
+              },
+              "retry_changed": [],
+              "retry_gained": [
+                [
+                  0,
+                  2,
+                  1
+                ],
+                [
+                  0,
+                  8,
+                  2
+                ],
+                [
+                  0,
+                  14,
+                  0
+                ],
+                [
+                  0,
+                  21,
+                  20
+                ],
+                [
+                  0,
+                  34,
+                  13
+                ],
+                [
+                  0,
+                  34,
+                  14
+                ]
+              ],
+              "retry_gained_absent_from_end_only_final": [],
+              "scan_id": "s004",
+              "scan_index": 4
+            },
+            {
+              "after_retry_certified": 757,
+              "append": {
+                "newly_certified": 14,
+                "noop": false,
+                "stage1": {
+                  "attempted": 29,
+                  "certified": 9,
+                  "evaluated": 43
+                },
+                "total_certified": 755,
+                "union": {
+                  "attempted": 30,
+                  "certified": 5,
+                  "evaluated": 34
+                }
+              },
+              "before_retry_certified": 755,
+              "cumulative_bp_iterations": 101340,
+              "cumulative_crc_calls": 1241,
+              "retry": {
+                "attempted": 25,
+                "certified": 2,
+                "eligible": 25,
+                "frontier": 38,
+                "noop": false,
+                "total_certified": 757
+              },
+              "retry_changed": [],
+              "retry_gained": [
+                [
+                  0,
+                  13,
+                  13
+                ],
+                [
+                  0,
+                  34,
+                  12
+                ]
+              ],
+              "retry_gained_absent_from_end_only_final": [],
+              "scan_id": "s005",
+              "scan_index": 5
+            }
+          ]
+        },
+        "pava-v1": {
+          "after_each_final_repeat": {
+            "attempted": 0,
+            "certified": 0,
+            "eligible": 0,
+            "frontier": 45,
+            "noop": true,
+            "total_certified": 748
+          },
+          "after_each_prefix": {
+            "bp_iterations": 108459,
+            "certificate_bits_sha256": "d2121aaa1cd46b246ff68f8257bfbb9edeb7d6f427a554b9ff3c8baf4fabd2be",
+            "certificate_set_sha256": "ae8fe0b91c062799baa8a2537af5e182b9ee678c9abce186aed0a40c426bcebc",
+            "certified": 748,
+            "crc_calls": 1270,
+            "fatal": [],
+            "ledger_records": 1781,
+            "retry_stage": {
+              "bp_iterations": 61227,
+              "certified_new": 15,
+              "crc_calls": 211,
+              "ledger_records": 211
+            },
+            "tile_states": {
+              "attempted_failed": 45,
+              "below_attempt_floor": 12,
+              "certified": 748,
+              "degenerate": 35
+            }
+          },
+          "comparison": {
+            "after_each_only": [
+              [
+                0,
+                28,
+                11
+              ]
+            ],
+            "after_each_wrong": [],
+            "bp_iteration_delta": 45042,
+            "certificate_delta": 1,
+            "changed_common": [],
+            "crc_call_delta": 143,
+            "end_only_only": [],
+            "end_only_wrong": []
+          },
+          "end_only": {
+            "bp_iterations": 63417,
+            "certificate_bits_sha256": "bae1bb90e23a1ce8cfa422edbd343aa1f4fe2ab2b6e0d93d5ed13dd2e9c5ec19",
+            "certificate_set_sha256": "1e2942ccd447efb7d7bd1d06f1bc053cdea0018640cc73967d22945ad695d01f",
+            "certified": 747,
+            "crc_calls": 1127,
+            "fatal": [],
+            "ledger_records": 1644,
+            "retry_stage": {
+              "bp_iterations": 14731,
+              "certified_new": 5,
+              "crc_calls": 51,
+              "ledger_records": 51
+            },
+            "tile_states": {
+              "attempted_failed": 46,
+              "below_attempt_floor": 12,
+              "certified": 747,
+              "degenerate": 35
+            }
+          },
+          "end_only_before_retry": {
+            "bp_iterations": 48686,
+            "certificate_bits_sha256": "df6bc14f46f82a647be1d7962f8f01502db4753496aef7c8b6f3ee8c93936dad",
+            "certificate_set_sha256": "7c14b84dd500b82ea5c0fd92892bf3e740f6de5e7dc4a885197ae1b43526ba3c",
+            "certified": 742,
+            "crc_calls": 1076,
+            "fatal": [],
+            "ledger_records": 1593,
+            "retry_stage": {
+              "bp_iterations": 0,
+              "certified_new": 0,
+              "crc_calls": 0,
+              "ledger_records": 0
+            },
+            "tile_states": {
+              "attempted_failed": 51,
+              "below_attempt_floor": 12,
+              "certified": 742,
+              "degenerate": 35
+            }
+          },
+          "end_only_retry": {
+            "attempted": 51,
+            "certified": 5,
+            "eligible": 51,
+            "frontier": 51,
+            "noop": false,
+            "total_certified": 747
+          },
+          "prefixes": [
+            {
+              "after_retry_certified": 185,
+              "append": {
+                "newly_certified": 179,
+                "noop": false,
+                "stage1": {
+                  "attempted": 236,
+                  "certified": 179,
+                  "evaluated": 343
+                },
+                "total_certified": 179,
+                "union": {
+                  "attempted": 0,
+                  "certified": 0,
+                  "evaluated": 0
+                }
+              },
+              "before_retry_certified": 179,
+              "cumulative_bp_iterations": 24461,
+              "cumulative_crc_calls": 293,
+              "retry": {
+                "attempted": 57,
+                "certified": 6,
+                "eligible": 57,
+                "frontier": 57,
+                "noop": false,
+                "total_certified": 185
+              },
+              "retry_changed": [],
+              "retry_gained": [
+                [
+                  0,
+                  34,
+                  2
+                ],
+                [
+                  0,
+                  34,
+                  5
+                ],
+                [
+                  0,
+                  34,
+                  19
+                ],
+                [
+                  0,
+                  34,
+                  20
+                ],
+                [
+                  0,
+                  34,
+                  21
+                ],
+                [
+                  0,
+                  34,
+                  22
+                ]
+              ],
+              "retry_gained_absent_from_end_only_final": [],
+              "scan_id": "s000",
+              "scan_index": 0
+            },
+            {
+              "after_retry_certified": 205,
+              "append": {
+                "newly_certified": 18,
+                "noop": false,
+                "stage1": {
+                  "attempted": 51,
+                  "certified": 15,
+                  "evaluated": 143
+                },
+                "total_certified": 203,
+                "union": {
+                  "attempted": 43,
+                  "certified": 3,
+                  "evaluated": 124
+                }
+              },
+              "before_retry_certified": 203,
+              "cumulative_bp_iterations": 46044,
+              "cumulative_crc_calls": 427,
+              "retry": {
+                "attempted": 40,
+                "certified": 2,
+                "eligible": 40,
+                "frontier": 40,
+                "noop": false,
+                "total_certified": 205
+              },
+              "retry_changed": [],
+              "retry_gained": [
+                [
+                  0,
+                  2,
+                  3
+                ],
+                [
+                  0,
+                  34,
+                  6
+                ]
+              ],
+              "retry_gained_absent_from_end_only_final": [],
+              "scan_id": "s001",
+              "scan_index": 1
+            },
+            {
+              "after_retry_certified": 335,
+              "append": {
+                "newly_certified": 130,
+                "noop": false,
+                "stage1": {
+                  "attempted": 132,
+                  "certified": 110,
+                  "evaluated": 185
+                },
+                "total_certified": 335,
+                "union": {
+                  "attempted": 28,
+                  "certified": 20,
+                  "evaluated": 37
+                }
+              },
+              "before_retry_certified": 335,
+              "cumulative_bp_iterations": 57083,
+              "cumulative_crc_calls": 606,
+              "retry": {
+                "attempted": 19,
+                "certified": 0,
+                "eligible": 19,
+                "frontier": 46,
+                "noop": false,
+                "total_certified": 335
+              },
+              "retry_changed": [],
+              "retry_gained": [],
+              "retry_gained_absent_from_end_only_final": [],
+              "scan_id": "s002",
+              "scan_index": 2
+            },
+            {
+              "after_retry_certified": 339,
+              "append": {
+                "newly_certified": 4,
+                "noop": false,
+                "stage1": {
+                  "attempted": 17,
+                  "certified": 4,
+                  "evaluated": 55
+                },
+                "total_certified": 339,
+                "union": {
+                  "attempted": 20,
+                  "certified": 0,
+                  "evaluated": 51
+                }
+              },
+              "before_retry_certified": 339,
+              "cumulative_bp_iterations": 67174,
+              "cumulative_crc_calls": 663,
+              "retry": {
+                "attempted": 20,
+                "certified": 0,
+                "eligible": 20,
+                "frontier": 47,
+                "noop": false,
+                "total_certified": 339
+              },
+              "retry_changed": [],
+              "retry_gained": [],
+              "retry_gained_absent_from_end_only_final": [],
+              "scan_id": "s003",
+              "scan_index": 3
+            },
+            {
+              "after_retry_certified": 737,
+              "append": {
+                "newly_certified": 392,
+                "noop": false,
+                "stage1": {
+                  "attempted": 388,
+                  "certified": 340,
+                  "evaluated": 462
+                },
+                "total_certified": 731,
+                "union": {
+                  "attempted": 75,
+                  "certified": 52,
+                  "evaluated": 82
+                }
+              },
+              "before_retry_certified": 731,
+              "cumulative_bp_iterations": 91675,
+              "cumulative_crc_calls": 1170,
+              "retry": {
+                "attempted": 44,
+                "certified": 6,
+                "eligible": 44,
+                "frontier": 59,
+                "noop": false,
+                "total_certified": 737
+              },
+              "retry_changed": [],
+              "retry_gained": [
+                [
+                  0,
+                  1,
+                  18
+                ],
+                [
+                  0,
+                  2,
+                  1
+                ],
+                [
+                  0,
+                  20,
+                  7
+                ],
+                [
+                  0,
+                  28,
+                  11
+                ],
+                [
+                  0,
+                  34,
+                  13
+                ],
+                [
+                  0,
+                  34,
+                  14
+                ]
+              ],
+              "retry_gained_absent_from_end_only_final": [
+                [
+                  0,
+                  28,
+                  11
+                ]
+              ],
+              "scan_id": "s004",
+              "scan_index": 4
+            },
+            {
+              "after_retry_certified": 748,
+              "append": {
+                "newly_certified": 10,
+                "noop": false,
+                "stage1": {
+                  "attempted": 30,
+                  "certified": 2,
+                  "evaluated": 45
+                },
+                "total_certified": 747,
+                "union": {
+                  "attempted": 39,
+                  "certified": 8,
+                  "evaluated": 43
+                }
+              },
+              "before_retry_certified": 747,
+              "cumulative_bp_iterations": 108459,
+              "cumulative_crc_calls": 1270,
+              "retry": {
+                "attempted": 31,
+                "certified": 1,
+                "eligible": 31,
+                "frontier": 46,
+                "noop": false,
+                "total_certified": 748
+              },
+              "retry_changed": [],
+              "retry_gained": [
+                [
+                  0,
+                  34,
+                  12
+                ]
+              ],
+              "retry_gained_absent_from_end_only_final": [],
+              "scan_id": "s005",
+              "scan_index": 5
+            }
+          ]
+        }
+      },
+      "reference": {
+        "legacy_implementation_sha256": "e89d65ae5d24a7a0dd3d11a7c6b4738677d712d27e01f927b8659d3125f8a959",
+        "state_file": "e023b_decimated.pkl",
+        "state_sha256": "a34baa9379e23788c013b1772ef44b6f7d964c0e7aa25ef46b4d983a5880ee30"
+      }
+    },
+    "native": {
+      "profiles": {
+        "ctx-pava-v1": {
+          "after_each_final_repeat": {
+            "attempted": 0,
+            "certified": 0,
+            "eligible": 0,
+            "frontier": 43,
+            "noop": true,
+            "total_certified": 752
+          },
+          "after_each_prefix": {
+            "bp_iterations": 109222,
+            "certificate_bits_sha256": "c2154b32c5ba07563d42c22780c6740dd3da9ce7be8b2a3dbd40cf985516fa5d",
+            "certificate_set_sha256": "4a6435c91064865ca9bb9444d817ac801b77f83b7545272b5aa2d3402f875ef6",
+            "certified": 752,
+            "crc_calls": 1274,
+            "fatal": [],
+            "ledger_records": 1784,
+            "retry_stage": {
+              "bp_iterations": 62489,
+              "certified_new": 15,
+              "crc_calls": 215,
+              "ledger_records": 215
+            },
+            "tile_states": {
+              "attempted_failed": 43,
+              "below_attempt_floor": 10,
+              "certified": 752,
+              "degenerate": 35
+            }
+          },
+          "comparison": {
+            "after_each_only": [],
+            "after_each_wrong": [],
+            "bp_iteration_delta": 46976,
+            "certificate_delta": 0,
+            "changed_common": [],
+            "crc_call_delta": 149,
+            "end_only_only": [],
+            "end_only_wrong": []
+          },
+          "end_only": {
+            "bp_iterations": 62246,
+            "certificate_bits_sha256": "c2154b32c5ba07563d42c22780c6740dd3da9ce7be8b2a3dbd40cf985516fa5d",
+            "certificate_set_sha256": "4a6435c91064865ca9bb9444d817ac801b77f83b7545272b5aa2d3402f875ef6",
+            "certified": 752,
+            "crc_calls": 1125,
+            "fatal": [],
+            "ledger_records": 1639,
+            "retry_stage": {
+              "bp_iterations": 14130,
+              "certified_new": 6,
+              "crc_calls": 49,
+              "ledger_records": 49
+            },
+            "tile_states": {
+              "attempted_failed": 43,
+              "below_attempt_floor": 10,
+              "certified": 752,
+              "degenerate": 35
+            }
+          },
+          "end_only_before_retry": {
+            "bp_iterations": 48116,
+            "certificate_bits_sha256": "aa24d0fe2629b8aea21ac1626e6e936a4a19eb0aa3473224a170aefb1ae221f0",
+            "certificate_set_sha256": "c05b95a072def32405cc5b5234cb5fb9c9c8745a077047622d3f8f3709ab8de8",
+            "certified": 746,
+            "crc_calls": 1076,
+            "fatal": [],
+            "ledger_records": 1590,
+            "retry_stage": {
+              "bp_iterations": 0,
+              "certified_new": 0,
+              "crc_calls": 0,
+              "ledger_records": 0
+            },
+            "tile_states": {
+              "attempted_failed": 49,
+              "below_attempt_floor": 10,
+              "certified": 746,
+              "degenerate": 35
+            }
+          },
+          "end_only_retry": {
+            "attempted": 49,
+            "certified": 6,
+            "eligible": 49,
+            "frontier": 49,
+            "noop": false,
+            "total_certified": 752
+          },
+          "prefixes": [
+            {
+              "after_retry_certified": 187,
+              "append": {
+                "newly_certified": 180,
+                "noop": false,
+                "stage1": {
+                  "attempted": 238,
+                  "certified": 180,
+                  "evaluated": 343
+                },
+                "total_certified": 180,
+                "union": {
+                  "attempted": 0,
+                  "certified": 0,
+                  "evaluated": 0
+                }
+              },
+              "before_retry_certified": 180,
+              "cumulative_bp_iterations": 24761,
+              "cumulative_crc_calls": 296,
+              "retry": {
+                "attempted": 58,
+                "certified": 7,
+                "eligible": 58,
+                "frontier": 58,
+                "noop": false,
+                "total_certified": 187
+              },
+              "retry_changed": [],
+              "retry_gained": [
+                [
+                  0,
+                  34,
+                  6
+                ],
+                [
+                  0,
+                  34,
+                  7
+                ],
+                [
+                  0,
+                  34,
+                  8
+                ],
+                [
+                  0,
+                  34,
+                  9
+                ],
+                [
+                  0,
+                  34,
+                  19
+                ],
+                [
+                  0,
+                  34,
+                  21
+                ],
+                [
+                  0,
+                  34,
+                  22
+                ]
+              ],
+              "retry_gained_absent_from_end_only_final": [],
+              "scan_id": "s000",
+              "scan_index": 0
+            },
+            {
+              "after_retry_certified": 206,
+              "append": {
+                "newly_certified": 17,
+                "noop": false,
+                "stage1": {
+                  "attempted": 53,
+                  "certified": 15,
+                  "evaluated": 142
+                },
+                "total_certified": 204,
+                "union": {
+                  "attempted": 42,
+                  "certified": 2,
+                  "evaluated": 123
+                }
+              },
+              "before_retry_certified": 204,
+              "cumulative_bp_iterations": 46439,
+              "cumulative_crc_calls": 431,
+              "retry": {
+                "attempted": 40,
+                "certified": 2,
+                "eligible": 40,
+                "frontier": 40,
+                "noop": false,
+                "total_certified": 206
+              },
+              "retry_changed": [],
+              "retry_gained": [
+                [
+                  0,
+                  2,
+                  3
+                ],
+                [
+                  0,
+                  34,
+                  5
+                ]
+              ],
+              "retry_gained_absent_from_end_only_final": [],
+              "scan_id": "s001",
+              "scan_index": 1
+            },
+            {
+              "after_retry_certified": 329,
+              "append": {
+                "newly_certified": 121,
+                "noop": false,
+                "stage1": {
+                  "attempted": 132,
+                  "certified": 104,
+                  "evaluated": 184
+                },
+                "total_certified": 327,
+                "union": {
+                  "attempted": 30,
+                  "certified": 17,
+                  "evaluated": 37
+                }
+              },
+              "before_retry_certified": 327,
+              "cumulative_bp_iterations": 61037,
+              "cumulative_crc_calls": 622,
+              "retry": {
+                "attempted": 29,
+                "certified": 2,
+                "eligible": 29,
+                "frontier": 56,
+                "noop": false,
+                "total_certified": 329
+              },
+              "retry_changed": [],
+              "retry_gained": [
+                [
+                  0,
+                  2,
+                  8
+                ],
+                [
+                  0,
+                  15,
+                  8
+                ]
+              ],
+              "retry_gained_absent_from_end_only_final": [],
+              "scan_id": "s002",
+              "scan_index": 2
+            },
+            {
+              "after_retry_certified": 339,
+              "append": {
+                "newly_certified": 9,
+                "noop": false,
+                "stage1": {
+                  "attempted": 22,
+                  "certified": 9,
+                  "evaluated": 61
+                },
+                "total_certified": 338,
+                "union": {
+                  "attempted": 23,
+                  "certified": 0,
+                  "evaluated": 52
+                }
+              },
+              "before_retry_certified": 338,
+              "cumulative_bp_iterations": 72447,
+              "cumulative_crc_calls": 690,
+              "retry": {
+                "attempted": 23,
+                "certified": 1,
+                "eligible": 23,
+                "frontier": 50,
+                "noop": false,
+                "total_certified": 339
+              },
+              "retry_changed": [],
+              "retry_gained": [
+                [
+                  0,
+                  1,
+                  13
+                ]
+              ],
+              "retry_gained_absent_from_end_only_final": [],
+              "scan_id": "s003",
+              "scan_index": 3
+            },
+            {
+              "after_retry_certified": 735,
+              "append": {
+                "newly_certified": 393,
+                "noop": false,
+                "stage1": {
+                  "attempted": 388,
+                  "certified": 341,
+                  "evaluated": 460
+                },
+                "total_certified": 732,
+                "union": {
+                  "attempted": 75,
+                  "certified": 52,
+                  "evaluated": 83
+                }
+              },
+              "before_retry_certified": 732,
+              "cumulative_bp_iterations": 96032,
+              "cumulative_crc_calls": 1192,
+              "retry": {
+                "attempted": 39,
+                "certified": 3,
+                "eligible": 39,
+                "frontier": 58,
+                "noop": false,
+                "total_certified": 735
+              },
+              "retry_changed": [],
+              "retry_gained": [
+                [
+                  0,
+                  1,
+                  22
+                ],
+                [
+                  0,
+                  2,
+                  1
+                ],
+                [
+                  0,
+                  34,
+                  12
+                ]
+              ],
+              "retry_gained_absent_from_end_only_final": [],
+              "scan_id": "s004",
+              "scan_index": 4
+            },
+            {
+              "after_retry_certified": 752,
+              "append": {
+                "newly_certified": 17,
+                "noop": false,
+                "stage1": {
+                  "attempted": 23,
+                  "certified": 10,
+                  "evaluated": 47
+                },
+                "total_certified": 752,
+                "union": {
+                  "attempted": 33,
+                  "certified": 7,
+                  "evaluated": 37
+                }
+              },
+              "before_retry_certified": 752,
+              "cumulative_bp_iterations": 109222,
+              "cumulative_crc_calls": 1274,
+              "retry": {
+                "attempted": 26,
+                "certified": 0,
+                "eligible": 26,
+                "frontier": 43,
+                "noop": false,
+                "total_certified": 752
+              },
+              "retry_changed": [],
+              "retry_gained": [],
+              "retry_gained_absent_from_end_only_final": [],
+              "scan_id": "s005",
+              "scan_index": 5
+            }
+          ]
+        },
+        "pava-v1": {
+          "after_each_final_repeat": {
+            "attempted": 0,
+            "certified": 0,
+            "eligible": 0,
+            "frontier": 48,
+            "noop": true,
+            "total_certified": 747
+          },
+          "after_each_prefix": {
+            "bp_iterations": 117217,
+            "certificate_bits_sha256": "64a3ec37b3ac3ef5077e0ca303d8428be6fa952442da5975f4cfe6cbf6ca8f53",
+            "certificate_set_sha256": "bea751cd47a6be3c54fd0787f58632c82c5cbcdc8c6c912d137fa18e22b77322",
+            "certified": 747,
+            "crc_calls": 1308,
+            "fatal": [],
+            "ledger_records": 1823,
+            "retry_stage": {
+              "bp_iterations": 66952,
+              "certified_new": 15,
+              "crc_calls": 229,
+              "ledger_records": 229
+            },
+            "tile_states": {
+              "attempted_failed": 48,
+              "below_attempt_floor": 10,
+              "certified": 747,
+              "degenerate": 35
+            }
+          },
+          "comparison": {
+            "after_each_only": [],
+            "after_each_wrong": [],
+            "bp_iteration_delta": 49799,
+            "certificate_delta": 0,
+            "changed_common": [],
+            "crc_call_delta": 157,
+            "end_only_only": [],
+            "end_only_wrong": []
+          },
+          "end_only": {
+            "bp_iterations": 67418,
+            "certificate_bits_sha256": "64a3ec37b3ac3ef5077e0ca303d8428be6fa952442da5975f4cfe6cbf6ca8f53",
+            "certificate_set_sha256": "bea751cd47a6be3c54fd0787f58632c82c5cbcdc8c6c912d137fa18e22b77322",
+            "certified": 747,
+            "crc_calls": 1151,
+            "fatal": [],
+            "ledger_records": 1670,
+            "retry_stage": {
+              "bp_iterations": 15518,
+              "certified_new": 5,
+              "crc_calls": 53,
+              "ledger_records": 53
+            },
+            "tile_states": {
+              "attempted_failed": 48,
+              "below_attempt_floor": 10,
+              "certified": 747,
+              "degenerate": 35
+            }
+          },
+          "end_only_before_retry": {
+            "bp_iterations": 51900,
+            "certificate_bits_sha256": "2986de6b5dd85da46769e0f729d1187e376e6350670c23bf72e41224f91b3214",
+            "certificate_set_sha256": "53dec7d8d9dd838462ca771a8758a9afc4b62951f0c216afa9d931cda4644707",
+            "certified": 742,
+            "crc_calls": 1098,
+            "fatal": [],
+            "ledger_records": 1617,
+            "retry_stage": {
+              "bp_iterations": 0,
+              "certified_new": 0,
+              "crc_calls": 0,
+              "ledger_records": 0
+            },
+            "tile_states": {
+              "attempted_failed": 53,
+              "below_attempt_floor": 10,
+              "certified": 742,
+              "degenerate": 35
+            }
+          },
+          "end_only_retry": {
+            "attempted": 53,
+            "certified": 5,
+            "eligible": 53,
+            "frontier": 53,
+            "noop": false,
+            "total_certified": 747
+          },
+          "prefixes": [
+            {
+              "after_retry_certified": 186,
+              "append": {
+                "newly_certified": 178,
+                "noop": false,
+                "stage1": {
+                  "attempted": 238,
+                  "certified": 178,
+                  "evaluated": 343
+                },
+                "total_certified": 178,
+                "union": {
+                  "attempted": 0,
+                  "certified": 0,
+                  "evaluated": 0
+                }
+              },
+              "before_retry_certified": 178,
+              "cumulative_bp_iterations": 25476,
+              "cumulative_crc_calls": 298,
+              "retry": {
+                "attempted": 60,
+                "certified": 8,
+                "eligible": 60,
+                "frontier": 60,
+                "noop": false,
+                "total_certified": 186
+              },
+              "retry_changed": [],
+              "retry_gained": [
+                [
+                  0,
+                  34,
+                  5
+                ],
+                [
+                  0,
+                  34,
+                  6
+                ],
+                [
+                  0,
+                  34,
+                  7
+                ],
+                [
+                  0,
+                  34,
+                  8
+                ],
+                [
+                  0,
+                  34,
+                  9
+                ],
+                [
+                  0,
+                  34,
+                  19
+                ],
+                [
+                  0,
+                  34,
+                  21
+                ],
+                [
+                  0,
+                  34,
+                  22
+                ]
+              ],
+              "retry_gained_absent_from_end_only_final": [],
+              "scan_id": "s000",
+              "scan_index": 0
+            },
+            {
+              "after_retry_certified": 203,
+              "append": {
+                "newly_certified": 16,
+                "noop": false,
+                "stage1": {
+                  "attempted": 54,
+                  "certified": 14,
+                  "evaluated": 143
+                },
+                "total_certified": 202,
+                "union": {
+                  "attempted": 44,
+                  "certified": 2,
+                  "evaluated": 125
+                }
+              },
+              "before_retry_certified": 202,
+              "cumulative_bp_iterations": 48430,
+              "cumulative_crc_calls": 438,
+              "retry": {
+                "attempted": 42,
+                "certified": 1,
+                "eligible": 42,
+                "frontier": 42,
+                "noop": false,
+                "total_certified": 203
+              },
+              "retry_changed": [],
+              "retry_gained": [
+                [
+                  0,
+                  2,
+                  3
+                ]
+              ],
+              "retry_gained_absent_from_end_only_final": [],
+              "scan_id": "s001",
+              "scan_index": 1
+            },
+            {
+              "after_retry_certified": 328,
+              "append": {
+                "newly_certified": 123,
+                "noop": false,
+                "stage1": {
+                  "attempted": 132,
+                  "certified": 102,
+                  "evaluated": 186
+                },
+                "total_certified": 326,
+                "union": {
+                  "attempted": 33,
+                  "certified": 21,
+                  "evaluated": 40
+                }
+              },
+              "before_retry_certified": 326,
+              "cumulative_bp_iterations": 63704,
+              "cumulative_crc_calls": 632,
+              "retry": {
+                "attempted": 29,
+                "certified": 2,
+                "eligible": 29,
+                "frontier": 57,
+                "noop": false,
+                "total_certified": 328
+              },
+              "retry_changed": [],
+              "retry_gained": [
+                [
+                  0,
+                  15,
+                  8
+                ],
+                [
+                  0,
+                  21,
+                  11
+                ]
+              ],
+              "retry_gained_absent_from_end_only_final": [],
+              "scan_id": "s002",
+              "scan_index": 2
+            },
+            {
+              "after_retry_certified": 337,
+              "append": {
+                "newly_certified": 9,
+                "noop": false,
+                "stage1": {
+                  "attempted": 22,
+                  "certified": 8,
+                  "evaluated": 61
+                },
+                "total_certified": 337,
+                "union": {
+                  "attempted": 24,
+                  "certified": 1,
+                  "evaluated": 53
+                }
+              },
+              "before_retry_certified": 337,
+              "cumulative_bp_iterations": 75296,
+              "cumulative_crc_calls": 701,
+              "retry": {
+                "attempted": 23,
+                "certified": 0,
+                "eligible": 23,
+                "frontier": 51,
+                "noop": false,
+                "total_certified": 337
+              },
+              "retry_changed": [],
+              "retry_gained": [],
+              "retry_gained_absent_from_end_only_final": [],
+              "scan_id": "s003",
+              "scan_index": 3
+            },
+            {
+              "after_retry_certified": 729,
+              "append": {
+                "newly_certified": 388,
+                "noop": false,
+                "stage1": {
+                  "attempted": 388,
+                  "certified": 335,
+                  "evaluated": 461
+                },
+                "total_certified": 725,
+                "union": {
+                  "attempted": 80,
+                  "certified": 53,
+                  "evaluated": 88
+                }
+              },
+              "before_retry_certified": 725,
+              "cumulative_bp_iterations": 101976,
+              "cumulative_crc_calls": 1214,
+              "retry": {
+                "attempted": 45,
+                "certified": 4,
+                "eligible": 45,
+                "frontier": 65,
+                "noop": false,
+                "total_certified": 729
+              },
+              "retry_changed": [],
+              "retry_gained": [
+                [
+                  0,
+                  1,
+                  22
+                ],
+                [
+                  0,
+                  2,
+                  1
+                ],
+                [
+                  0,
+                  28,
+                  12
+                ],
+                [
+                  0,
+                  34,
+                  12
+                ]
+              ],
+              "retry_gained_absent_from_end_only_final": [],
+              "scan_id": "s004",
+              "scan_index": 4
+            },
+            {
+              "after_retry_certified": 747,
+              "append": {
+                "newly_certified": 18,
+                "noop": false,
+                "stage1": {
+                  "attempted": 26,
+                  "certified": 10,
+                  "evaluated": 52
+                },
+                "total_certified": 747,
+                "union": {
+                  "attempted": 38,
+                  "certified": 8,
+                  "evaluated": 42
+                }
+              },
+              "before_retry_certified": 747,
+              "cumulative_bp_iterations": 117217,
+              "cumulative_crc_calls": 1308,
+              "retry": {
+                "attempted": 30,
+                "certified": 0,
+                "eligible": 30,
+                "frontier": 48,
+                "noop": false,
+                "total_certified": 747
+              },
+              "retry_changed": [],
+              "retry_gained": [],
+              "retry_gained_absent_from_end_only_final": [],
+              "scan_id": "s005",
+              "scan_index": 5
+            }
+          ]
+        }
+      },
+      "reference": {
+        "legacy_implementation_sha256": "e89d65ae5d24a7a0dd3d11a7c6b4738677d712d27e01f927b8659d3125f8a959",
+        "state_file": "e023b_native.pkl",
+        "state_sha256": "328e9ce6b1c6d01e722d90b0fa92324c3f280e86273a4470ba361aa505e1282e"
+      }
+    }
+  },
+  "frozen_expectations": {
+    "dual_footing_context_union": 769,
+    "dual_footing_context_union_hashes": [
+      "a910cce60403edd5f01a31a30aa4cf4226a78e29ecde246c59086524b65125b5",
+      "2c462b6e9fda47c77e25b903bb1fc760a750a456c561932fa33bb285aa76e444"
+    ],
+    "rows": {
+      "decimated": {
+        "ctx-pava-v1": {
+          "after_each_only": [],
+          "after_each_prefix": [
+            757,
+            1241,
+            101340
+          ],
+          "after_hashes": [
+            "6f4a786aa48c6a6342a5c9550a7f3f4d5a9c9b5bdbbbbb3633f22d5bc5bab103",
+            "d04d51fef4cf2dca8424b294cbc0d464ec640d495400ac702a2068b5561e12cd"
+          ],
+          "delta": [
+            0,
+            140,
+            43796
+          ],
+          "end_hashes": [
+            "6f4a786aa48c6a6342a5c9550a7f3f4d5a9c9b5bdbbbbb3633f22d5bc5bab103",
+            "d04d51fef4cf2dca8424b294cbc0d464ec640d495400ac702a2068b5561e12cd"
+          ],
+          "end_only": [
+            757,
+            1101,
+            57544
+          ]
+        },
+        "pava-v1": {
+          "after_each_only": [
+            [
+              0,
+              28,
+              11
+            ]
+          ],
+          "after_each_prefix": [
+            748,
+            1270,
+            108459
+          ],
+          "after_hashes": [
+            "ae8fe0b91c062799baa8a2537af5e182b9ee678c9abce186aed0a40c426bcebc",
+            "d2121aaa1cd46b246ff68f8257bfbb9edeb7d6f427a554b9ff3c8baf4fabd2be"
+          ],
+          "delta": [
+            1,
+            143,
+            45042
+          ],
+          "end_hashes": [
+            "1e2942ccd447efb7d7bd1d06f1bc053cdea0018640cc73967d22945ad695d01f",
+            "bae1bb90e23a1ce8cfa422edbd343aa1f4fe2ab2b6e0d93d5ed13dd2e9c5ec19"
+          ],
+          "end_only": [
+            747,
+            1127,
+            63417
+          ]
+        }
+      },
+      "native": {
+        "ctx-pava-v1": {
+          "after_each_only": [],
+          "after_each_prefix": [
+            752,
+            1274,
+            109222
+          ],
+          "after_hashes": [
+            "4a6435c91064865ca9bb9444d817ac801b77f83b7545272b5aa2d3402f875ef6",
+            "c2154b32c5ba07563d42c22780c6740dd3da9ce7be8b2a3dbd40cf985516fa5d"
+          ],
+          "delta": [
+            0,
+            149,
+            46976
+          ],
+          "end_hashes": [
+            "4a6435c91064865ca9bb9444d817ac801b77f83b7545272b5aa2d3402f875ef6",
+            "c2154b32c5ba07563d42c22780c6740dd3da9ce7be8b2a3dbd40cf985516fa5d"
+          ],
+          "end_only": [
+            752,
+            1125,
+            62246
+          ]
+        },
+        "pava-v1": {
+          "after_each_only": [],
+          "after_each_prefix": [
+            747,
+            1308,
+            117217
+          ],
+          "after_hashes": [
+            "bea751cd47a6be3c54fd0787f58632c82c5cbcdc8c6c912d137fa18e22b77322",
+            "64a3ec37b3ac3ef5077e0ca303d8428be6fa952442da5975f4cfe6cbf6ca8f53"
+          ],
+          "delta": [
+            0,
+            157,
+            49799
+          ],
+          "end_hashes": [
+            "bea751cd47a6be3c54fd0787f58632c82c5cbcdc8c6c912d137fa18e22b77322",
+            "64a3ec37b3ac3ef5077e0ca303d8428be6fa952442da5975f4cfe6cbf6ca8f53"
+          ],
+          "end_only": [
+            747,
+            1151,
+            67418
+          ]
+        }
+      }
+    }
+  },
+  "gates": {
+    "dual_footing_context_union": {
+      "exact_after_each_certificate_hashes": true,
+      "exact_count": true,
+      "exact_end_certificate_hashes": true,
+      "no_changed_common": true,
+      "no_cross_footing_conflicts": true,
+      "no_schedule_set_difference": true
+    },
+    "ground_truth_loaded_after_all_blind_schedules": true,
+    "rows": {
+      "decimated/ctx-pava-v1": {
+        "all_certificates_gt_correct": true,
+        "exact_after_each_certificate_hashes": true,
+        "exact_counts_and_costs": true,
+        "exact_end_certificate_hashes": true,
+        "exact_set_gain": true,
+        "no_changed_common": true,
+        "no_end_only_only": true,
+        "no_fatal": true,
+        "repeat_is_noop": true
+      },
+      "decimated/pava-v1": {
+        "all_certificates_gt_correct": true,
+        "exact_after_each_certificate_hashes": true,
+        "exact_counts_and_costs": true,
+        "exact_end_certificate_hashes": true,
+        "exact_set_gain": true,
+        "no_changed_common": true,
+        "no_end_only_only": true,
+        "no_fatal": true,
+        "repeat_is_noop": true
+      },
+      "native/ctx-pava-v1": {
+        "all_certificates_gt_correct": true,
+        "exact_after_each_certificate_hashes": true,
+        "exact_counts_and_costs": true,
+        "exact_end_certificate_hashes": true,
+        "exact_set_gain": true,
+        "no_changed_common": true,
+        "no_end_only_only": true,
+        "no_fatal": true,
+        "repeat_is_noop": true
+      },
+      "native/pava-v1": {
+        "all_certificates_gt_correct": true,
+        "exact_after_each_certificate_hashes": true,
+        "exact_counts_and_costs": true,
+        "exact_end_certificate_hashes": true,
+        "exact_set_gain": true,
+        "no_changed_common": true,
+        "no_end_only_only": true,
+        "no_fatal": true,
+        "repeat_is_noop": true
+      }
+    }
+  },
+  "gates_ok": true,
+  "ground_truth": {
+    "file": "K__e018_field.npy",
+    "loaded_after_all_blind_schedules": true,
+    "sha256": "6c6f54b7a8dec9d5b5d4e75ce5a29af4323bb91da5eca50391cc5d5eebc5cc82"
+  },
+  "implementation_sha256": {
+    "arms_qualifier": {
+      "path": "experiments/023b-integrated-receiver/qualify_e023b_arms.py",
+      "sha256": "49c06c30d939e4ae6dc7090eb80b0d806c14fbc6dcae9663a8ba310823c20d2b"
+    },
+    "payloaddec": {
+      "path": "src/paperholo/payloaddec.py",
+      "sha256": "b6eb0f52ae1efc5be0f6be7576c728b1167728ea3136150726c9887bce4b3a65"
+    },
+    "receiver": {
+      "path": "src/paperholo/receiver.py",
+      "sha256": "ce45760956228c8be9936de1f741b5acd60adf50d0d5ff3c01aa0a52100c0b86"
+    },
+    "schedule_qualifier": {
+      "path": "experiments/023b-integrated-receiver/qualify_e023b_bp_schedule.py",
+      "sha256": "c6720a30f2a69f738be276928e6684189a7c2ea944e1a8d69547b8a9fe1e0259"
+    }
+  },
+  "method": {
+    "after_each_prefix": "one max-150 retry after each appended scan, including s005",
+    "end_only": "one max-150 retry after the sixth scan",
+    "ground_truth_boundary": "all four footing/profile blind schedules complete before the printed field is opened",
+    "ground_truth_is_observer_only": true,
+    "same_profiled_records": true,
+    "scan_order": "frozen E023b.0 order s000 through s005"
+  },
+  "profiles": [
+    "pava-v1",
+    "ctx-pava-v1"
+  ],
+  "qualification_only": true
+}

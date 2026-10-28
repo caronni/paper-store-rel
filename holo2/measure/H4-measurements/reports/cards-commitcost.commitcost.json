@@ -1,0 +1,42 @@
+{
+ "wall": 207.6288216249086,
+ "main_cpu": 205.509016375,
+ "cpu": {
+  "batch.canonical": 0.02167998199955079,
+  "wall._settle_merges": 0.015758302000434377,
+  "digest_json.wall": 0.07166106900002589,
+  "wall.blobs.put": 0.6505883410001259,
+  "wall.journal.append": 0.4185862760001564,
+  "wall.CommitEngine.apply": 1.4539326129997212,
+  "view.StoreIndex.build": 54.52361829100028,
+  "sched.store.mark_start": 0.34304249999997083,
+  "digest_json.fire": 0.10495571000065329,
+  "fire.batch_id": 0.3164771650002951,
+  "fire._propose": 110.96388065299934,
+  "wall._maybe_consult": 0.9756189039995844,
+  "wall._apply(total)": 79.17510703500015,
+  "wall.store._frame": 0.24186833300001354
+ },
+ "n": {
+  "batch.canonical": 4242,
+  "wall._settle_merges": 1919,
+  "digest_json.wall": 1919,
+  "wall.blobs.put": 6975,
+  "wall.journal.append": 4242,
+  "wall.CommitEngine.apply": 1919,
+  "view.StoreIndex.build": 1921,
+  "sched.store.mark_start": 2323,
+  "digest_json.fire": 2323,
+  "fire.batch_id": 2323,
+  "fire._propose": 2323,
+  "wall._maybe_consult": 2323,
+  "wall._apply(total)": 2323,
+  "wall.store._frame": 4
+ },
+ "merge_same_object": 555,
+ "merge_equal": 1364,
+ "merge_differs": 0,
+ "workers": 1,
+ "commits": 1918,
+ "fires": 2323
+}

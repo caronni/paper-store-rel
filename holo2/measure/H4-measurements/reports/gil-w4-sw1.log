@@ -1,0 +1,107 @@
+=== START gil-w4-sw1 Sun Aug 16 20:40:39 CEST 2026 ===
+format   c2-r0700@3392x2368 · codec k-v1 · 1 page domain · streams main · PROVISIONAL
+capture  1 ingested · cf29e165ebe4… · done coverage 68.8% (5530207/8034771 cells)
+queue    ready 168[payload:67,place:101] · running 0 · sleeping 345 · retired 1356 · declined 0 (re-offerable 0) · pool 4/free
+work     commits 1925 (scheduled 1924) · fires 2333 · wakes/commit 0.71 · useful 0.68 · peak 4 · stale 18
+tiles    UNKNOWN 0 · ADDRESSED 398 · ATTEMPTED 7 · CERTIFIED 1356 · crc exposure 1363 spends/1363 attempts
+close    verified · certified 1356 · K 1356/1356 · metadata rank 24/24 · blocks 1/1
+[gil-w4-sw1] RESULT VERIFIED certified=1356 commits=1924 fires=2333 wall=555s workers=4 switch_ms=1.0
+[gil-w4-sw1] payload 465580 B sha e5021f8d099587c3
+[gil-w4-sw1] vs w1a-gc-serial.bin: BYTE-IDENTICAL
+[gil-w4-sw1] FIRES 2354 wall 1938.4s cpu 511.4s offcore 1427.1s (73.6% of fire wall) | fire-cpu/wall 0.921 cores
+[gil-w4-sw1] FIRE wall p50 30.25ms p90 475.43ms | cpu p50 1.37ms p90 153.46ms
+[gil-w4-sw1] --- per family/route ---
+[gil-w4-sw1]   place/pull/source    n=  646 cpu=   508.5s ( 99.4%) wall=  1868.2s cpu-p50=  149.31ms cpu-p90=  3306.55ms wall-p90= 12237.98ms
+[gil-w4-sw1]   payload/scan           n= 1708 cpu=     2.9s (  0.6%) wall=    70.3s cpu-p50=    1.18ms cpu-p90=     2.35ms wall-p90=    64.18ms
+[gil-w4-sw1] MAIN thread cpu 91.2s of wall 555.0s (16.4%)
+[gil-w4-sw1]   main.fill       n=  1645 wall=     7.7s cpu=     6.4s p50=   0.50ms p90=   29.34ms
+[gil-w4-sw1]   main.admit      n=  1645 wall=   542.4s cpu=    80.1s p50=  81.77ms p90=  210.43ms
+[gil-w4-sw1]   main.apply      n=  2333 wall=    83.3s cpu=    76.0s p50=  44.00ms p90=   61.12ms
+[gil-w4-sw1]   main.ctx.apply  n=  1924 wall=     3.6s cpu=     1.6s p50=   0.80ms p90=    7.38ms
+[gil-w4-sw1]   main.is_current n=  2351 wall=     4.3s cpu=     4.1s p50=   0.06ms p90=    0.09ms
+[gil-w4-sw1] GIL-LATENCY probe n=63335 period=5.0ms mean=3.60ms p50=2.74ms p90=6.91ms p99=12.88ms max=266.1ms
+[gil-w4-sw1] IN-FIRE THREADS per sample: 0:1%, 4:99%
+[gil-w4-sw1] --- stack sampler: 250384 pool-thread samples ---
+[gil-w4-sw1]   22.61%  bch:_chien_roots:300
+[gil-w4-sw1]   12.84%  thread:_worker:116
+[gil-w4-sw1]    8.35%  bch:_berlekamp_massey:255
+[gil-w4-sw1]    7.42%  _interpolation:map_coordinates:474
+[gil-w4-sw1]    6.97%  pose_audit:evaluate:510
+[gil-w4-sw1]    5.88%  pose_audit:evaluate:504
+[gil-w4-sw1]    5.42%  pose_audit:evaluate:513
+[gil-w4-sw1]    3.69%  bch:_berlekamp_massey:267
+[gil-w4-sw1]    2.83%  bch:_berlekamp_massey:265
+[gil-w4-sw1]    2.09%  pose_fit:_fit_phase:492
+[gil-w4-sw1]    1.55%  bch:_berlekamp_massey:252
+[gil-w4-sw1]    0.97%  _arraysetops_impl:_isin:891
+[gil-w4-sw1]    0.93%  bch:_decode_syndromes:308
+[gil-w4-sw1]    0.90%  bch:_berlekamp_massey:271
+[gil-w4-sw1]    0.72%  _methods:_any:61
+[gil-w4-sw1]    0.67%  words:_gather_slot:269
+[gil-w4-sw1]    0.61%  _arraysetops_impl:_isin:874
+[gil-w4-sw1]    0.60%  numeric:_flatnonzero_dispatcher:670
+[gil-w4-sw1]    0.58%  pose_fit:_fit_phase:502
+[gil-w4-sw1]    0.55%  words:_gather_slot:268
+[gil-w4-sw1] --- top stacks ---
+[gil-w4-sw1]   23.09%  bch:_chien_roots < bch:_decode_syndromes < bch:decode_many < words:_decode_candidates < words:stage_a < words:stage_a_patch
+[gil-w4-sw1]   18.27%  pose_audit:evaluate < pose_audit:refine_patch_pose < place_shared:place_addressed < place_job:run < orchestrator:_propose < thread:run
+[gil-w4-sw1]   18.17%  bch:_berlekamp_massey < bch:_decode_syndromes < bch:decode_many < words:_decode_candidates < words:stage_a < words:stage_a_patch
+[gil-w4-sw1]   12.84%  thread:_worker
+[gil-w4-sw1]    5.24%  _interpolation:map_coordinates < pose_audit:evaluate < pose_audit:refine_patch_pose < place_shared:place_addressed < place_job:run < orchestrator:_propose
+[gil-w4-sw1]    2.89%  pose_fit:_fit_phase < pose_fit:fit_window_pose < place_shared:sample_window < place_job:run < orchestrator:_propose < thread:run
+[gil-w4-sw1]    2.47%  _arraysetops_impl:_isin < _arraysetops_impl:isin < bch:_as_words < bch:decode_many < words:_decode_candidates < words:stage_a
+[gil-w4-sw1]    2.46%  decode:_bp_loop < decode:_run < decode:decode < tile:decode_tile < tiles:attempt_k_tile < payload_h3bis:run
+[gil-w4-sw1]    1.98%  _interpolation:map_coordinates < pose_fit:_fit_phase < pose_fit:fit_window_pose < place_shared:sample_window < place_job:run < orchestrator:_propose
+[gil-w4-sw1]    1.32%  words:_gather_slot < words:_decode_candidates < words:stage_a < words:stage_a_patch < placement:decode_word_address < place_job:run
+[gil-w4-sw1]    1.07%  bch:_decode_syndromes < bch:decode_many < words:_decode_candidates < words:stage_a < words:stage_a_patch < placement:decode_word_address
+[gil-w4-sw1]    0.95%  bch:_syndromes_many_words < bch:decode_many < words:_decode_candidates < words:stage_a < words:stage_a_patch < placement:decode_word_address
+[gil-w4-sw1] --- stack sampler: 63335 MAIN-thread samples ---
+[gil-w4-sw1]   80.34%  threading:wait:369
+[gil-w4-sw1]    3.38%  keys:<genexpr>:253
+[gil-w4-sw1]    3.29%  <string>:__lt__:14
+[gil-w4-sw1]    1.63%  keys:parse_key:257
+[gil-w4-sw1]    0.98%  keys:key_parts:134
+[gil-w4-sw1]    0.79%  keys:<genexpr>:198
+[gil-w4-sw1]    0.73%  <string>:__init__:2
+[gil-w4-sw1]    0.46%  blobs:put:221
+[gil-w4-sw1]    0.45%  <string>:__hash__:38
+[gil-w4-sw1]    0.42%  <string>:__init__:3
+[gil-w4-sw1]    0.42%  <string>:__init__:4
+[gil-w4-sw1]    0.42%  keys:key_parts:116
+[gil-w4-sw1]    0.40%  _filters:correlate1d:610
+[gil-w4-sw1]    0.39%  journal:append:343
+[gil-w4-sw1]    0.39%  <string>:__hash__:39
+[gil-w4-sw1]    0.32%  payload_h3bis:evidence_footing:164
+[gil-w4-sw1]    0.28%  keys:tile_key:80
+[gil-w4-sw1]    0.27%  journal:append:345
+[gil-w4-sw1]    0.27%  keys:build_key:223
+[gil-w4-sw1]    0.23%  keys:parse_evidence_key:131
+[gil-w4-sw1]   S 80.34%  orchestrator:_admit_completed < orchestrator:_run_pool < orchestrator:_run < orchestrator:run < cli:decode
+[gil-w4-sw1]   S  2.53%  <string>:__lt__ < store:keys < tilemap:build < plane:index < plane:tiles < plane:tiles
+[gil-w4-sw1]   S  1.36%  keys:<genexpr> < keys:parse_key < keys:parse_evidence_key < tilemap:build < plane:index < plane:tiles
+[gil-w4-sw1]   S  1.29%  keys:key_parts < keys:build_key < keys:tile_key < tilemap:build < plane:index < plane:tiles
+[gil-w4-sw1]   S  0.87%  keys:<genexpr> < keys:parse_key < keys:parse_evidence_key < payload_h3bis:evidence_footing < payload_h3bis:resident_footings < payload_h3bis:expand
+[gil-w4-sw1]   S  0.85%  keys:parse_key < keys:parse_evidence_key < tilemap:build < plane:index < plane:tiles < plane:tiles
+[gil-w4-sw1]   S  0.83%  keys:<genexpr> < keys:parse_key < keys:parse_evidence_key < payload_h3bis:evidence_footing < payload_h3bis:union_tags < payload_h3bis:expand
+[gil-w4-sw1]   S  0.71%  blobs:put < store:put_staged < commit:apply < session:apply < orchestrator:_commit < orchestrator:_apply
+[gil-w4-sw1] wrote gil-w4-sw1.gil.json
+      555.43 real       582.56 user        31.89 sys
+          2782216192  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              190237  page reclaims
+               94307  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   4  messages sent
+                   4  messages received
+                   0  signals received
+               13168  voluntary context switches
+             7901095  involuntary context switches
+       8694286464622  instructions retired
+       1922570977543  cycles elapsed
+          1093387992  peak memory footprint
+EXIT_CODE=0
+=== END gil-w4-sw1 Sun Aug 16 20:49:55 CEST 2026 ===

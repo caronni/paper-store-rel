@@ -1,0 +1,2 @@
+{"step": "crop-xerox-k", "argv": ["<checkout>/env314t/bin/python", "-m", "measure.crop_parity.harness", "--volume", "xerox-k", "--workers", "8"], "started": 1788057203.308388, "exit_code": 0, "killed_at_footprint": false, "wall_s": 541.9, "peak_footprint_gib": 0.16, "peak_rss_gib": 0.18}
+{"step": "e029", "waiting_free_gib": 40.0}

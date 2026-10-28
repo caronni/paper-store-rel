@@ -1,0 +1,53 @@
+%!PS-Adobe-3.0
+%%Title: paper-store one-page resolution probe
+%%Pages: 1
+%%EndComments
+% ONE page. Requests a 1200-dot grid but GUARDS it: if the interpreter can't do
+% 1200 it silently keeps its own grid instead of aborting the job.
+%
+% Patterns are painted from a 1200-ppi *source* image (imagemask, dot-exact,
+% immune to fill-adjust). Whatever grid the engine truly marks at samples that
+% source:
+%   * 600-native engine  -> "600" blocks stay crisp 1-on/1-off; "1200" blocks
+%                           average to flat grey.
+%   * 1200-capable axis  -> "1200" blocks also resolve (watch for the fast-scan
+%                           vs process-direction asymmetry: one axis may win).
+% period 4 src-px = 1-on/1-off at 600 dpi;  period 2 src-px = 1-on/1-off at 1200.
+
+<< /PageSize [595 842] >> setpagedevice
+{ << /HWResolution [1200 1200] >> setpagedevice } stopped pop   % try 1200, never abort
+
+/mk150 { /b exch def /s 150 string def 0 1 149 { s exch b put } for s } def
+/vP4 16#CC mk150 def                     % 11001100 -> vertical, 600 test
+/vP2 16#AA mk150 def                     % 10101010 -> vertical, 1200 test
+/hP4 1200 string def 0 1 1199 { /i exch def hP4 i i 4 mod 2 lt {16#80}{0} ifelse put } for
+/hP2 1200 string def 0 1 1199 { /i exch def hP2 i i 2 mod 0 eq {16#80}{0} ifelse put } for
+
+/VB { /s exch def /y exch def /x exch def       % ( x y str VB ) vertical stripes
+  gsave x y translate 72 72 scale 0 setgray
+  1200 1 true [1200 0 0 -1 0 1] { s } imagemask grestore } def
+/HB { /s exch def /y exch def /x exch def
+  gsave x y translate 72 72 scale 0 setgray
+  1 1200 true [1 0 0 -1200 0 1200] { s } imagemask grestore } def
+
+0 setgray
+0.06 setlinewidth                        % ~1 dot at 1200; corner-to-corner X
+0 0 moveto 595 842 lineto stroke  0 842 moveto 595 0 lineto stroke
+
+/Helvetica-Bold findfont 13 scalefont setfont
+60 780 moveto (paper-store one-page resolution probe  [requested HWResolution 1200, guarded]) show
+/Helvetica findfont 9 scalefont setfont
+60 766 moveto (Crisp 1-on/1-off = engine addresses that pitch. Flat grey = beyond its grid.) show
+60 755 moveto (PPD advertises 600 only, so expect the 600 blocks crisp and the 1200 blocks grey.) show
+
+72  520 vP4 VB   300 520 vP2 VB          % vertical-stripe blocks (probe H addressability)
+72  300 hP4 HB   300 300 hP2 HB          % horizontal-stripe blocks (probe V addressability)
+
+/Helvetica findfont 10 scalefont setfont
+72  505 moveto (600 dpi  vertical stripes) show
+300 505 moveto (1200 dpi  vertical stripes) show
+72  285 moveto (600 dpi  horizontal stripes) show
+300 285 moveto (1200 dpi  horizontal stripes) show
+
+showpage
+%%EOF

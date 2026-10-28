@@ -1,0 +1,35 @@
+=== START refine-on-w1 (run_decode_ab.py, refine=on, W=1) Mon Aug 17 00:09:47 CEST 2026 ===
+[refine] batched_refine forced ON in <checkout>
+format   c2-r0700@3392x2368 · codec k-v1 · 1 page domain · streams main · PROVISIONAL
+capture  1 ingested · cf29e165ebe4… · done coverage 68.9% (5534263/8034771 cells)
+queue    ready 175[payload:74,place:101] · running 0 · sleeping 337 · retired 1357 · declined 0 (re-offerable 0) · pool 1/free
+work     commits 1919 (scheduled 1918) · fires 2323 · wakes/commit 0.71 · useful 0.68 · peak 0 · stale 0
+tiles    UNKNOWN 0 · ADDRESSED 397 · ATTEMPTED 7 · CERTIFIED 1357 · crc exposure 1364 spends/1364 attempts
+close    verified · certified 1357 · K 1357/1356 · metadata rank 24/24 · blocks 1/1
+[refine-on-w1] RESULT VERIFIED certified=1357 commits=1918 fires=2323 wall=529s workers=1
+[refine-on-w1] payload 465580 B sha e5021f8d099587c3
+[refine-on-w1] vs w1a-gc-serial.bin: BYTE-IDENTICAL
+[refine-on-w1] FIRES 2323 busy 441.3s wall*W 529.3s utilisation 83.4% (residual = idle + main-thread phases)
+[refine-on-w1]   fire wall: median 0.7ms p90 61.2ms max 3208.8ms
+[refine-on-w1] ROUNDS none (continuous admission)
+[refine] batched scans 564 (scalar 0); sites per scan min 958 median 982 max 988
+      529.89 real       525.82 user         2.32 sys
+          2718269440  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              177867  page reclaims
+               94330  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   4  messages sent
+                   4  messages received
+                   0  signals received
+               13663  voluntary context switches
+                9776  involuntary context switches
+       8137564248637  instructions retired
+       1700165642933  cycles elapsed
+          1030129776  peak memory footprint
+EXIT_CODE=0
+=== END refine-on-w1 Mon Aug 17 00:18:37 CEST 2026 ===

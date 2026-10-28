@@ -1,0 +1,31 @@
+START w1exit-real-serial: 2026-08-16 04:13:43 CEST
+format   c2-r0700@3392x2368 · codec k-v1 · 1 page domain · streams main · PROVISIONAL
+capture  1 ingested · 57a261454cc0… · done coverage 69.3% (5577215/8048178 cells)
+queue    ready 63[payload:4,place:59] · running 0 · sleeping 550 · retired 1704 · declined 990 (re-offerable 0) · pool 1/free
+work     commits 4918 (scheduled 4917) · fires 4916 · wakes/commit 45.25 · useful 0.39 · peak 0 · stale 0
+tiles    UNKNOWN 0 · ADDRESSED 90 · ATTEMPTED 232 · CERTIFIED 1357 · crc exposure 1894 spends/2824 attempts
+close    verified · certified 1357 · K 1357/1356 · metadata rank 24/24 · blocks 1/1
+[w1exit-real-serial] RESULT VERIFIED certified=1357 commits=4917 fires=4916 wall=632s workers=1
+[w1exit-real-serial] payload 465580 B sha e5021f8d099587c3
+[w1exit-real-serial] vs c2bw-waved.bin: BYTE-IDENTICAL
+[w1exit-real-serial] FIRES 4916 busy 510.1s wall*W 632.2s utilisation 80.7% (residual = idle + main-thread phases)
+[w1exit-real-serial]   fire wall: median 4.1ms p90 146.9ms max 35116.5ms
+[w1exit-real-serial] ROUNDS none (continuous admission)
+      633.03 real       610.50 user        12.74 sys
+         27809972224  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+             1592130  page reclaims
+             1517995  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   4  messages sent
+                   4  messages received
+                   0  signals received
+               40893  voluntary context switches
+              134535  involuntary context switches
+       9104987757401  instructions retired
+       1924456719911  cycles elapsed
+          5026717592  peak memory footprint

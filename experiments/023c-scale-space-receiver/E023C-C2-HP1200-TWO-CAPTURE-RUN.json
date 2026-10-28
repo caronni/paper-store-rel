@@ -1,0 +1,370 @@
+{
+  "algorithm_id": "e023c-scale-space-cascade-v1",
+  "attempts": 3464,
+  "authoritative_sha256": "76ebdb11566bf77d39741ec9a8b1d88df19a099d8595f92235af6c46d0a99c57",
+  "captures": [
+    {
+      "capture_id": "c2-hp-1200-rescan-offset",
+      "first_verified_level_id": "l00-2ppc-600dpi",
+      "levels": [
+        {
+          "artifacts": {
+            "apply_counts": {
+              "newly_certified": 1312,
+              "noop": false,
+              "retry150": {
+                "attempted": 402,
+                "certified": 34,
+                "eligible": 402,
+                "frontier": 402,
+                "noop": false,
+                "skipped_failed": 0,
+                "total_certified": 1346
+              },
+              "skipped_candidates": 0,
+              "stage1": {
+                "attempted": 1714,
+                "certified": 1312,
+                "evaluated": 1797
+              },
+              "total_certified": 1312,
+              "union": {
+                "attempted": 0,
+                "certified": 0,
+                "evaluated": 0
+              }
+            },
+            "feedback": {
+              "adopted": 0,
+              "certificate_frontier": 0,
+              "eligible": 0
+            },
+            "lower_hint_count": 0,
+            "pilot_tiles": 2004,
+            "placements": 406,
+            "survey_regions": 1
+          },
+          "attempts": 2199,
+          "certificate_count": 1346,
+          "certificate_frontier_sha256": "664ad166cbbc645fc0651227a91429ff88f403abcc3079c165e181ef3fe43cbe",
+          "completion": {
+            "expected_volume_sha256": "424e41a2825727bcb107b2c6574b2864e34c3846925754bbba6536d248a15b32",
+            "rank": 737,
+            "shortfall": 0,
+            "status": "volume_verified",
+            "volume_sha256": "424e41a2825727bcb107b2c6574b2864e34c3846925754bbba6536d248a15b32"
+          },
+          "level_id": "l00-2ppc-600dpi",
+          "new_certificates": 1346,
+          "status": "complete",
+          "timings": {
+            "e021_s": 3.105520582990721,
+            "e022_s": 391.4404918947257,
+            "payload_generation0_s": 21.167720084195025,
+            "total_s": 854.8698072661646
+          },
+          "view_sha256": "6f0477a8997c3a55f3c4d2c47978c1f7ce82045d998341d28a6bafd2e31c3774"
+        },
+        {
+          "artifacts": {
+            "apply_counts": {
+              "newly_certified": 121,
+              "noop": false,
+              "retry150": {
+                "attempted": 350,
+                "certified": 2,
+                "eligible": 350,
+                "frontier": 350,
+                "noop": false,
+                "skipped_failed": 0,
+                "total_certified": 123
+              },
+              "skipped_candidates": 1346,
+              "stage1": {
+                "attempted": 471,
+                "certified": 121,
+                "evaluated": 474
+              },
+              "total_certified": 121,
+              "union": {
+                "attempted": 0,
+                "certified": 0,
+                "evaluated": 0
+              }
+            },
+            "feedback": {
+              "adopted": 80,
+              "certificate_frontier": 1346,
+              "eligible": 337
+            },
+            "lower_hint_count": 408,
+            "pilot_tiles": 2035,
+            "placements": 354,
+            "survey_regions": 1
+          },
+          "attempts": 824,
+          "certificate_count": 1469,
+          "certificate_frontier_sha256": "6dce876bcbce4141157c07f8163f0186f2795356f7bf91e1bf9450fe91af7df5",
+          "completion": {
+            "expected_volume_sha256": "424e41a2825727bcb107b2c6574b2864e34c3846925754bbba6536d248a15b32",
+            "rank": 737,
+            "shortfall": 0,
+            "status": "volume_verified",
+            "volume_sha256": "424e41a2825727bcb107b2c6574b2864e34c3846925754bbba6536d248a15b32"
+          },
+          "level_id": "l01-4ppc-1200dpi",
+          "new_certificates": 123,
+          "status": "complete",
+          "timings": {
+            "e021_s": 4.67527812498156,
+            "e022_s": 120.22913715301547,
+            "payload_generation0_s": 24.627440916956402,
+            "payload_refined_s": 24.346226874855347,
+            "total_s": 450.39685262774583
+          },
+          "view_sha256": "cd07d91e4db17ca7fd21eee2d4af8ce199112a7f8f9908f83f9917c2fdd0bd81"
+        }
+      ],
+      "source_path": "scratch/e018b/hp-e018b-c2-hp-1200-page-2nd.png",
+      "source_sha256": "cd07d91e4db17ca7fd21eee2d4af8ce199112a7f8f9908f83f9917c2fdd0bd81",
+      "status": "exhausted"
+    },
+    {
+      "capture_id": "c2-hp-1200-original",
+      "first_verified_level_id": "l00-2ppc-600dpi",
+      "levels": [
+        {
+          "artifacts": {
+            "apply_counts": {
+              "newly_certified": 330,
+              "noop": false,
+              "retry150": {
+                "attempted": 18,
+                "certified": 1,
+                "eligible": 18,
+                "frontier": 76,
+                "noop": false,
+                "skipped_failed": 0,
+                "total_certified": 1677
+              },
+              "skipped_candidates": 1461,
+              "stage1": {
+                "attempted": 342,
+                "certified": 299,
+                "evaluated": 349
+              },
+              "total_certified": 1676,
+              "union": {
+                "attempted": 44,
+                "certified": 31,
+                "evaluated": 45
+              }
+            },
+            "feedback": {
+              "adopted": 138,
+              "certificate_frontier": 1469,
+              "eligible": 378
+            },
+            "lower_hint_count": 0,
+            "pilot_tiles": 2025,
+            "placements": 391,
+            "survey_regions": 1
+          },
+          "attempts": 412,
+          "certificate_count": 1800,
+          "certificate_frontier_sha256": "0d3e2c45f4b9de6ae5c2ed0e4349f6712ac14c55d30f5303eae6b0cf31c307c6",
+          "completion": {
+            "expected_volume_sha256": "424e41a2825727bcb107b2c6574b2864e34c3846925754bbba6536d248a15b32",
+            "rank": 737,
+            "shortfall": 0,
+            "status": "volume_verified",
+            "volume_sha256": "424e41a2825727bcb107b2c6574b2864e34c3846925754bbba6536d248a15b32"
+          },
+          "level_id": "l00-2ppc-600dpi",
+          "new_certificates": 331,
+          "status": "complete",
+          "timings": {
+            "e021_s": 2.6171070830896497,
+            "e022_s": 260.6014973735437,
+            "payload_generation0_s": 21.762583459028974,
+            "payload_refined_s": 21.902617457904853,
+            "total_s": 896.0412230541697
+          },
+          "view_sha256": "f7f736cc5cf08eda34e5c5a7724849a5a13e1ba0054ded7f8ff372e50e00e200"
+        },
+        {
+          "artifacts": {
+            "apply_counts": {
+              "newly_certified": 15,
+              "noop": false,
+              "retry150": {
+                "attempted": 4,
+                "certified": 0,
+                "eligible": 4,
+                "frontier": 333,
+                "noop": false,
+                "skipped_failed": 0,
+                "total_certified": 138
+              },
+              "skipped_candidates": 1799,
+              "stage1": {
+                "attempted": 19,
+                "certified": 13,
+                "evaluated": 19
+              },
+              "total_certified": 138,
+              "union": {
+                "attempted": 6,
+                "certified": 2,
+                "evaluated": 6
+              }
+            },
+            "feedback": {
+              "adopted": 82,
+              "certificate_frontier": 1800,
+              "eligible": 294
+            },
+            "lower_hint_count": 393,
+            "pilot_tiles": 2035,
+            "placements": 294,
+            "survey_regions": 1
+          },
+          "attempts": 29,
+          "certificate_count": 1815,
+          "certificate_frontier_sha256": "64a0890da08cf3a4f3eaae7c0f2c12abfbf1e2b819fb06604db80bbc39d7c814",
+          "completion": {
+            "expected_volume_sha256": "424e41a2825727bcb107b2c6574b2864e34c3846925754bbba6536d248a15b32",
+            "rank": 737,
+            "shortfall": 0,
+            "status": "volume_verified",
+            "volume_sha256": "424e41a2825727bcb107b2c6574b2864e34c3846925754bbba6536d248a15b32"
+          },
+          "level_id": "l01-4ppc-1200dpi",
+          "new_certificates": 15,
+          "status": "complete",
+          "timings": {
+            "e021_s": 4.1904743750346825,
+            "e022_s": 43.13201393757481,
+            "payload_generation0_s": 25.10647066787351,
+            "payload_refined_s": 24.414324917946942,
+            "total_s": 391.57886815909296
+          },
+          "view_sha256": "51b2841d044d939b2355c4d9069141ba5ced709a76986a492f0b2b4d514b2798"
+        }
+      ],
+      "source_path": "scratch/e018b/hp-e018b-c2-hp-1200-page.tiff.png",
+      "source_sha256": "51b2841d044d939b2355c4d9069141ba5ced709a76986a492f0b2b4d514b2798",
+      "status": "exhausted"
+    }
+  ],
+  "certificate_union": {
+    "count": 1815,
+    "sha256": "64a0890da08cf3a4f3eaae7c0f2c12abfbf1e2b819fb06604db80bbc39d7c814"
+  },
+  "detector_profile": "ctx-pava-v1",
+  "first_verified_at": [
+    "c2-hp-1200-rescan-offset",
+    "l00-2ppc-600dpi"
+  ],
+  "format_id": "e018b-v3-c2",
+  "lanes": {
+    "l00-2ppc-600dpi": {
+      "attempts": 2611,
+      "bp_iterations": 186052,
+      "captures": [
+        "c2-hp-1200-rescan-offset",
+        "c2-hp-1200-original"
+      ],
+      "crc_calls": 2520,
+      "lane_id": "2720095af63ba0438bcf9d3449f20bedbcc97f02ece838b9e9390fc161794065",
+      "placements": 797,
+      "scans": 2,
+      "states": {
+        "attempted_failed": 75,
+        "below_attempt_floor": 50,
+        "certified": 1677,
+        "degenerate": 1,
+        "unobserved": 17
+      }
+    },
+    "l01-4ppc-1200dpi": {
+      "attempts": 853,
+      "bp_iterations": 150294,
+      "captures": [
+        "c2-hp-1200-rescan-offset",
+        "c2-hp-1200-original"
+      ],
+      "crc_calls": 850,
+      "lane_id": "df9d290475f309c53146bd8a2f909f5d80a377c424b41e109e8f16e274e8288b",
+      "placements": 648,
+      "scans": 2,
+      "states": {
+        "attempted_failed": 333,
+        "below_attempt_floor": 2,
+        "certified": 138,
+        "degenerate": 1,
+        "unobserved": 1346
+      }
+    }
+  },
+  "magic": "paperholo/e023c-cascade-state",
+  "native_dpi": 1200.0,
+  "pages": [
+    0
+  ],
+  "pilot_knowledge": {
+    "contributing_level_ids": [
+      "l00-2ppc-600dpi",
+      "l01-4ppc-1200dpi"
+    ],
+    "knowledge_sha256": "cc94fea2e81721a3607ca32c1fad7afafc72fbcb3882e2213d53505e01a6265c",
+    "pages": [
+      {
+        "addressed": 382,
+        "bch_solved": 1653,
+        "conflicted": 0,
+        "page": 0,
+        "total": 2035,
+        "unseen": 0
+      }
+    ]
+  },
+  "scale_plan": [
+    {
+      "effective_dpi": 600.0,
+      "level_id": "l00-2ppc-600dpi",
+      "native_per_view_yx": [
+        [
+          2,
+          1
+        ],
+        [
+          2,
+          1
+        ]
+      ],
+      "ordinal": 0,
+      "resampler_id": "e018-integer-box-v1",
+      "target_ppc": 2.0
+    },
+    {
+      "effective_dpi": 1200.0,
+      "level_id": "l01-4ppc-1200dpi",
+      "native_per_view_yx": [
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          1
+        ]
+      ],
+      "ordinal": 1,
+      "resampler_id": "e018-integer-box-v1",
+      "target_ppc": 4.0
+    }
+  ],
+  "status": "exhausted",
+  "version": 1
+}

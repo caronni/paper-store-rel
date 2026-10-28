@@ -1,0 +1,26 @@
+{
+  "authoritative_digest": "2aa65e46a4b2de17824e1c82f8984d72670693ea696e56308abe9b03d67f8a95",
+  "equal_after_excluding_timing_and_worker_metadata": true,
+  "experiment": "e023c-serial-parallel-reproduction-v1",
+  "normalized_report_sha256": "dea7f1702609c8a393dbdf10238f382f285734010bfc4bd92f89aa83c8c9e203",
+  "parallel": {
+    "execution_elapsed_s": 498.18646212504245,
+    "gates_ok": true,
+    "report": "E023C-QUALIFICATION.json",
+    "report_sha256": "76acc780073f2f0aad46db1cfbf0785e04a403582bc233525f89fc0672ae809e",
+    "status": "QUALIFIED",
+    "wall_elapsed_s": 545.7017862079665,
+    "workers": 2
+  },
+  "parallel_execution_reduction_fraction": 0.11848270634102365,
+  "parallel_wall_reduction_fraction": 0.10897681713113305,
+  "serial": {
+    "execution_elapsed_s": 565.1465554999886,
+    "gates_ok": true,
+    "report": "scratch/e023c-full-serial.json (untracked; identity retained here)",
+    "report_sha256": "985a35c4ae0389a067423f9885a488e243229614218b8f30dbedd24afda32ba3",
+    "status": "QUALIFIED",
+    "wall_elapsed_s": 612.443982042023,
+    "workers": 1
+  }
+}

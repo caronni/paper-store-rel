@@ -1,0 +1,59 @@
+{
+  "schema": "holo-color-m281-cal1-operational-check-v1",
+  "run_date": "2026-07-27",
+  "paper_qualification": false,
+  "receiver_success": false,
+  "generator_source_revision": "c4a6cb5ffe10cc41b3badcfeadacf19c5967cdf3",
+  "tool_source_sha256_at_run": "f4ebdbca64d6270566b0a43dac74eefb9116caf0c8ccf4cf141da11352b2dc27",
+  "simulator_source_sha256": "ecd5f7293321826ecdcdccb847b43ce1b78955efeb71255be4ff6427f3d6ae75",
+  "transform": {
+    "command": "PYTHONPATH=src env/bin/python -m holo.qualification.color_distort INPUT.tif OUTPUT.tif --m281-cal1 --seed 17 --scan-seed 29",
+    "status": "completed",
+    "elapsed_seconds": 44.94,
+    "source": {
+      "coding_id": "c3-cmy8-p120-v0",
+      "dpi_xy": [
+        600,
+        600
+      ],
+      "file_sha256": "481fb059a572d7efb8b746063876eb8391bb84a5ea59c920def85f258580cfae",
+      "pixel_sha256": "82597fb13db00d238cb4dce29bb210adeaa5ea157abcd135daa6e7aeb73c41a7",
+      "size_xy": [
+        4960,
+        7016
+      ]
+    },
+    "output": {
+      "dpi_xy": [
+        1200,
+        1200
+      ],
+      "file_sha256": "50d59ecb92ed52641ecb029a923038e8354e54c8e3530b06985949205ce916bb",
+      "pixel_sha256": "b632435df8a3c51913768df079836377adf31b8d8e241bb1fcf2d31237c21dd7",
+      "size_xy": [
+        9920,
+        14032
+      ]
+    },
+    "sidecar_sha256": "c094e46975998155bf2ae2438f9a962aeb0be0739c801d72201036a99bb54d3e"
+  },
+  "receiver": {
+    "command": "PYTHONPATH=src env/bin/python -m holo.cli decode OUTPUT.tif --scan-dpi 1200 --coding c3-cmy8-p120-v0 --printer hp-m281 --state receive.json -o recovered.bin",
+    "process_exit": 2,
+    "capture_status": "complete; committed",
+    "state_file_sha256": "1fb24320a45221af37d13463b35469d41392a02f43dc236b95d7dfa93fd2efba",
+    "state_sha256": "31de3d831af79c536aa8019a6e861633b23b83d2af796f9dd19362c4eae50731",
+    "format_row_id": "c3-cmy8-p120-v0@2240x1536",
+    "captures": 1,
+    "levels": 3,
+    "regions": 3,
+    "poses": 0,
+    "proposals": 0,
+    "attempts": 0,
+    "certificates": 0,
+    "evidence_blocks": 0,
+    "close_status": "open"
+  },
+  "large_artifacts": "generated under build/ and deliberately untracked",
+  "interpretation": "The TIFF-in/TIFF-out and receiver-ingest seam is operational. This historical M281/CAL-1 realization did not demonstrate acquisition or payload recovery and is not a usable-footing or paper qualification claim."
+}

@@ -1,0 +1,4771 @@
+{
+ "scan": "finalists.png",
+ "sha256": "a9148acc5d7a47b409f96122e0bdd90e7ef455362020e0650c37208cdea7ccf6",
+ "affine_stats": {
+  "px_per_dot_x": 2.00055,
+  "px_per_dot_y": 2.00732,
+  "rotation_deg": 0.32334,
+  "shear_deg": 0.17709
+ },
+ "tiles": [
+  {
+   "shape": [
+    1255,
+    824
+   ],
+   "mcp": {
+    "pitch_px": 5.678733031674208,
+    "contrast": 157.27226843385918,
+    "angle_deg": 0.0,
+    "strong": [
+     [
+      5.679,
+      157.3
+     ],
+     [
+      3.78,
+      67.1
+     ]
+    ],
+    "candidates": [
+     [
+      3.78,
+      67.1
+     ],
+     [
+      5.679,
+      157.3
+     ],
+     [
+      5.679,
+      116.5
+     ],
+     [
+      5.679,
+      52.6
+     ],
+     [
+      5.679,
+      34.7
+     ],
+     [
+      11.306,
+      19.8
+     ],
+     [
+      11.306,
+      16.5
+     ],
+     [
+      43.879,
+      4.7
+     ],
+     [
+      43.879,
+      4.0
+     ]
+    ]
+   },
+   "lines": {
+    "cell": {
+     "probe_px": 6.0,
+     "pitch_px": 5.6787,
+     "contrast": 32.2,
+     "angle_deg": 0.0
+    },
+    "cell_tight": {
+     "probe_px": 6.0,
+     "pitch_px": 5.976,
+     "contrast": 19.0,
+     "angle_deg": 0.42
+    },
+    "comb11": {
+     "probe_px": 11.36,
+     "pitch_px": 11.3063,
+     "contrast": 16.8,
+     "angle_deg": 0.0
+    },
+    "165lpi": {
+     "probe_px": 7.273,
+     "pitch_px": 7.2661,
+     "contrast": 7.3,
+     "angle_deg": 14.07
+    },
+    "224lpi": {
+     "probe_px": 5.357,
+     "pitch_px": 5.6787,
+     "contrast": 36.9,
+     "angle_deg": 0.0
+    },
+    "306lpi": {
+     "probe_px": 3.922,
+     "pitch_px": 3.7801,
+     "contrast": 22.1,
+     "angle_deg": 0.0
+    }
+   },
+   "lock": {
+    "pitch_v_px": 5.72916784011091,
+    "pitch_u_px": 6.003815619166194,
+    "angle_deg": 0.0,
+    "quality_mean": 0.037925665665583426,
+    "quality_p10": 0.013322605396747756,
+    "quality_p50": 0.03686751168520942
+   },
+   "coherence": {
+    "v48": 0.695,
+    "u48": 0.736,
+    "v96": 0.781,
+    "u96": 0.771
+   },
+   "seconds": 0.9,
+   "tile": "T03/A3",
+   "class": "A3",
+   "cell_dots": 3,
+   "expected_pitch_v_px": 6.022,
+   "expected_pitch_u_px": 6.0016
+  },
+  {
+   "shape": [
+    1255,
+    824
+   ],
+   "mcp": {
+    "pitch_px": 5.678733031674208,
+    "contrast": 143.3648293695358,
+    "angle_deg": 0.0,
+    "strong": [
+     [
+      5.679,
+      143.4
+     ],
+     [
+      3.78,
+      60.5
+     ]
+    ],
+    "candidates": [
+     [
+      3.78,
+      60.5
+     ],
+     [
+      5.679,
+      143.4
+     ],
+     [
+      5.679,
+      105.5
+     ],
+     [
+      5.679,
+      47.9
+     ],
+     [
+      5.679,
+      31.9
+     ],
+     [
+      11.306,
+      20.3
+     ],
+     [
+      11.306,
+      16.8
+     ],
+     [
+      24.174,
+      5.6
+     ],
+     [
+      24.174,
+      4.8
+     ]
+    ]
+   },
+   "lines": {
+    "cell": {
+     "probe_px": 6.0,
+     "pitch_px": 5.6787,
+     "contrast": 29.1,
+     "angle_deg": 0.0
+    },
+    "cell_tight": {
+     "probe_px": 6.0,
+     "pitch_px": 6.0146,
+     "contrast": 10.6,
+     "angle_deg": 0.0
+    },
+    "comb11": {
+     "probe_px": 11.36,
+     "pitch_px": 11.3063,
+     "contrast": 17.2,
+     "angle_deg": 0.0
+    },
+    "165lpi": {
+     "probe_px": 7.273,
+     "pitch_px": 7.2661,
+     "contrast": 7.7,
+     "angle_deg": 14.07
+    },
+    "224lpi": {
+     "probe_px": 5.357,
+     "pitch_px": 5.6787,
+     "contrast": 33.4,
+     "angle_deg": 0.0
+    },
+    "306lpi": {
+     "probe_px": 3.922,
+     "pitch_px": 3.7801,
+     "contrast": 19.8,
+     "angle_deg": 0.0
+    }
+   },
+   "lock": {
+    "pitch_v_px": 6.388024634545992,
+    "pitch_u_px": 6.002352623415332,
+    "angle_deg": 0.0,
+    "quality_mean": 0.03179733896992345,
+    "quality_p10": 0.012177163804269113,
+    "quality_p50": 0.029956987968062794
+   },
+   "coherence": {
+    "v48": 0.465,
+    "u48": 0.799,
+    "v96": 0.426,
+    "u96": 0.867
+   },
+   "seconds": 0.8,
+   "tile": "T05/A3",
+   "class": "A3",
+   "cell_dots": 3,
+   "expected_pitch_v_px": 6.022,
+   "expected_pitch_u_px": 6.0016
+  },
+  {
+   "shape": [
+    1256,
+    825
+   ],
+   "mcp": {
+    "pitch_px": 6.021828597902914,
+    "contrast": 120.4247652587609,
+    "angle_deg": 0.27470277504758783,
+    "strong": [
+     [
+      6.022,
+      120.4
+     ]
+    ],
+    "candidates": [
+     [
+      3.783,
+      21.8
+     ],
+     [
+      5.978,
+      109.1
+     ],
+     [
+      6.022,
+      120.4
+     ],
+     [
+      6.022,
+      54.4
+     ],
+     [
+      6.022,
+      36.0
+     ],
+     [
+      6.022,
+      23.9
+     ],
+     [
+      11.315,
+      18.6
+     ],
+     [
+      34.027,
+      4.5
+     ],
+     [
+      34.027,
+      3.8
+     ]
+    ]
+   },
+   "lines": {
+    "cell": {
+     "probe_px": 6.0,
+     "pitch_px": 6.0218,
+     "contrast": 32.4,
+     "angle_deg": 0.27
+    },
+    "cell_tight": {
+     "probe_px": 6.0,
+     "pitch_px": 6.0218,
+     "contrast": 32.0,
+     "angle_deg": 0.27
+    },
+    "comb11": {
+     "probe_px": 11.36,
+     "pitch_px": 11.3153,
+     "contrast": 18.8,
+     "angle_deg": 0.0
+    },
+    "165lpi": {
+     "probe_px": 7.273,
+     "pitch_px": 7.2747,
+     "contrast": 6.5,
+     "angle_deg": 14.08
+    },
+    "224lpi": {
+     "probe_px": 5.357,
+     "pitch_px": 5.6833,
+     "contrast": 22.7,
+     "angle_deg": 0.0
+    },
+    "306lpi": {
+     "probe_px": 3.922,
+     "pitch_px": 4.2585,
+     "contrast": 10.1,
+     "angle_deg": 45.43
+    }
+   },
+   "lock": {
+    "pitch_v_px": 6.047872305710557,
+    "pitch_u_px": 6.012486936146031,
+    "angle_deg": 0.27470277504758783,
+    "quality_mean": 0.05326451795603692,
+    "quality_p10": 0.019131831615250446,
+    "quality_p50": 0.05281636114991724
+   },
+   "coherence": {
+    "v48": 0.125,
+    "u48": 0.989,
+    "v96": 0.685,
+    "u96": 0.971
+   },
+   "seconds": 0.9,
+   "tile": "T10/A3",
+   "class": "A3",
+   "cell_dots": 3,
+   "expected_pitch_v_px": 6.022,
+   "expected_pitch_u_px": 6.0016
+  },
+  {
+   "shape": [
+    1255,
+    825
+   ],
+   "mcp": {
+    "pitch_px": 11.409090909090908,
+    "contrast": 49.13733721181756,
+    "angle_deg": 0.0,
+    "strong": [
+     [
+      11.409,
+      49.1
+     ],
+     [
+      5.679,
+      107.0
+     ]
+    ],
+    "candidates": [
+     [
+      3.022,
+      28.5
+     ],
+     [
+      5.679,
+      107.0
+     ],
+     [
+      5.679,
+      79.2
+     ],
+     [
+      11.409,
+      49.1
+     ],
+     [
+      11.409,
+      32.5
+     ],
+     [
+      11.409,
+      21.6
+     ],
+     [
+      11.409,
+      18.1
+     ],
+     [
+      22.818,
+      5.7
+     ],
+     [
+      22.818,
+      4.8
+     ]
+    ]
+   },
+   "lines": {
+    "cell": {
+     "probe_px": 6.0,
+     "pitch_px": 5.6787,
+     "contrast": 21.4,
+     "angle_deg": 0.0
+    },
+    "cell_tight": {
+     "probe_px": 6.0,
+     "pitch_px": 6.0626,
+     "contrast": 9.6,
+     "angle_deg": 0.42
+    },
+    "comb11": {
+     "probe_px": 11.36,
+     "pitch_px": 11.4091,
+     "contrast": 18.7,
+     "angle_deg": 0.0
+    },
+    "165lpi": {
+     "probe_px": 7.273,
+     "pitch_px": 7.2744,
+     "contrast": 6.4,
+     "angle_deg": 14.09
+    },
+    "224lpi": {
+     "probe_px": 5.357,
+     "pitch_px": 5.6787,
+     "contrast": 25.1,
+     "angle_deg": 0.0
+    },
+    "306lpi": {
+     "probe_px": 3.922,
+     "pitch_px": 3.7801,
+     "contrast": 8.9,
+     "angle_deg": 0.0
+    }
+   },
+   "lock": {
+    "pitch_v_px": 6.032400626006231,
+    "pitch_u_px": 6.192,
+    "angle_deg": 0.0,
+    "quality_mean": 0.029530658848620953,
+    "quality_p10": 0.00945661229336068,
+    "quality_p50": 0.02831727643061763
+   },
+   "coherence": {
+    "v48": 0.492,
+    "u48": 0.395,
+    "v96": 0.646,
+    "u96": 0.041
+   },
+   "seconds": 0.8,
+   "tile": "T16/A3",
+   "class": "A3",
+   "cell_dots": 3,
+   "expected_pitch_v_px": 6.022,
+   "expected_pitch_u_px": 6.0016
+  },
+  {
+   "shape": [
+    1255,
+    825
+   ],
+   "mcp": {
+    "pitch_px": 11.306306306306306,
+    "contrast": 54.76559170228927,
+    "angle_deg": 0.0,
+    "strong": [
+     [
+      11.306,
+      54.8
+     ],
+     [
+      5.679,
+      110.7
+     ]
+    ],
+    "candidates": [
+     [
+      3.022,
+      27.1
+     ],
+     [
+      5.679,
+      110.7
+     ],
+     [
+      5.679,
+      81.5
+     ],
+     [
+      11.306,
+      54.8
+     ],
+     [
+      11.306,
+      35.6
+     ],
+     [
+      11.306,
+      23.6
+     ],
+     [
+      11.306,
+      19.5
+     ],
+     [
+      22.818,
+      7.0
+     ],
+     [
+      22.818,
+      6.0
+     ]
+    ]
+   },
+   "lines": {
+    "cell": {
+     "probe_px": 6.0,
+     "pitch_px": 5.6787,
+     "contrast": 21.1,
+     "angle_deg": 0.0
+    },
+    "cell_tight": {
+     "probe_px": 6.0,
+     "pitch_px": 5.9197,
+     "contrast": 7.6,
+     "angle_deg": 0.41
+    },
+    "comb11": {
+     "probe_px": 11.36,
+     "pitch_px": 11.3063,
+     "contrast": 20.7,
+     "angle_deg": 0.0
+    },
+    "165lpi": {
+     "probe_px": 7.273,
+     "pitch_px": 7.264,
+     "contrast": 6.8,
+     "angle_deg": 14.41
+    },
+    "224lpi": {
+     "probe_px": 5.357,
+     "pitch_px": 5.6787,
+     "contrast": 24.1,
+     "angle_deg": 0.0
+    },
+    "306lpi": {
+     "probe_px": 3.922,
+     "pitch_px": 4.2521,
+     "contrast": 11.5,
+     "angle_deg": 45.08
+    }
+   },
+   "lock": {
+    "pitch_v_px": 5.772615780324182,
+    "pitch_u_px": 6.014883052022123,
+    "angle_deg": 0.0,
+    "quality_mean": 0.036885496889260794,
+    "quality_p10": 0.012678008894916649,
+    "quality_p50": 0.03535528995018214
+   },
+   "coherence": {
+    "v48": 0.681,
+    "u48": 0.662,
+    "v96": 0.837,
+    "u96": 0.726
+   },
+   "seconds": 0.8,
+   "tile": "T22/A3",
+   "class": "A3",
+   "cell_dots": 3,
+   "expected_pitch_v_px": 6.022,
+   "expected_pitch_u_px": 6.0016
+  },
+  {
+   "shape": [
+    1256,
+    824
+   ],
+   "mcp": {
+    "pitch_px": 11.315315315315313,
+    "contrast": 45.98787314224174,
+    "angle_deg": 0.0,
+    "strong": [
+     [
+      11.315,
+      46.0
+     ],
+     [
+      6.015,
+      68.5
+     ],
+     [
+      5.683,
+      87.6
+     ],
+     [
+      4.0,
+      37.8
+     ]
+    ],
+    "candidates": [
+     [
+      4.0,
+      37.8
+     ],
+     [
+      5.683,
+      87.6
+     ],
+     [
+      6.015,
+      68.5
+     ],
+     [
+      11.315,
+      46.0
+     ],
+     [
+      11.315,
+      30.3
+     ],
+     [
+      11.315,
+      20.3
+     ],
+     [
+      11.315,
+      16.9
+     ],
+     [
+      22.836,
+      7.0
+     ],
+     [
+      22.836,
+      6.0
+     ]
+    ]
+   },
+   "lines": {
+    "cell": {
+     "probe_px": 6.0,
+     "pitch_px": 6.0146,
+     "contrast": 18.0,
+     "angle_deg": 0.0
+    },
+    "cell_tight": {
+     "probe_px": 6.0,
+     "pitch_px": 6.0146,
+     "contrast": 18.0,
+     "angle_deg": 0.0
+    },
+    "comb11": {
+     "probe_px": 11.36,
+     "pitch_px": 11.3153,
+     "contrast": 17.1,
+     "angle_deg": 0.0
+    },
+    "165lpi": {
+     "probe_px": 7.273,
+     "pitch_px": 7.3185,
+     "contrast": 6.1,
+     "angle_deg": 14.51
+    },
+    "224lpi": {
+     "probe_px": 5.357,
+     "pitch_px": 5.6833,
+     "contrast": 20.1,
+     "angle_deg": 0.0
+    },
+    "306lpi": {
+     "probe_px": 3.922,
+     "pitch_px": 4.0,
+     "contrast": 12.5,
+     "angle_deg": 0.0
+    }
+   },
+   "lock": {
+    "pitch_v_px": 6.024,
+    "pitch_u_px": 6.012412436568079,
+    "angle_deg": 0.0,
+    "quality_mean": 0.042940425752415426,
+    "quality_p10": 0.018397299669990094,
+    "quality_p50": 0.04138960431605243
+   },
+   "coherence": {
+    "v48": 0.252,
+    "u48": 0.775,
+    "v96": 0.327,
+    "u96": 0.615
+   },
+   "seconds": 0.9,
+   "tile": "T27/A3",
+   "class": "A3",
+   "cell_dots": 3,
+   "expected_pitch_v_px": 6.022,
+   "expected_pitch_u_px": 6.0016
+  },
+  {
+   "shape": [
+    1256,
+    825
+   ],
+   "mcp": {
+    "pitch_px": 6.021828597902914,
+    "contrast": 130.29030785372976,
+    "angle_deg": 0.27470277504758783,
+    "strong": [
+     [
+      6.022,
+      130.3
+     ]
+    ],
+    "candidates": [
+     [
+      3.783,
+      21.3
+     ],
+     [
+      5.978,
+      115.9
+     ],
+     [
+      6.022,
+      130.3
+     ],
+     [
+      6.022,
+      58.2
+     ],
+     [
+      6.022,
+      38.2
+     ],
+     [
+      6.022,
+      25.8
+     ],
+     [
+      11.315,
+      17.1
+     ],
+     [
+      22.429,
+      5.4
+     ],
+     [
+      22.429,
+      4.5
+     ]
+    ]
+   },
+   "lines": {
+    "cell": {
+     "probe_px": 6.0,
+     "pitch_px": 6.0218,
+     "contrast": 34.3,
+     "angle_deg": 0.27
+    },
+    "cell_tight": {
+     "probe_px": 6.0,
+     "pitch_px": 6.0218,
+     "contrast": 34.0,
+     "angle_deg": 0.27
+    },
+    "comb11": {
+     "probe_px": 11.36,
+     "pitch_px": 11.3153,
+     "contrast": 17.9,
+     "angle_deg": 0.0
+    },
+    "165lpi": {
+     "probe_px": 7.273,
+     "pitch_px": 7.2747,
+     "contrast": 6.7,
+     "angle_deg": 14.08
+    },
+    "224lpi": {
+     "probe_px": 5.357,
+     "pitch_px": 5.6833,
+     "contrast": 18.4,
+     "angle_deg": 0.0
+    },
+    "306lpi": {
+     "probe_px": 3.922,
+     "pitch_px": 3.7831,
+     "contrast": 7.0,
+     "angle_deg": 0.0
+    }
+   },
+   "lock": {
+    "pitch_v_px": 6.057,
+    "pitch_u_px": 6.0129142458133344,
+    "angle_deg": 0.27470277504758783,
+    "quality_mean": 0.051290500452485045,
+    "quality_p10": 0.019133927843935604,
+    "quality_p50": 0.049138011260472805
+   },
+   "coherence": {
+    "v48": 0.183,
+    "u48": 0.99,
+    "v96": 0.174,
+    "u96": 0.977
+   },
+   "seconds": 0.8,
+   "tile": "T30/A3",
+   "class": "A3",
+   "cell_dots": 3,
+   "expected_pitch_v_px": 6.022,
+   "expected_pitch_u_px": 6.0016
+  },
+  {
+   "shape": [
+    1255,
+    824
+   ],
+   "mcp": {
+    "pitch_px": 11.306306306306306,
+    "contrast": 42.2452680917192,
+    "angle_deg": 0.0,
+    "strong": [
+     [
+      11.306,
+      42.2
+     ],
+     [
+      5.679,
+      90.6
+     ]
+    ],
+    "candidates": [
+     [
+      3.018,
+      25.6
+     ],
+     [
+      5.679,
+      90.6
+     ],
+     [
+      5.679,
+      67.2
+     ],
+     [
+      11.306,
+      42.2
+     ],
+     [
+      11.306,
+      27.8
+     ],
+     [
+      11.306,
+      18.5
+     ],
+     [
+      11.306,
+      15.5
+     ],
+     [
+      41.602,
+      5.3
+     ],
+     [
+      41.602,
+      4.5
+     ]
+    ]
+   },
+   "lines": {
+    "cell": {
+     "probe_px": 6.0,
+     "pitch_px": 5.6787,
+     "contrast": 18.1,
+     "angle_deg": 0.0
+    },
+    "cell_tight": {
+     "probe_px": 6.0,
+     "pitch_px": 6.0626,
+     "contrast": 12.6,
+     "angle_deg": 0.42
+    },
+    "comb11": {
+     "probe_px": 11.36,
+     "pitch_px": 11.3063,
+     "contrast": 16.3,
+     "angle_deg": 0.0
+    },
+    "165lpi": {
+     "probe_px": 7.273,
+     "pitch_px": 7.2661,
+     "contrast": 8.0,
+     "angle_deg": 14.07
+    },
+    "224lpi": {
+     "probe_px": 5.357,
+     "pitch_px": 5.6787,
+     "contrast": 21.1,
+     "angle_deg": 0.0
+    },
+    "306lpi": {
+     "probe_px": 3.922,
+     "pitch_px": 4.0096,
+     "contrast": 12.8,
+     "angle_deg": 0.0
+    }
+   },
+   "lock": {
+    "pitch_v_px": 6.2742617728269385,
+    "pitch_u_px": 5.847,
+    "angle_deg": 0.0,
+    "quality_mean": 0.0288088989333563,
+    "quality_p10": 0.010251455048040857,
+    "quality_p50": 0.026575174155680815
+   },
+   "coherence": {
+    "v48": 0.397,
+    "u48": 0.243,
+    "v96": 0.013,
+    "u96": 0.185
+   },
+   "seconds": 0.8,
+   "tile": "T36/A3",
+   "class": "A3",
+   "cell_dots": 3,
+   "expected_pitch_v_px": 6.022,
+   "expected_pitch_u_px": 6.0016
+  },
+  {
+   "shape": [
+    1255,
+    824
+   ],
+   "mcp": {
+    "pitch_px": 11.306306306306306,
+    "contrast": 53.85496668340924,
+    "angle_deg": 0.0,
+    "strong": [
+     [
+      11.306,
+      53.9
+     ],
+     [
+      6.015,
+      72.1
+     ],
+     [
+      5.679,
+      93.8
+     ]
+    ],
+    "candidates": [
+     [
+      3.007,
+      26.8
+     ],
+     [
+      5.679,
+      93.8
+     ],
+     [
+      6.015,
+      72.1
+     ],
+     [
+      11.306,
+      53.9
+     ],
+     [
+      11.306,
+      35.6
+     ],
+     [
+      11.306,
+      23.9
+     ],
+     [
+      11.306,
+      19.8
+     ],
+     [
+      22.411,
+      5.3
+     ],
+     [
+      22.411,
+      4.5
+     ]
+    ]
+   },
+   "lines": {
+    "cell": {
+     "probe_px": 6.0,
+     "pitch_px": 6.0146,
+     "contrast": 19.6,
+     "angle_deg": 0.0
+    },
+    "cell_tight": {
+     "probe_px": 6.0,
+     "pitch_px": 6.0146,
+     "contrast": 19.3,
+     "angle_deg": 0.0
+    },
+    "comb11": {
+     "probe_px": 11.36,
+     "pitch_px": 11.3063,
+     "contrast": 20.4,
+     "angle_deg": 0.0
+    },
+    "165lpi": {
+     "probe_px": 7.273,
+     "pitch_px": 7.4702,
+     "contrast": 5.4,
+     "angle_deg": 0.0
+    },
+    "224lpi": {
+     "probe_px": 5.357,
+     "pitch_px": 5.6787,
+     "contrast": 21.4,
+     "angle_deg": 0.0
+    },
+    "306lpi": {
+     "probe_px": 3.922,
+     "pitch_px": 3.7801,
+     "contrast": 8.7,
+     "angle_deg": 0.0
+    }
+   },
+   "lock": {
+    "pitch_v_px": 5.832,
+    "pitch_u_px": 6.013113629845372,
+    "angle_deg": 0.0,
+    "quality_mean": 0.0483425098666866,
+    "quality_p10": 0.020126153620732102,
+    "quality_p50": 0.046338303732194344
+   },
+   "coherence": {
+    "v48": 0.556,
+    "u48": 0.808,
+    "v96": 0.784,
+    "u96": 0.559
+   },
+   "seconds": 1.0,
+   "tile": "T41/A3",
+   "class": "A3",
+   "cell_dots": 3,
+   "expected_pitch_v_px": 6.022,
+   "expected_pitch_u_px": 6.0016
+  },
+  {
+   "shape": [
+    1256,
+    824
+   ],
+   "mcp": {
+    "pitch_px": 11.315315315315313,
+    "contrast": 56.87579891634333,
+    "angle_deg": 0.0,
+    "strong": [
+     [
+      11.315,
+      56.9
+     ],
+     [
+      5.683,
+      92.6
+     ],
+     [
+      4.0,
+      54.2
+     ]
+    ],
+    "candidates": [
+     [
+      4.0,
+      54.2
+     ],
+     [
+      5.683,
+      92.6
+     ],
+     [
+      5.683,
+      67.5
+     ],
+     [
+      11.315,
+      56.9
+     ],
+     [
+      11.315,
+      36.2
+     ],
+     [
+      11.315,
+      23.8
+     ],
+     [
+      11.315,
+      19.7
+     ],
+     [
+      29.776,
+      5.3
+     ],
+     [
+      29.776,
+      4.5
+     ]
+    ]
+   },
+   "lines": {
+    "cell": {
+     "probe_px": 6.0,
+     "pitch_px": 5.6833,
+     "contrast": 16.4,
+     "angle_deg": 0.0
+    },
+    "cell_tight": {
+     "probe_px": 6.0,
+     "pitch_px": 5.8966,
+     "contrast": 11.9,
+     "angle_deg": 0.41
+    },
+    "comb11": {
+     "probe_px": 11.36,
+     "pitch_px": 11.3153,
+     "contrast": 20.3,
+     "angle_deg": 0.0
+    },
+    "165lpi": {
+     "probe_px": 7.273,
+     "pitch_px": 7.2664,
+     "contrast": 6.2,
+     "angle_deg": 14.06
+    },
+    "224lpi": {
+     "probe_px": 5.357,
+     "pitch_px": 5.6833,
+     "contrast": 19.4,
+     "angle_deg": 0.0
+    },
+    "306lpi": {
+     "probe_px": 3.922,
+     "pitch_px": 4.0,
+     "contrast": 16.5,
+     "angle_deg": 0.0
+    }
+   },
+   "lock": {
+    "pitch_v_px": 5.826,
+    "pitch_u_px": 6.00330250586191,
+    "angle_deg": 0.0,
+    "quality_mean": 0.035949422845952546,
+    "quality_p10": 0.013689234700551108,
+    "quality_p50": 0.03433433417840874
+   },
+   "coherence": {
+    "v48": 0.475,
+    "u48": 0.89,
+    "v96": 0.681,
+    "u96": 0.928
+   },
+   "seconds": 0.9,
+   "tile": "T44/A3",
+   "class": "A3",
+   "cell_dots": 3,
+   "expected_pitch_v_px": 6.022,
+   "expected_pitch_u_px": 6.0016
+  },
+  {
+   "shape": [
+    1255,
+    824
+   ],
+   "mcp": {
+    "pitch_px": 11.306306306306306,
+    "contrast": 53.139554034849674,
+    "angle_deg": 0.0,
+    "strong": [
+     [
+      11.306,
+      53.1
+     ],
+     [
+      5.679,
+      148.3
+     ],
+     [
+      3.946,
+      38.4
+     ]
+    ],
+    "candidates": [
+     [
+      3.946,
+      38.4
+     ],
+     [
+      5.679,
+      148.3
+     ],
+     [
+      5.679,
+      109.7
+     ],
+     [
+      11.306,
+      53.1
+     ],
+     [
+      11.306,
+      34.3
+     ],
+     [
+      11.306,
+      22.7
+     ],
+     [
+      11.306,
+      18.9
+     ],
+     [
+      22.818,
+      5.5
+     ],
+     [
+      22.818,
+      4.7
+     ]
+    ]
+   },
+   "lines": {
+    "cell": {
+     "probe_px": 6.0,
+     "pitch_px": 5.6787,
+     "contrast": 28.3,
+     "angle_deg": 0.0
+    },
+    "cell_tight": {
+     "probe_px": 6.0,
+     "pitch_px": 6.0335,
+     "contrast": 17.4,
+     "angle_deg": 0.42
+    },
+    "comb11": {
+     "probe_px": 11.36,
+     "pitch_px": 11.3063,
+     "contrast": 19.7,
+     "angle_deg": 0.0
+    },
+    "165lpi": {
+     "probe_px": 7.273,
+     "pitch_px": 6.8207,
+     "contrast": 7.4,
+     "angle_deg": 0.0
+    },
+    "224lpi": {
+     "probe_px": 5.357,
+     "pitch_px": 5.6787,
+     "contrast": 33.0,
+     "angle_deg": 0.0
+    },
+    "306lpi": {
+     "probe_px": 3.922,
+     "pitch_px": 4.2597,
+     "contrast": 14.8,
+     "angle_deg": 44.91
+    }
+   },
+   "lock": {
+    "pitch_v_px": 6.034930921244017,
+    "pitch_u_px": 6.023185513807445,
+    "angle_deg": 0.0,
+    "quality_mean": 0.04931115780914465,
+    "quality_p10": 0.021311759169164137,
+    "quality_p50": 0.04946601706957433
+   },
+   "coherence": {
+    "v48": 0.299,
+    "u48": 0.779,
+    "v96": 0.627,
+    "u96": 0.684
+   },
+   "seconds": 0.9,
+   "tile": "T52/A3",
+   "class": "A3",
+   "cell_dots": 3,
+   "expected_pitch_v_px": 6.022,
+   "expected_pitch_u_px": 6.0016
+  },
+  {
+   "shape": [
+    1256,
+    825
+   ],
+   "mcp": {
+    "pitch_px": 11.315315315315313,
+    "contrast": 52.257898563439916,
+    "angle_deg": 0.0,
+    "strong": [
+     [
+      11.315,
+      52.3
+     ],
+     [
+      5.683,
+      117.7
+     ],
+     [
+      3.901,
+      41.3
+     ]
+    ],
+    "candidates": [
+     [
+      3.901,
+      41.3
+     ],
+     [
+      5.683,
+      117.7
+     ],
+     [
+      5.683,
+      87.4
+     ],
+     [
+      11.315,
+      52.3
+     ],
+     [
+      11.315,
+      34.6
+     ],
+     [
+      11.315,
+      23.2
+     ],
+     [
+      11.315,
+      19.6
+     ],
+     [
+      22.836,
+      6.5
+     ],
+     [
+      22.836,
+      5.5
+     ]
+    ]
+   },
+   "lines": {
+    "cell": {
+     "probe_px": 6.0,
+     "pitch_px": 5.6833,
+     "contrast": 23.8,
+     "angle_deg": 0.0
+    },
+    "cell_tight": {
+     "probe_px": 6.0,
+     "pitch_px": 6.0385,
+     "contrast": 11.0,
+     "angle_deg": 0.0
+    },
+    "comb11": {
+     "probe_px": 11.36,
+     "pitch_px": 11.3153,
+     "contrast": 20.1,
+     "angle_deg": 0.0
+    },
+    "165lpi": {
+     "probe_px": 7.273,
+     "pitch_px": 6.8261,
+     "contrast": 6.8,
+     "angle_deg": 0.0
+    },
+    "224lpi": {
+     "probe_px": 5.357,
+     "pitch_px": 5.6833,
+     "contrast": 27.7,
+     "angle_deg": 0.0
+    },
+    "306lpi": {
+     "probe_px": 3.922,
+     "pitch_px": 4.1867,
+     "contrast": 14.8,
+     "angle_deg": 0.0
+    }
+   },
+   "lock": {
+    "pitch_v_px": 6.014718770026895,
+    "pitch_u_px": 6.017672532871549,
+    "angle_deg": 0.0,
+    "quality_mean": 0.03737251442328755,
+    "quality_p10": 0.014737221557918375,
+    "quality_p50": 0.035189394771610705
+   },
+   "coherence": {
+    "v48": 0.564,
+    "u48": 0.829,
+    "v96": 0.828,
+    "u96": 0.506
+   },
+   "seconds": 0.8,
+   "tile": "T57/A3",
+   "class": "A3",
+   "cell_dots": 3,
+   "expected_pitch_v_px": 6.022,
+   "expected_pitch_u_px": 6.0016
+  },
+  {
+   "shape": [
+    1255,
+    825
+   ],
+   "mcp": {
+    "pitch_px": 11.306306306306306,
+    "contrast": 55.70164314050654,
+    "angle_deg": 0.0,
+    "strong": [
+     [
+      11.306,
+      55.7
+     ],
+     [
+      5.679,
+      128.6
+     ],
+     [
+      3.78,
+      45.4
+     ]
+    ],
+    "candidates": [
+     [
+      3.78,
+      45.4
+     ],
+     [
+      5.679,
+      128.6
+     ],
+     [
+      5.679,
+      95.2
+     ],
+     [
+      11.306,
+      55.7
+     ],
+     [
+      11.306,
+      37.0
+     ],
+     [
+      11.306,
+      25.1
+     ],
+     [
+      11.306,
+      20.6
+     ],
+     [
+      38.813,
+      4.5
+     ],
+     [
+      38.813,
+      3.7
+     ]
+    ]
+   },
+   "lines": {
+    "cell": {
+     "probe_px": 6.0,
+     "pitch_px": 5.6787,
+     "contrast": 26.2,
+     "angle_deg": 0.0
+    },
+    "cell_tight": {
+     "probe_px": 6.0,
+     "pitch_px": 6.0219,
+     "contrast": 21.6,
+     "angle_deg": 0.0
+    },
+    "comb11": {
+     "probe_px": 11.36,
+     "pitch_px": 11.3063,
+     "contrast": 20.8,
+     "angle_deg": 0.0
+    },
+    "165lpi": {
+     "probe_px": 7.273,
+     "pitch_px": 7.2744,
+     "contrast": 5.6,
+     "angle_deg": 14.09
+    },
+    "224lpi": {
+     "probe_px": 5.357,
+     "pitch_px": 5.6787,
+     "contrast": 30.2,
+     "angle_deg": 0.0
+    },
+    "306lpi": {
+     "probe_px": 3.922,
+     "pitch_px": 3.7801,
+     "contrast": 15.2,
+     "angle_deg": 0.0
+    }
+   },
+   "lock": {
+    "pitch_v_px": 6.029999999999999,
+    "pitch_u_px": 6.0223310280983915,
+    "angle_deg": 0.0,
+    "quality_mean": 0.04876800840488554,
+    "quality_p10": 0.018520750747095426,
+    "quality_p50": 0.04843511568098268
+   },
+   "coherence": {
+    "v48": 0.728,
+    "u48": 0.842,
+    "v96": 0.67,
+    "u96": 0.829
+   },
+   "seconds": 0.8,
+   "tile": "T61/A3",
+   "class": "A3",
+   "cell_dots": 3,
+   "expected_pitch_v_px": 6.022,
+   "expected_pitch_u_px": 6.0016
+  },
+  {
+   "shape": [
+    1255,
+    824
+   ],
+   "mcp": {
+    "pitch_px": 11.306306306306306,
+    "contrast": 56.194563392563765,
+    "angle_deg": 0.0,
+    "strong": [
+     [
+      11.306,
+      56.2
+     ],
+     [
+      5.679,
+      113.4
+     ],
+     [
+      3.78,
+      52.9
+     ]
+    ],
+    "candidates": [
+     [
+      3.78,
+      52.9
+     ],
+     [
+      5.679,
+      113.4
+     ],
+     [
+      5.679,
+      83.5
+     ],
+     [
+      11.306,
+      56.2
+     ],
+     [
+      11.306,
+      37.2
+     ],
+     [
+      11.306,
+      25.2
+     ],
+     [
+      11.306,
+      20.5
+     ],
+     [
+      22.818,
+      4.9
+     ],
+     [
+      22.818,
+      4.2
+     ]
+    ]
+   },
+   "lines": {
+    "cell": {
+     "probe_px": 6.0,
+     "pitch_px": 5.6787,
+     "contrast": 23.1,
+     "angle_deg": 0.0
+    },
+    "cell_tight": {
+     "probe_px": 6.0,
+     "pitch_px": 5.976,
+     "contrast": 16.8,
+     "angle_deg": 0.42
+    },
+    "comb11": {
+     "probe_px": 11.36,
+     "pitch_px": 11.3063,
+     "contrast": 21.6,
+     "angle_deg": 0.0
+    },
+    "165lpi": {
+     "probe_px": 7.273,
+     "pitch_px": 7.2661,
+     "contrast": 6.5,
+     "angle_deg": 14.07
+    },
+    "224lpi": {
+     "probe_px": 5.357,
+     "pitch_px": 5.6787,
+     "contrast": 26.3,
+     "angle_deg": 0.0
+    },
+    "306lpi": {
+     "probe_px": 3.922,
+     "pitch_px": 3.7801,
+     "contrast": 17.5,
+     "angle_deg": 0.0
+    }
+   },
+   "lock": {
+    "pitch_v_px": 6.049198381991053,
+    "pitch_u_px": 6.007812606606326,
+    "angle_deg": 0.0,
+    "quality_mean": 0.03658934908047339,
+    "quality_p10": 0.014762708379601535,
+    "quality_p50": 0.034884252713665784
+   },
+   "coherence": {
+    "v48": 0.359,
+    "u48": 0.925,
+    "v96": 0.815,
+    "u96": 0.958
+   },
+   "seconds": 0.9,
+   "tile": "T64/A3",
+   "class": "A3",
+   "cell_dots": 3,
+   "expected_pitch_v_px": 6.022,
+   "expected_pitch_u_px": 6.0016
+  },
+  {
+   "shape": [
+    1256,
+    825
+   ],
+   "mcp": {
+    "pitch_px": 11.315315315315313,
+    "contrast": 68.66308111216844,
+    "angle_deg": 0.0,
+    "strong": [
+     [
+      11.315,
+      68.7
+     ],
+     [
+      5.683,
+      121.2
+     ],
+     [
+      3.783,
+      58.3
+     ]
+    ],
+    "candidates": [
+     [
+      3.783,
+      58.3
+     ],
+     [
+      5.683,
+      121.2
+     ],
+     [
+      5.683,
+      88.8
+     ],
+     [
+      11.315,
+      68.7
+     ],
+     [
+      11.315,
+      45.5
+     ],
+     [
+      11.315,
+      30.7
+     ],
+     [
+      11.315,
+      25.5
+     ],
+     [
+      43.27,
+      4.3
+     ],
+     [
+      43.27,
+      3.7
+     ]
+    ]
+   },
+   "lines": {
+    "cell": {
+     "probe_px": 6.0,
+     "pitch_px": 5.6833,
+     "contrast": 24.4,
+     "angle_deg": 0.0
+    },
+    "cell_tight": {
+     "probe_px": 6.0,
+     "pitch_px": 5.9808,
+     "contrast": 8.2,
+     "angle_deg": 0.42
+    },
+    "comb11": {
+     "probe_px": 11.36,
+     "pitch_px": 11.3153,
+     "contrast": 25.7,
+     "angle_deg": 0.0
+    },
+    "165lpi": {
+     "probe_px": 7.273,
+     "pitch_px": 7.2747,
+     "contrast": 7.9,
+     "angle_deg": 14.08
+    },
+    "224lpi": {
+     "probe_px": 5.357,
+     "pitch_px": 5.6833,
+     "contrast": 28.0,
+     "angle_deg": 0.0
+    },
+    "306lpi": {
+     "probe_px": 3.922,
+     "pitch_px": 3.7831,
+     "contrast": 19.2,
+     "angle_deg": 0.0
+    }
+   },
+   "lock": {
+    "pitch_v_px": 6.1739999999999995,
+    "pitch_u_px": 6.008345034869114,
+    "angle_deg": 0.0,
+    "quality_mean": 0.033609613677624196,
+    "quality_p10": 0.012288430971777179,
+    "quality_p50": 0.03229324589224834
+   },
+   "coherence": {
+    "v48": 0.478,
+    "u48": 0.704,
+    "v96": 0.327,
+    "u96": 0.809
+   },
+   "seconds": 0.8,
+   "tile": "T73/A3",
+   "class": "A3",
+   "cell_dots": 3,
+   "expected_pitch_v_px": 6.022,
+   "expected_pitch_u_px": 6.0016
+  },
+  {
+   "shape": [
+    1255,
+    825
+   ],
+   "mcp": {
+    "pitch_px": 11.306306306306306,
+    "contrast": 56.38556140054685,
+    "angle_deg": 0.0,
+    "strong": [
+     [
+      11.306,
+      56.4
+     ],
+     [
+      5.679,
+      140.8
+     ],
+     [
+      3.78,
+      53.7
+     ]
+    ],
+    "candidates": [
+     [
+      3.78,
+      53.7
+     ],
+     [
+      5.679,
+      140.8
+     ],
+     [
+      5.679,
+      103.1
+     ],
+     [
+      11.306,
+      56.4
+     ],
+     [
+      11.306,
+      37.5
+     ],
+     [
+      11.306,
+      25.6
+     ],
+     [
+      11.306,
+      21.5
+     ],
+     [
+      22.818,
+      5.1
+     ],
+     [
+      22.818,
+      4.4
+     ]
+    ]
+   },
+   "lines": {
+    "cell": {
+     "probe_px": 6.0,
+     "pitch_px": 5.6787,
+     "contrast": 28.6,
+     "angle_deg": 0.0
+    },
+    "cell_tight": {
+     "probe_px": 6.0,
+     "pitch_px": 6.0219,
+     "contrast": 10.3,
+     "angle_deg": 0.0
+    },
+    "comb11": {
+     "probe_px": 11.36,
+     "pitch_px": 11.3063,
+     "contrast": 21.6,
+     "angle_deg": 0.0
+    },
+    "165lpi": {
+     "probe_px": 7.273,
+     "pitch_px": 7.2744,
+     "contrast": 6.7,
+     "angle_deg": 14.09
+    },
+    "224lpi": {
+     "probe_px": 5.357,
+     "pitch_px": 5.6787,
+     "contrast": 32.5,
+     "angle_deg": 0.0
+    },
+    "306lpi": {
+     "probe_px": 3.922,
+     "pitch_px": 4.0096,
+     "contrast": 18.7,
+     "angle_deg": 0.0
+    }
+   },
+   "lock": {
+    "pitch_v_px": 5.9869890009455355,
+    "pitch_u_px": 5.997919369901509,
+    "angle_deg": 0.0,
+    "quality_mean": 0.03852942270274626,
+    "quality_p10": 0.01654523963510264,
+    "quality_p50": 0.035684947072950175
+   },
+   "coherence": {
+    "v48": 0.565,
+    "u48": 0.734,
+    "v96": 0.543,
+    "u96": 0.569
+   },
+   "seconds": 0.8,
+   "tile": "T75/A3",
+   "class": "A3",
+   "cell_dots": 3,
+   "expected_pitch_v_px": 6.022,
+   "expected_pitch_u_px": 6.0016
+  },
+  {
+   "shape": [
+    1256,
+    824
+   ],
+   "mcp": {
+    "pitch_px": 5.6832579185520355,
+    "contrast": 147.9093510264639,
+    "angle_deg": 0.0,
+    "strong": [
+     [
+      8.0,
+      124.5
+     ],
+     [
+      5.683,
+      147.9
+     ],
+     [
+      3.783,
+      75.5
+     ]
+    ],
+    "candidates": [
+     [
+      3.783,
+      75.5
+     ],
+     [
+      5.683,
+      147.9
+     ],
+     [
+      8.0,
+      124.5
+     ],
+     [
+      8.0,
+      70.4
+     ],
+     [
+      8.0,
+      45.2
+     ],
+     [
+      8.0,
+      28.4
+     ],
+     [
+      8.0,
+      22.7
+     ],
+     [
+      44.612,
+      4.9
+     ],
+     [
+      49.879,
+      4.6
+     ]
+    ]
+   },
+   "lines": {
+    "cell": {
+     "probe_px": 8.0,
+     "pitch_px": 8.0,
+     "contrast": 28.8,
+     "angle_deg": 0.0
+    },
+    "cell_tight": {
+     "probe_px": 8.0,
+     "pitch_px": 8.0,
+     "contrast": 28.6,
+     "angle_deg": 0.0
+    },
+    "comb11": {
+     "probe_px": 11.36,
+     "pitch_px": 11.3153,
+     "contrast": 16.7,
+     "angle_deg": 0.0
+    },
+    "165lpi": {
+     "probe_px": 7.273,
+     "pitch_px": 7.899,
+     "contrast": 9.3,
+     "angle_deg": 0.55
+    },
+    "224lpi": {
+     "probe_px": 5.357,
+     "pitch_px": 5.6833,
+     "contrast": 34.0,
+     "angle_deg": 0.0
+    },
+    "306lpi": {
+     "probe_px": 3.922,
+     "pitch_px": 3.7831,
+     "contrast": 26.0,
+     "angle_deg": 0.0
+    }
+   },
+   "lock": {
+    "pitch_v_px": 8.0348955249286,
+    "pitch_u_px": 8.009209907648577,
+    "angle_deg": 0.0,
+    "quality_mean": 0.07308080166958385,
+    "quality_p10": 0.03627963055809632,
+    "quality_p50": 0.07385442482955293
+   },
+   "coherence": {
+    "v48": 0.34,
+    "u48": 0.902,
+    "v96": 0.544,
+    "u96": 0.963
+   },
+   "seconds": 0.7,
+   "tile": "T01/A4",
+   "class": "A4",
+   "cell_dots": 4,
+   "expected_pitch_v_px": 8.0293,
+   "expected_pitch_u_px": 8.0022
+  },
+  {
+   "shape": [
+    1256,
+    825
+   ],
+   "mcp": {
+    "pitch_px": 7.999623901638318,
+    "contrast": 135.8558857703081,
+    "angle_deg": 0.5555780242458636,
+    "strong": [
+     [
+      8.0,
+      135.9
+     ],
+     [
+      5.683,
+      135.3
+     ],
+     [
+      3.783,
+      80.3
+     ]
+    ],
+    "candidates": [
+     [
+      3.783,
+      80.3
+     ],
+     [
+      5.683,
+      135.3
+     ],
+     [
+      8.0,
+      135.9
+     ],
+     [
+      8.01,
+      63.3
+     ],
+     [
+      8.01,
+      41.0
+     ],
+     [
+      8.01,
+      25.7
+     ],
+     [
+      8.01,
+      20.7
+     ],
+     [
+      26.809,
+      4.7
+     ],
+     [
+      26.809,
+      3.9
+     ]
+    ]
+   },
+   "lines": {
+    "cell": {
+     "probe_px": 8.0,
+     "pitch_px": 8.0097,
+     "contrast": 26.3,
+     "angle_deg": 0.0
+    },
+    "cell_tight": {
+     "probe_px": 8.0,
+     "pitch_px": 8.0097,
+     "contrast": 27.5,
+     "angle_deg": 0.0
+    },
+    "comb11": {
+     "probe_px": 11.36,
+     "pitch_px": 11.3153,
+     "contrast": 15.4,
+     "angle_deg": 0.0
+    },
+    "165lpi": {
+     "probe_px": 7.273,
+     "pitch_px": 7.899,
+     "contrast": 11.6,
+     "angle_deg": 0.55
+    },
+    "224lpi": {
+     "probe_px": 5.357,
+     "pitch_px": 5.6833,
+     "contrast": 31.2,
+     "angle_deg": 0.0
+    },
+    "306lpi": {
+     "probe_px": 3.922,
+     "pitch_px": 4.0048,
+     "contrast": 37.7,
+     "angle_deg": 0.18
+    }
+   },
+   "lock": {
+    "pitch_v_px": 7.98641321376037,
+    "pitch_u_px": 8.003443543483353,
+    "angle_deg": 0.0,
+    "quality_mean": 0.08044008854644512,
+    "quality_p10": 0.03498058527454526,
+    "quality_p50": 0.08112011599162805
+   },
+   "coherence": {
+    "v48": 0.455,
+    "u48": 0.972,
+    "v96": 0.568,
+    "u96": 0.989
+   },
+   "seconds": 0.7,
+   "tile": "T04/A4",
+   "class": "A4",
+   "cell_dots": 4,
+   "expected_pitch_v_px": 8.0293,
+   "expected_pitch_u_px": 8.0022
+  },
+  {
+   "shape": [
+    1255,
+    825
+   ],
+   "mcp": {
+    "pitch_px": 5.678733031674208,
+    "contrast": 130.78814732507976,
+    "angle_deg": 0.0,
+    "strong": [
+     [
+      7.933,
+      115.7
+     ],
+     [
+      5.679,
+      130.8
+     ],
+     [
+      3.985,
+      31.4
+     ]
+    ],
+    "candidates": [
+     [
+      3.985,
+      31.4
+     ],
+     [
+      5.679,
+      130.8
+     ],
+     [
+      7.933,
+      115.7
+     ],
+     [
+      8.01,
+      59.6
+     ],
+     [
+      8.01,
+      37.3
+     ],
+     [
+      8.01,
+      23.2
+     ],
+     [
+      8.01,
+      18.7
+     ],
+     [
+      44.034,
+      4.7
+     ],
+     [
+      44.034,
+      3.8
+     ]
+    ]
+   },
+   "lines": {
+    "cell": {
+     "probe_px": 8.0,
+     "pitch_px": 8.0097,
+     "contrast": 23.3,
+     "angle_deg": 0.0
+    },
+    "cell_tight": {
+     "probe_px": 8.0,
+     "pitch_px": 8.0097,
+     "contrast": 22.6,
+     "angle_deg": 0.0
+    },
+    "comb11": {
+     "probe_px": 11.36,
+     "pitch_px": 11.3063,
+     "contrast": 17.9,
+     "angle_deg": 0.0
+    },
+    "165lpi": {
+     "probe_px": 7.273,
+     "pitch_px": 7.2744,
+     "contrast": 7.7,
+     "angle_deg": 14.09
+    },
+    "224lpi": {
+     "probe_px": 5.357,
+     "pitch_px": 5.6787,
+     "contrast": 28.3,
+     "angle_deg": 0.0
+    },
+    "306lpi": {
+     "probe_px": 3.922,
+     "pitch_px": 4.0483,
+     "contrast": 10.4,
+     "angle_deg": 0.28
+    }
+   },
+   "lock": {
+    "pitch_v_px": 8.061011339124395,
+    "pitch_u_px": 8.016643235050603,
+    "angle_deg": 0.0,
+    "quality_mean": 0.0891108000426945,
+    "quality_p10": 0.047635777930108265,
+    "quality_p50": 0.09008934744045788
+   },
+   "coherence": {
+    "v48": 0.619,
+    "u48": 0.888,
+    "v96": 0.526,
+    "u96": 0.878
+   },
+   "seconds": 0.7,
+   "tile": "T12/A4",
+   "class": "A4",
+   "cell_dots": 4,
+   "expected_pitch_v_px": 8.0293,
+   "expected_pitch_u_px": 8.0022
+  },
+  {
+   "shape": [
+    1256,
+    824
+   ],
+   "mcp": {
+    "pitch_px": 7.999837726548935,
+    "contrast": 138.17243738069484,
+    "angle_deg": 0.3649363357306456,
+    "strong": [
+     [
+      8.0,
+      138.2
+     ],
+     [
+      5.683,
+      106.2
+     ],
+     [
+      4.0,
+      58.2
+     ]
+    ],
+    "candidates": [
+     [
+      4.0,
+      58.2
+     ],
+     [
+      5.683,
+      106.2
+     ],
+     [
+      8.0,
+      138.2
+     ],
+     [
+      8.0,
+      75.4
+     ],
+     [
+      8.0,
+      48.0
+     ],
+     [
+      8.0,
+      30.2
+     ],
+     [
+      8.0,
+      23.9
+     ],
+     [
+      22.836,
+      4.9
+     ],
+     [
+      22.836,
+      4.2
+     ]
+    ]
+   },
+   "lines": {
+    "cell": {
+     "probe_px": 8.0,
+     "pitch_px": 8.0,
+     "contrast": 31.1,
+     "angle_deg": 0.0
+    },
+    "cell_tight": {
+     "probe_px": 8.0,
+     "pitch_px": 8.0,
+     "contrast": 29.9,
+     "angle_deg": 0.0
+    },
+    "comb11": {
+     "probe_px": 11.36,
+     "pitch_px": 11.3153,
+     "contrast": 19.1,
+     "angle_deg": 0.0
+    },
+    "165lpi": {
+     "probe_px": 7.273,
+     "pitch_px": 7.3291,
+     "contrast": 7.3,
+     "angle_deg": 14.19
+    },
+    "224lpi": {
+     "probe_px": 5.357,
+     "pitch_px": 5.6833,
+     "contrast": 24.4,
+     "angle_deg": 0.0
+    },
+    "306lpi": {
+     "probe_px": 3.922,
+     "pitch_px": 4.0,
+     "contrast": 19.7,
+     "angle_deg": 0.18
+    }
+   },
+   "lock": {
+    "pitch_v_px": 8.088,
+    "pitch_u_px": 8.005625396907064,
+    "angle_deg": 0.0,
+    "quality_mean": 0.07629989404697807,
+    "quality_p10": 0.02919371321349448,
+    "quality_p50": 0.07456668728829022
+   },
+   "coherence": {
+    "v48": 0.466,
+    "u48": 0.934,
+    "v96": 0.418,
+    "u96": 0.956
+   },
+   "seconds": 0.8,
+   "tile": "T17/A4",
+   "class": "A4",
+   "cell_dots": 4,
+   "expected_pitch_v_px": 8.0293,
+   "expected_pitch_u_px": 8.0022
+  },
+  {
+   "shape": [
+    1256,
+    825
+   ],
+   "mcp": {
+    "pitch_px": 5.6832579185520355,
+    "contrast": 104.81187206833933,
+    "angle_deg": 0.0,
+    "strong": [
+     [
+      8.01,
+      76.9
+     ],
+     [
+      5.683,
+      104.8
+     ]
+    ],
+    "candidates": [
+     [
+      3.783,
+      26.8
+     ],
+     [
+      5.683,
+      104.8
+     ],
+     [
+      5.683,
+      78.1
+     ],
+     [
+      8.01,
+      76.9
+     ],
+     [
+      8.01,
+      49.4
+     ],
+     [
+      8.01,
+      31.5
+     ],
+     [
+      8.01,
+      25.2
+     ],
+     [
+      40.201,
+      4.6
+     ],
+     [
+      52.228,
+      4.1
+     ]
+    ]
+   },
+   "lines": {
+    "cell": {
+     "probe_px": 8.0,
+     "pitch_px": 8.0095,
+     "contrast": 32.1,
+     "angle_deg": 0.37
+    },
+    "cell_tight": {
+     "probe_px": 8.0,
+     "pitch_px": 8.0095,
+     "contrast": 32.1,
+     "angle_deg": 0.37
+    },
+    "comb11": {
+     "probe_px": 11.36,
+     "pitch_px": 11.3153,
+     "contrast": 17.0,
+     "angle_deg": 0.0
+    },
+    "165lpi": {
+     "probe_px": 7.273,
+     "pitch_px": 7.899,
+     "contrast": 9.0,
+     "angle_deg": 0.55
+    },
+    "224lpi": {
+     "probe_px": 5.357,
+     "pitch_px": 5.6833,
+     "contrast": 24.8,
+     "angle_deg": 0.0
+    },
+    "306lpi": {
+     "probe_px": 3.922,
+     "pitch_px": 4.0048,
+     "contrast": 16.6,
+     "angle_deg": 0.18
+    }
+   },
+   "lock": {
+    "pitch_v_px": 8.02782041770914,
+    "pitch_u_px": 8.02764747492547,
+    "angle_deg": 0.36537920763342535,
+    "quality_mean": 0.08844824544438648,
+    "quality_p10": 0.04118497125194968,
+    "quality_p50": 0.08855309701911651
+   },
+   "coherence": {
+    "v48": 0.698,
+    "u48": 0.988,
+    "v96": 0.783,
+    "u96": 0.983
+   },
+   "seconds": 0.7,
+   "tile": "T20/A4",
+   "class": "A4",
+   "cell_dots": 4,
+   "expected_pitch_v_px": 8.0293,
+   "expected_pitch_u_px": 8.0022
+  },
+  {
+   "shape": [
+    1255,
+    825
+   ],
+   "mcp": {
+    "pitch_px": 5.678733031674208,
+    "contrast": 104.4067306613957,
+    "angle_deg": 0.0,
+    "strong": [
+     [
+      7.933,
+      91.0
+     ],
+     [
+      5.679,
+      104.4
+     ],
+     [
+      3.985,
+      42.7
+     ]
+    ],
+    "candidates": [
+     [
+      3.985,
+      42.7
+     ],
+     [
+      5.679,
+      104.4
+     ],
+     [
+      7.933,
+      91.0
+     ],
+     [
+      8.01,
+      60.3
+     ],
+     [
+      8.01,
+      39.0
+     ],
+     [
+      8.01,
+      24.7
+     ],
+     [
+      8.01,
+      19.7
+     ],
+     [
+      22.818,
+      6.6
+     ],
+     [
+      22.818,
+      5.6
+     ]
+    ]
+   },
+   "lines": {
+    "cell": {
+     "probe_px": 8.0,
+     "pitch_px": 8.0097,
+     "contrast": 25.7,
+     "angle_deg": 0.0
+    },
+    "cell_tight": {
+     "probe_px": 8.0,
+     "pitch_px": 8.0097,
+     "contrast": 25.2,
+     "angle_deg": 0.0
+    },
+    "comb11": {
+     "probe_px": 11.36,
+     "pitch_px": 11.3063,
+     "contrast": 16.3,
+     "angle_deg": 0.0
+    },
+    "165lpi": {
+     "probe_px": 7.273,
+     "pitch_px": 7.2744,
+     "contrast": 8.8,
+     "angle_deg": 14.09
+    },
+    "224lpi": {
+     "probe_px": 5.357,
+     "pitch_px": 5.6787,
+     "contrast": 24.7,
+     "angle_deg": 0.0
+    },
+    "306lpi": {
+     "probe_px": 3.922,
+     "pitch_px": 3.9855,
+     "contrast": 14.1,
+     "angle_deg": 0.18
+    }
+   },
+   "lock": {
+    "pitch_v_px": 7.992,
+    "pitch_u_px": 8.020796418920172,
+    "angle_deg": 0.0,
+    "quality_mean": 0.08194817000706561,
+    "quality_p10": 0.03767830953102806,
+    "quality_p50": 0.08254392002285857
+   },
+   "coherence": {
+    "v48": 0.353,
+    "u48": 0.815,
+    "v96": 0.411,
+    "u96": 0.856
+   },
+   "seconds": 0.7,
+   "tile": "T26/A4",
+   "class": "A4",
+   "cell_dots": 4,
+   "expected_pitch_v_px": 8.0293,
+   "expected_pitch_u_px": 8.0022
+  },
+  {
+   "shape": [
+    1255,
+    825
+   ],
+   "mcp": {
+    "pitch_px": 7.9326923076923075,
+    "contrast": 138.30715418628176,
+    "angle_deg": 0.0,
+    "strong": [
+     [
+      7.933,
+      138.3
+     ],
+     [
+      5.679,
+      95.7
+     ],
+     [
+      3.985,
+      40.4
+     ]
+    ],
+    "candidates": [
+     [
+      3.985,
+      40.4
+     ],
+     [
+      5.679,
+      95.7
+     ],
+     [
+      7.933,
+      138.3
+     ],
+     [
+      8.01,
+      71.9
+     ],
+     [
+      8.01,
+      43.1
+     ],
+     [
+      8.01,
+      25.0
+     ],
+     [
+      8.01,
+      20.2
+     ],
+     [
+      41.456,
+      4.7
+     ],
+     [
+      51.562,
+      4.7
+     ]
+    ]
+   },
+   "lines": {
+    "cell": {
+     "probe_px": 8.0,
+     "pitch_px": 8.0097,
+     "contrast": 24.9,
+     "angle_deg": 0.0
+    },
+    "cell_tight": {
+     "probe_px": 8.0,
+     "pitch_px": 8.0097,
+     "contrast": 24.7,
+     "angle_deg": 0.0
+    },
+    "comb11": {
+     "probe_px": 11.36,
+     "pitch_px": 11.3063,
+     "contrast": 14.6,
+     "angle_deg": 0.0
+    },
+    "165lpi": {
+     "probe_px": 7.273,
+     "pitch_px": 7.8434,
+     "contrast": 7.5,
+     "angle_deg": 0.54
+    },
+    "224lpi": {
+     "probe_px": 5.357,
+     "pitch_px": 5.6787,
+     "contrast": 19.2,
+     "angle_deg": 0.0
+    },
+    "306lpi": {
+     "probe_px": 3.922,
+     "pitch_px": 3.9855,
+     "contrast": 12.3,
+     "angle_deg": 0.18
+    }
+   },
+   "lock": {
+    "pitch_v_px": 8.143845192076062,
+    "pitch_u_px": 8.00651327444864,
+    "angle_deg": 0.0,
+    "quality_mean": 0.09581431065823726,
+    "quality_p10": 0.058111324606277874,
+    "quality_p50": 0.09747265209173109
+   },
+   "coherence": {
+    "v48": 0.644,
+    "u48": 0.948,
+    "v96": 0.566,
+    "u96": 0.944
+   },
+   "seconds": 0.7,
+   "tile": "T32/A4",
+   "class": "A4",
+   "cell_dots": 4,
+   "expected_pitch_v_px": 8.0293,
+   "expected_pitch_u_px": 8.0022
+  },
+  {
+   "shape": [
+    1256,
+    825
+   ],
+   "mcp": {
+    "pitch_px": 7.9326923076923075,
+    "contrast": 86.11537064776118,
+    "angle_deg": 0.0,
+    "strong": [
+     [
+      7.933,
+      86.1
+     ],
+     [
+      5.683,
+      83.8
+     ],
+     [
+      4.0,
+      44.3
+     ]
+    ],
+    "candidates": [
+     [
+      4.0,
+      44.3
+     ],
+     [
+      5.683,
+      83.8
+     ],
+     [
+      7.933,
+      86.1
+     ],
+     [
+      8.01,
+      76.3
+     ],
+     [
+      8.01,
+      48.7
+     ],
+     [
+      8.01,
+      30.4
+     ],
+     [
+      8.01,
+      24.2
+     ],
+     [
+      22.836,
+      5.0
+     ],
+     [
+      22.836,
+      4.3
+     ]
+    ]
+   },
+   "lines": {
+    "cell": {
+     "probe_px": 8.0,
+     "pitch_px": 8.0097,
+     "contrast": 31.0,
+     "angle_deg": 0.0
+    },
+    "cell_tight": {
+     "probe_px": 8.0,
+     "pitch_px": 8.0097,
+     "contrast": 31.0,
+     "angle_deg": 0.0
+    },
+    "comb11": {
+     "probe_px": 11.36,
+     "pitch_px": 11.3153,
+     "contrast": 14.3,
+     "angle_deg": 0.0
+    },
+    "165lpi": {
+     "probe_px": 7.273,
+     "pitch_px": 7.6585,
+     "contrast": 8.0,
+     "angle_deg": 0.0
+    },
+    "224lpi": {
+     "probe_px": 5.357,
+     "pitch_px": 5.6833,
+     "contrast": 19.1,
+     "angle_deg": 0.0
+    },
+    "306lpi": {
+     "probe_px": 3.922,
+     "pitch_px": 4.0048,
+     "contrast": 17.8,
+     "angle_deg": 0.18
+    }
+   },
+   "lock": {
+    "pitch_v_px": 8.049056305282704,
+    "pitch_u_px": 8.010429774903805,
+    "angle_deg": 0.0,
+    "quality_mean": 0.08412894651903546,
+    "quality_p10": 0.035366918389431054,
+    "quality_p50": 0.08550217011395939
+   },
+   "coherence": {
+    "v48": 0.625,
+    "u48": 0.905,
+    "v96": 0.6,
+    "u96": 0.954
+   },
+   "seconds": 0.7,
+   "tile": "T37/A4",
+   "class": "A4",
+   "cell_dots": 4,
+   "expected_pitch_v_px": 8.0293,
+   "expected_pitch_u_px": 8.0022
+  },
+  {
+   "shape": [
+    1256,
+    825
+   ],
+   "mcp": {
+    "pitch_px": 5.6832579185520355,
+    "contrast": 172.12134235086933,
+    "angle_deg": 0.0,
+    "strong": [
+     [
+      5.683,
+      172.1
+     ],
+     [
+      3.783,
+      102.1
+     ]
+    ],
+    "candidates": [
+     [
+      3.783,
+      102.1
+     ],
+     [
+      5.683,
+      172.1
+     ],
+     [
+      5.683,
+      123.6
+     ],
+     [
+      5.683,
+      48.6
+     ],
+     [
+      5.683,
+      29.1
+     ],
+     [
+      11.315,
+      20.1
+     ],
+     [
+      11.315,
+      18.6
+     ],
+     [
+      14.952,
+      4.4
+     ],
+     [
+      30.613,
+      3.7
+     ]
+    ]
+   },
+   "lines": {
+    "cell": {
+     "probe_px": 4.0,
+     "pitch_px": 4.0049,
+     "contrast": 47.0,
+     "angle_deg": 0.0
+    },
+    "cell_tight": {
+     "probe_px": 4.0,
+     "pitch_px": 4.0049,
+     "contrast": 46.9,
+     "angle_deg": 0.0
+    },
+    "comb11": {
+     "probe_px": 11.36,
+     "pitch_px": 11.3153,
+     "contrast": 18.7,
+     "angle_deg": 0.0
+    },
+    "165lpi": {
+     "probe_px": 7.273,
+     "pitch_px": 7.0168,
+     "contrast": 4.8,
+     "angle_deg": 0.0
+    },
+    "224lpi": {
+     "probe_px": 5.357,
+     "pitch_px": 5.6833,
+     "contrast": 28.7,
+     "angle_deg": 0.0
+    },
+    "306lpi": {
+     "probe_px": 3.922,
+     "pitch_px": 4.0049,
+     "contrast": 49.3,
+     "angle_deg": 0.0
+    }
+   },
+   "lock": {
+    "pitch_v_px": 3.988,
+    "pitch_u_px": 4.009683139125724,
+    "angle_deg": 0.0,
+    "quality_mean": 0.05630626606302056,
+    "quality_p10": 0.025029718837038483,
+    "quality_p50": 0.05740605948645211
+   },
+   "coherence": {
+    "v48": 0.067,
+    "u48": 0.978,
+    "v96": 0.137,
+    "u96": 0.966
+   },
+   "seconds": 1.3,
+   "tile": "T00/B1",
+   "class": "B1",
+   "cell_dots": 2,
+   "expected_pitch_v_px": 4.0146,
+   "expected_pitch_u_px": 4.0011
+  },
+  {
+   "shape": [
+    1255,
+    825
+   ],
+   "mcp": {
+    "pitch_px": 5.678733031674208,
+    "contrast": 183.72685027540422,
+    "angle_deg": 0.0,
+    "strong": [
+     [
+      5.679,
+      183.7
+     ],
+     [
+      3.985,
+      116.0
+     ]
+    ],
+    "candidates": [
+     [
+      3.985,
+      116.0
+     ],
+     [
+      5.679,
+      183.7
+     ],
+     [
+      5.679,
+      131.0
+     ],
+     [
+      5.679,
+      52.4
+     ],
+     [
+      5.679,
+      31.6
+     ],
+     [
+      11.306,
+      20.2
+     ],
+     [
+      11.306,
+      19.3
+     ],
+     [
+      13.641,
+      5.6
+     ],
+     [
+      22.411,
+      4.7
+     ]
+    ]
+   },
+   "lines": {
+    "cell": {
+     "probe_px": 4.0,
+     "pitch_px": 4.0048,
+     "contrast": 33.8,
+     "angle_deg": 0.18
+    },
+    "cell_tight": {
+     "probe_px": 4.0,
+     "pitch_px": 4.0048,
+     "contrast": 33.4,
+     "angle_deg": 0.18
+    },
+    "comb11": {
+     "probe_px": 11.36,
+     "pitch_px": 11.3063,
+     "contrast": 19.3,
+     "angle_deg": 0.0
+    },
+    "165lpi": {
+     "probe_px": 7.273,
+     "pitch_px": 7.6061,
+     "contrast": 6.3,
+     "angle_deg": 0.0
+    },
+    "224lpi": {
+     "probe_px": 5.357,
+     "pitch_px": 5.6787,
+     "contrast": 30.9,
+     "angle_deg": 0.0
+    },
+    "306lpi": {
+     "probe_px": 3.922,
+     "pitch_px": 4.0048,
+     "contrast": 35.4,
+     "angle_deg": 0.18
+    }
+   },
+   "lock": {
+    "pitch_v_px": 3.9859999999999998,
+    "pitch_u_px": 4.006370401499383,
+    "angle_deg": 0.0,
+    "quality_mean": 0.05716175687644497,
+    "quality_p10": 0.02469040498618286,
+    "quality_p50": 0.059671751714182944
+   },
+   "coherence": {
+    "v48": 0.079,
+    "u48": 0.776,
+    "v96": 0.424,
+    "u96": 0.529
+   },
+   "seconds": 1.2,
+   "tile": "T06/B1",
+   "class": "B1",
+   "cell_dots": 2,
+   "expected_pitch_v_px": 4.0146,
+   "expected_pitch_u_px": 4.0011
+  },
+  {
+   "shape": [
+    1255,
+    824
+   ],
+   "mcp": {
+    "pitch_px": 11.409090909090908,
+    "contrast": 50.68055184370425,
+    "angle_deg": 0.0,
+    "strong": [
+     [
+      11.409,
+      50.7
+     ],
+     [
+      4.0,
+      177.4
+     ]
+    ],
+    "candidates": [
+     [
+      4.0,
+      177.4
+     ],
+     [
+      4.0,
+      156.0
+     ],
+     [
+      4.0,
+      112.9
+     ],
+     [
+      11.409,
+      50.7
+     ],
+     [
+      11.409,
+      30.1
+     ],
+     [
+      11.409,
+      21.2
+     ],
+     [
+      11.409,
+      19.5
+     ],
+     [
+      22.818,
+      6.5
+     ],
+     [
+      22.818,
+      6.2
+     ]
+    ]
+   },
+   "lines": {
+    "cell": {
+     "probe_px": 4.0,
+     "pitch_px": 4.0,
+     "contrast": 46.1,
+     "angle_deg": 0.18
+    },
+    "cell_tight": {
+     "probe_px": 4.0,
+     "pitch_px": 4.0,
+     "contrast": 45.3,
+     "angle_deg": 0.18
+    },
+    "comb11": {
+     "probe_px": 11.36,
+     "pitch_px": 11.4091,
+     "contrast": 19.6,
+     "angle_deg": 0.0
+    },
+    "165lpi": {
+     "probe_px": 7.273,
+     "pitch_px": 6.8579,
+     "contrast": 4.2,
+     "angle_deg": 0.0
+    },
+    "224lpi": {
+     "probe_px": 5.357,
+     "pitch_px": 5.6787,
+     "contrast": 23.4,
+     "angle_deg": 0.0
+    },
+    "306lpi": {
+     "probe_px": 3.922,
+     "pitch_px": 4.0,
+     "contrast": 48.5,
+     "angle_deg": 0.18
+    }
+   },
+   "lock": {
+    "pitch_v_px": 4.032892204857779,
+    "pitch_u_px": 4.0120005647326105,
+    "angle_deg": 0.18261541195184072,
+    "quality_mean": 0.05470383120757999,
+    "quality_p10": 0.0309979064289635,
+    "quality_p50": 0.055702219342712286
+   },
+   "coherence": {
+    "v48": 0.676,
+    "u48": 0.858,
+    "v96": 0.494,
+    "u96": 0.632
+   },
+   "seconds": 1.3,
+   "tile": "T11/B1",
+   "class": "B1",
+   "cell_dots": 2,
+   "expected_pitch_v_px": 4.0146,
+   "expected_pitch_u_px": 4.0011
+  },
+  {
+   "shape": [
+    1256,
+    825
+   ],
+   "mcp": {
+    "pitch_px": 4.004834010346622,
+    "contrast": 226.75737786754658,
+    "angle_deg": 0.1826914611962323,
+    "strong": [
+     [
+      4.005,
+      226.8
+     ]
+    ],
+    "candidates": [
+     [
+      3.985,
+      176.4
+     ],
+     [
+      4.005,
+      226.8
+     ],
+     [
+      4.005,
+      163.1
+     ],
+     [
+      4.005,
+      61.0
+     ],
+     [
+      4.005,
+      36.1
+     ],
+     [
+      11.315,
+      22.1
+     ],
+     [
+      11.315,
+      20.8
+     ],
+     [
+      22.836,
+      7.8
+     ],
+     [
+      22.836,
+      7.7
+     ]
+    ]
+   },
+   "lines": {
+    "cell": {
+     "probe_px": 4.0,
+     "pitch_px": 4.0048,
+     "contrast": 63.7,
+     "angle_deg": 0.18
+    },
+    "cell_tight": {
+     "probe_px": 4.0,
+     "pitch_px": 4.0048,
+     "contrast": 62.0,
+     "angle_deg": 0.18
+    },
+    "comb11": {
+     "probe_px": 11.36,
+     "pitch_px": 11.3153,
+     "contrast": 20.2,
+     "angle_deg": 0.0
+    },
+    "165lpi": {
+     "probe_px": 7.273,
+     "pitch_px": 7.3271,
+     "contrast": 3.9,
+     "angle_deg": 31.6
+    },
+    "224lpi": {
+     "probe_px": 5.357,
+     "pitch_px": 5.6833,
+     "contrast": 20.1,
+     "angle_deg": 0.0
+    },
+    "306lpi": {
+     "probe_px": 3.922,
+     "pitch_px": 4.0048,
+     "contrast": 67.1,
+     "angle_deg": 0.18
+    }
+   },
+   "lock": {
+    "pitch_v_px": 4.0347260536331415,
+    "pitch_u_px": 4.00157445590079,
+    "angle_deg": 0.1826914611962323,
+    "quality_mean": 0.059080661539197034,
+    "quality_p10": 0.0313275274217885,
+    "quality_p50": 0.06033696625890447
+   },
+   "coherence": {
+    "v48": 0.563,
+    "u48": 0.96,
+    "v96": 0.552,
+    "u96": 0.979
+   },
+   "seconds": 1.3,
+   "tile": "T14/B1",
+   "class": "B1",
+   "cell_dots": 2,
+   "expected_pitch_v_px": 4.0146,
+   "expected_pitch_u_px": 4.0011
+  },
+  {
+   "shape": [
+    1256,
+    824
+   ],
+   "mcp": {
+    "pitch_px": 11.315315315315313,
+    "contrast": 64.32840460976557,
+    "angle_deg": 0.0,
+    "strong": [
+     [
+      11.315,
+      64.3
+     ],
+     [
+      5.683,
+      185.1
+     ],
+     [
+      4.0,
+      193.1
+     ]
+    ],
+    "candidates": [
+     [
+      4.0,
+      193.1
+     ],
+     [
+      5.683,
+      185.1
+     ],
+     [
+      5.683,
+      131.6
+     ],
+     [
+      11.315,
+      64.3
+     ],
+     [
+      11.315,
+      36.2
+     ],
+     [
+      11.315,
+      24.8
+     ],
+     [
+      11.315,
+      23.3
+     ],
+     [
+      22.836,
+      10.1
+     ],
+     [
+      22.836,
+      10.2
+     ]
+    ]
+   },
+   "lines": {
+    "cell": {
+     "probe_px": 4.0,
+     "pitch_px": 4.0,
+     "contrast": 44.4,
+     "angle_deg": 0.18
+    },
+    "cell_tight": {
+     "probe_px": 4.0,
+     "pitch_px": 4.0,
+     "contrast": 43.2,
+     "angle_deg": 0.18
+    },
+    "comb11": {
+     "probe_px": 11.36,
+     "pitch_px": 11.3153,
+     "contrast": 23.4,
+     "angle_deg": 0.0
+    },
+    "165lpi": {
+     "probe_px": 7.273,
+     "pitch_px": 7.1652,
+     "contrast": 4.7,
+     "angle_deg": 0.0
+    },
+    "224lpi": {
+     "probe_px": 5.357,
+     "pitch_px": 5.6833,
+     "contrast": 25.3,
+     "angle_deg": 0.0
+    },
+    "306lpi": {
+     "probe_px": 3.922,
+     "pitch_px": 4.0,
+     "contrast": 47.1,
+     "angle_deg": 0.18
+    }
+   },
+   "lock": {
+    "pitch_v_px": 4.006,
+    "pitch_u_px": 4.013996636217079,
+    "angle_deg": 0.0,
+    "quality_mean": 0.055188905158701854,
+    "quality_p10": 0.030337977023266068,
+    "quality_p50": 0.056963213047759344
+   },
+   "coherence": {
+    "v48": 0.142,
+    "u48": 0.826,
+    "v96": 0.279,
+    "u96": 0.624
+   },
+   "seconds": 1.4,
+   "tile": "T23/B1",
+   "class": "B1",
+   "cell_dots": 2,
+   "expected_pitch_v_px": 4.0146,
+   "expected_pitch_u_px": 4.0011
+  },
+  {
+   "shape": [
+    1255,
+    824
+   ],
+   "mcp": {
+    "pitch_px": 11.409090909090908,
+    "contrast": 52.26517940277615,
+    "angle_deg": 0.0,
+    "strong": [
+     [
+      11.409,
+      52.3
+     ],
+     [
+      4.0,
+      198.0
+     ]
+    ],
+    "candidates": [
+     [
+      4.0,
+      198.0
+     ],
+     [
+      4.0,
+      174.3
+     ],
+     [
+      4.0,
+      122.7
+     ],
+     [
+      11.409,
+      52.3
+     ],
+     [
+      11.409,
+      30.7
+     ],
+     [
+      11.409,
+      21.9
+     ],
+     [
+      11.409,
+      20.7
+     ],
+     [
+      22.818,
+      7.6
+     ],
+     [
+      22.818,
+      7.6
+     ]
+    ]
+   },
+   "lines": {
+    "cell": {
+     "probe_px": 4.0,
+     "pitch_px": 4.0,
+     "contrast": 48.1,
+     "angle_deg": 0.18
+    },
+    "cell_tight": {
+     "probe_px": 4.0,
+     "pitch_px": 4.0,
+     "contrast": 47.3,
+     "angle_deg": 0.18
+    },
+    "comb11": {
+     "probe_px": 11.36,
+     "pitch_px": 11.4091,
+     "contrast": 20.1,
+     "angle_deg": 0.0
+    },
+    "165lpi": {
+     "probe_px": 7.273,
+     "pitch_px": 7.6524,
+     "contrast": 4.1,
+     "angle_deg": 0.0
+    },
+    "224lpi": {
+     "probe_px": 5.357,
+     "pitch_px": 5.6787,
+     "contrast": 20.8,
+     "angle_deg": 0.0
+    },
+    "306lpi": {
+     "probe_px": 3.922,
+     "pitch_px": 4.0,
+     "contrast": 50.7,
+     "angle_deg": 0.18
+    }
+   },
+   "lock": {
+    "pitch_v_px": 4.002195973709106,
+    "pitch_u_px": 4.005249769133848,
+    "angle_deg": 0.18261541195184072,
+    "quality_mean": 0.058257918537508314,
+    "quality_p10": 0.030391542227464406,
+    "quality_p50": 0.05993873074791564
+   },
+   "coherence": {
+    "v48": 0.58,
+    "u48": 0.847,
+    "v96": 0.355,
+    "u96": 0.674
+   },
+   "seconds": 1.3,
+   "tile": "T25/B1",
+   "class": "B1",
+   "cell_dots": 2,
+   "expected_pitch_v_px": 4.0146,
+   "expected_pitch_u_px": 4.0011
+  },
+  {
+   "shape": [
+    1255,
+    824
+   ],
+   "mcp": {
+    "pitch_px": 3.9999796830169707,
+    "contrast": 188.2790974966288,
+    "angle_deg": 0.18261541195184072,
+    "strong": [
+     [
+      4.0,
+      188.3
+     ]
+    ],
+    "candidates": [
+     [
+      4.0,
+      188.3
+     ],
+     [
+      4.0,
+      165.4
+     ],
+     [
+      4.0,
+      118.2
+     ],
+     [
+      4.0,
+      45.8
+     ],
+     [
+      11.306,
+      26.7
+     ],
+     [
+      11.306,
+      18.8
+     ],
+     [
+      11.306,
+      17.6
+     ],
+     [
+      22.818,
+      6.1
+     ],
+     [
+      22.818,
+      5.9
+     ]
+    ]
+   },
+   "lines": {
+    "cell": {
+     "probe_px": 4.0,
+     "pitch_px": 4.0,
+     "contrast": 48.6,
+     "angle_deg": 0.18
+    },
+    "cell_tight": {
+     "probe_px": 4.0,
+     "pitch_px": 4.0,
+     "contrast": 48.1,
+     "angle_deg": 0.18
+    },
+    "comb11": {
+     "probe_px": 11.36,
+     "pitch_px": 11.3063,
+     "contrast": 18.0,
+     "angle_deg": 0.0
+    },
+    "165lpi": {
+     "probe_px": 7.273,
+     "pitch_px": 6.7112,
+     "contrast": 4.1,
+     "angle_deg": 0.0
+    },
+    "224lpi": {
+     "probe_px": 5.357,
+     "pitch_px": 5.6787,
+     "contrast": 17.4,
+     "angle_deg": 0.0
+    },
+    "306lpi": {
+     "probe_px": 3.922,
+     "pitch_px": 4.0,
+     "contrast": 51.4,
+     "angle_deg": 0.18
+    }
+   },
+   "lock": {
+    "pitch_v_px": 4.027911417273322,
+    "pitch_u_px": 4.0111189432284275,
+    "angle_deg": 0.18261541195184072,
+    "quality_mean": 0.057911859899209224,
+    "quality_p10": 0.030667806278734493,
+    "quality_p50": 0.05949174958525531
+   },
+   "coherence": {
+    "v48": 0.403,
+    "u48": 0.856,
+    "v96": 0.682,
+    "u96": 0.69
+   },
+   "seconds": 1.3,
+   "tile": "T31/B1",
+   "class": "B1",
+   "cell_dots": 2,
+   "expected_pitch_v_px": 4.0146,
+   "expected_pitch_u_px": 4.0011
+  },
+  {
+   "shape": [
+    1256,
+    824
+   ],
+   "mcp": {
+    "pitch_px": 3.999979715355729,
+    "contrast": 252.0539952205023,
+    "angle_deg": 0.1824700184990553,
+    "strong": [
+     [
+      4.0,
+      252.1
+     ]
+    ],
+    "candidates": [
+     [
+      4.0,
+      252.1
+     ],
+     [
+      4.0,
+      218.5
+     ],
+     [
+      4.0,
+      155.5
+     ],
+     [
+      4.0,
+      55.4
+     ],
+     [
+      11.315,
+      28.9
+     ],
+     [
+      11.315,
+      20.5
+     ],
+     [
+      11.315,
+      19.5
+     ],
+     [
+      22.836,
+      7.6
+     ],
+     [
+      22.836,
+      7.4
+     ]
+    ]
+   },
+   "lines": {
+    "cell": {
+     "probe_px": 4.0,
+     "pitch_px": 4.0,
+     "contrast": 58.3,
+     "angle_deg": 0.18
+    },
+    "cell_tight": {
+     "probe_px": 4.0,
+     "pitch_px": 4.0,
+     "contrast": 57.4,
+     "angle_deg": 0.18
+    },
+    "comb11": {
+     "probe_px": 11.36,
+     "pitch_px": 11.3153,
+     "contrast": 19.6,
+     "angle_deg": 0.0
+    },
+    "165lpi": {
+     "probe_px": 7.273,
+     "pitch_px": 6.7166,
+     "contrast": 4.1,
+     "angle_deg": 0.0
+    },
+    "224lpi": {
+     "probe_px": 5.357,
+     "pitch_px": 5.6833,
+     "contrast": 17.8,
+     "angle_deg": 0.0
+    },
+    "306lpi": {
+     "probe_px": 3.922,
+     "pitch_px": 4.0,
+     "contrast": 61.6,
+     "angle_deg": 0.18
+    }
+   },
+   "lock": {
+    "pitch_v_px": 4.03143689378554,
+    "pitch_u_px": 4.000507809958533,
+    "angle_deg": 0.1824700184990553,
+    "quality_mean": 0.06167327150494858,
+    "quality_p10": 0.03364360881479427,
+    "quality_p50": 0.06333384790263219
+   },
+   "coherence": {
+    "v48": 0.413,
+    "u48": 0.944,
+    "v96": 0.649,
+    "u96": 0.964
+   },
+   "seconds": 1.5,
+   "tile": "T34/B1",
+   "class": "B1",
+   "cell_dots": 2,
+   "expected_pitch_v_px": 4.0146,
+   "expected_pitch_u_px": 4.0011
+  },
+  {
+   "shape": [
+    1255,
+    824
+   ],
+   "mcp": {
+    "pitch_px": 11.306306306306306,
+    "contrast": 55.0567240385098,
+    "angle_deg": 0.0,
+    "strong": [
+     [
+      11.306,
+      55.1
+     ],
+     [
+      5.679,
+      126.6
+     ],
+     [
+      4.0,
+      137.8
+     ]
+    ],
+    "candidates": [
+     [
+      4.0,
+      137.8
+     ],
+     [
+      5.679,
+      126.6
+     ],
+     [
+      5.679,
+      90.1
+     ],
+     [
+      11.306,
+      55.1
+     ],
+     [
+      11.306,
+      32.9
+     ],
+     [
+      11.306,
+      23.8
+     ],
+     [
+      11.306,
+      22.2
+     ],
+     [
+      22.411,
+      6.4
+     ],
+     [
+      22.411,
+      6.2
+     ]
+    ]
+   },
+   "lines": {
+    "cell": {
+     "probe_px": 4.0,
+     "pitch_px": 4.0,
+     "contrast": 35.0,
+     "angle_deg": 0.18
+    },
+    "cell_tight": {
+     "probe_px": 4.0,
+     "pitch_px": 4.0,
+     "contrast": 34.6,
+     "angle_deg": 0.18
+    },
+    "comb11": {
+     "probe_px": 11.36,
+     "pitch_px": 11.3063,
+     "contrast": 21.6,
+     "angle_deg": 0.0
+    },
+    "165lpi": {
+     "probe_px": 7.273,
+     "pitch_px": 7.4702,
+     "contrast": 6.0,
+     "angle_deg": 0.0
+    },
+    "224lpi": {
+     "probe_px": 5.357,
+     "pitch_px": 5.6787,
+     "contrast": 20.4,
+     "angle_deg": 0.0
+    },
+    "306lpi": {
+     "probe_px": 3.922,
+     "pitch_px": 4.0,
+     "contrast": 36.7,
+     "angle_deg": 0.18
+    }
+   },
+   "lock": {
+    "pitch_v_px": 4.002,
+    "pitch_u_px": 4.009788480710279,
+    "angle_deg": 0.0,
+    "quality_mean": 0.05622076047586609,
+    "quality_p10": 0.02833856859454274,
+    "quality_p50": 0.05663361411003981
+   },
+   "coherence": {
+    "v48": 0.108,
+    "u48": 0.854,
+    "v96": 0.246,
+    "u96": 0.739
+   },
+   "seconds": 1.3,
+   "tile": "T42/B1",
+   "class": "B1",
+   "cell_dots": 2,
+   "expected_pitch_v_px": 4.0146,
+   "expected_pitch_u_px": 4.0011
+  },
+  {
+   "shape": [
+    1256,
+    825
+   ],
+   "mcp": {
+    "pitch_px": 11.315315315315313,
+    "contrast": 52.69113724240403,
+    "angle_deg": 0.0,
+    "strong": [
+     [
+      11.315,
+      52.7
+     ],
+     [
+      4.005,
+      180.5
+     ]
+    ],
+    "candidates": [
+     [
+      3.985,
+      103.0
+     ],
+     [
+      4.005,
+      180.5
+     ],
+     [
+      4.005,
+      130.4
+     ],
+     [
+      11.315,
+      52.7
+     ],
+     [
+      11.315,
+      32.0
+     ],
+     [
+      11.315,
+      23.1
+     ],
+     [
+      11.315,
+      21.7
+     ],
+     [
+      22.429,
+      5.2
+     ],
+     [
+      22.429,
+      5.1
+     ]
+    ]
+   },
+   "lines": {
+    "cell": {
+     "probe_px": 4.0,
+     "pitch_px": 4.0048,
+     "contrast": 55.4,
+     "angle_deg": 0.18
+    },
+    "cell_tight": {
+     "probe_px": 4.0,
+     "pitch_px": 4.0048,
+     "contrast": 54.0,
+     "angle_deg": 0.18
+    },
+    "comb11": {
+     "probe_px": 11.36,
+     "pitch_px": 11.3153,
+     "contrast": 22.5,
+     "angle_deg": 0.0
+    },
+    "165lpi": {
+     "probe_px": 7.273,
+     "pitch_px": 7.096,
+     "contrast": 5.4,
+     "angle_deg": 0.0
+    },
+    "224lpi": {
+     "probe_px": 5.357,
+     "pitch_px": 5.6833,
+     "contrast": 20.8,
+     "angle_deg": 0.0
+    },
+    "306lpi": {
+     "probe_px": 3.922,
+     "pitch_px": 4.0048,
+     "contrast": 57.9,
+     "angle_deg": 0.18
+    }
+   },
+   "lock": {
+    "pitch_v_px": 3.977053227998699,
+    "pitch_u_px": 4.01678453971187,
+    "angle_deg": 0.1826914611962323,
+    "quality_mean": 0.06090033144719473,
+    "quality_p10": 0.029722437058638727,
+    "quality_p50": 0.06332665981812241
+   },
+   "coherence": {
+    "v48": 0.499,
+    "u48": 0.817,
+    "v96": 0.509,
+    "u96": 0.597
+   },
+   "seconds": 1.2,
+   "tile": "T47/B1",
+   "class": "B1",
+   "cell_dots": 2,
+   "expected_pitch_v_px": 4.0146,
+   "expected_pitch_u_px": 4.0011
+  },
+  {
+   "shape": [
+    1256,
+    825
+   ],
+   "mcp": {
+    "pitch_px": 11.315315315315313,
+    "contrast": 52.06183489948915,
+    "angle_deg": 0.0,
+    "strong": [
+     [
+      11.315,
+      52.1
+     ],
+     [
+      5.683,
+      174.6
+     ],
+     [
+      3.985,
+      108.0
+     ]
+    ],
+    "candidates": [
+     [
+      3.985,
+      108.0
+     ],
+     [
+      5.683,
+      174.6
+     ],
+     [
+      5.683,
+      123.2
+     ],
+     [
+      11.315,
+      52.1
+     ],
+     [
+      11.315,
+      31.3
+     ],
+     [
+      11.315,
+      22.3
+     ],
+     [
+      11.315,
+      21.4
+     ],
+     [
+      22.836,
+      7.1
+     ],
+     [
+      22.836,
+      7.1
+     ]
+    ]
+   },
+   "lines": {
+    "cell": {
+     "probe_px": 4.0,
+     "pitch_px": 4.0048,
+     "contrast": 47.8,
+     "angle_deg": 0.18
+    },
+    "cell_tight": {
+     "probe_px": 4.0,
+     "pitch_px": 4.0048,
+     "contrast": 47.2,
+     "angle_deg": 0.18
+    },
+    "comb11": {
+     "probe_px": 11.36,
+     "pitch_px": 11.3153,
+     "contrast": 20.2,
+     "angle_deg": 0.0
+    },
+    "165lpi": {
+     "probe_px": 7.273,
+     "pitch_px": 6.8261,
+     "contrast": 6.4,
+     "angle_deg": 0.0
+    },
+    "224lpi": {
+     "probe_px": 5.357,
+     "pitch_px": 5.6833,
+     "contrast": 28.6,
+     "angle_deg": 0.0
+    },
+    "306lpi": {
+     "probe_px": 3.922,
+     "pitch_px": 4.0048,
+     "contrast": 50.3,
+     "angle_deg": 0.18
+    }
+   },
+   "lock": {
+    "pitch_v_px": 4.004,
+    "pitch_u_px": 4.010785832872923,
+    "angle_deg": 0.0,
+    "quality_mean": 0.05875565713366388,
+    "quality_p10": 0.023053162940706612,
+    "quality_p50": 0.061866312580197785
+   },
+   "coherence": {
+    "v48": 0.081,
+    "u48": 0.848,
+    "v96": 0.116,
+    "u96": 0.692
+   },
+   "seconds": 1.3,
+   "tile": "T53/B1",
+   "class": "B1",
+   "cell_dots": 2,
+   "expected_pitch_v_px": 4.0146,
+   "expected_pitch_u_px": 4.0011
+  },
+  {
+   "shape": [
+    1255,
+    825
+   ],
+   "mcp": {
+    "pitch_px": 11.306306306306306,
+    "contrast": 50.86112126434412,
+    "angle_deg": 0.0,
+    "strong": [
+     [
+      11.306,
+      50.9
+     ],
+     [
+      5.679,
+      164.3
+     ],
+     [
+      3.986,
+      123.5
+     ]
+    ],
+    "candidates": [
+     [
+      3.986,
+      123.5
+     ],
+     [
+      5.679,
+      164.3
+     ],
+     [
+      5.679,
+      116.7
+     ],
+     [
+      11.306,
+      50.9
+     ],
+     [
+      11.306,
+      30.7
+     ],
+     [
+      11.306,
+      22.5
+     ],
+     [
+      11.306,
+      21.5
+     ],
+     [
+      22.818,
+      7.9
+     ],
+     [
+      22.818,
+      7.8
+     ]
+    ]
+   },
+   "lines": {
+    "cell": {
+     "probe_px": 4.0,
+     "pitch_px": 4.0049,
+     "contrast": 45.7,
+     "angle_deg": 0.0
+    },
+    "cell_tight": {
+     "probe_px": 4.0,
+     "pitch_px": 4.0049,
+     "contrast": 45.2,
+     "angle_deg": 0.0
+    },
+    "comb11": {
+     "probe_px": 11.36,
+     "pitch_px": 11.3063,
+     "contrast": 20.9,
+     "angle_deg": 0.0
+    },
+    "165lpi": {
+     "probe_px": 7.273,
+     "pitch_px": 6.8207,
+     "contrast": 5.7,
+     "angle_deg": 0.0
+    },
+    "224lpi": {
+     "probe_px": 5.357,
+     "pitch_px": 5.6787,
+     "contrast": 27.1,
+     "angle_deg": 0.0
+    },
+    "306lpi": {
+     "probe_px": 3.922,
+     "pitch_px": 4.0049,
+     "contrast": 48.2,
+     "angle_deg": 0.0
+    }
+   },
+   "lock": {
+    "pitch_v_px": 4.036,
+    "pitch_u_px": 4.004637306334449,
+    "angle_deg": 0.0,
+    "quality_mean": 0.06067601404234276,
+    "quality_p10": 0.02823213811608403,
+    "quality_p50": 0.06185704557450679
+   },
+   "coherence": {
+    "v48": 0.202,
+    "u48": 0.841,
+    "v96": 0.485,
+    "u96": 0.664
+   },
+   "seconds": 1.3,
+   "tile": "T55/B1",
+   "class": "B1",
+   "cell_dots": 2,
+   "expected_pitch_v_px": 4.0146,
+   "expected_pitch_u_px": 4.0011
+  },
+  {
+   "shape": [
+    1255,
+    824
+   ],
+   "mcp": {
+    "pitch_px": 11.306306306306306,
+    "contrast": 62.26904016067778,
+    "angle_deg": 0.0,
+    "strong": [
+     [
+      11.306,
+      62.3
+     ],
+     [
+      5.679,
+      151.7
+     ],
+     [
+      4.0,
+      127.9
+     ]
+    ],
+    "candidates": [
+     [
+      4.0,
+      127.9
+     ],
+     [
+      5.679,
+      151.7
+     ],
+     [
+      5.679,
+      109.2
+     ],
+     [
+      11.306,
+      62.3
+     ],
+     [
+      11.306,
+      37.7
+     ],
+     [
+      11.306,
+      26.9
+     ],
+     [
+      11.306,
+      25.1
+     ],
+     [
+      22.818,
+      6.9
+     ],
+     [
+      22.818,
+      6.9
+     ]
+    ]
+   },
+   "lines": {
+    "cell": {
+     "probe_px": 4.0,
+     "pitch_px": 4.0,
+     "contrast": 35.2,
+     "angle_deg": 0.0
+    },
+    "cell_tight": {
+     "probe_px": 4.0,
+     "pitch_px": 4.0,
+     "contrast": 34.5,
+     "angle_deg": 0.0
+    },
+    "comb11": {
+     "probe_px": 11.36,
+     "pitch_px": 11.3063,
+     "contrast": 25.1,
+     "angle_deg": 0.0
+    },
+    "165lpi": {
+     "probe_px": 7.273,
+     "pitch_px": 7.4702,
+     "contrast": 4.5,
+     "angle_deg": 0.0
+    },
+    "224lpi": {
+     "probe_px": 5.357,
+     "pitch_px": 5.6787,
+     "contrast": 25.6,
+     "angle_deg": 0.0
+    },
+    "306lpi": {
+     "probe_px": 3.922,
+     "pitch_px": 4.0,
+     "contrast": 36.8,
+     "angle_deg": 0.0
+    }
+   },
+   "lock": {
+    "pitch_v_px": 4.002,
+    "pitch_u_px": 4.007302546187204,
+    "angle_deg": 0.0,
+    "quality_mean": 0.05745377531790049,
+    "quality_p10": 0.028055352063360323,
+    "quality_p50": 0.058685864595589166
+   },
+   "coherence": {
+    "v48": 0.225,
+    "u48": 0.865,
+    "v96": 0.218,
+    "u96": 0.752
+   },
+   "seconds": 1.4,
+   "tile": "T62/B1",
+   "class": "B1",
+   "cell_dots": 2,
+   "expected_pitch_v_px": 4.0146,
+   "expected_pitch_u_px": 4.0011
+  },
+  {
+   "shape": [
+    1256,
+    825
+   ],
+   "mcp": {
+    "pitch_px": 11.315315315315313,
+    "contrast": 56.87894550242217,
+    "angle_deg": 0.0,
+    "strong": [
+     [
+      11.315,
+      56.9
+     ],
+     [
+      4.005,
+      174.3
+     ]
+    ],
+    "candidates": [
+     [
+      3.985,
+      104.1
+     ],
+     [
+      4.005,
+      174.3
+     ],
+     [
+      4.005,
+      125.2
+     ],
+     [
+      11.315,
+      56.9
+     ],
+     [
+      11.315,
+      35.1
+     ],
+     [
+      11.315,
+      25.8
+     ],
+     [
+      11.315,
+      24.2
+     ],
+     [
+      15.317,
+      5.5
+     ],
+     [
+      22.836,
+      5.2
+     ]
+    ]
+   },
+   "lines": {
+    "cell": {
+     "probe_px": 4.0,
+     "pitch_px": 4.0048,
+     "contrast": 54.3,
+     "angle_deg": 0.18
+    },
+    "cell_tight": {
+     "probe_px": 4.0,
+     "pitch_px": 4.0048,
+     "contrast": 53.1,
+     "angle_deg": 0.18
+    },
+    "comb11": {
+     "probe_px": 11.36,
+     "pitch_px": 11.3153,
+     "contrast": 24.9,
+     "angle_deg": 0.0
+    },
+    "165lpi": {
+     "probe_px": 7.273,
+     "pitch_px": 6.9392,
+     "contrast": 4.1,
+     "angle_deg": 0.0
+    },
+    "224lpi": {
+     "probe_px": 5.357,
+     "pitch_px": 5.6833,
+     "contrast": 24.7,
+     "angle_deg": 0.0
+    },
+    "306lpi": {
+     "probe_px": 3.922,
+     "pitch_px": 4.0048,
+     "contrast": 56.9,
+     "angle_deg": 0.18
+    }
+   },
+   "lock": {
+    "pitch_v_px": 4.000707931775043,
+    "pitch_u_px": 4.007295220673188,
+    "angle_deg": 0.1826914611962323,
+    "quality_mean": 0.060216213813452345,
+    "quality_p10": 0.024534629498421542,
+    "quality_p50": 0.06284728369571538
+   },
+   "coherence": {
+    "v48": 0.514,
+    "u48": 0.816,
+    "v96": 0.518,
+    "u96": 0.67
+   },
+   "seconds": 1.3,
+   "tile": "T67/B1",
+   "class": "B1",
+   "cell_dots": 2,
+   "expected_pitch_v_px": 4.0146,
+   "expected_pitch_u_px": 4.0011
+  },
+  {
+   "shape": [
+    1255,
+    824
+   ],
+   "mcp": {
+    "pitch_px": 11.306306306306306,
+    "contrast": 61.31006696255611,
+    "angle_deg": 0.0,
+    "strong": [
+     [
+      11.306,
+      61.3
+     ],
+     [
+      5.679,
+      163.1
+     ],
+     [
+      4.0,
+      161.1
+     ]
+    ],
+    "candidates": [
+     [
+      4.0,
+      161.1
+     ],
+     [
+      5.679,
+      163.1
+     ],
+     [
+      5.679,
+      116.5
+     ],
+     [
+      11.306,
+      61.3
+     ],
+     [
+      11.306,
+      37.5
+     ],
+     [
+      11.306,
+      26.8
+     ],
+     [
+      11.306,
+      24.7
+     ],
+     [
+      33.919,
+      6.0
+     ],
+     [
+      33.919,
+      5.5
+     ]
+    ]
+   },
+   "lines": {
+    "cell": {
+     "probe_px": 4.0,
+     "pitch_px": 4.0,
+     "contrast": 43.3,
+     "angle_deg": 0.0
+    },
+    "cell_tight": {
+     "probe_px": 4.0,
+     "pitch_px": 4.0,
+     "contrast": 42.5,
+     "angle_deg": 0.0
+    },
+    "comb11": {
+     "probe_px": 11.36,
+     "pitch_px": 11.3063,
+     "contrast": 23.2,
+     "angle_deg": 0.0
+    },
+    "165lpi": {
+     "probe_px": 7.273,
+     "pitch_px": 7.7469,
+     "contrast": 6.4,
+     "angle_deg": 0.0
+    },
+    "224lpi": {
+     "probe_px": 5.357,
+     "pitch_px": 5.6787,
+     "contrast": 28.3,
+     "angle_deg": 0.0
+    },
+    "306lpi": {
+     "probe_px": 3.922,
+     "pitch_px": 4.0,
+     "contrast": 45.4,
+     "angle_deg": 0.0
+    }
+   },
+   "lock": {
+    "pitch_v_px": 4.0120000000000005,
+    "pitch_u_px": 4.008149715771507,
+    "angle_deg": 0.0,
+    "quality_mean": 0.05653139090570735,
+    "quality_p10": 0.02765965797346579,
+    "quality_p50": 0.058972258149145446
+   },
+   "coherence": {
+    "v48": 0.255,
+    "u48": 0.975,
+    "v96": 0.111,
+    "u96": 0.945
+   },
+   "seconds": 1.3,
+   "tile": "T70/B1",
+   "class": "B1",
+   "cell_dots": 2,
+   "expected_pitch_v_px": 4.0146,
+   "expected_pitch_u_px": 4.0011
+  },
+  {
+   "shape": [
+    1256,
+    824
+   ],
+   "mcp": {
+    "pitch_px": 11.315315315315313,
+    "contrast": 63.033617671384384,
+    "angle_deg": 0.0,
+    "strong": [
+     [
+      11.315,
+      63.0
+     ],
+     [
+      5.683,
+      147.7
+     ],
+     [
+      4.0,
+      109.4
+     ]
+    ],
+    "candidates": [
+     [
+      4.0,
+      109.4
+     ],
+     [
+      5.683,
+      147.7
+     ],
+     [
+      5.683,
+      106.8
+     ],
+     [
+      11.315,
+      63.0
+     ],
+     [
+      11.315,
+      38.6
+     ],
+     [
+      11.315,
+      28.3
+     ],
+     [
+      11.315,
+      27.0
+     ],
+     [
+      22.836,
+      7.6
+     ],
+     [
+      22.836,
+      7.4
+     ]
+    ]
+   },
+   "lines": {
+    "cell": {
+     "probe_px": 4.0,
+     "pitch_px": 4.0,
+     "contrast": 39.4,
+     "angle_deg": 0.0
+    },
+    "cell_tight": {
+     "probe_px": 4.0,
+     "pitch_px": 4.0,
+     "contrast": 39.1,
+     "angle_deg": 0.0
+    },
+    "comb11": {
+     "probe_px": 11.36,
+     "pitch_px": 11.3153,
+     "contrast": 26.8,
+     "angle_deg": 0.0
+    },
+    "165lpi": {
+     "probe_px": 7.273,
+     "pitch_px": 7.7531,
+     "contrast": 5.6,
+     "angle_deg": 0.0
+    },
+    "224lpi": {
+     "probe_px": 5.357,
+     "pitch_px": 5.6833,
+     "contrast": 25.9,
+     "angle_deg": 0.0
+    },
+    "306lpi": {
+     "probe_px": 3.922,
+     "pitch_px": 4.0,
+     "contrast": 41.4,
+     "angle_deg": 0.0
+    }
+   },
+   "lock": {
+    "pitch_v_px": 4.0120000000000005,
+    "pitch_u_px": 4.009847405808075,
+    "angle_deg": 0.0,
+    "quality_mean": 0.0576427861251439,
+    "quality_p10": 0.0235804137341533,
+    "quality_p50": 0.059165036083482114
+   },
+   "coherence": {
+    "v48": 0.083,
+    "u48": 0.835,
+    "v96": 0.244,
+    "u96": 0.647
+   },
+   "seconds": 1.3,
+   "tile": "T76/B1",
+   "class": "B1",
+   "cell_dots": 2,
+   "expected_pitch_v_px": 4.0146,
+   "expected_pitch_u_px": 4.0011
+  }
+ ],
+ "registration_rms_px": null,
+ "case": "e004-home",
+ "elapsed_s": 46.0
+}

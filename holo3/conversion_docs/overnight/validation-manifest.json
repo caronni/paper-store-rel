@@ -1,0 +1,52 @@
+{
+ "steps": [
+  {
+   "id": "e029-postfix",
+   "argv": [
+    "<checkout>/env314t/bin/python",
+    "-m",
+    "holo3",
+    "decode",
+    "scratch/e028/hp-canon-c2-ink-counting.tiff",
+    "--dpi",
+    "4800",
+    "--format",
+    "L:c2-r0700@3392x2368",
+    "--out",
+    "_distill/verify/overnight/e029-postfix.bin",
+    "--workers",
+    "8",
+    "--complete",
+    "--run-dir",
+    "_distill/verify/overnight/e029-postfix-run"
+   ],
+   "payload_sha256": "e5021f8d099587c38c95185d51e82ab7cab29db0dfe68e502f1ab9dd165787af",
+   "out": "_distill/verify/overnight/e029-postfix.bin",
+   "free_gib": 20.0
+  },
+  {
+   "id": "xerox-k-postfix",
+   "argv": [
+    "<checkout>/env314t/bin/python",
+    "-m",
+    "holo3",
+    "decode",
+    "scratch/in/xerox-canon-c2-bw.tiff",
+    "--dpi",
+    "4800",
+    "--format",
+    "L:c2-r0700@3392x2368",
+    "--out",
+    "_distill/verify/overnight/xerox-k-postfix.bin",
+    "--workers",
+    "8",
+    "--complete",
+    "--run-dir",
+    "_distill/verify/overnight/xerox-k-postfix-run"
+   ],
+   "payload_sha256": "e5021f8d099587c38c95185d51e82ab7cab29db0dfe68e502f1ab9dd165787af",
+   "out": "_distill/verify/overnight/xerox-k-postfix.bin",
+   "free_gib": 20.0
+  }
+ ]
+}

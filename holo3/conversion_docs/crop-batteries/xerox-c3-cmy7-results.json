@@ -1,0 +1,3927 @@
+{
+ "volume": "xerox-c3-cmy7",
+ "label": "xerox c3-cmy7",
+ "colour": true,
+ "manifest": "<checkout>/scratch/crop-parity/xerox-c3-cmy7/cases.json",
+ "format_ref": "L:c3-cmy7-p120-v0@2240x1536",
+ "classes": [
+  "miss",
+  "gain"
+ ],
+ "gap_counts": {
+  "holo1": 720,
+  "holo3": 815,
+  "both": 720,
+  "miss": 0,
+  "gain": 95,
+  "neither": 25,
+  "holo3_run": "post-3",
+  "events": {
+   "tile_outcome_rows": 6534,
+   "results": {
+    "below_attempt_floor": 312,
+    "certified": 815,
+    "attempted_failed": 5407
+   }
+  }
+ },
+ "generated_at": "2026-08-30 15:51:09",
+ "harness": {
+  "argv": "--volume xerox-c3-cmy7 --workers 8",
+  "worktree_head": "d8749c48b9c0634930293681b77a84f6b5bdd427",
+  "holo3_tree": "a6f43747064ef0ac366e7158709064806dc09dd1",
+  "holo1_tree": "3537128d0084772885a8c7857996c1dfb480aaf0"
+ },
+ "gt": {
+  "payload_sha256": "4f68dbf932324aa85c1af576b9724504eb5dff85039a66a062ff9c9adc4e50c2",
+  "validated_certificates": 720,
+  "rule": "every certificate in the archived holo1 state matches the re-encoded golden payload exactly"
+ },
+ "cases": [
+  {
+   "case_id": "xerox-c3-cmy7-c01",
+   "cell_bbox": [
+    336,
+    0,
+    880,
+    496
+   ],
+   "runs": {
+    "holo1": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "env/bin/python confetti.py decode <checkout>/scratch/crop-parity/xerox-c3-cmy7/xerox-c3-cmy7-c01-0.tiff --scan-dpi 2400.0 --format L:c3-cmy7-p120-v0@2240x1536 --state <checkout>/scratch/crop-parity/xerox-c3-cmy7/runs/xerox-c3-cmy7-c01/holo1.state -o <checkout>/scratch/crop-parity/xerox-c3-cmy7/runs/xerox-c3-cmy7-c01/holo1.out --no-close --complete --mopup --refine --workers 8",
+      "cwd": "<repo>",
+      "crop_sha256": "bd4faf0631ab9a605ac526476425d4ffa15dda209f33c97507bec84f73ff6867",
+      "receiver_tree": "3537128d0084772885a8c7857996c1dfb480aaf0",
+      "receiver_dirty_sha": "",
+      "repo_head": "ed8b352efc574a70938baf47cf6dc167d36d71d8",
+      "wall_seconds": 205.76947379099875,
+      "exit": 2,
+      "summary": [
+       "capture 233def630beb7898056640c94c2c716589b3743162655da5cb433c31f01a9054: complete; committed",
+       "state: <checkout>/scratch/crop-parity/xerox-c3-cmy7/runs/xerox-c3-cmy7-c01/holo1.state  sha256 f582a9395776e62c5da7c647361221b0c5a5702f627615d2d31542e787e05b93",
+       "NOTE: mop-up supersession dropped 651 re-observation(s) at committed cells; winner flips 279 (42.9%) (two-view consistency canary \u2014 a high flip rate suggests a misplaced mop-up window or physical damage; committed evidence unchanged)",
+       "close skipped (--no-close): 72 certificates accumulated; no closing record was read, attempted, or written. Close with a plain or --complete run.",
+       "src/holo/cli.py:636: ProvisionalReceiverWarning: HOLO TRACK-3 RECEIVER IS PROVISIONAL: historical E021-E023c stand-in constants are active; production qualification is still required. Outstanding: the v1 physical/null false-accept gate, channel-BER envelope, and support safety margin still require frozen qualification; the 0.176 complete-domain rival refusal was diagnosed as a parity-concentrated cross-page alias and the v0.30 whole-word rival gate restores the d=27 floor (synthetically verified); real-capture full-domain yield and resource profile remain unqualified",
+       "  res = run_receive("
+      ],
+      "ran_at": "2026-08-30 14:49:38"
+     }
+    },
+    "holo3": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "<checkout>/env314t/bin/python -m measure.crop_parity._h3run --certs-out <checkout>/scratch/crop-parity/xerox-c3-cmy7/runs/xerox-c3-cmy7-c01/holo3-certs.json -- decode <checkout>/scratch/crop-parity/xerox-c3-cmy7/xerox-c3-cmy7-c01-0.tiff --dpi 2400.0 --format L:c3-cmy7-p120-v0@2240x1536 --no-close --workers 8 --run-dir <checkout>/scratch/crop-parity/xerox-c3-cmy7/runs/xerox-c3-cmy7-c01/holo3-run --out <checkout>/scratch/crop-parity/xerox-c3-cmy7/runs/xerox-c3-cmy7-c01/holo3.out",
+      "cwd": "<checkout>",
+      "crop_sha256": "bd4faf0631ab9a605ac526476425d4ffa15dda209f33c97507bec84f73ff6867",
+      "receiver_tree": "a6f43747064ef0ac366e7158709064806dc09dd1",
+      "receiver_dirty_sha": "",
+      "repo_head": "d8749c48b9c0634930293681b77a84f6b5bdd427",
+      "wall_seconds": 49.79788595900027,
+      "exit": 0,
+      "summary": [
+       "_h3run: open, 72 certificates in 49.1 s"
+      ],
+      "ran_at": "2026-08-30 14:53:04"
+     }
+    }
+   },
+   "n_certificates": {
+    "holo1": 72,
+    "holo3": 72
+   },
+   "bits_available": {
+    "holo1": true,
+    "holo3": true
+   },
+   "targets": [
+    {
+     "address": [
+      0,
+      0,
+      9,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      3,
+      9,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    }
+   ],
+   "controls": {
+    "holo1": {
+     "n": 41,
+     "reproduced": 41,
+     "flipped": 0,
+     "flipped_addresses": [],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 0,
+       "n": 17
+      },
+      "64-127": {
+       "flipped": 0,
+       "n": 16
+      },
+      "128-191": {
+       "flipped": 0,
+       "n": 8
+      }
+     }
+    },
+    "holo3": {
+     "n": 41,
+     "reproduced": 41,
+     "flipped": 0,
+     "flipped_addresses": [],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 0,
+       "n": 17
+      },
+      "64-127": {
+       "flipped": 0,
+       "n": 16
+      },
+      "128-191": {
+       "flipped": 0,
+       "n": 8
+      }
+     }
+    }
+   },
+   "wrong_certificates": [],
+   "out_of_bbox": [],
+   "checked_certificates": {
+    "holo1": 72,
+    "holo3": 72
+   },
+   "crops": [
+    "<checkout>/scratch/crop-parity/xerox-c3-cmy7/xerox-c3-cmy7-c01-0.tiff"
+   ],
+   "crop_sha256": "bd4faf0631ab9a605ac526476425d4ffa15dda209f33c97507bec84f73ff6867"
+  },
+  {
+   "case_id": "xerox-c3-cmy7-c02",
+   "cell_bbox": [
+    1040,
+    0,
+    1536,
+    1008
+   ],
+   "runs": {
+    "holo1": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "env/bin/python confetti.py decode <checkout>/scratch/crop-parity/xerox-c3-cmy7/xerox-c3-cmy7-c02-0.tiff --scan-dpi 2400.0 --format L:c3-cmy7-p120-v0@2240x1536 --state <checkout>/scratch/crop-parity/xerox-c3-cmy7/runs/xerox-c3-cmy7-c02/holo1.state -o <checkout>/scratch/crop-parity/xerox-c3-cmy7/runs/xerox-c3-cmy7-c02/holo1.out --no-close --complete --mopup --refine --workers 8",
+      "cwd": "<repo>",
+      "crop_sha256": "37ff80a02aaf891a9a1db7db303b67e14061c01f69ff744b6b65a7df06331fce",
+      "receiver_tree": "3537128d0084772885a8c7857996c1dfb480aaf0",
+      "receiver_dirty_sha": "",
+      "repo_head": "ed8b352efc574a70938baf47cf6dc167d36d71d8",
+      "wall_seconds": 698.0700995000007,
+      "exit": 2,
+      "summary": [
+       "capture 9402152f1d7871d36526fafe7edf04c6d5559fa8b66674166d20dc97b2c9a0dc: complete; committed",
+       "state: <checkout>/scratch/crop-parity/xerox-c3-cmy7/runs/xerox-c3-cmy7-c02/holo1.state  sha256 d9396e8f001bc96332554ac71f841add58ab3e009a73d47d8fa9fe76aa0e6e0d",
+       "NOTE: mop-up supersession dropped 47521 re-observation(s) at committed cells; winner flips 15563 (32.7%) (two-view consistency canary \u2014 a high flip rate suggests a misplaced mop-up window or physical damage; committed evidence unchanged)",
+       "close skipped (--no-close): 110 certificates accumulated; no closing record was read, attempted, or written. Close with a plain or --complete run.",
+       "src/holo/cli.py:636: ProvisionalReceiverWarning: HOLO TRACK-3 RECEIVER IS PROVISIONAL: historical E021-E023c stand-in constants are active; production qualification is still required. Outstanding: the v1 physical/null false-accept gate, channel-BER envelope, and support safety margin still require frozen qualification; the 0.176 complete-domain rival refusal was diagnosed as a parity-concentrated cross-page alias and the v0.30 whole-word rival gate restores the d=27 floor (synthetically verified); real-capture full-domain yield and resource profile remain unqualified",
+       "  res = run_receive("
+      ],
+      "ran_at": "2026-08-30 14:53:54"
+     }
+    },
+    "holo3": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "<checkout>/env314t/bin/python -m measure.crop_parity._h3run --certs-out <checkout>/scratch/crop-parity/xerox-c3-cmy7/runs/xerox-c3-cmy7-c02/holo3-certs.json -- decode <checkout>/scratch/crop-parity/xerox-c3-cmy7/xerox-c3-cmy7-c02-0.tiff --dpi 2400.0 --format L:c3-cmy7-p120-v0@2240x1536 --no-close --workers 8 --run-dir <checkout>/scratch/crop-parity/xerox-c3-cmy7/runs/xerox-c3-cmy7-c02/holo3-run --out <checkout>/scratch/crop-parity/xerox-c3-cmy7/runs/xerox-c3-cmy7-c02/holo3.out",
+      "cwd": "<checkout>",
+      "crop_sha256": "37ff80a02aaf891a9a1db7db303b67e14061c01f69ff744b6b65a7df06331fce",
+      "receiver_tree": "a6f43747064ef0ac366e7158709064806dc09dd1",
+      "receiver_dirty_sha": "",
+      "repo_head": "d8749c48b9c0634930293681b77a84f6b5bdd427",
+      "wall_seconds": 126.16411995799717,
+      "exit": 0,
+      "summary": [
+       "_h3run: open, 112 certificates in 125.4 s"
+      ],
+      "ran_at": "2026-08-30 15:05:32"
+     }
+    }
+   },
+   "n_certificates": {
+    "holo1": 110,
+    "holo3": 112
+   },
+   "bits_available": {
+    "holo1": true,
+    "holo3": true
+   },
+   "targets": [
+    {
+     "address": [
+      0,
+      0,
+      20,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      0,
+      21,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      0,
+      22,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": false
+      },
+      "holo3": {
+       "available": true,
+       "certified": false
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": true,
+      "holo3": false
+     }
+    },
+    {
+     "address": [
+      0,
+      1,
+      22,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": false
+      },
+      "holo3": {
+       "available": true,
+       "certified": false
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": true,
+      "holo3": false
+     }
+    },
+    {
+     "address": [
+      0,
+      3,
+      20,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      3,
+      21,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      4,
+      21,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      5,
+      21,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      5,
+      23,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      6,
+      21,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      7,
+      20,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      7,
+      22,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      8,
+      20,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      8,
+      22,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      9,
+      21,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      9,
+      22,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      10,
+      21,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": false
+      },
+      "holo3": {
+       "available": true,
+       "certified": false
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": true,
+      "holo3": false
+     }
+    },
+    {
+     "address": [
+      0,
+      10,
+      23,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": false
+      },
+      "holo3": {
+       "available": true,
+       "certified": false
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": true,
+      "holo3": false
+     }
+    },
+    {
+     "address": [
+      0,
+      11,
+      20,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      11,
+      21,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    }
+   ],
+   "controls": {
+    "holo1": {
+     "n": 54,
+     "reproduced": 54,
+     "flipped": 0,
+     "flipped_addresses": [],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 0,
+       "n": 17
+      },
+      "64-127": {
+       "flipped": 0,
+       "n": 19
+      },
+      "128-191": {
+       "flipped": 0,
+       "n": 13
+      },
+      "192-255": {
+       "flipped": 0,
+       "n": 5
+      }
+     }
+    },
+    "holo3": {
+     "n": 54,
+     "reproduced": 54,
+     "flipped": 0,
+     "flipped_addresses": [],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 0,
+       "n": 17
+      },
+      "64-127": {
+       "flipped": 0,
+       "n": 19
+      },
+      "128-191": {
+       "flipped": 0,
+       "n": 13
+      },
+      "192-255": {
+       "flipped": 0,
+       "n": 5
+      }
+     }
+    }
+   },
+   "wrong_certificates": [],
+   "out_of_bbox": [],
+   "checked_certificates": {
+    "holo1": 110,
+    "holo3": 112
+   },
+   "crops": [
+    "<checkout>/scratch/crop-parity/xerox-c3-cmy7/xerox-c3-cmy7-c02-0.tiff"
+   ],
+   "crop_sha256": "37ff80a02aaf891a9a1db7db303b67e14061c01f69ff744b6b65a7df06331fce"
+  },
+  {
+   "case_id": "xerox-c3-cmy7-c03",
+   "cell_bbox": [
+    0,
+    0,
+    304,
+    1008
+   ],
+   "runs": {
+    "holo1": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "env/bin/python confetti.py decode <checkout>/scratch/crop-parity/xerox-c3-cmy7/xerox-c3-cmy7-c03-0.tiff --scan-dpi 2400.0 --format L:c3-cmy7-p120-v0@2240x1536 --state <checkout>/scratch/crop-parity/xerox-c3-cmy7/runs/xerox-c3-cmy7-c03/holo1.state -o <checkout>/scratch/crop-parity/xerox-c3-cmy7/runs/xerox-c3-cmy7-c03/holo1.out --no-close --complete --mopup --refine --workers 8",
+      "cwd": "<repo>",
+      "crop_sha256": "d33859731a445a70c8069cf3ee2b84ca39cef66681eeb1e88a491a013f259298",
+      "receiver_tree": "3537128d0084772885a8c7857996c1dfb480aaf0",
+      "receiver_dirty_sha": "",
+      "repo_head": "ed8b352efc574a70938baf47cf6dc167d36d71d8",
+      "wall_seconds": 194.2458933339949,
+      "exit": 2,
+      "summary": [
+       "capture a608f13814bd52732b23d6bb8a85961c2747f5df8577895ab923a42036fe6426: complete; committed",
+       "state: <checkout>/scratch/crop-parity/xerox-c3-cmy7/runs/xerox-c3-cmy7-c03/holo1.state  sha256 c55455707701b10fffc148c0b4ccdf4e4b6ac1390a455bdc5f8377d9b2f7e6c3",
+       "close skipped (--no-close): 79 certificates accumulated; no closing record was read, attempted, or written. Close with a plain or --complete run.",
+       "src/holo/cli.py:636: ProvisionalReceiverWarning: HOLO TRACK-3 RECEIVER IS PROVISIONAL: historical E021-E023c stand-in constants are active; production qualification is still required. Outstanding: the v1 physical/null false-accept gate, channel-BER envelope, and support safety margin still require frozen qualification; the 0.176 complete-domain rival refusal was diagnosed as a parity-concentrated cross-page alias and the v0.30 whole-word rival gate restores the d=27 floor (synthetically verified); real-capture full-domain yield and resource profile remain unqualified",
+       "  res = run_receive("
+      ],
+      "ran_at": "2026-08-30 15:07:38"
+     }
+    },
+    "holo3": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "<checkout>/env314t/bin/python -m measure.crop_parity._h3run --certs-out <checkout>/scratch/crop-parity/xerox-c3-cmy7/runs/xerox-c3-cmy7-c03/holo3-certs.json -- decode <checkout>/scratch/crop-parity/xerox-c3-cmy7/xerox-c3-cmy7-c03-0.tiff --dpi 2400.0 --format L:c3-cmy7-p120-v0@2240x1536 --no-close --workers 8 --run-dir <checkout>/scratch/crop-parity/xerox-c3-cmy7/runs/xerox-c3-cmy7-c03/holo3-run --out <checkout>/scratch/crop-parity/xerox-c3-cmy7/runs/xerox-c3-cmy7-c03/holo3.out",
+      "cwd": "<checkout>",
+      "crop_sha256": "d33859731a445a70c8069cf3ee2b84ca39cef66681eeb1e88a491a013f259298",
+      "receiver_tree": "a6f43747064ef0ac366e7158709064806dc09dd1",
+      "receiver_dirty_sha": "",
+      "repo_head": "d8749c48b9c0634930293681b77a84f6b5bdd427",
+      "wall_seconds": 54.54398175000097,
+      "exit": 0,
+      "summary": [
+       "_h3run: open, 78 certificates in 53.8 s"
+      ],
+      "ran_at": "2026-08-30 15:10:53"
+     }
+    }
+   },
+   "n_certificates": {
+    "holo1": 79,
+    "holo3": 78
+   },
+   "bits_available": {
+    "holo1": true,
+    "holo3": true
+   },
+   "targets": [
+    {
+     "address": [
+      0,
+      1,
+      0,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      3,
+      0,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      4,
+      0,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      7,
+      0,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      8,
+      0,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      9,
+      0,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      11,
+      0,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    }
+   ],
+   "controls": {
+    "holo1": {
+     "n": 42,
+     "reproduced": 42,
+     "flipped": 0,
+     "flipped_addresses": [],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 0,
+       "n": 16
+      },
+      "64-127": {
+       "flipped": 0,
+       "n": 26
+      }
+     }
+    },
+    "holo3": {
+     "n": 42,
+     "reproduced": 42,
+     "flipped": 0,
+     "flipped_addresses": [],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 0,
+       "n": 16
+      },
+      "64-127": {
+       "flipped": 0,
+       "n": 26
+      }
+     }
+    }
+   },
+   "wrong_certificates": [],
+   "out_of_bbox": [],
+   "checked_certificates": {
+    "holo1": 79,
+    "holo3": 78
+   },
+   "crops": [
+    "<checkout>/scratch/crop-parity/xerox-c3-cmy7/xerox-c3-cmy7-c03-0.tiff"
+   ],
+   "crop_sha256": "d33859731a445a70c8069cf3ee2b84ca39cef66681eeb1e88a491a013f259298"
+  },
+  {
+   "case_id": "xerox-c3-cmy7-c04",
+   "cell_bbox": [
+    0,
+    528,
+    304,
+    1712
+   ],
+   "runs": {
+    "holo1": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "env/bin/python confetti.py decode <checkout>/scratch/crop-parity/xerox-c3-cmy7/xerox-c3-cmy7-c04-0.tiff --scan-dpi 2400.0 --format L:c3-cmy7-p120-v0@2240x1536 --state <checkout>/scratch/crop-parity/xerox-c3-cmy7/runs/xerox-c3-cmy7-c04/holo1.state -o <checkout>/scratch/crop-parity/xerox-c3-cmy7/runs/xerox-c3-cmy7-c04/holo1.out --no-close --complete --mopup --refine --workers 8",
+      "cwd": "<repo>",
+      "crop_sha256": "14a7d359f5dc9f0585f5f26e3431eb5f16465fdc99a37ca1094d47e6d645d4bd",
+      "receiver_tree": "3537128d0084772885a8c7857996c1dfb480aaf0",
+      "receiver_dirty_sha": "",
+      "repo_head": "ed8b352efc574a70938baf47cf6dc167d36d71d8",
+      "wall_seconds": 197.08249804099614,
+      "exit": 2,
+      "summary": [
+       "capture 2ab8d3e28d376e778775dd1e1936561835216e467c9910e825eb044743954143: complete; committed",
+       "state: <checkout>/scratch/crop-parity/xerox-c3-cmy7/runs/xerox-c3-cmy7-c04/holo1.state  sha256 cfaf4f06c071bfebf1463be565c3fdf196e800cfa9df6bf9797a38522a9f2d61",
+       "close skipped (--no-close): 95 certificates accumulated; no closing record was read, attempted, or written. Close with a plain or --complete run.",
+       "src/holo/cli.py:636: ProvisionalReceiverWarning: HOLO TRACK-3 RECEIVER IS PROVISIONAL: historical E021-E023c stand-in constants are active; production qualification is still required. Outstanding: the v1 physical/null false-accept gate, channel-BER envelope, and support safety margin still require frozen qualification; the 0.176 complete-domain rival refusal was diagnosed as a parity-concentrated cross-page alias and the v0.30 whole-word rival gate restores the d=27 floor (synthetically verified); real-capture full-domain yield and resource profile remain unqualified",
+       "  res = run_receive("
+      ],
+      "ran_at": "2026-08-30 15:11:47"
+     }
+    },
+    "holo3": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "<checkout>/env314t/bin/python -m measure.crop_parity._h3run --certs-out <checkout>/scratch/crop-parity/xerox-c3-cmy7/runs/xerox-c3-cmy7-c04/holo3-certs.json -- decode <checkout>/scratch/crop-parity/xerox-c3-cmy7/xerox-c3-cmy7-c04-0.tiff --dpi 2400.0 --format L:c3-cmy7-p120-v0@2240x1536 --no-close --workers 8 --run-dir <checkout>/scratch/crop-parity/xerox-c3-cmy7/runs/xerox-c3-cmy7-c04/holo3-run --out <checkout>/scratch/crop-parity/xerox-c3-cmy7/runs/xerox-c3-cmy7-c04/holo3.out",
+      "cwd": "<checkout>",
+      "crop_sha256": "14a7d359f5dc9f0585f5f26e3431eb5f16465fdc99a37ca1094d47e6d645d4bd",
+      "receiver_tree": "a6f43747064ef0ac366e7158709064806dc09dd1",
+      "receiver_dirty_sha": "",
+      "repo_head": "d8749c48b9c0634930293681b77a84f6b5bdd427",
+      "wall_seconds": 63.39071954199608,
+      "exit": 0,
+      "summary": [
+       "_h3run: open, 94 certificates in 62.7 s"
+      ],
+      "ran_at": "2026-08-30 15:15:04"
+     }
+    }
+   },
+   "n_certificates": {
+    "holo1": 95,
+    "holo3": 94
+   },
+   "bits_available": {
+    "holo1": true,
+    "holo3": true
+   },
+   "targets": [
+    {
+     "address": [
+      0,
+      12,
+      0,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      14,
+      0,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      16,
+      0,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      17,
+      0,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      18,
+      0,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      19,
+      0,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      22,
+      0,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    }
+   ],
+   "controls": {
+    "holo1": {
+     "n": 51,
+     "reproduced": 51,
+     "flipped": 0,
+     "flipped_addresses": [],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 0,
+       "n": 21
+      },
+      "64-127": {
+       "flipped": 0,
+       "n": 30
+      }
+     }
+    },
+    "holo3": {
+     "n": 51,
+     "reproduced": 51,
+     "flipped": 0,
+     "flipped_addresses": [],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 0,
+       "n": 21
+      },
+      "64-127": {
+       "flipped": 0,
+       "n": 30
+      }
+     }
+    }
+   },
+   "wrong_certificates": [],
+   "out_of_bbox": [],
+   "checked_certificates": {
+    "holo1": 95,
+    "holo3": 94
+   },
+   "crops": [
+    "<checkout>/scratch/crop-parity/xerox-c3-cmy7/xerox-c3-cmy7-c04-0.tiff"
+   ],
+   "crop_sha256": "14a7d359f5dc9f0585f5f26e3431eb5f16465fdc99a37ca1094d47e6d645d4bd"
+  },
+  {
+   "case_id": "xerox-c3-cmy7-c05",
+   "cell_bbox": [
+    1040,
+    528,
+    1536,
+    1776
+   ],
+   "runs": {
+    "holo1": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "env/bin/python confetti.py decode <checkout>/scratch/crop-parity/xerox-c3-cmy7/xerox-c3-cmy7-c05-0.tiff --scan-dpi 2400.0 --format L:c3-cmy7-p120-v0@2240x1536 --state <checkout>/scratch/crop-parity/xerox-c3-cmy7/runs/xerox-c3-cmy7-c05/holo1.state -o <checkout>/scratch/crop-parity/xerox-c3-cmy7/runs/xerox-c3-cmy7-c05/holo1.out --no-close --complete --mopup --refine --workers 8",
+      "cwd": "<repo>",
+      "crop_sha256": "931deb7b5e3bb82da40d5699f7bd5543e3f3e4ce65d8706bf9ecb6c761a50ec9",
+      "receiver_tree": "3537128d0084772885a8c7857996c1dfb480aaf0",
+      "receiver_dirty_sha": "",
+      "repo_head": "ed8b352efc574a70938baf47cf6dc167d36d71d8",
+      "wall_seconds": 674.4256892080011,
+      "exit": 2,
+      "summary": [
+       "capture c22afd7ae7e0fb408110bc533a9b6af9f1ea25037e3a40dc9cbf0fbda9472e26: complete; committed",
+       "state: <checkout>/scratch/crop-parity/xerox-c3-cmy7/runs/xerox-c3-cmy7-c05/holo1.state  sha256 a7a09ec254c8c8dda178a80c8737691b30360b5473f3cfd4b0490262c4847c39",
+       "NOTE: mop-up supersession dropped 30964 re-observation(s) at committed cells; winner flips 10138 (32.7%) (two-view consistency canary \u2014 a high flip rate suggests a misplaced mop-up window or physical damage; committed evidence unchanged)",
+       "close skipped (--no-close): 151 certificates accumulated; no closing record was read, attempted, or written. Close with a plain or --complete run.",
+       "src/holo/cli.py:636: ProvisionalReceiverWarning: HOLO TRACK-3 RECEIVER IS PROVISIONAL: historical E021-E023c stand-in constants are active; production qualification is still required. Outstanding: the v1 physical/null false-accept gate, channel-BER envelope, and support safety margin still require frozen qualification; the 0.176 complete-domain rival refusal was diagnosed as a parity-concentrated cross-page alias and the v0.30 whole-word rival gate restores the d=27 floor (synthetically verified); real-capture full-domain yield and resource profile remain unqualified",
+       "  res = run_receive("
+      ],
+      "ran_at": "2026-08-30 15:16:08"
+     }
+    },
+    "holo3": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "<checkout>/env314t/bin/python -m measure.crop_parity._h3run --certs-out <checkout>/scratch/crop-parity/xerox-c3-cmy7/runs/xerox-c3-cmy7-c05/holo3-certs.json -- decode <checkout>/scratch/crop-parity/xerox-c3-cmy7/xerox-c3-cmy7-c05-0.tiff --dpi 2400.0 --format L:c3-cmy7-p120-v0@2240x1536 --no-close --workers 8 --run-dir <checkout>/scratch/crop-parity/xerox-c3-cmy7/runs/xerox-c3-cmy7-c05/holo3-run --out <checkout>/scratch/crop-parity/xerox-c3-cmy7/runs/xerox-c3-cmy7-c05/holo3.out",
+      "cwd": "<checkout>",
+      "crop_sha256": "931deb7b5e3bb82da40d5699f7bd5543e3f3e4ce65d8706bf9ecb6c761a50ec9",
+      "receiver_tree": "a6f43747064ef0ac366e7158709064806dc09dd1",
+      "receiver_dirty_sha": "",
+      "repo_head": "d8749c48b9c0634930293681b77a84f6b5bdd427",
+      "wall_seconds": 139.86640220900154,
+      "exit": 0,
+      "summary": [
+       "_h3run: open, 153 certificates in 139.0 s"
+      ],
+      "ran_at": "2026-08-30 15:27:23"
+     }
+    }
+   },
+   "n_certificates": {
+    "holo1": 151,
+    "holo3": 153
+   },
+   "bits_available": {
+    "holo1": true,
+    "holo3": true
+   },
+   "targets": [
+    {
+     "address": [
+      0,
+      12,
+      20,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      12,
+      21,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      12,
+      22,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": false
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": false,
+     "reproduces_full_sheet": {
+      "holo1": true,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      12,
+      23,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": false
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": false,
+     "reproduces_full_sheet": {
+      "holo1": true,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      13,
+      20,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      13,
+      21,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      13,
+      23,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": false
+      },
+      "holo3": {
+       "available": true,
+       "certified": false
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": true,
+      "holo3": false
+     }
+    },
+    {
+     "address": [
+      0,
+      14,
+      21,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      14,
+      22,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": false
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": false,
+     "reproduces_full_sheet": {
+      "holo1": true,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      14,
+      23,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      15,
+      20,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      15,
+      21,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      15,
+      22,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      16,
+      20,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      16,
+      21,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      16,
+      22,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      17,
+      20,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      17,
+      21,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      17,
+      22,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      17,
+      23,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      18,
+      21,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      18,
+      22,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      18,
+      23,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      19,
+      20,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      19,
+      21,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      19,
+      23,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      20,
+      20,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      20,
+      22,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      20,
+      23,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      21,
+      20,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      21,
+      22,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      22,
+      20,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      22,
+      21,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      23,
+      21,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      23,
+      22,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    }
+   ],
+   "controls": {
+    "holo1": {
+     "n": 62,
+     "reproduced": 62,
+     "flipped": 0,
+     "flipped_addresses": [],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 0,
+       "n": 25
+      },
+      "64-127": {
+       "flipped": 0,
+       "n": 19
+      },
+      "128-191": {
+       "flipped": 0,
+       "n": 16
+      },
+      "192-255": {
+       "flipped": 0,
+       "n": 2
+      }
+     }
+    },
+    "holo3": {
+     "n": 62,
+     "reproduced": 62,
+     "flipped": 0,
+     "flipped_addresses": [],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 0,
+       "n": 25
+      },
+      "64-127": {
+       "flipped": 0,
+       "n": 19
+      },
+      "128-191": {
+       "flipped": 0,
+       "n": 16
+      },
+      "192-255": {
+       "flipped": 0,
+       "n": 2
+      }
+     }
+    }
+   },
+   "wrong_certificates": [],
+   "out_of_bbox": [],
+   "checked_certificates": {
+    "holo1": 151,
+    "holo3": 153
+   },
+   "crops": [
+    "<checkout>/scratch/crop-parity/xerox-c3-cmy7/xerox-c3-cmy7-c05-0.tiff"
+   ],
+   "crop_sha256": "931deb7b5e3bb82da40d5699f7bd5543e3f3e4ce65d8706bf9ecb6c761a50ec9"
+  },
+  {
+   "case_id": "xerox-c3-cmy7-c06",
+   "cell_bbox": [
+    1040,
+    1296,
+    1536,
+    2240
+   ],
+   "runs": {
+    "holo1": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "env/bin/python confetti.py decode <checkout>/scratch/crop-parity/xerox-c3-cmy7/xerox-c3-cmy7-c06-0.tiff --scan-dpi 2400.0 --format L:c3-cmy7-p120-v0@2240x1536 --state <checkout>/scratch/crop-parity/xerox-c3-cmy7/runs/xerox-c3-cmy7-c06/holo1.state -o <checkout>/scratch/crop-parity/xerox-c3-cmy7/runs/xerox-c3-cmy7-c06/holo1.out --no-close --complete --mopup --refine --workers 8",
+      "cwd": "<repo>",
+      "crop_sha256": "764c5df7e8b4ad756a719468230aa5c000977c1eac3a949136a8aeee3004e6d2",
+      "receiver_tree": "3537128d0084772885a8c7857996c1dfb480aaf0",
+      "receiver_dirty_sha": "",
+      "repo_head": "ed8b352efc574a70938baf47cf6dc167d36d71d8",
+      "wall_seconds": 480.7227367079977,
+      "exit": 2,
+      "summary": [
+       "capture 8ff75db53963bc2dd6bb71917a927cdceedded5c81ada26b9a7ffc3ed6ef6920: complete; committed",
+       "state: <checkout>/scratch/crop-parity/xerox-c3-cmy7/runs/xerox-c3-cmy7-c06/holo1.state  sha256 0de091d806139d211c35d7577a4278b86b68d304fe9b174147d7c73c08b04759",
+       "NOTE: mop-up supersession dropped 4053 re-observation(s) at committed cells; winner flips 1590 (39.2%) (two-view consistency canary \u2014 a high flip rate suggests a misplaced mop-up window or physical damage; committed evidence unchanged)",
+       "close skipped (--no-close): 116 certificates accumulated; no closing record was read, attempted, or written. Close with a plain or --complete run.",
+       "src/holo/cli.py:636: ProvisionalReceiverWarning: HOLO TRACK-3 RECEIVER IS PROVISIONAL: historical E021-E023c stand-in constants are active; production qualification is still required. Outstanding: the v1 physical/null false-accept gate, channel-BER envelope, and support safety margin still require frozen qualification; the 0.176 complete-domain rival refusal was diagnosed as a parity-concentrated cross-page alias and the v0.30 whole-word rival gate restores the d=27 floor (synthetically verified); real-capture full-domain yield and resource profile remain unqualified",
+       "  res = run_receive("
+      ],
+      "ran_at": "2026-08-30 15:29:43"
+     }
+    },
+    "holo3": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "<checkout>/env314t/bin/python -m measure.crop_parity._h3run --certs-out <checkout>/scratch/crop-parity/xerox-c3-cmy7/runs/xerox-c3-cmy7-c06/holo3-certs.json -- decode <checkout>/scratch/crop-parity/xerox-c3-cmy7/xerox-c3-cmy7-c06-0.tiff --dpi 2400.0 --format L:c3-cmy7-p120-v0@2240x1536 --no-close --workers 8 --run-dir <checkout>/scratch/crop-parity/xerox-c3-cmy7/runs/xerox-c3-cmy7-c06/holo3-run --out <checkout>/scratch/crop-parity/xerox-c3-cmy7/runs/xerox-c3-cmy7-c06/holo3.out",
+      "cwd": "<checkout>",
+      "crop_sha256": "764c5df7e8b4ad756a719468230aa5c000977c1eac3a949136a8aeee3004e6d2",
+      "receiver_tree": "a6f43747064ef0ac366e7158709064806dc09dd1",
+      "receiver_dirty_sha": "",
+      "repo_head": "d8749c48b9c0634930293681b77a84f6b5bdd427",
+      "wall_seconds": 169.93849291700462,
+      "exit": 0,
+      "summary": [
+       "_h3run: open, 113 certificates in 168.4 s"
+      ],
+      "ran_at": "2026-08-30 15:37:43"
+     }
+    }
+   },
+   "n_certificates": {
+    "holo1": 116,
+    "holo3": 113
+   },
+   "bits_available": {
+    "holo1": true,
+    "holo3": true
+   },
+   "targets": [
+    {
+     "address": [
+      0,
+      24,
+      20,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      24,
+      21,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      25,
+      20,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      25,
+      21,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      25,
+      22,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      26,
+      22,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      27,
+      21,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      28,
+      21,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      28,
+      22,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      29,
+      20,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      29,
+      21,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      30,
+      21,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      30,
+      22,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      31,
+      21,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      31,
+      22,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      32,
+      21,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": false
+      }
+     },
+     "agree": false,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": false
+     }
+    },
+    {
+     "address": [
+      0,
+      32,
+      22,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      33,
+      22,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      34,
+      22,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      34,
+      23,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": false
+      },
+      "holo3": {
+       "available": true,
+       "certified": false
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": true,
+      "holo3": false
+     }
+    }
+   ],
+   "controls": {
+    "holo1": {
+     "n": 48,
+     "reproduced": 48,
+     "flipped": 0,
+     "flipped_addresses": [],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 0,
+       "n": 16
+      },
+      "64-127": {
+       "flipped": 0,
+       "n": 17
+      },
+      "128-191": {
+       "flipped": 0,
+       "n": 12
+      },
+      "192-255": {
+       "flipped": 0,
+       "n": 3
+      }
+     }
+    },
+    "holo3": {
+     "n": 48,
+     "reproduced": 48,
+     "flipped": 0,
+     "flipped_addresses": [],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 0,
+       "n": 16
+      },
+      "64-127": {
+       "flipped": 0,
+       "n": 17
+      },
+      "128-191": {
+       "flipped": 0,
+       "n": 12
+      },
+      "192-255": {
+       "flipped": 0,
+       "n": 3
+      }
+     }
+    }
+   },
+   "wrong_certificates": [],
+   "out_of_bbox": [],
+   "checked_certificates": {
+    "holo1": 116,
+    "holo3": 113
+   },
+   "crops": [
+    "<checkout>/scratch/crop-parity/xerox-c3-cmy7/xerox-c3-cmy7-c06-0.tiff"
+   ],
+   "crop_sha256": "764c5df7e8b4ad756a719468230aa5c000977c1eac3a949136a8aeee3004e6d2"
+  },
+  {
+   "case_id": "xerox-c3-cmy7-c07",
+   "cell_bbox": [
+    336,
+    1808,
+    1008,
+    2240
+   ],
+   "runs": {
+    "holo1": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "env/bin/python confetti.py decode <checkout>/scratch/crop-parity/xerox-c3-cmy7/xerox-c3-cmy7-c07-0.tiff --scan-dpi 2400.0 --format L:c3-cmy7-p120-v0@2240x1536 --state <checkout>/scratch/crop-parity/xerox-c3-cmy7/runs/xerox-c3-cmy7-c07/holo1.state -o <checkout>/scratch/crop-parity/xerox-c3-cmy7/runs/xerox-c3-cmy7-c07/holo1.out --no-close --complete --mopup --refine --workers 8",
+      "cwd": "<repo>",
+      "crop_sha256": "129f2f6ccf709518308b207998c4249c68665532d4cfa4ecbc80afe0b1069330",
+      "receiver_tree": "3537128d0084772885a8c7857996c1dfb480aaf0",
+      "receiver_dirty_sha": "",
+      "repo_head": "ed8b352efc574a70938baf47cf6dc167d36d71d8",
+      "wall_seconds": 365.7010478749944,
+      "exit": 2,
+      "summary": [
+       "capture c1b14d8a8829acab218708eeea8a75131910797a295adbc9e94caaeb7a5c49b8: complete; committed",
+       "state: <checkout>/scratch/crop-parity/xerox-c3-cmy7/runs/xerox-c3-cmy7-c07/holo1.state  sha256 3d83f97673f01bf4011cafc73bf7108c902d30969ac1f8afe75f6cb27e8686ec",
+       "NOTE: mop-up supersession dropped 2152 re-observation(s) at committed cells; winner flips 423 (19.7%) (two-view consistency canary \u2014 a high flip rate suggests a misplaced mop-up window or physical damage; committed evidence unchanged)",
+       "close skipped (--no-close): 76 certificates accumulated; no closing record was read, attempted, or written. Close with a plain or --complete run.",
+       "src/holo/cli.py:636: ProvisionalReceiverWarning: HOLO TRACK-3 RECEIVER IS PROVISIONAL: historical E021-E023c stand-in constants are active; production qualification is still required. Outstanding: the v1 physical/null false-accept gate, channel-BER envelope, and support safety margin still require frozen qualification; the 0.176 complete-domain rival refusal was diagnosed as a parity-concentrated cross-page alias and the v0.30 whole-word rival gate restores the d=27 floor (synthetically verified); real-capture full-domain yield and resource profile remain unqualified",
+       "  res = run_receive("
+      ],
+      "ran_at": "2026-08-30 15:40:34"
+     }
+    },
+    "holo3": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "<checkout>/env314t/bin/python -m measure.crop_parity._h3run --certs-out <checkout>/scratch/crop-parity/xerox-c3-cmy7/runs/xerox-c3-cmy7-c07/holo3-certs.json -- decode <checkout>/scratch/crop-parity/xerox-c3-cmy7/xerox-c3-cmy7-c07-0.tiff --dpi 2400.0 --format L:c3-cmy7-p120-v0@2240x1536 --no-close --workers 8 --run-dir <checkout>/scratch/crop-parity/xerox-c3-cmy7/runs/xerox-c3-cmy7-c07/holo3-run --out <checkout>/scratch/crop-parity/xerox-c3-cmy7/runs/xerox-c3-cmy7-c07/holo3.out",
+      "cwd": "<checkout>",
+      "crop_sha256": "129f2f6ccf709518308b207998c4249c68665532d4cfa4ecbc80afe0b1069330",
+      "receiver_tree": "f5d7c0e2efc8ece54936bf2c64626f3a580c6771",
+      "receiver_dirty_sha": "",
+      "repo_head": "65d2d08ce398d23d3af0bcf3fd2a308a9d8d9283",
+      "wall_seconds": 75.77705150000111,
+      "exit": 0,
+      "summary": [
+       "_h3run: open, 77 certificates in 74.6 s"
+      ],
+      "ran_at": "2026-08-30 15:46:39"
+     }
+    }
+   },
+   "n_certificates": {
+    "holo1": 76,
+    "holo3": 77
+   },
+   "bits_available": {
+    "holo1": true,
+    "holo3": true
+   },
+   "targets": [
+    {
+     "address": [
+      0,
+      32,
+      9,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      33,
+      11,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      34,
+      11,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    }
+   ],
+   "controls": {
+    "holo1": {
+     "n": 43,
+     "reproduced": 43,
+     "flipped": 0,
+     "flipped_addresses": [],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 0,
+       "n": 17
+      },
+      "64-127": {
+       "flipped": 0,
+       "n": 17
+      },
+      "128-191": {
+       "flipped": 0,
+       "n": 9
+      }
+     }
+    },
+    "holo3": {
+     "n": 43,
+     "reproduced": 43,
+     "flipped": 0,
+     "flipped_addresses": [],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 0,
+       "n": 17
+      },
+      "64-127": {
+       "flipped": 0,
+       "n": 17
+      },
+      "128-191": {
+       "flipped": 0,
+       "n": 9
+      }
+     }
+    }
+   },
+   "wrong_certificates": [],
+   "out_of_bbox": [],
+   "checked_certificates": {
+    "holo1": 76,
+    "holo3": 77
+   },
+   "crops": [
+    "<checkout>/scratch/crop-parity/xerox-c3-cmy7/xerox-c3-cmy7-c07-0.tiff"
+   ],
+   "crop_sha256": "129f2f6ccf709518308b207998c4249c68665532d4cfa4ecbc80afe0b1069330"
+  },
+  {
+   "case_id": "xerox-c3-cmy7-c08",
+   "cell_bbox": [
+    0,
+    1936,
+    432,
+    2240
+   ],
+   "runs": {
+    "holo1": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "env/bin/python confetti.py decode <checkout>/scratch/crop-parity/xerox-c3-cmy7/xerox-c3-cmy7-c08-0.tiff --scan-dpi 2400.0 --format L:c3-cmy7-p120-v0@2240x1536 --state <checkout>/scratch/crop-parity/xerox-c3-cmy7/runs/xerox-c3-cmy7-c08/holo1.state -o <checkout>/scratch/crop-parity/xerox-c3-cmy7/runs/xerox-c3-cmy7-c08/holo1.out --no-close --complete --mopup --refine --workers 8",
+      "cwd": "<repo>",
+      "crop_sha256": "277eb27e5b05f91f72537314659fac573c20597b54efb7c3d56f7a99b69a01ed",
+      "receiver_tree": "3537128d0084772885a8c7857996c1dfb480aaf0",
+      "receiver_dirty_sha": "",
+      "repo_head": "259e622148f844d02742ff6eb033fd66b0b83cc8",
+      "wall_seconds": 162.24084908300574,
+      "exit": 2,
+      "summary": [
+       "capture 523d4b513b6331b97ad92a2833374126657002c681aed04a433e8bc7809ceae2: complete; committed",
+       "state: <checkout>/scratch/crop-parity/xerox-c3-cmy7/runs/xerox-c3-cmy7-c08/holo1.state  sha256 f7122b1aa32d431768071320b8f668d6730982a19dfc44e80eeceed19c6aa19b",
+       "close skipped (--no-close): 34 certificates accumulated; no closing record was read, attempted, or written. Close with a plain or --complete run.",
+       "src/holo/cli.py:636: ProvisionalReceiverWarning: HOLO TRACK-3 RECEIVER IS PROVISIONAL: historical E021-E023c stand-in constants are active; production qualification is still required. Outstanding: the v1 physical/null false-accept gate, channel-BER envelope, and support safety margin still require frozen qualification; the 0.176 complete-domain rival refusal was diagnosed as a parity-concentrated cross-page alias and the v0.30 whole-word rival gate restores the d=27 floor (synthetically verified); real-capture full-domain yield and resource profile remain unqualified",
+       "  res = run_receive("
+      ],
+      "ran_at": "2026-08-30 15:47:55"
+     }
+    },
+    "holo3": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "<checkout>/env314t/bin/python -m measure.crop_parity._h3run --certs-out <checkout>/scratch/crop-parity/xerox-c3-cmy7/runs/xerox-c3-cmy7-c08/holo3-certs.json -- decode <checkout>/scratch/crop-parity/xerox-c3-cmy7/xerox-c3-cmy7-c08-0.tiff --dpi 2400.0 --format L:c3-cmy7-p120-v0@2240x1536 --no-close --workers 8 --run-dir <checkout>/scratch/crop-parity/xerox-c3-cmy7/runs/xerox-c3-cmy7-c08/holo3-run --out <checkout>/scratch/crop-parity/xerox-c3-cmy7/runs/xerox-c3-cmy7-c08/holo3.out",
+      "cwd": "<checkout>",
+      "crop_sha256": "277eb27e5b05f91f72537314659fac573c20597b54efb7c3d56f7a99b69a01ed",
+      "receiver_tree": "f5d7c0e2efc8ece54936bf2c64626f3a580c6771",
+      "receiver_dirty_sha": "",
+      "repo_head": "65d2d08ce398d23d3af0bcf3fd2a308a9d8d9283",
+      "wall_seconds": 31.35584099999687,
+      "exit": 0,
+      "summary": [
+       "_h3run: open, 34 certificates in 30.1 s"
+      ],
+      "ran_at": "2026-08-30 15:50:38"
+     }
+    }
+   },
+   "n_certificates": {
+    "holo1": 34,
+    "holo3": 34
+   },
+   "bits_available": {
+    "holo1": true,
+    "holo3": true
+   },
+   "targets": [
+    {
+     "address": [
+      0,
+      34,
+      2,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    }
+   ],
+   "controls": {
+    "holo1": {
+     "n": 15,
+     "reproduced": 15,
+     "flipped": 0,
+     "flipped_addresses": [],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 0,
+       "n": 7
+      },
+      "64-127": {
+       "flipped": 0,
+       "n": 8
+      }
+     }
+    },
+    "holo3": {
+     "n": 15,
+     "reproduced": 15,
+     "flipped": 0,
+     "flipped_addresses": [],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 0,
+       "n": 7
+      },
+      "64-127": {
+       "flipped": 0,
+       "n": 8
+      }
+     }
+    }
+   },
+   "wrong_certificates": [],
+   "out_of_bbox": [],
+   "checked_certificates": {
+    "holo1": 34,
+    "holo3": 34
+   },
+   "crops": [
+    "<checkout>/scratch/crop-parity/xerox-c3-cmy7/xerox-c3-cmy7-c08-0.tiff"
+   ],
+   "crop_sha256": "277eb27e5b05f91f72537314659fac573c20597b54efb7c3d56f7a99b69a01ed"
+  }
+ ],
+ "aggregates": {
+  "per_class": {
+   "gain": {
+    "n": 95,
+    "holo1_crop_certified": 86,
+    "holo3_crop_certified": 88,
+    "holo1_compared": 95,
+    "holo3_compared": 95,
+    "reproduces_full_sheet": {
+     "holo1": 9,
+     "holo3": 88
+    }
+   }
+  },
+  "wrong_certificates": [],
+  "out_of_bbox": [],
+  "walls": {
+   "executed_wall_seconds": {
+    "holo1": 2978.2582875399894,
+    "holo3": 710.8344948349986
+   },
+   "runs_executed": 16,
+   "runs_adopted": 0,
+   "adopted_wall_seconds": 0.0
+  },
+  "agreement": {
+   "agree": 91,
+   "disagree": 4,
+   "undetermined": 0
+  }
+ }
+}

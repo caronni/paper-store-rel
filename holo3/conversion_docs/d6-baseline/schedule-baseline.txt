@@ -1,0 +1,14 @@
+name          subject  born by                          reads                                                                             tier                                         premium
+------------  -------  -------------------------------  --------------------------------------------------------------------------------  -------------------------------------------  -------------------------------------
+survey        capture  Capture                          () — fires once per capture                                                       SURVEY                                       0
+place         window   Window                           ring-neighbour poses, own region lattice_seed; done projection consulted at fire  ladder ring/word/wide/cold (bookmark stage)  +2/rung lane (+20/rung cold) +5 child
+calibrate     window   Placement                        own pose, region pitch                                                            CALIBRATE                                    +2/rung (lane)
+ctx           region   WindowEvidence                   region accepted-set version                                                       CALIBRATE                                    +2/rung (lane)
+color         lane     Placement                        lane placements, certificates on page                                             CALIBRATE                                    +2/rung (lane)
+tiles.freeze  lane     WindowEvidence|ColorEvidenceRow  lane keys across the page domain                                                  CALIBRATE                                    +2/rung (lane)
+tiles.scan    tile     TileEvidence                     own evidence epoch                                                                PAYLOAD                                      +2/rung (lane)
+tiles.union   tile     TileEvidence                     member evidence epochs (all captures)                                             PAYLOAD                                      +2/rung (lane)
+tiles.retry   tile     AttemptFact                      its source evidence epoch                                                         PAYLOAD                                      +2/rung (lane)
+refine        window   Placement                        certificates in reach, own evidence, own pose                                     REFINE                                       0
+refine.color  window   Placement                        certificates in reach (per stream), own pose                                      REFINE                                       0
+revisit       window   Certificate                      certificates in reach, region ctx version; unplaced: lane poses via lane keys     REFINE (mop-up)                              0

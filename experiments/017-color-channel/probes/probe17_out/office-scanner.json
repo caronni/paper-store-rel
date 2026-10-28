@@ -1,0 +1,185 @@
+{
+ "note": "AltaLink scanner color path, 600 dpi = 1 px/dot; c2 = 2 px/cell (below scannorm floor), c3 = 3 px/cell (marginal). Secondary footing.",
+ "tiles": [
+  {
+   "shape": [
+    2048,
+    2048
+   ],
+   "mcp": {
+    "refused": "no credible lattice line at any probe pitch (best contrast 15.9 at 3.99 px < floor 30.0)"
+   },
+   "lines": {
+    "cell": {
+     "probe_px": 2.0,
+     "pitch_px": 2.0177,
+     "contrast": 11.5,
+     "angle_deg": 89.94
+    },
+    "cell_tight": {
+     "probe_px": 2.0,
+     "pitch_px": 2.0177,
+     "contrast": 11.6,
+     "angle_deg": 89.94
+    },
+    "comb11": {
+     "probe_px": 11.36,
+     "pitch_px": 11.0819,
+     "contrast": 3.8,
+     "angle_deg": 24.62
+    },
+    "165lpi": {
+     "probe_px": 3.636,
+     "pitch_px": 3.7741,
+     "contrast": 4.4,
+     "angle_deg": 31.43
+    },
+    "224lpi": {
+     "probe_px": 2.679,
+     "pitch_px": 2.6667,
+     "contrast": 6.8,
+     "angle_deg": 0.0
+    },
+    "306lpi": {
+     "probe_px": 1.961,
+     "pitch_px": 2.0177,
+     "contrast": 11.9,
+     "angle_deg": 89.94
+    }
+   },
+   "lock": {
+    "pitch_v_px": 2.063,
+    "pitch_u_px": 2.061,
+    "angle_deg": 10.214962976941036,
+    "quality_mean": 0.0028656982686336764,
+    "quality_p10": 0.0010417038198237446,
+    "quality_p50": 0.0026429551954118067
+   },
+   "coherence": {
+    "v48": 0.091,
+    "u48": 0.191,
+    "v96": 0.246,
+    "u96": 0.071
+   },
+   "seconds": 11.4,
+   "tile": "e006bw-xeroxscan-col.png",
+   "class": "office600",
+   "desc": "K-only page (LOOP-BW), c2",
+   "cell_dots": 2
+  },
+  {
+   "shape": [
+    2048,
+    2048
+   ],
+   "mcp": {
+    "pitch_px": 3.01620029455081,
+    "contrast": 61.685265297191634,
+    "angle_deg": 0.0,
+    "strong": [
+     [
+      3.016,
+      61.7
+     ]
+    ],
+    "candidates": [
+     [
+      3.016,
+      61.7
+     ],
+     [
+      3.016,
+      54.7
+     ],
+     [
+      3.016,
+      39.1
+     ],
+     [
+      9.99,
+      20.9
+     ],
+     [
+      14.949,
+      19.3
+     ],
+     [
+      14.949,
+      14.8
+     ],
+     [
+      30.118,
+      14.2
+     ],
+     [
+      39.385,
+      22.1
+     ],
+     [
+      39.385,
+      18.3
+     ]
+    ]
+   },
+   "lines": {
+    "cell": {
+     "probe_px": 3.0,
+     "pitch_px": 3.0162,
+     "contrast": 29.9,
+     "angle_deg": 0.0
+    },
+    "cell_tight": {
+     "probe_px": 3.0,
+     "pitch_px": 3.0162,
+     "contrast": 29.3,
+     "angle_deg": 0.0
+    },
+    "comb11": {
+     "probe_px": 11.36,
+     "pitch_px": 11.0106,
+     "contrast": 6.0,
+     "angle_deg": 0.31
+    },
+    "165lpi": {
+     "probe_px": 3.636,
+     "pitch_px": 3.7101,
+     "contrast": 6.5,
+     "angle_deg": 89.9
+    },
+    "224lpi": {
+     "probe_px": 2.679,
+     "pitch_px": 2.6667,
+     "contrast": 5.7,
+     "angle_deg": 0.0
+    },
+    "306lpi": {
+     "probe_px": 1.961,
+     "pitch_px": 2.0459,
+     "contrast": 6.9,
+     "angle_deg": 0.23
+    }
+   },
+   "lock": {
+    "pitch_v_px": 3.0435,
+    "pitch_u_px": 3.018,
+    "angle_deg": 0.0,
+    "quality_mean": 0.014334618747028193,
+    "quality_p10": 0.0033965687812316124,
+    "quality_p50": 0.011251543039126786
+   },
+   "coherence": {
+    "v48": 0.182,
+    "u48": 0.109,
+    "v96": 0.242,
+    "u96": 0.237
+   },
+   "seconds": 6.6,
+   "tile": "disc1p1-xeroxscan-col.png",
+   "class": "office600",
+   "desc": "disc1 p1 center (K ladder)",
+   "cell_dots": 3
+  }
+ ],
+ "case": "office-scanner",
+ "elapsed_s": 19.2
+}

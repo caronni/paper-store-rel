@@ -1,0 +1,7470 @@
+{
+  "boundary": "LDPC and below; no fountain/rank/stop condition",
+  "capture_count": 6,
+  "elapsed_s": 545.7017862079665,
+  "execution": {
+    "authoritative_digest": "2aa65e46a4b2de17824e1c82f8984d72670693ea696e56308abe9b03d67f8a95",
+    "elapsed_s": 498.18646212504245,
+    "lanes": {
+      "DD": {
+        "after_bp": {
+          "bits_sha256": "d04d51fef4cf2dca8424b294cbc0d464ec640d495400ac702a2068b5561e12cd",
+          "count": 757,
+          "set_sha256": "6f4a786aa48c6a6342a5c9550a7f3f4d5a9c9b5bdbbbbb3633f22d5bc5bab103"
+        },
+        "attempts": {
+          "below_floor_records": 478,
+          "bp_iterations": 57544,
+          "by_stage": {
+            "retry150": {
+              "bp_iterations": 12400,
+              "certified_new": 8,
+              "crc_calls": 44,
+              "ledger_records": 44
+            },
+            "scan": {
+              "bp_iterations": 28412,
+              "certified_new": 666,
+              "crc_calls": 858,
+              "ledger_records": 1239
+            },
+            "union": {
+              "bp_iterations": 16732,
+              "certified_new": 83,
+              "crc_calls": 199,
+              "ledger_records": 331
+            }
+          },
+          "crc_calls": 1101,
+          "crc_false_accept_budget": 2.5634653866291046e-07,
+          "ledger_records": 1614
+        },
+        "before_bp": {
+          "bits_sha256": "daa71427e90de224eea1af7063f3d29679f6bb19c370a15702018139a2b73d65",
+          "count": 749,
+          "set_sha256": "0db6bdb570c3286d1990855dafcd9c85f2f2467d10049338fc126c7869dabdc9"
+        },
+        "fatal": [],
+        "geometry": "decimated",
+        "prefix": [
+          {
+            "attempts": {
+              "below_floor_records": 91,
+              "bp_iterations": 7935,
+              "by_stage": {
+                "scan": {
+                  "bp_iterations": 7935,
+                  "certified_new": 184,
+                  "crc_calls": 236,
+                  "ledger_records": 343
+                }
+              },
+              "crc_calls": 236,
+              "crc_false_accept_budget": 5.494803190231323e-08,
+              "ledger_records": 343
+            },
+            "capture_id": "confetti-1",
+            "certificates": {
+              "bits_sha256": "7c063f778b8c674ecdbf64b1fcc7bdda17f9d2160c8101dd9c7e4cac4016c00e",
+              "count": 184,
+              "set_sha256": "15bc42641f26c09215e74c0ae35bccfd08db613550f05e4de4d9ddd68895ed1e"
+            },
+            "tile_states": {
+              "attempted_failed": 52,
+              "below_attempt_floor": 91,
+              "certified": 184,
+              "degenerate": 35,
+              "unobserved": 478
+            },
+            "transaction": {
+              "newly_certified": 184,
+              "noop": false,
+              "stage1": {
+                "attempted": 236,
+                "certified": 184,
+                "evaluated": 343
+              },
+              "total_certified": 184,
+              "union": {
+                "attempted": 0,
+                "certified": 0,
+                "evaluated": 0
+              }
+            }
+          },
+          {
+            "attempts": {
+              "below_floor_records": 264,
+              "bp_iterations": 17650,
+              "by_stage": {
+                "scan": {
+                  "bp_iterations": 12664,
+                  "certified_new": 200,
+                  "crc_calls": 288,
+                  "ledger_records": 487
+                },
+                "union": {
+                  "bp_iterations": 4986,
+                  "certified_new": 3,
+                  "crc_calls": 43,
+                  "ledger_records": 124
+                }
+              },
+              "crc_calls": 331,
+              "crc_false_accept_budget": 7.706694304943085e-08,
+              "ledger_records": 611
+            },
+            "capture_id": "confetti-1b",
+            "certificates": {
+              "bits_sha256": "11129aa6a979c66ed7675d7c98b118d30204012557943066a63bb14ccb3ec623",
+              "count": 203,
+              "set_sha256": "eebc2eee9bf0af0a686a4206f1633eb18b9c92ed2c5431ba60b90ad3e946b3ef"
+            },
+            "tile_states": {
+              "attempted_failed": 40,
+              "below_attempt_floor": 88,
+              "certified": 203,
+              "degenerate": 35,
+              "unobserved": 474
+            },
+            "transaction": {
+              "newly_certified": 19,
+              "noop": false,
+              "stage1": {
+                "attempted": 52,
+                "certified": 16,
+                "evaluated": 144
+              },
+              "total_certified": 203,
+              "union": {
+                "attempted": 43,
+                "certified": 3,
+                "evaluated": 124
+              }
+            }
+          },
+          {
+            "attempts": {
+              "below_floor_records": 325,
+              "bp_iterations": 22708,
+              "by_stage": {
+                "scan": {
+                  "bp_iterations": 16389,
+                  "certified_new": 309,
+                  "crc_calls": 420,
+                  "ledger_records": 671
+                },
+                "union": {
+                  "bp_iterations": 6319,
+                  "certified_new": 23,
+                  "crc_calls": 70,
+                  "ledger_records": 160
+                }
+              },
+              "crc_calls": 490,
+              "crc_false_accept_budget": 1.1408701539039612e-07,
+              "ledger_records": 831
+            },
+            "capture_id": "confetti-2",
+            "certificates": {
+              "bits_sha256": "df67ee7e2686afc3787bb29273fabefdce43559635c581600ae53005203be8b9",
+              "count": 332,
+              "set_sha256": "da233ee75ad4d4cc8f32a54c68d4a13eb7b1add3a6738cfef812f6b1ada36396"
+            },
+            "tile_states": {
+              "attempted_failed": 49,
+              "below_attempt_floor": 90,
+              "certified": 332,
+              "degenerate": 35,
+              "unobserved": 334
+            },
+            "transaction": {
+              "newly_certified": 129,
+              "noop": false,
+              "stage1": {
+                "attempted": 132,
+                "certified": 109,
+                "evaluated": 184
+              },
+              "total_certified": 332,
+              "union": {
+                "attempted": 27,
+                "certified": 20,
+                "evaluated": 36
+              }
+            }
+          },
+          {
+            "attempts": {
+              "below_floor_records": 393,
+              "bp_iterations": 26685,
+              "by_stage": {
+                "scan": {
+                  "bp_iterations": 18086,
+                  "certified_new": 314,
+                  "crc_calls": 438,
+                  "ledger_records": 726
+                },
+                "union": {
+                  "bp_iterations": 8599,
+                  "certified_new": 23,
+                  "crc_calls": 89,
+                  "ledger_records": 210
+                }
+              },
+              "crc_calls": 527,
+              "crc_false_accept_budget": 1.227017492055893e-07,
+              "ledger_records": 936
+            },
+            "capture_id": "confetti-2b",
+            "certificates": {
+              "bits_sha256": "00578f7ca14411bc391f12b03b7f15d2f331c745b4d943cc731278c5a611d8f5",
+              "count": 337,
+              "set_sha256": "b17fe8255948eba165968f727a2bb8cb047a573fe427f87bb47c136522236a96"
+            },
+            "tile_states": {
+              "attempted_failed": 49,
+              "below_attempt_floor": 85,
+              "certified": 337,
+              "degenerate": 35,
+              "unobserved": 334
+            },
+            "transaction": {
+              "newly_certified": 5,
+              "noop": false,
+              "stage1": {
+                "attempted": 18,
+                "certified": 5,
+                "evaluated": 55
+              },
+              "total_certified": 337,
+              "union": {
+                "attempted": 19,
+                "certified": 0,
+                "evaluated": 50
+              }
+            }
+          },
+          {
+            "attempts": {
+              "below_floor_records": 457,
+              "bp_iterations": 38064,
+              "by_stage": {
+                "scan": {
+                  "bp_iterations": 25283,
+                  "certified_new": 656,
+                  "crc_calls": 826,
+                  "ledger_records": 1190
+                },
+                "union": {
+                  "bp_iterations": 12781,
+                  "certified_new": 77,
+                  "crc_calls": 164,
+                  "ledger_records": 292
+                }
+              },
+              "crc_calls": 990,
+              "crc_false_accept_budget": 2.3050233721733093e-07,
+              "ledger_records": 1482
+            },
+            "capture_id": "confetti-3",
+            "certificates": {
+              "bits_sha256": "0fa492a98c804189ce8254063348b4b7bec39330049f5acebb6712dbfb637f03",
+              "count": 733,
+              "set_sha256": "13c31c3a226d310f702c17e4b86122f2062909031dd9a282f9b096675bb946f9"
+            },
+            "tile_states": {
+              "attempted_failed": 57,
+              "below_attempt_floor": 15,
+              "certified": 733,
+              "degenerate": 35
+            },
+            "transaction": {
+              "newly_certified": 396,
+              "noop": false,
+              "stage1": {
+                "attempted": 388,
+                "certified": 342,
+                "evaluated": 464
+              },
+              "total_certified": 733,
+              "union": {
+                "attempted": 75,
+                "certified": 54,
+                "evaluated": 82
+              }
+            }
+          },
+          {
+            "attempts": {
+              "below_floor_records": 478,
+              "bp_iterations": 45144,
+              "by_stage": {
+                "scan": {
+                  "bp_iterations": 28412,
+                  "certified_new": 666,
+                  "crc_calls": 858,
+                  "ledger_records": 1239
+                },
+                "union": {
+                  "bp_iterations": 16732,
+                  "certified_new": 83,
+                  "crc_calls": 199,
+                  "ledger_records": 331
+                }
+              },
+              "crc_calls": 1057,
+              "crc_false_accept_budget": 2.461019903421402e-07,
+              "ledger_records": 1570
+            },
+            "capture_id": "confetti-3b",
+            "certificates": {
+              "bits_sha256": "daa71427e90de224eea1af7063f3d29679f6bb19c370a15702018139a2b73d65",
+              "count": 749,
+              "set_sha256": "0db6bdb570c3286d1990855dafcd9c85f2f2467d10049338fc126c7869dabdc9"
+            },
+            "tile_states": {
+              "attempted_failed": 44,
+              "below_attempt_floor": 12,
+              "certified": 749,
+              "degenerate": 35
+            },
+            "transaction": {
+              "newly_certified": 16,
+              "noop": false,
+              "stage1": {
+                "attempted": 32,
+                "certified": 10,
+                "evaluated": 49
+              },
+              "total_certified": 749,
+              "union": {
+                "attempted": 35,
+                "certified": 6,
+                "evaluated": 39
+              }
+            }
+          }
+        ],
+        "retry": {
+          "attempted": 44,
+          "certified": 8,
+          "eligible": 44
+        },
+        "sampler": "decimated",
+        "sampling": [
+          {
+            "bounds": {
+              "authoritative_core_cells": 2009138,
+              "mapped_max_yx": [
+                15621.437312254388,
+                11963.071641226554
+              ],
+              "mapped_min_yx": [
+                295.32840829944615,
+                439.1021771203891
+              ],
+              "out_of_bounds": 0,
+              "placements": 86
+            },
+            "capture_id": "confetti-1",
+            "context_emission_digest": "d20cfacc741e98644a4242a7c076356869efaaadab297ad8802297ef4703807b",
+            "elapsed_s": 4.179613249958493,
+            "geometry_source": "decimated",
+            "lane": "DD",
+            "pava_emission_digest": "d23d651fcc6dc1f6ba5bd69f8a7b363cdf98c5c330e2ea1b7e0eda272ca89330",
+            "same_view_pava_emission_exact": true,
+            "same_view_pava_rows_exact": true,
+            "sampler_source": "decimated",
+            "sampling": {
+              "accepted": 86,
+              "context_adopted": 17,
+              "context_eligible": 17,
+              "context_fits": 17,
+              "context_reasons": {
+                "adopted": 17
+              },
+              "context_refused": 0,
+              "emitted_cells": 943392,
+              "heldout_logloss_mean": 0.06913268612340472,
+              "heldout_logloss_median": 0.06482998034772598,
+              "pava_refused": 0,
+              "windows": 86
+            },
+            "scan_id": "s000",
+            "source_sha256": "cd087916bf9fb241514d87353168741f0b976befd05610290c70aa73ce305af1"
+          },
+          {
+            "bounds": {
+              "authoritative_core_cells": 2090931,
+              "mapped_max_yx": [
+                15036.041603706877,
+                11664.8464021373
+              ],
+              "mapped_min_yx": [
+                16.182126129296456,
+                186.36545748846535
+              ],
+              "out_of_bounds": 0,
+              "placements": 84
+            },
+            "capture_id": "confetti-1b",
+            "context_emission_digest": "97f6aaec62efbc936465e59ecd8f2c8b90d647261dbde4955dbbd500c9203c45",
+            "elapsed_s": 3.9983675410039723,
+            "geometry_source": "decimated",
+            "lane": "DD",
+            "pava_emission_digest": "4ee56dac250d3fa07c8cb1c37f298d7aa861f3e1bffc07ed18793899ce79eeaf",
+            "same_view_pava_emission_exact": true,
+            "same_view_pava_rows_exact": true,
+            "sampler_source": "decimated",
+            "sampling": {
+              "accepted": 84,
+              "context_adopted": 17,
+              "context_eligible": 17,
+              "context_fits": 17,
+              "context_reasons": {
+                "adopted": 17
+              },
+              "context_refused": 0,
+              "emitted_cells": 954626,
+              "heldout_logloss_mean": 0.06635394121242208,
+              "heldout_logloss_median": 0.062269985184213825,
+              "pava_refused": 0,
+              "windows": 84
+            },
+            "scan_id": "s001",
+            "source_sha256": "527e96db65d4ae19f55ad827dd999088bf683e29647ca6c0116a81181f47ac53"
+          },
+          {
+            "bounds": {
+              "authoritative_core_cells": 1132219,
+              "mapped_max_yx": [
+                8672.018800091178,
+                11273.531941422956
+              ],
+              "mapped_min_yx": [
+                377.41436480438614,
+                375.0002566918727
+              ],
+              "out_of_bounds": 0,
+              "placements": 50
+            },
+            "capture_id": "confetti-2",
+            "context_emission_digest": "610898a1c39cc4d42b20b74dc00b345f8f05fb89c860744a6fc150bc209d85d5",
+            "elapsed_s": 2.2621934580383822,
+            "geometry_source": "decimated",
+            "lane": "DD",
+            "pava_emission_digest": "5862f62a47df913c8c94afee3ab6bc0cffe80cde6136193f8bec7798fdc2c904",
+            "same_view_pava_emission_exact": true,
+            "same_view_pava_rows_exact": true,
+            "sampler_source": "decimated",
+            "sampling": {
+              "accepted": 50,
+              "context_adopted": 10,
+              "context_eligible": 10,
+              "context_fits": 10,
+              "context_reasons": {
+                "adopted": 10
+              },
+              "context_refused": 0,
+              "emitted_cells": 536840,
+              "heldout_logloss_mean": 0.06864940979517638,
+              "heldout_logloss_median": 0.06213730698627271,
+              "pava_refused": 0,
+              "windows": 50
+            },
+            "scan_id": "s002",
+            "source_sha256": "634e593963ccd1b723b104fee650ce31a791bb5d3ff29f13865dac621a341051"
+          },
+          {
+            "bounds": {
+              "authoritative_core_cells": 1257994,
+              "mapped_max_yx": [
+                8848.480312270634,
+                11240.195835058617
+              ],
+              "mapped_min_yx": [
+                686.2487739816056,
+                675.2454200823358
+              ],
+              "out_of_bounds": 0,
+              "placements": 48
+            },
+            "capture_id": "confetti-2b",
+            "context_emission_digest": "26a553dd7f0720de20bd36eb8a725f368275d2dc4e7bd50d1587b09f575cc6e1",
+            "elapsed_s": 2.3999716660473496,
+            "geometry_source": "decimated",
+            "lane": "DD",
+            "pava_emission_digest": "8fa14826c2d267c177a8f3c27506ac985a5189921426a54df5c6734e7a11b563",
+            "same_view_pava_emission_exact": true,
+            "same_view_pava_rows_exact": true,
+            "sampler_source": "decimated",
+            "sampling": {
+              "accepted": 48,
+              "context_adopted": 10,
+              "context_eligible": 10,
+              "context_fits": 10,
+              "context_reasons": {
+                "adopted": 10
+              },
+              "context_refused": 0,
+              "emitted_cells": 542692,
+              "heldout_logloss_mean": 0.06349484187722719,
+              "heldout_logloss_median": 0.0573151364634273,
+              "pava_refused": 0,
+              "windows": 48
+            },
+            "scan_id": "s003",
+            "source_sha256": "a9edb61c74f350d4dff5ed3589021a61280d17f1af16a2a78e9a496c75ead732"
+          },
+          {
+            "bounds": {
+              "authoritative_core_cells": 2981886,
+              "mapped_max_yx": [
+                17804.587260513046,
+                12120.985888084697
+              ],
+              "mapped_min_yx": [
+                308.1314315980958,
+                373.92151498735046
+              ],
+              "out_of_bounds": 0,
+              "placements": 97
+            },
+            "capture_id": "confetti-3",
+            "context_emission_digest": "1da105ec60c0f5eb21b00eaf2f4b041fddd1aad2948bc0b114f6a3315414e61e",
+            "elapsed_s": 5.9328287079697475,
+            "geometry_source": "decimated",
+            "lane": "DD",
+            "pava_emission_digest": "e5abbbe3bfcc4105f8f838549905ea94fda437549001497c3a3e9b344d2bda41",
+            "same_view_pava_emission_exact": true,
+            "same_view_pava_rows_exact": true,
+            "sampler_source": "decimated",
+            "sampling": {
+              "accepted": 97,
+              "context_adopted": 8,
+              "context_eligible": 8,
+              "context_fits": 8,
+              "context_reasons": {
+                "adopted": 8
+              },
+              "context_refused": 0,
+              "emitted_cells": 1562046,
+              "heldout_logloss_mean": 0.06393305889106096,
+              "heldout_logloss_median": 0.05582519685927942,
+              "pava_refused": 0,
+              "windows": 97
+            },
+            "scan_id": "s004",
+            "source_sha256": "c946b481b5fcf05bdf722bfac05073c1bf3d0dce82c5a9c72ccde592b4210844"
+          },
+          {
+            "bounds": {
+              "authoritative_core_cells": 2936151,
+              "mapped_max_yx": [
+                18096.352032168914,
+                12472.773893349979
+              ],
+              "mapped_min_yx": [
+                616.1791559533702,
+                545.2831846904003
+              ],
+              "out_of_bounds": 0,
+              "placements": 97
+            },
+            "capture_id": "confetti-3b",
+            "context_emission_digest": "7f8c94ca4225f909c79a6b01ac3c78dae6c5a78ff58089e9ff46afe60351a487",
+            "elapsed_s": 5.912510875030421,
+            "geometry_source": "decimated",
+            "lane": "DD",
+            "pava_emission_digest": "8dfdceb3aa43ea70a4df3edb21dd417b7b5ad60564b3164fa5790f947129e7be",
+            "same_view_pava_emission_exact": true,
+            "same_view_pava_rows_exact": true,
+            "sampler_source": "decimated",
+            "sampling": {
+              "accepted": 97,
+              "context_adopted": 8,
+              "context_eligible": 8,
+              "context_fits": 8,
+              "context_reasons": {
+                "adopted": 8
+              },
+              "context_refused": 0,
+              "emitted_cells": 1571058,
+              "heldout_logloss_mean": 0.0649957077847357,
+              "heldout_logloss_median": 0.058603247138181734,
+              "pava_refused": 0,
+              "windows": 97
+            },
+            "scan_id": "s005",
+            "source_sha256": "74c7654cb29b47e005e253c814ad89147f5aaad4f2029427385825cb8685dc19"
+          }
+        ],
+        "tile_states": {
+          "attempted_failed": 36,
+          "below_attempt_floor": 12,
+          "certified": 757,
+          "degenerate": 35
+        }
+      },
+      "DN": {
+        "after_bp": {
+          "bits_sha256": "8a89fe284136cd1a1e0b872ee487cbf5e956edc443ab03b404bc7d075ee8fd38",
+          "count": 756,
+          "set_sha256": "d738072fd9670bc65d2dbe8ee8c2625b042877bbb4c46eed8def516e3536ef07"
+        },
+        "attempts": {
+          "below_floor_records": 480,
+          "bp_iterations": 56910,
+          "by_stage": {
+            "retry150": {
+              "bp_iterations": 11646,
+              "certified_new": 4,
+              "crc_calls": 41,
+              "ledger_records": 41
+            },
+            "scan": {
+              "bp_iterations": 28675,
+              "certified_new": 665,
+              "crc_calls": 861,
+              "ledger_records": 1244
+            },
+            "union": {
+              "bp_iterations": 16589,
+              "certified_new": 87,
+              "crc_calls": 201,
+              "ledger_records": 333
+            }
+          },
+          "crc_calls": 1103,
+          "crc_false_accept_budget": 2.568121999502182e-07,
+          "ledger_records": 1618
+        },
+        "before_bp": {
+          "bits_sha256": "9577e9e4b3d2fb86b00d297cb67154c3b40e1987d4aefad42f179d194f004b86",
+          "count": 752,
+          "set_sha256": "88daae5d31405c83a060a0a8b3d1244b212b5c453162b1304ee4180c5ede09ce"
+        },
+        "fatal": [],
+        "geometry": "decimated",
+        "prefix": [
+          {
+            "attempts": {
+              "below_floor_records": 91,
+              "bp_iterations": 8203,
+              "by_stage": {
+                "scan": {
+                  "bp_iterations": 8203,
+                  "certified_new": 182,
+                  "crc_calls": 236,
+                  "ledger_records": 343
+                }
+              },
+              "crc_calls": 236,
+              "crc_false_accept_budget": 5.494803190231323e-08,
+              "ledger_records": 343
+            },
+            "capture_id": "confetti-1",
+            "certificates": {
+              "bits_sha256": "27ea89fda46a76af2216f66311bfd0fe833663b85f9306a3c9cde15d07246118",
+              "count": 182,
+              "set_sha256": "f89e2f870b7c640608ea1056f8fcd735e3f0ff6df15a39e1e6f67e8a2b5330f4"
+            },
+            "tile_states": {
+              "attempted_failed": 54,
+              "below_attempt_floor": 91,
+              "certified": 182,
+              "degenerate": 35,
+              "unobserved": 478
+            },
+            "transaction": {
+              "newly_certified": 182,
+              "noop": false,
+              "stage1": {
+                "attempted": 236,
+                "certified": 182,
+                "evaluated": 343
+              },
+              "total_certified": 182,
+              "union": {
+                "attempted": 0,
+                "certified": 0,
+                "evaluated": 0
+              }
+            }
+          },
+          {
+            "attempts": {
+              "below_floor_records": 264,
+              "bp_iterations": 18009,
+              "by_stage": {
+                "scan": {
+                  "bp_iterations": 12945,
+                  "certified_new": 200,
+                  "crc_calls": 290,
+                  "ledger_records": 489
+                },
+                "union": {
+                  "bp_iterations": 5064,
+                  "certified_new": 3,
+                  "crc_calls": 43,
+                  "ledger_records": 124
+                }
+              },
+              "crc_calls": 333,
+              "crc_false_accept_budget": 7.753260433673859e-08,
+              "ledger_records": 613
+            },
+            "capture_id": "confetti-1b",
+            "certificates": {
+              "bits_sha256": "ab3d90328ef8206052a5dbcb956d7c318da2281d584f4f1ea4530f3369b5599e",
+              "count": 203,
+              "set_sha256": "297e8e92c3dee85895f4d153235c09fdd8a07dd238c0232f16c3d55686b2d17a"
+            },
+            "tile_states": {
+              "attempted_failed": 40,
+              "below_attempt_floor": 88,
+              "certified": 203,
+              "degenerate": 35,
+              "unobserved": 474
+            },
+            "transaction": {
+              "newly_certified": 21,
+              "noop": false,
+              "stage1": {
+                "attempted": 54,
+                "certified": 18,
+                "evaluated": 146
+              },
+              "total_certified": 203,
+              "union": {
+                "attempted": 43,
+                "certified": 3,
+                "evaluated": 124
+              }
+            }
+          },
+          {
+            "attempts": {
+              "below_floor_records": 326,
+              "bp_iterations": 23068,
+              "by_stage": {
+                "scan": {
+                  "bp_iterations": 16520,
+                  "certified_new": 307,
+                  "crc_calls": 422,
+                  "ledger_records": 674
+                },
+                "union": {
+                  "bp_iterations": 6548,
+                  "certified_new": 23,
+                  "crc_calls": 71,
+                  "ledger_records": 161
+                }
+              },
+              "crc_calls": 493,
+              "crc_false_accept_budget": 1.1478550732135773e-07,
+              "ledger_records": 835
+            },
+            "capture_id": "confetti-2",
+            "certificates": {
+              "bits_sha256": "5e5e792006c8409e3b56879cb5dcd8a355a1ee581ec0b1b84275beeecbcdb260",
+              "count": 330,
+              "set_sha256": "1110232eacadb472bde5f151846d0ab29c0ead44f62cd0141fb7730684ebab98"
+            },
+            "tile_states": {
+              "attempted_failed": 51,
+              "below_attempt_floor": 90,
+              "certified": 330,
+              "degenerate": 35,
+              "unobserved": 334
+            },
+            "transaction": {
+              "newly_certified": 127,
+              "noop": false,
+              "stage1": {
+                "attempted": 132,
+                "certified": 107,
+                "evaluated": 185
+              },
+              "total_certified": 330,
+              "union": {
+                "attempted": 28,
+                "certified": 20,
+                "evaluated": 37
+              }
+            }
+          },
+          {
+            "attempts": {
+              "below_floor_records": 395,
+              "bp_iterations": 27327,
+              "by_stage": {
+                "scan": {
+                  "bp_iterations": 18379,
+                  "certified_new": 314,
+                  "crc_calls": 442,
+                  "ledger_records": 732
+                },
+                "union": {
+                  "bp_iterations": 8948,
+                  "certified_new": 23,
+                  "crc_calls": 91,
+                  "ledger_records": 212
+                }
+              },
+              "crc_calls": 533,
+              "crc_false_accept_budget": 1.240987330675125e-07,
+              "ledger_records": 944
+            },
+            "capture_id": "confetti-2b",
+            "certificates": {
+              "bits_sha256": "16fb55d4e93b2106f8ee360376d1ca9222eec5c27aaf91a8e70db602ec7b011f",
+              "count": 337,
+              "set_sha256": "8bb55bd8529dcf73b24c074ab9814473160420249552b2f43bf43755aa286eb6"
+            },
+            "tile_states": {
+              "attempted_failed": 49,
+              "below_attempt_floor": 85,
+              "certified": 337,
+              "degenerate": 35,
+              "unobserved": 334
+            },
+            "transaction": {
+              "newly_certified": 7,
+              "noop": false,
+              "stage1": {
+                "attempted": 20,
+                "certified": 7,
+                "evaluated": 58
+              },
+              "total_certified": 337,
+              "union": {
+                "attempted": 20,
+                "certified": 0,
+                "evaluated": 51
+              }
+            }
+          },
+          {
+            "attempts": {
+              "below_floor_records": 459,
+              "bp_iterations": 38491,
+              "by_stage": {
+                "scan": {
+                  "bp_iterations": 25592,
+                  "certified_new": 658,
+                  "crc_calls": 830,
+                  "ledger_records": 1196
+                },
+                "union": {
+                  "bp_iterations": 12899,
+                  "certified_new": 76,
+                  "crc_calls": 164,
+                  "ledger_records": 292
+                }
+              },
+              "crc_calls": 994,
+              "crc_false_accept_budget": 2.314336597919464e-07,
+              "ledger_records": 1488
+            },
+            "capture_id": "confetti-3",
+            "certificates": {
+              "bits_sha256": "452caea05ef536358e0cce171a438d11275e0c496c272ba40bd11add63931fdc",
+              "count": 734,
+              "set_sha256": "cd33fea56cd2a2c2c012ddc0ac3df6df57d00f8b9ac14ff9e0b302df244634ce"
+            },
+            "tile_states": {
+              "attempted_failed": 56,
+              "below_attempt_floor": 15,
+              "certified": 734,
+              "degenerate": 35
+            },
+            "transaction": {
+              "newly_certified": 397,
+              "noop": false,
+              "stage1": {
+                "attempted": 388,
+                "certified": 344,
+                "evaluated": 464
+              },
+              "total_certified": 734,
+              "union": {
+                "attempted": 73,
+                "certified": 53,
+                "evaluated": 80
+              }
+            }
+          },
+          {
+            "attempts": {
+              "below_floor_records": 480,
+              "bp_iterations": 45264,
+              "by_stage": {
+                "scan": {
+                  "bp_iterations": 28675,
+                  "certified_new": 665,
+                  "crc_calls": 861,
+                  "ledger_records": 1244
+                },
+                "union": {
+                  "bp_iterations": 16589,
+                  "certified_new": 87,
+                  "crc_calls": 201,
+                  "ledger_records": 333
+                }
+              },
+              "crc_calls": 1062,
+              "crc_false_accept_budget": 2.4726614356040955e-07,
+              "ledger_records": 1577
+            },
+            "capture_id": "confetti-3b",
+            "certificates": {
+              "bits_sha256": "9577e9e4b3d2fb86b00d297cb67154c3b40e1987d4aefad42f179d194f004b86",
+              "count": 752,
+              "set_sha256": "88daae5d31405c83a060a0a8b3d1244b212b5c453162b1304ee4180c5ede09ce"
+            },
+            "tile_states": {
+              "attempted_failed": 41,
+              "below_attempt_floor": 12,
+              "certified": 752,
+              "degenerate": 35
+            },
+            "transaction": {
+              "newly_certified": 18,
+              "noop": false,
+              "stage1": {
+                "attempted": 31,
+                "certified": 7,
+                "evaluated": 48
+              },
+              "total_certified": 752,
+              "union": {
+                "attempted": 37,
+                "certified": 11,
+                "evaluated": 41
+              }
+            }
+          }
+        ],
+        "retry": {
+          "attempted": 41,
+          "certified": 4,
+          "eligible": 41
+        },
+        "sampler": "native",
+        "sampling": [
+          {
+            "bounds": {
+              "authoritative_core_cells": 2009138,
+              "mapped_max_yx": [
+                46865.31193676316,
+                35890.21492367966
+              ],
+              "mapped_min_yx": [
+                886.9852248983385,
+                1318.3065313611673
+              ],
+              "out_of_bounds": 0,
+              "placements": 86
+            },
+            "capture_id": "confetti-1",
+            "context_emission_digest": "e4325c5986977137b000634900435d828b76b4b172efd71f59d6922528ced218",
+            "elapsed_s": 18.45421220897697,
+            "geometry_source": "decimated",
+            "lane": "DN",
+            "pava_emission_digest": "3df8467a98cc3d7ad0e5798b60f0f368c6d36b42842e6a6bd72416180660241f",
+            "same_view_pava_emission_exact": null,
+            "same_view_pava_rows_exact": null,
+            "sampler_source": "native",
+            "sampling": {
+              "accepted": 86,
+              "context_adopted": 17,
+              "context_eligible": 17,
+              "context_fits": 17,
+              "context_reasons": {
+                "adopted": 17
+              },
+              "context_refused": 0,
+              "emitted_cells": 943392,
+              "heldout_logloss_mean": 0.0722913898473847,
+              "heldout_logloss_median": 0.06604111345430151,
+              "pava_refused": 0,
+              "windows": 86
+            },
+            "scan_id": "dn-s000",
+            "source_sha256": "8659e78d4327c06279e19092d29ae1b96ea2e727d74957ef2846ca7b3cea1cbd"
+          },
+          {
+            "bounds": {
+              "authoritative_core_cells": 2090931,
+              "mapped_max_yx": [
+                45109.12481112063,
+                34995.5392064119
+              ],
+              "mapped_min_yx": [
+                49.54637838788939,
+                560.096372465396
+              ],
+              "out_of_bounds": 0,
+              "placements": 84
+            },
+            "capture_id": "confetti-1b",
+            "context_emission_digest": "e6b3fc3d8ce945d7af2e2b315916242d17f777b17dc0ad0f2f2b0d15a75fffa7",
+            "elapsed_s": 17.016910958103836,
+            "geometry_source": "decimated",
+            "lane": "DN",
+            "pava_emission_digest": "9ea0c15c7edf6b8da4234e227a83694e0224d5a4835aaaaaa7db73e4937e37c8",
+            "same_view_pava_emission_exact": null,
+            "same_view_pava_rows_exact": null,
+            "sampler_source": "native",
+            "sampling": {
+              "accepted": 84,
+              "context_adopted": 17,
+              "context_eligible": 17,
+              "context_fits": 17,
+              "context_reasons": {
+                "adopted": 17
+              },
+              "context_refused": 0,
+              "emitted_cells": 954626,
+              "heldout_logloss_mean": 0.06794304772165587,
+              "heldout_logloss_median": 0.06335447519034187,
+              "pava_refused": 0,
+              "windows": 84
+            },
+            "scan_id": "dn-s001",
+            "source_sha256": "513ee8f9a4d539c546cea7d717e28feb143051fdbf974706894cc5bb492503b8"
+          },
+          {
+            "bounds": {
+              "authoritative_core_cells": 1132219,
+              "mapped_max_yx": [
+                26017.056400273534,
+                33821.595824268865
+              ],
+              "mapped_min_yx": [
+                1133.2430944131584,
+                1126.0007700756182
+              ],
+              "out_of_bounds": 0,
+              "placements": 50
+            },
+            "capture_id": "confetti-2",
+            "context_emission_digest": "3887a875c8b3405e11c86b645a28c47b5c65fe2ba30ede2e9821f6561f6de76d",
+            "elapsed_s": 11.543464665999636,
+            "geometry_source": "decimated",
+            "lane": "DN",
+            "pava_emission_digest": "20de2970a98e6b44f49bd6d72aa4d36e72e0756529d4bb9252f35efdd84032d7",
+            "same_view_pava_emission_exact": null,
+            "same_view_pava_rows_exact": null,
+            "sampler_source": "native",
+            "sampling": {
+              "accepted": 50,
+              "context_adopted": 10,
+              "context_eligible": 10,
+              "context_fits": 10,
+              "context_reasons": {
+                "adopted": 10
+              },
+              "context_refused": 0,
+              "emitted_cells": 536840,
+              "heldout_logloss_mean": 0.0720216369097419,
+              "heldout_logloss_median": 0.06564006768142908,
+              "pava_refused": 0,
+              "windows": 50
+            },
+            "scan_id": "dn-s002",
+            "source_sha256": "4f1c844cd7f4470061063370fc2f8c30a4c47842eefae259c2e9a0a8bbef73f0"
+          },
+          {
+            "bounds": {
+              "authoritative_core_cells": 1257994,
+              "mapped_max_yx": [
+                26546.440936811905,
+                33721.58750517585
+              ],
+              "mapped_min_yx": [
+                2059.746321944817,
+                2026.7362602470075
+              ],
+              "out_of_bounds": 0,
+              "placements": 48
+            },
+            "capture_id": "confetti-2b",
+            "context_emission_digest": "cef038a9387ae9436c23b5f358cf224f6e39da4759045e571bb19dcf6f6861d0",
+            "elapsed_s": 11.415475042071193,
+            "geometry_source": "decimated",
+            "lane": "DN",
+            "pava_emission_digest": "494a47cbc59c8a01e469d964a8a74897b7acb8912293a58571cc25b83457dc63",
+            "same_view_pava_emission_exact": null,
+            "same_view_pava_rows_exact": null,
+            "sampler_source": "native",
+            "sampling": {
+              "accepted": 48,
+              "context_adopted": 10,
+              "context_eligible": 10,
+              "context_fits": 10,
+              "context_reasons": {
+                "adopted": 10
+              },
+              "context_refused": 0,
+              "emitted_cells": 542692,
+              "heldout_logloss_mean": 0.06705712592117606,
+              "heldout_logloss_median": 0.06278321038502152,
+              "pava_refused": 0,
+              "windows": 48
+            },
+            "scan_id": "dn-s003",
+            "source_sha256": "6b662372e29eec7457f5e32be18fc9b22c353f58c2272a1509d021300816abfd"
+          },
+          {
+            "bounds": {
+              "authoritative_core_cells": 2981886,
+              "mapped_max_yx": [
+                53414.761781539135,
+                36363.95766425409
+              ],
+              "mapped_min_yx": [
+                925.3942947942875,
+                1122.7645449620516
+              ],
+              "out_of_bounds": 0,
+              "placements": 97
+            },
+            "capture_id": "confetti-3",
+            "context_emission_digest": "8eb802550497eaddab35ad98aa318f195e224166e25fdc2763aff3f53e3c674e",
+            "elapsed_s": 20.887329792021774,
+            "geometry_source": "decimated",
+            "lane": "DN",
+            "pava_emission_digest": "e8109d92046d59d6674a1a6f5a1256f7ddb06f7085456cc55183574fa528300b",
+            "same_view_pava_emission_exact": null,
+            "same_view_pava_rows_exact": null,
+            "sampler_source": "native",
+            "sampling": {
+              "accepted": 97,
+              "context_adopted": 8,
+              "context_eligible": 8,
+              "context_fits": 8,
+              "context_reasons": {
+                "adopted": 8
+              },
+              "context_refused": 0,
+              "emitted_cells": 1562046,
+              "heldout_logloss_mean": 0.06864747354436695,
+              "heldout_logloss_median": 0.05945145884198366,
+              "pava_refused": 0,
+              "windows": 97
+            },
+            "scan_id": "dn-s004",
+            "source_sha256": "a4388151ea487faea8f8232c63d9faf384c9ee84238c02973205651d43686c52"
+          },
+          {
+            "bounds": {
+              "authoritative_core_cells": 2936151,
+              "mapped_max_yx": [
+                54290.05609650674,
+                37419.321680049936
+              ],
+              "mapped_min_yx": [
+                1849.5374678601108,
+                1636.849554071201
+              ],
+              "out_of_bounds": 0,
+              "placements": 97
+            },
+            "capture_id": "confetti-3b",
+            "context_emission_digest": "ce6a2a2f8cde6b430ced1e080e9b6437f724753d9eb6b2f822bc3dcdd3f18aaf",
+            "elapsed_s": 20.455469666980207,
+            "geometry_source": "decimated",
+            "lane": "DN",
+            "pava_emission_digest": "4dc7501eee84c88f2ba2f3cbb6fd6dadd4887de3b17426d5f4016685d16f1f04",
+            "same_view_pava_emission_exact": null,
+            "same_view_pava_rows_exact": null,
+            "sampler_source": "native",
+            "sampling": {
+              "accepted": 97,
+              "context_adopted": 8,
+              "context_eligible": 8,
+              "context_fits": 8,
+              "context_reasons": {
+                "adopted": 8
+              },
+              "context_refused": 0,
+              "emitted_cells": 1571058,
+              "heldout_logloss_mean": 0.07041962640850315,
+              "heldout_logloss_median": 0.06446920110078397,
+              "pava_refused": 0,
+              "windows": 97
+            },
+            "scan_id": "dn-s005",
+            "source_sha256": "91b17513b69fcf1b6643d858212832c2c11072f972408e528e79ba0dc67ea515"
+          }
+        ],
+        "tile_states": {
+          "attempted_failed": 37,
+          "below_attempt_floor": 12,
+          "certified": 756,
+          "degenerate": 35
+        }
+      },
+      "ND": {
+        "after_bp": {
+          "bits_sha256": "624cf3e41b3ec9c78af11322706ce8b78a2e54cbbcf86bfdebf36cd75cf3e99a",
+          "count": 749,
+          "set_sha256": "4c97d1b8cc75f44358d0c434262282bdf932f01ddcfca375dd6e54d5a56eb4d9"
+        },
+        "attempts": {
+          "below_floor_records": 479,
+          "bp_iterations": 65855,
+          "by_stage": {
+            "retry150": {
+              "bp_iterations": 15095,
+              "certified_new": 6,
+              "crc_calls": 52,
+              "ledger_records": 52
+            },
+            "scan": {
+              "bp_iterations": 31456,
+              "certified_new": 661,
+              "crc_calls": 872,
+              "ledger_records": 1257
+            },
+            "union": {
+              "bp_iterations": 19304,
+              "certified_new": 82,
+              "crc_calls": 217,
+              "ledger_records": 346
+            }
+          },
+          "crc_calls": 1141,
+          "crc_false_accept_budget": 2.6565976440906525e-07,
+          "ledger_records": 1655
+        },
+        "before_bp": {
+          "bits_sha256": "a270c40e6815485306164a8c5145c70b2694b729f43d426e395486db928b524f",
+          "count": 743,
+          "set_sha256": "4064dcaa9ba92fa1cf64844a6a43a952d4cc4f8ed405364b1c9374f4f16a6418"
+        },
+        "fatal": [],
+        "geometry": "native",
+        "prefix": [
+          {
+            "attempts": {
+              "below_floor_records": 89,
+              "bp_iterations": 8486,
+              "by_stage": {
+                "scan": {
+                  "bp_iterations": 8486,
+                  "certified_new": 179,
+                  "crc_calls": 238,
+                  "ledger_records": 343
+                }
+              },
+              "crc_calls": 238,
+              "crc_false_accept_budget": 5.541369318962097e-08,
+              "ledger_records": 343
+            },
+            "capture_id": "confetti-1",
+            "certificates": {
+              "bits_sha256": "a4c3ac51eae76133b952e78af68be9732032694daf01874adbff0511a2527f55",
+              "count": 179,
+              "set_sha256": "7ecf35a84d97a27f92051f8e361225ae965f20f7fead6867e7f2c027fd679aa1"
+            },
+            "tile_states": {
+              "attempted_failed": 59,
+              "below_attempt_floor": 89,
+              "certified": 179,
+              "degenerate": 35,
+              "unobserved": 478
+            },
+            "transaction": {
+              "newly_certified": 179,
+              "noop": false,
+              "stage1": {
+                "attempted": 238,
+                "certified": 179,
+                "evaluated": 343
+              },
+              "total_certified": 179,
+              "union": {
+                "attempted": 0,
+                "certified": 0,
+                "evaluated": 0
+              }
+            }
+          },
+          {
+            "attempts": {
+              "below_floor_records": 259,
+              "bp_iterations": 19524,
+              "by_stage": {
+                "scan": {
+                  "bp_iterations": 14102,
+                  "certified_new": 198,
+                  "crc_calls": 299,
+                  "ledger_records": 493
+                },
+                "union": {
+                  "bp_iterations": 5422,
+                  "certified_new": 1,
+                  "crc_calls": 46,
+                  "ledger_records": 127
+                }
+              },
+              "crc_calls": 345,
+              "crc_false_accept_budget": 8.032657206058502e-08,
+              "ledger_records": 620
+            },
+            "capture_id": "confetti-1b",
+            "certificates": {
+              "bits_sha256": "6414c83501a6695048f8f55223535bdd48fa6297c0e31be13aa2a5933876d146",
+              "count": 199,
+              "set_sha256": "51fb968938d19e5aff2ca22bd22bb3083bd29f6689aeb2b332b241070b545025"
+            },
+            "tile_states": {
+              "attempted_failed": 45,
+              "below_attempt_floor": 87,
+              "certified": 199,
+              "degenerate": 35,
+              "unobserved": 474
+            },
+            "transaction": {
+              "newly_certified": 20,
+              "noop": false,
+              "stage1": {
+                "attempted": 61,
+                "certified": 19,
+                "evaluated": 150
+              },
+              "total_certified": 199,
+              "union": {
+                "attempted": 46,
+                "certified": 1,
+                "evaluated": 127
+              }
+            }
+          },
+          {
+            "attempts": {
+              "below_floor_records": 318,
+              "bp_iterations": 26053,
+              "by_stage": {
+                "scan": {
+                  "bp_iterations": 18416,
+                  "certified_new": 299,
+                  "crc_calls": 431,
+                  "ledger_records": 677
+                },
+                "union": {
+                  "bp_iterations": 7637,
+                  "certified_new": 20,
+                  "crc_calls": 77,
+                  "ledger_records": 165
+                }
+              },
+              "crc_calls": 508,
+              "crc_false_accept_budget": 1.1827796697616577e-07,
+              "ledger_records": 842
+            },
+            "capture_id": "confetti-2",
+            "certificates": {
+              "bits_sha256": "597af3df1a7a7c8d444562f0c1de7c842a52a0bb328a164c7665c36cd23b232e",
+              "count": 319,
+              "set_sha256": "d465b032a6e561b96a20931734b4b5898cd193f580626284901571241cf62911"
+            },
+            "tile_states": {
+              "attempted_failed": 64,
+              "below_attempt_floor": 88,
+              "certified": 319,
+              "degenerate": 35,
+              "unobserved": 334
+            },
+            "transaction": {
+              "newly_certified": 120,
+              "noop": false,
+              "stage1": {
+                "attempted": 132,
+                "certified": 101,
+                "evaluated": 184
+              },
+              "total_certified": 319,
+              "union": {
+                "attempted": 31,
+                "certified": 19,
+                "evaluated": 38
+              }
+            }
+          },
+          {
+            "attempts": {
+              "below_floor_records": 385,
+              "bp_iterations": 30875,
+              "by_stage": {
+                "scan": {
+                  "bp_iterations": 20537,
+                  "certified_new": 310,
+                  "crc_calls": 457,
+                  "ledger_records": 741
+                },
+                "union": {
+                  "bp_iterations": 10338,
+                  "certified_new": 22,
+                  "crc_calls": 101,
+                  "ledger_records": 218
+                }
+              },
+              "crc_calls": 558,
+              "crc_false_accept_budget": 1.2991949915885925e-07,
+              "ledger_records": 959
+            },
+            "capture_id": "confetti-2b",
+            "certificates": {
+              "bits_sha256": "2073dcc8d3afd36ddb64a6f7b9e1a9fac9847599f6be6ed34c7db222cf32f727",
+              "count": 332,
+              "set_sha256": "5a4aea0803c2cb2293ca5ab5bd7ecc349968a0fd9ff9aacba11188777856216a"
+            },
+            "tile_states": {
+              "attempted_failed": 56,
+              "below_attempt_floor": 83,
+              "certified": 332,
+              "degenerate": 35,
+              "unobserved": 334
+            },
+            "transaction": {
+              "newly_certified": 13,
+              "noop": false,
+              "stage1": {
+                "attempted": 26,
+                "certified": 11,
+                "evaluated": 64
+              },
+              "total_certified": 332,
+              "union": {
+                "attempted": 24,
+                "certified": 2,
+                "evaluated": 53
+              }
+            }
+          },
+          {
+            "attempts": {
+              "below_floor_records": 448,
+              "bp_iterations": 44105,
+              "by_stage": {
+                "scan": {
+                  "bp_iterations": 29145,
+                  "certified_new": 651,
+                  "crc_calls": 845,
+                  "ledger_records": 1203
+                },
+                "union": {
+                  "bp_iterations": 14960,
+                  "certified_new": 72,
+                  "crc_calls": 177,
+                  "ledger_records": 302
+                }
+              },
+              "crc_calls": 1022,
+              "crc_false_accept_budget": 2.3795291781425476e-07,
+              "ledger_records": 1505
+            },
+            "capture_id": "confetti-3",
+            "certificates": {
+              "bits_sha256": "8d24fd9e62d324560b0bae1c9de506c22c27a0eae2fd26cb8e99b7893b0cacc6",
+              "count": 723,
+              "set_sha256": "1da678a6101c3a4cec9e273b12cfd69ce2d8f9e1102aece56b045d101838bd93"
+            },
+            "tile_states": {
+              "attempted_failed": 67,
+              "below_attempt_floor": 15,
+              "certified": 723,
+              "degenerate": 35
+            },
+            "transaction": {
+              "newly_certified": 391,
+              "noop": false,
+              "stage1": {
+                "attempted": 388,
+                "certified": 341,
+                "evaluated": 462
+              },
+              "total_certified": 723,
+              "union": {
+                "attempted": 76,
+                "certified": 50,
+                "evaluated": 84
+              }
+            }
+          },
+          {
+            "attempts": {
+              "below_floor_records": 479,
+              "bp_iterations": 50760,
+              "by_stage": {
+                "scan": {
+                  "bp_iterations": 31456,
+                  "certified_new": 661,
+                  "crc_calls": 872,
+                  "ledger_records": 1257
+                },
+                "union": {
+                  "bp_iterations": 19304,
+                  "certified_new": 82,
+                  "crc_calls": 217,
+                  "ledger_records": 346
+                }
+              },
+              "crc_calls": 1089,
+              "crc_false_accept_budget": 2.53552570939064e-07,
+              "ledger_records": 1603
+            },
+            "capture_id": "confetti-3b",
+            "certificates": {
+              "bits_sha256": "a270c40e6815485306164a8c5145c70b2694b729f43d426e395486db928b524f",
+              "count": 743,
+              "set_sha256": "4064dcaa9ba92fa1cf64844a6a43a952d4cc4f8ed405364b1c9374f4f16a6418"
+            },
+            "tile_states": {
+              "attempted_failed": 52,
+              "below_attempt_floor": 10,
+              "certified": 743,
+              "degenerate": 35
+            },
+            "transaction": {
+              "newly_certified": 20,
+              "noop": false,
+              "stage1": {
+                "attempted": 27,
+                "certified": 10,
+                "evaluated": 54
+              },
+              "total_certified": 743,
+              "union": {
+                "attempted": 40,
+                "certified": 10,
+                "evaluated": 44
+              }
+            }
+          }
+        ],
+        "retry": {
+          "attempted": 52,
+          "certified": 6,
+          "eligible": 52
+        },
+        "sampler": "decimated",
+        "sampling": [
+          {
+            "bounds": {
+              "authoritative_core_cells": 2079488,
+              "mapped_max_yx": [
+                15614.053244472107,
+                11960.601844534996
+              ],
+              "mapped_min_yx": [
+                294.47038883464666,
+                442.04486299064445
+              ],
+              "out_of_bounds": 0,
+              "placements": 90
+            },
+            "capture_id": "confetti-1",
+            "context_emission_digest": "0bee609f19ec85ac4f83e5ef60e67d0413d6890ae8fae1408e12b986b0bacb19",
+            "elapsed_s": 4.177519666962326,
+            "geometry_source": "native",
+            "lane": "ND",
+            "pava_emission_digest": "7e4dfb93e255c559c29083707b755cad5c94dad6896474794d2731126d3f94eb",
+            "same_view_pava_emission_exact": null,
+            "same_view_pava_rows_exact": null,
+            "sampler_source": "decimated",
+            "sampling": {
+              "accepted": 90,
+              "context_adopted": 17,
+              "context_eligible": 17,
+              "context_fits": 17,
+              "context_reasons": {
+                "adopted": 17
+              },
+              "context_refused": 0,
+              "emitted_cells": 951832,
+              "heldout_logloss_mean": 0.09236001190798143,
+              "heldout_logloss_median": 0.08002096653589197,
+              "pava_refused": 0,
+              "windows": 90
+            },
+            "scan_id": "nd-s000",
+            "source_sha256": "d9ecc3421e0c2a8eac61acafaa8e0443cbe5e722f3e86a5fea3f7b0bf71201cf"
+          },
+          {
+            "bounds": {
+              "authoritative_core_cells": 2152372,
+              "mapped_max_yx": [
+                15035.039748613322,
+                11660.446444245452
+              ],
+              "mapped_min_yx": [
+                99.20115924905082,
+                193.35548053699227
+              ],
+              "out_of_bounds": 0,
+              "placements": 86
+            },
+            "capture_id": "confetti-1b",
+            "context_emission_digest": "c1244090d77fe663fd5e240ede37f28999e3641d68a631ab09276791caee4580",
+            "elapsed_s": 3.9302864590426907,
+            "geometry_source": "native",
+            "lane": "ND",
+            "pava_emission_digest": "c73f376a73a98becf86b6d2bbbb3813850274d0fd4951b2bed3987981934e54c",
+            "same_view_pava_emission_exact": null,
+            "same_view_pava_rows_exact": null,
+            "sampler_source": "decimated",
+            "sampling": {
+              "accepted": 86,
+              "context_adopted": 17,
+              "context_eligible": 17,
+              "context_fits": 17,
+              "context_reasons": {
+                "adopted": 17
+              },
+              "context_refused": 0,
+              "emitted_cells": 962360,
+              "heldout_logloss_mean": 0.09718021040320034,
+              "heldout_logloss_median": 0.08362584511766175,
+              "pava_refused": 0,
+              "windows": 86
+            },
+            "scan_id": "nd-s001",
+            "source_sha256": "82cc748802b7d49a49f99ae4801e27142de9d64812d9ad26b497995f313fe5c8"
+          },
+          {
+            "bounds": {
+              "authoritative_core_cells": 1166515,
+              "mapped_max_yx": [
+                8698.04592698574,
+                11281.376103218969
+              ],
+              "mapped_min_yx": [
+                385.45844154734226,
+                367.44250359783143
+              ],
+              "out_of_bounds": 0,
+              "placements": 51
+            },
+            "capture_id": "confetti-2",
+            "context_emission_digest": "1cf4eb65e6f6ece3b9a9637640776692fbc239b12fc604d86858f4d055a7d229",
+            "elapsed_s": 2.1840304590296,
+            "geometry_source": "native",
+            "lane": "ND",
+            "pava_emission_digest": "609e60e80dedddca3c5d192580be9ce4bb4659071afb36e161ae08bc9a7e4915",
+            "same_view_pava_emission_exact": null,
+            "same_view_pava_rows_exact": null,
+            "sampler_source": "decimated",
+            "sampling": {
+              "accepted": 51,
+              "context_adopted": 10,
+              "context_eligible": 10,
+              "context_fits": 10,
+              "context_reasons": {
+                "adopted": 10
+              },
+              "context_refused": 0,
+              "emitted_cells": 537048,
+              "heldout_logloss_mean": 0.09420588495290377,
+              "heldout_logloss_median": 0.08571224991753336,
+              "pava_refused": 0,
+              "windows": 51
+            },
+            "scan_id": "nd-s002",
+            "source_sha256": "7214a4a4d5bf86ed1dd17e4c5ee60946675789ff7142d85e671a512539db6dd8"
+          },
+          {
+            "bounds": {
+              "authoritative_core_cells": 1248800,
+              "mapped_max_yx": [
+                8851.533863599587,
+                11245.880725533234
+              ],
+              "mapped_min_yx": [
+                685.7745847080799,
+                674.8417866538764
+              ],
+              "out_of_bounds": 0,
+              "placements": 49
+            },
+            "capture_id": "confetti-2b",
+            "context_emission_digest": "c5de6cd773d6ac075be6c6da953a8c24257e69c36aa9a56dc0049505ea1a690b",
+            "elapsed_s": 2.3398892499972135,
+            "geometry_source": "native",
+            "lane": "ND",
+            "pava_emission_digest": "5290697721c872564e3c9683269670510d7e5999a4a7bb477fa010c149105a60",
+            "same_view_pava_emission_exact": null,
+            "same_view_pava_rows_exact": null,
+            "sampler_source": "decimated",
+            "sampling": {
+              "accepted": 49,
+              "context_adopted": 10,
+              "context_eligible": 10,
+              "context_fits": 10,
+              "context_reasons": {
+                "adopted": 10
+              },
+              "context_refused": 0,
+              "emitted_cells": 542112,
+              "heldout_logloss_mean": 0.09084379345523763,
+              "heldout_logloss_median": 0.07916543857157536,
+              "pava_refused": 0,
+              "windows": 49
+            },
+            "scan_id": "nd-s003",
+            "source_sha256": "46b533243a3df45bc134f297bacdc8fac8e97ea3c73067c5bc69677477496123"
+          },
+          {
+            "bounds": {
+              "authoritative_core_cells": 3085268,
+              "mapped_max_yx": [
+                17814.405146790403,
+                11805.328971805639
+              ],
+              "mapped_min_yx": [
+                314.502872515238,
+                366.843546291009
+              ],
+              "out_of_bounds": 0,
+              "placements": 105
+            },
+            "capture_id": "confetti-3",
+            "context_emission_digest": "35ebcf03c9922853b87cfcf182c2ef64f7233f44ed1b5c641e40755b807d4440",
+            "elapsed_s": 6.047749583958648,
+            "geometry_source": "native",
+            "lane": "ND",
+            "pava_emission_digest": "e5f989038a97ecd55de301d011e4738c13f03db6fdbeaf317e126a9c4f6d82dc",
+            "same_view_pava_emission_exact": null,
+            "same_view_pava_rows_exact": null,
+            "sampler_source": "decimated",
+            "sampling": {
+              "accepted": 105,
+              "context_adopted": 8,
+              "context_eligible": 8,
+              "context_fits": 8,
+              "context_reasons": {
+                "adopted": 8
+              },
+              "context_refused": 0,
+              "emitted_cells": 1569854,
+              "heldout_logloss_mean": 0.09709442311724076,
+              "heldout_logloss_median": 0.0822895254151851,
+              "pava_refused": 0,
+              "windows": 105
+            },
+            "scan_id": "nd-s004",
+            "source_sha256": "2a3fed57b417f11c4cce9f4a74199b5c6bb86ae37069c7275d15c38fc99e6e0d"
+          },
+          {
+            "bounds": {
+              "authoritative_core_cells": 2947948,
+              "mapped_max_yx": [
+                18117.312726737186,
+                12477.32946818156
+              ],
+              "mapped_min_yx": [
+                615.8072235505412,
+                538.7054135812559
+              ],
+              "out_of_bounds": 0,
+              "placements": 100
+            },
+            "capture_id": "confetti-3b",
+            "context_emission_digest": "e4c53be0f1bcc8e14e1375cd301672de07ad9709e4cbbbf85be8bcad39faee38",
+            "elapsed_s": 5.904831457999535,
+            "geometry_source": "native",
+            "lane": "ND",
+            "pava_emission_digest": "11ded28fb1bb6070137eb08fe1ebb6c6104cf3f186e098ed647d97cda554c832",
+            "same_view_pava_emission_exact": null,
+            "same_view_pava_rows_exact": null,
+            "sampler_source": "decimated",
+            "sampling": {
+              "accepted": 100,
+              "context_adopted": 8,
+              "context_eligible": 8,
+              "context_fits": 8,
+              "context_reasons": {
+                "adopted": 8
+              },
+              "context_refused": 0,
+              "emitted_cells": 1576345,
+              "heldout_logloss_mean": 0.1054667810641726,
+              "heldout_logloss_median": 0.08335263310837077,
+              "pava_refused": 0,
+              "windows": 100
+            },
+            "scan_id": "nd-s005",
+            "source_sha256": "d22ba9dddf5689fdc1cc7f9035d0e9812f9a76e4a811ee7bf8f690ff29e28254"
+          }
+        ],
+        "tile_states": {
+          "attempted_failed": 46,
+          "below_attempt_floor": 10,
+          "certified": 749,
+          "degenerate": 35
+        }
+      },
+      "NN": {
+        "after_bp": {
+          "bits_sha256": "c2154b32c5ba07563d42c22780c6740dd3da9ce7be8b2a3dbd40cf985516fa5d",
+          "count": 752,
+          "set_sha256": "4a6435c91064865ca9bb9444d817ac801b77f83b7545272b5aa2d3402f875ef6"
+        },
+        "attempts": {
+          "below_floor_records": 479,
+          "bp_iterations": 62246,
+          "by_stage": {
+            "retry150": {
+              "bp_iterations": 14130,
+              "certified_new": 6,
+              "crc_calls": 49,
+              "ledger_records": 49
+            },
+            "scan": {
+              "bp_iterations": 29755,
+              "certified_new": 664,
+              "crc_calls": 865,
+              "ledger_records": 1250
+            },
+            "union": {
+              "bp_iterations": 18361,
+              "certified_new": 82,
+              "crc_calls": 211,
+              "ledger_records": 340
+            }
+          },
+          "crc_calls": 1125,
+          "crc_false_accept_budget": 2.6193447411060333e-07,
+          "ledger_records": 1639
+        },
+        "before_bp": {
+          "bits_sha256": "aa24d0fe2629b8aea21ac1626e6e936a4a19eb0aa3473224a170aefb1ae221f0",
+          "count": 746,
+          "set_sha256": "c05b95a072def32405cc5b5234cb5fb9c9c8745a077047622d3f8f3709ab8de8"
+        },
+        "fatal": [],
+        "geometry": "native",
+        "prefix": [
+          {
+            "attempts": {
+              "below_floor_records": 89,
+              "bp_iterations": 8316,
+              "by_stage": {
+                "scan": {
+                  "bp_iterations": 8316,
+                  "certified_new": 180,
+                  "crc_calls": 238,
+                  "ledger_records": 343
+                }
+              },
+              "crc_calls": 238,
+              "crc_false_accept_budget": 5.541369318962097e-08,
+              "ledger_records": 343
+            },
+            "capture_id": "confetti-1",
+            "certificates": {
+              "bits_sha256": "b736757b283df1fbe74685873211ce122dd3debf2b8ce28cb3e65d94c37d8462",
+              "count": 180,
+              "set_sha256": "d6a5e28febac92cca16809f0a991bd9543691bf2e58c278bca8811e56c9db61f"
+            },
+            "tile_states": {
+              "attempted_failed": 58,
+              "below_attempt_floor": 89,
+              "certified": 180,
+              "degenerate": 35,
+              "unobserved": 478
+            },
+            "transaction": {
+              "newly_certified": 180,
+              "noop": false,
+              "stage1": {
+                "attempted": 238,
+                "certified": 180,
+                "evaluated": 343
+              },
+              "total_certified": 180,
+              "union": {
+                "attempted": 0,
+                "certified": 0,
+                "evaluated": 0
+              }
+            }
+          },
+          {
+            "attempts": {
+              "below_floor_records": 259,
+              "bp_iterations": 19059,
+              "by_stage": {
+                "scan": {
+                  "bp_iterations": 13859,
+                  "certified_new": 199,
+                  "crc_calls": 298,
+                  "ledger_records": 492
+                },
+                "union": {
+                  "bp_iterations": 5200,
+                  "certified_new": 2,
+                  "crc_calls": 45,
+                  "ledger_records": 126
+                }
+              },
+              "crc_calls": 343,
+              "crc_false_accept_budget": 7.986091077327728e-08,
+              "ledger_records": 618
+            },
+            "capture_id": "confetti-1b",
+            "certificates": {
+              "bits_sha256": "1e9feaeba7151bb81738a472da943cb4ea2b45615a62d064300f05f507a63c0c",
+              "count": 201,
+              "set_sha256": "329adacb4506b985ee89e4bd3e80ab8c3a2d62ffb1886161eeccc7423b19c153"
+            },
+            "tile_states": {
+              "attempted_failed": 43,
+              "below_attempt_floor": 87,
+              "certified": 201,
+              "degenerate": 35,
+              "unobserved": 474
+            },
+            "transaction": {
+              "newly_certified": 21,
+              "noop": false,
+              "stage1": {
+                "attempted": 60,
+                "certified": 19,
+                "evaluated": 149
+              },
+              "total_certified": 201,
+              "union": {
+                "attempted": 45,
+                "certified": 2,
+                "evaluated": 126
+              }
+            }
+          },
+          {
+            "attempts": {
+              "below_floor_records": 318,
+              "bp_iterations": 25213,
+              "by_stage": {
+                "scan": {
+                  "bp_iterations": 18066,
+                  "certified_new": 303,
+                  "crc_calls": 430,
+                  "ledger_records": 676
+                },
+                "union": {
+                  "bp_iterations": 7147,
+                  "certified_new": 19,
+                  "crc_calls": 75,
+                  "ledger_records": 163
+                }
+              },
+              "crc_calls": 505,
+              "crc_false_accept_budget": 1.1757947504520416e-07,
+              "ledger_records": 839
+            },
+            "capture_id": "confetti-2",
+            "certificates": {
+              "bits_sha256": "33dc2bcc839e8f563f0c6e2bd4d8f9c8d85863906f086746b3fc61f1c21cb26f",
+              "count": 322,
+              "set_sha256": "6290b9ee7f25b529c62ecc3c3f57ce3295e989dbe78f57e41f3b2d9f7647be0c"
+            },
+            "tile_states": {
+              "attempted_failed": 61,
+              "below_attempt_floor": 88,
+              "certified": 322,
+              "degenerate": 35,
+              "unobserved": 334
+            },
+            "transaction": {
+              "newly_certified": 121,
+              "noop": false,
+              "stage1": {
+                "attempted": 132,
+                "certified": 104,
+                "evaluated": 184
+              },
+              "total_certified": 322,
+              "union": {
+                "attempted": 30,
+                "certified": 17,
+                "evaluated": 37
+              }
+            }
+          },
+          {
+            "attempts": {
+              "below_floor_records": 387,
+              "bp_iterations": 29851,
+              "by_stage": {
+                "scan": {
+                  "bp_iterations": 19861,
+                  "certified_new": 313,
+                  "crc_calls": 453,
+                  "ledger_records": 739
+                },
+                "union": {
+                  "bp_iterations": 9990,
+                  "certified_new": 20,
+                  "crc_calls": 99,
+                  "ledger_records": 216
+                }
+              },
+              "crc_calls": 552,
+              "crc_false_accept_budget": 1.2852251529693604e-07,
+              "ledger_records": 955
+            },
+            "capture_id": "confetti-2b",
+            "certificates": {
+              "bits_sha256": "b532c8be617b84140ebf23c7430aa0c47649c2ec76d40d9f721789756719f9bd",
+              "count": 333,
+              "set_sha256": "9680014ada7d1858234f4b3f6b1d9e79ac4a4eb543e10f653025afeabe716d0b"
+            },
+            "tile_states": {
+              "attempted_failed": 55,
+              "below_attempt_floor": 83,
+              "certified": 333,
+              "degenerate": 35,
+              "unobserved": 334
+            },
+            "transaction": {
+              "newly_certified": 11,
+              "noop": false,
+              "stage1": {
+                "attempted": 23,
+                "certified": 10,
+                "evaluated": 63
+              },
+              "total_certified": 333,
+              "union": {
+                "attempted": 24,
+                "certified": 1,
+                "evaluated": 53
+              }
+            }
+          },
+          {
+            "attempts": {
+              "below_floor_records": 449,
+              "bp_iterations": 42302,
+              "by_stage": {
+                "scan": {
+                  "bp_iterations": 27894,
+                  "certified_new": 654,
+                  "crc_calls": 841,
+                  "ledger_records": 1200
+                },
+                "union": {
+                  "bp_iterations": 14408,
+                  "certified_new": 73,
+                  "crc_calls": 175,
+                  "ledger_records": 300
+                }
+              },
+              "crc_calls": 1016,
+              "crc_false_accept_budget": 2.3655593395233154e-07,
+              "ledger_records": 1500
+            },
+            "capture_id": "confetti-3",
+            "certificates": {
+              "bits_sha256": "04e4ca37ad88d0996fb6247e72238902dff8a04d5bf1e2b18860a93d7d6a3597",
+              "count": 727,
+              "set_sha256": "0094a6cc6175982f4672bcc4e35f564045973fdeaa4f956d4e95099b901ce894"
+            },
+            "tile_states": {
+              "attempted_failed": 63,
+              "below_attempt_floor": 15,
+              "certified": 727,
+              "degenerate": 35
+            },
+            "transaction": {
+              "newly_certified": 394,
+              "noop": false,
+              "stage1": {
+                "attempted": 388,
+                "certified": 341,
+                "evaluated": 461
+              },
+              "total_certified": 727,
+              "union": {
+                "attempted": 76,
+                "certified": 53,
+                "evaluated": 84
+              }
+            }
+          },
+          {
+            "attempts": {
+              "below_floor_records": 479,
+              "bp_iterations": 48116,
+              "by_stage": {
+                "scan": {
+                  "bp_iterations": 29755,
+                  "certified_new": 664,
+                  "crc_calls": 865,
+                  "ledger_records": 1250
+                },
+                "union": {
+                  "bp_iterations": 18361,
+                  "certified_new": 82,
+                  "crc_calls": 211,
+                  "ledger_records": 340
+                }
+              },
+              "crc_calls": 1076,
+              "crc_false_accept_budget": 2.505257725715637e-07,
+              "ledger_records": 1590
+            },
+            "capture_id": "confetti-3b",
+            "certificates": {
+              "bits_sha256": "aa24d0fe2629b8aea21ac1626e6e936a4a19eb0aa3473224a170aefb1ae221f0",
+              "count": 746,
+              "set_sha256": "c05b95a072def32405cc5b5234cb5fb9c9c8745a077047622d3f8f3709ab8de8"
+            },
+            "tile_states": {
+              "attempted_failed": 49,
+              "below_attempt_floor": 10,
+              "certified": 746,
+              "degenerate": 35
+            },
+            "transaction": {
+              "newly_certified": 19,
+              "noop": false,
+              "stage1": {
+                "attempted": 24,
+                "certified": 10,
+                "evaluated": 50
+              },
+              "total_certified": 746,
+              "union": {
+                "attempted": 36,
+                "certified": 9,
+                "evaluated": 40
+              }
+            }
+          }
+        ],
+        "retry": {
+          "attempted": 49,
+          "certified": 6,
+          "eligible": 49
+        },
+        "sampler": "native",
+        "sampling": [
+          {
+            "bounds": {
+              "authoritative_core_cells": 2079488,
+              "mapped_max_yx": [
+                46843.15973341632,
+                35882.80553360499
+              ],
+              "mapped_min_yx": [
+                884.41116650394,
+                1327.1345889719332
+              ],
+              "out_of_bounds": 0,
+              "placements": 90
+            },
+            "capture_id": "confetti-1",
+            "context_emission_digest": "b714725b1c1c18154df7ca48260476d58c704eb129699a26cf7741e93b75173d",
+            "elapsed_s": 19.335381666081958,
+            "geometry_source": "native",
+            "lane": "NN",
+            "pava_emission_digest": "33cb9dea7624c45ae0a3871d85a92e2cb2e82710b5228a18de0b72586630205e",
+            "same_view_pava_emission_exact": true,
+            "same_view_pava_rows_exact": true,
+            "sampler_source": "native",
+            "sampling": {
+              "accepted": 90,
+              "context_adopted": 17,
+              "context_eligible": 17,
+              "context_fits": 17,
+              "context_reasons": {
+                "adopted": 17
+              },
+              "context_refused": 0,
+              "emitted_cells": 951832,
+              "heldout_logloss_mean": 0.08175834688318748,
+              "heldout_logloss_median": 0.07314647469503385,
+              "pava_refused": 0,
+              "windows": 90
+            },
+            "scan_id": "s000",
+            "source_sha256": "293c6c9490f03923b3f73c86bd5034cee22c13d6bbf620446403ac714a9a1381"
+          },
+          {
+            "bounds": {
+              "authoritative_core_cells": 2152372,
+              "mapped_max_yx": [
+                45106.11924583996,
+                34982.33933273636
+              ],
+              "mapped_min_yx": [
+                298.60347774715245,
+                581.0664416109768
+              ],
+              "out_of_bounds": 0,
+              "placements": 86
+            },
+            "capture_id": "confetti-1b",
+            "context_emission_digest": "46d4ae52a1061474e4e0febff5b30d56d7ad6c2bc42ed01e90ef77f3cba67828",
+            "elapsed_s": 17.093083917046897,
+            "geometry_source": "native",
+            "lane": "NN",
+            "pava_emission_digest": "dbf346754d7cf99d7b98914d44ac7bf103343cc40921b3476c179dbfe519bb38",
+            "same_view_pava_emission_exact": true,
+            "same_view_pava_rows_exact": true,
+            "sampler_source": "native",
+            "sampling": {
+              "accepted": 86,
+              "context_adopted": 17,
+              "context_eligible": 17,
+              "context_fits": 17,
+              "context_reasons": {
+                "adopted": 17
+              },
+              "context_refused": 0,
+              "emitted_cells": 962360,
+              "heldout_logloss_mean": 0.08571073070043389,
+              "heldout_logloss_median": 0.07319941250154344,
+              "pava_refused": 0,
+              "windows": 86
+            },
+            "scan_id": "s001",
+            "source_sha256": "b0a9fd56b11bb8d840bf84e38a8446f4d8a119199b66b526e2eeeb93713941d3"
+          },
+          {
+            "bounds": {
+              "authoritative_core_cells": 1166515,
+              "mapped_max_yx": [
+                26095.137780957222,
+                33845.12830965691
+              ],
+              "mapped_min_yx": [
+                1157.3753246420267,
+                1103.3275107934942
+              ],
+              "out_of_bounds": 0,
+              "placements": 51
+            },
+            "capture_id": "confetti-2",
+            "context_emission_digest": "b49d263a4f483ea62a45f91336f6e9fc464d292b469c521c511d91b6c3f227f1",
+            "elapsed_s": 11.557657332974486,
+            "geometry_source": "native",
+            "lane": "NN",
+            "pava_emission_digest": "e910c6bee51883bdbce5a44bf2d630816cce43c166e237ec29e94575bb955288",
+            "same_view_pava_emission_exact": true,
+            "same_view_pava_rows_exact": true,
+            "sampler_source": "native",
+            "sampling": {
+              "accepted": 51,
+              "context_adopted": 10,
+              "context_eligible": 10,
+              "context_fits": 10,
+              "context_reasons": {
+                "adopted": 10
+              },
+              "context_refused": 0,
+              "emitted_cells": 537048,
+              "heldout_logloss_mean": 0.08238143162306308,
+              "heldout_logloss_median": 0.07661333878146634,
+              "pava_refused": 0,
+              "windows": 51
+            },
+            "scan_id": "s002",
+            "source_sha256": "240624d157b0e5eaeb34f5492d66ce8a6dc2f706a6cc44e4dbcd5b203fdf64f9"
+          },
+          {
+            "bounds": {
+              "authoritative_core_cells": 1248800,
+              "mapped_max_yx": [
+                26555.60159079876,
+                33738.6421765997
+              ],
+              "mapped_min_yx": [
+                2058.3237541242397,
+                2025.525359961629
+              ],
+              "out_of_bounds": 0,
+              "placements": 49
+            },
+            "capture_id": "confetti-2b",
+            "context_emission_digest": "14922fcd02bcd147baff12439cdab149828cca16223b7d8aebced0ebb887ffb9",
+            "elapsed_s": 11.939693125081249,
+            "geometry_source": "native",
+            "lane": "NN",
+            "pava_emission_digest": "43537f5512716944e33f4b1553e40a41831c4eb8bfb4228e59cb632d7917b285",
+            "same_view_pava_emission_exact": true,
+            "same_view_pava_rows_exact": true,
+            "sampler_source": "native",
+            "sampling": {
+              "accepted": 49,
+              "context_adopted": 10,
+              "context_eligible": 10,
+              "context_fits": 10,
+              "context_reasons": {
+                "adopted": 10
+              },
+              "context_refused": 0,
+              "emitted_cells": 542112,
+              "heldout_logloss_mean": 0.08118886453937019,
+              "heldout_logloss_median": 0.07107177355600511,
+              "pava_refused": 0,
+              "windows": 49
+            },
+            "scan_id": "s003",
+            "source_sha256": "ea8403ff5425857aecc624400e053473c8e99b92e12659aa97fdd77018148ef3"
+          },
+          {
+            "bounds": {
+              "authoritative_core_cells": 3085268,
+              "mapped_max_yx": [
+                53444.215440371205,
+                35416.986915416914
+              ],
+              "mapped_min_yx": [
+                944.5086175457138,
+                1101.5306388730269
+              ],
+              "out_of_bounds": 0,
+              "placements": 105
+            },
+            "capture_id": "confetti-3",
+            "context_emission_digest": "9b1899da35bc6f8e66fd4c4cd42eaa83d45025363108b916a18b009163b15bb0",
+            "elapsed_s": 22.34990920801647,
+            "geometry_source": "native",
+            "lane": "NN",
+            "pava_emission_digest": "6ad5f046587ba92150c793f6509010db4128688c562baae2a778d4c63e672009",
+            "same_view_pava_emission_exact": true,
+            "same_view_pava_rows_exact": true,
+            "sampler_source": "native",
+            "sampling": {
+              "accepted": 105,
+              "context_adopted": 8,
+              "context_eligible": 8,
+              "context_fits": 8,
+              "context_reasons": {
+                "adopted": 8
+              },
+              "context_refused": 0,
+              "emitted_cells": 1569854,
+              "heldout_logloss_mean": 0.0863000892619341,
+              "heldout_logloss_median": 0.07735356892401196,
+              "pava_refused": 0,
+              "windows": 105
+            },
+            "scan_id": "s004",
+            "source_sha256": "bc1889249fd7ef519b65ceca215cecded46b5cf0c42107c88d19cd08074f1f08"
+          },
+          {
+            "bounds": {
+              "authoritative_core_cells": 2947948,
+              "mapped_max_yx": [
+                54352.93818021155,
+                37432.98840454468
+              ],
+              "mapped_min_yx": [
+                1848.4216706516236,
+                1617.1162407437678
+              ],
+              "out_of_bounds": 0,
+              "placements": 100
+            },
+            "capture_id": "confetti-3b",
+            "context_emission_digest": "6c127bc979028104380dc96d7190c3520d55c6e02d859ee0405563ab884a6fc0",
+            "elapsed_s": 20.819518417003565,
+            "geometry_source": "native",
+            "lane": "NN",
+            "pava_emission_digest": "3817051ae5e1d8bbfc8922537ec2a6c5ffc1ee128120e5c2aecc59e48e5f619a",
+            "same_view_pava_emission_exact": true,
+            "same_view_pava_rows_exact": true,
+            "sampler_source": "native",
+            "sampling": {
+              "accepted": 100,
+              "context_adopted": 8,
+              "context_eligible": 8,
+              "context_fits": 8,
+              "context_reasons": {
+                "adopted": 8
+              },
+              "context_refused": 0,
+              "emitted_cells": 1576345,
+              "heldout_logloss_mean": 0.0957351928949337,
+              "heldout_logloss_median": 0.07915127376680331,
+              "pava_refused": 0,
+              "windows": 100
+            },
+            "scan_id": "s005",
+            "source_sha256": "5e26220dfde73e5a713f89775bd6ff22e50774249e24e9465cd78995a3210910"
+          }
+        ],
+        "tile_states": {
+          "attempted_failed": 43,
+          "below_attempt_floor": 10,
+          "certified": 752,
+          "degenerate": 35
+        }
+      }
+    },
+    "portfolio": {
+      "aggregate_cost": {
+        "bp_iterations": 242555,
+        "crc_calls": 4470
+      },
+      "all_four": {
+        "bits_sha256": "41b768bb9cc02d029a1e82db533402c51863ef4932c806f918188e68eb23e438",
+        "count": 772,
+        "set_sha256": "596933a6fb6b897bbe428210afd6ec63a04eb07a28fbb2af25f7d91eeff25102"
+      },
+      "baseline_NN_DD": {
+        "bits_sha256": "2c462b6e9fda47c77e25b903bb1fc760a750a456c561932fa33bb285aa76e444",
+        "count": 769,
+        "set_sha256": "a910cce60403edd5f01a31a30aa4cf4226a78e29ecde246c59086524b65125b5"
+      },
+      "certificate_sources": {
+        "0.0.0": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.0.1": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.0.10": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.0.11": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.0.12": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.0.13": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.0.14": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.0.15": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.0.16": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.0.17": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.0.18": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.0.19": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.0.2": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.0.20": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.0.21": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.0.22": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.0.3": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.0.4": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.0.5": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.0.6": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.0.7": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.0.8": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.0.9": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.1.0": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.1.1": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.1.10": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.1.11": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.1.12": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.1.13": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.1.14": [
+          "DD",
+          "DN",
+          "ND"
+        ],
+        "0.1.15": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.1.16": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.1.17": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.1.18": [
+          "DD",
+          "DN"
+        ],
+        "0.1.19": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.1.2": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.1.20": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.1.21": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.1.22": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.1.3": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.1.4": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.1.5": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.1.6": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.1.7": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.1.8": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.1.9": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.10.0": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.10.1": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.10.10": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.10.11": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.10.12": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.10.13": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.10.14": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.10.15": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.10.16": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.10.17": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.10.18": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.10.19": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.10.2": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.10.20": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.10.21": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.10.22": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.10.3": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.10.4": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.10.5": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.10.6": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.10.7": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.10.8": [
+          "DD",
+          "DN"
+        ],
+        "0.11.0": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.11.1": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.11.10": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.11.11": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.11.12": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.11.13": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.11.14": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.11.15": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.11.16": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.11.17": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.11.18": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.11.19": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.11.2": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.11.20": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.11.21": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.11.22": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.11.3": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.11.5": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.11.6": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.11.7": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.11.8": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.11.9": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.12.0": [
+          "DD"
+        ],
+        "0.12.1": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.12.10": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.12.11": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.12.12": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.12.13": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.12.14": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.12.15": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.12.16": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.12.17": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.12.18": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.12.19": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.12.2": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.12.20": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.12.21": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.12.22": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.12.3": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.12.5": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.12.6": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.12.7": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.12.8": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.12.9": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.13.0": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.13.1": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.13.10": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.13.11": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.13.12": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.13.13": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.13.14": [
+          "ND",
+          "NN"
+        ],
+        "0.13.15": [
+          "ND",
+          "NN"
+        ],
+        "0.13.16": [
+          "ND",
+          "NN"
+        ],
+        "0.13.17": [
+          "ND",
+          "NN"
+        ],
+        "0.13.18": [
+          "ND",
+          "NN"
+        ],
+        "0.13.19": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.13.2": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.13.20": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.13.21": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.13.22": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.13.3": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.13.4": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.13.5": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.13.6": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.13.7": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.13.8": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.13.9": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.14.0": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.14.1": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.14.10": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.14.11": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.14.12": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.14.13": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.14.14": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.14.15": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.14.16": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.14.17": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.14.18": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.14.19": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.14.2": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.14.20": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.14.21": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.14.22": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.14.4": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.14.5": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.14.6": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.14.7": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.14.8": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.14.9": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.15.0": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.15.1": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.15.10": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.15.11": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.15.12": [
+          "DD",
+          "DN",
+          "NN"
+        ],
+        "0.15.13": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.15.14": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.15.15": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.15.16": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.15.17": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.15.18": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.15.19": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.15.2": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.15.20": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.15.21": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.15.22": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.15.3": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.15.4": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.15.5": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.15.6": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.15.7": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.15.8": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.15.9": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.16.0": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.16.1": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.16.10": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.16.11": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.16.12": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.16.13": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.16.14": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.16.15": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.16.16": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.16.17": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.16.18": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.16.19": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.16.2": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.16.20": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.16.21": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.16.22": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.16.3": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.16.4": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.16.5": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.16.6": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.16.7": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.16.8": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.16.9": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.17.0": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.17.1": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.17.10": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.17.11": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.17.12": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.17.13": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.17.14": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.17.15": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.17.16": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.17.17": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.17.18": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.17.19": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.17.2": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.17.20": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.17.21": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.17.22": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.17.3": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.17.4": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.17.5": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.17.6": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.17.7": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.17.8": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.17.9": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.18.0": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.18.1": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.18.10": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.18.11": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.18.12": [
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.18.13": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.18.14": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.18.15": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.18.16": [
+          "ND",
+          "NN"
+        ],
+        "0.18.17": [
+          "ND",
+          "NN"
+        ],
+        "0.18.18": [
+          "DN",
+          "NN"
+        ],
+        "0.18.19": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.18.2": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.18.20": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.18.21": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.18.22": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.18.3": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.18.4": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.18.5": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.18.6": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.18.7": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.18.8": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.18.9": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.19.0": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.19.1": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.19.10": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.19.11": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.19.14": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.19.15": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.19.16": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.19.17": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.19.18": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.19.19": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.19.2": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.19.20": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.19.21": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.19.22": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.19.3": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.19.4": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.19.5": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.19.6": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.19.7": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.19.8": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.19.9": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.2.1": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.2.10": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.2.12": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.2.13": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.2.14": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.2.15": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.2.16": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.2.17": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.2.18": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.2.19": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.2.2": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.2.20": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.2.21": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.2.22": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.2.3": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.2.4": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.2.5": [
+          "DD",
+          "DN",
+          "NN"
+        ],
+        "0.2.6": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.2.7": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.2.8": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.2.9": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.20.0": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.20.1": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.20.10": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.20.11": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.20.12": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.20.14": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.20.16": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.20.17": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.20.18": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.20.19": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.20.2": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.20.20": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.20.21": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.20.22": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.20.3": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.20.4": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.20.5": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.20.6": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.20.7": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.20.8": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.20.9": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.21.0": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.21.1": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.21.10": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.21.11": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.21.12": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.21.13": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.21.14": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.21.15": [
+          "DD",
+          "DN",
+          "ND"
+        ],
+        "0.21.16": [
+          "ND"
+        ],
+        "0.21.17": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.21.18": [
+          "ND",
+          "NN"
+        ],
+        "0.21.19": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.21.2": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.21.20": [
+          "DD",
+          "ND",
+          "NN"
+        ],
+        "0.21.21": [
+          "ND",
+          "NN"
+        ],
+        "0.21.22": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.21.3": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.21.4": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.21.5": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.21.6": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.21.8": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.21.9": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.22.0": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.22.1": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.22.10": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.22.11": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.22.13": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.22.14": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.22.15": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.22.17": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.22.18": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.22.19": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.22.2": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.22.20": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.22.21": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.22.22": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.22.3": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.22.4": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.22.5": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.22.6": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.22.8": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.22.9": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.23.0": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.23.1": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.23.10": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.23.11": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.23.12": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.23.13": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.23.14": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.23.15": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.23.16": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.23.17": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.23.18": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.23.19": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.23.2": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.23.20": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.23.21": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.23.22": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.23.3": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.23.4": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.23.5": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.23.6": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.23.7": [
+          "DD",
+          "DN",
+          "NN"
+        ],
+        "0.23.8": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.23.9": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.24.0": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.24.1": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.24.10": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.24.11": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.24.12": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.24.13": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.24.14": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.24.15": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.24.16": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.24.17": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.24.18": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.24.19": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.24.2": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.24.20": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.24.21": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.24.22": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.24.3": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.24.4": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.24.5": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.24.6": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.24.7": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.24.8": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.24.9": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.25.0": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.25.1": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.25.10": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.25.11": [
+          "DD"
+        ],
+        "0.25.12": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.25.13": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.25.14": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.25.15": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.25.16": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.25.17": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.25.18": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.25.19": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.25.2": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.25.20": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.25.21": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.25.22": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.25.3": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.25.4": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.25.5": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.25.6": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.25.7": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.25.8": [
+          "DD",
+          "ND",
+          "NN"
+        ],
+        "0.25.9": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.26.0": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.26.1": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.26.10": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.26.12": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.26.13": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.26.14": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.26.15": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.26.16": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.26.17": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.26.18": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.26.19": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.26.2": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.26.20": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.26.21": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.26.22": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.26.3": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.26.4": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.26.5": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.26.6": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.26.7": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.26.8": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.26.9": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.27.0": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.27.1": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.27.10": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.27.11": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.27.13": [
+          "DD",
+          "DN"
+        ],
+        "0.27.14": [
+          "DD",
+          "DN"
+        ],
+        "0.27.15": [
+          "DD",
+          "DN",
+          "ND"
+        ],
+        "0.27.16": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.27.17": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.27.2": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.27.20": [
+          "DD",
+          "DN"
+        ],
+        "0.27.21": [
+          "DN"
+        ],
+        "0.27.22": [
+          "DD",
+          "DN"
+        ],
+        "0.27.3": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.27.4": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.27.5": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.27.6": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.27.7": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.27.8": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.27.9": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.28.0": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.28.1": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.28.10": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.28.11": [
+          "DD",
+          "DN"
+        ],
+        "0.28.12": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.28.13": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.28.14": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.28.15": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.28.16": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.28.17": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.28.18": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.28.19": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.28.2": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.28.20": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.28.21": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.28.22": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.28.3": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.28.4": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.28.5": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.28.6": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.28.7": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.28.8": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.28.9": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.29.0": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.29.1": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.29.10": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.29.11": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.29.12": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.29.13": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.29.14": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.29.15": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.29.16": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.29.17": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.29.18": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.29.19": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.29.2": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.29.20": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.29.21": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.29.22": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.29.3": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.29.4": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.29.5": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.29.6": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.29.7": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.29.8": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.29.9": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.3.0": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.3.1": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.3.10": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.3.12": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.3.13": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.3.14": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.3.15": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.3.16": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.3.17": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.3.18": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.3.19": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.3.2": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.3.20": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.3.21": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.3.22": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.3.3": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.3.4": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.3.5": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.3.6": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.3.7": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.3.8": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.3.9": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.30.0": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.30.1": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.30.10": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.30.11": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.30.12": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.30.13": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.30.14": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.30.15": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.30.16": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.30.17": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.30.18": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.30.19": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.30.2": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.30.20": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.30.21": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.30.22": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.30.3": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.30.4": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.30.5": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.30.6": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.30.7": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.30.8": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.31.0": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.31.1": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.31.10": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.31.11": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.31.12": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.31.13": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.31.14": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.31.15": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.31.16": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.31.17": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.31.18": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.31.19": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.31.2": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.31.20": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.31.21": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.31.22": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.31.3": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.31.4": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.31.5": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.31.6": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.31.7": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.31.8": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.31.9": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.32.0": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.32.1": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.32.11": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.32.12": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.32.13": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.32.14": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.32.15": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.32.16": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.32.17": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.32.18": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.32.19": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.32.2": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.32.20": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.32.21": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.32.22": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.32.3": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.32.4": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.32.5": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.32.6": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.32.7": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.32.8": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.33.0": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.33.1": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.33.11": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.33.12": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.33.13": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.33.14": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.33.15": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.33.16": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.33.17": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.33.18": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.33.19": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.33.2": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.33.20": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.33.21": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.33.22": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.33.4": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.33.5": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.33.6": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.33.7": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.33.8": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.33.9": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.34.0": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.34.1": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.34.11": [
+          "DD",
+          "DN",
+          "NN"
+        ],
+        "0.34.12": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.34.13": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.34.14": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.34.15": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.34.16": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.34.17": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.34.18": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.34.19": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.34.2": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.34.20": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.34.21": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.34.22": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.34.3": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.34.4": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.34.5": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.34.6": [
+          "DD",
+          "DN",
+          "NN"
+        ],
+        "0.34.7": [
+          "DD",
+          "DN",
+          "NN"
+        ],
+        "0.34.8": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.34.9": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.4.0": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.4.1": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.4.10": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.4.11": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.4.12": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.4.13": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.4.14": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.4.15": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.4.16": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.4.17": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.4.18": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.4.19": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.4.2": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.4.20": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.4.21": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.4.22": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.4.3": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.4.4": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.4.5": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.4.6": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.4.7": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.4.8": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.4.9": [
+          "DD",
+          "ND",
+          "NN"
+        ],
+        "0.5.0": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.5.1": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.5.10": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.5.11": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.5.12": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.5.13": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.5.14": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.5.15": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.5.16": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.5.17": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.5.18": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.5.19": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.5.2": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.5.20": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.5.21": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.5.22": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.5.3": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.5.4": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.5.5": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.5.6": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.5.7": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.5.8": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.5.9": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.6.0": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.6.1": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.6.10": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.6.11": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.6.12": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.6.13": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.6.15": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.6.16": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.6.17": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.6.18": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.6.19": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.6.2": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.6.20": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.6.21": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.6.22": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.6.3": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.6.4": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.6.5": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.6.6": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.6.7": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.6.8": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.6.9": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.7.0": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.7.1": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.7.10": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.7.11": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.7.12": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.7.13": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.7.14": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.7.15": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.7.16": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.7.17": [
+          "DD",
+          "DN"
+        ],
+        "0.7.18": [
+          "DN"
+        ],
+        "0.7.19": [
+          "DD",
+          "DN"
+        ],
+        "0.7.2": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.7.20": [
+          "DD",
+          "DN"
+        ],
+        "0.7.3": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.7.4": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.7.5": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.7.6": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.7.7": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.7.8": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.7.9": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.8.1": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.8.10": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.8.11": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.8.12": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.8.13": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.8.14": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.8.15": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.8.16": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.8.17": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.8.18": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.8.19": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.8.2": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.8.20": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.8.21": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.8.22": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.8.3": [
+          "DD",
+          "DN"
+        ],
+        "0.8.5": [
+          "DD",
+          "DN"
+        ],
+        "0.8.6": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.8.7": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.8.8": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.8.9": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.9.0": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.9.1": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.9.10": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.9.11": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.9.12": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.9.13": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.9.14": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.9.15": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.9.16": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.9.17": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.9.18": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.9.19": [
+          "ND",
+          "NN"
+        ],
+        "0.9.2": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.9.20": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.9.21": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.9.22": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.9.3": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.9.4": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.9.6": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ],
+        "0.9.7": [
+          "DD",
+          "DN",
+          "ND",
+          "NN"
+        ]
+      },
+      "conflicts": [],
+      "cross_lane_unique_beyond_baseline": {
+        "DN": [
+          [
+            0,
+            7,
+            18
+          ],
+          [
+            0,
+            27,
+            21
+          ]
+        ],
+        "ND": [
+          [
+            0,
+            21,
+            16
+          ]
+        ]
+      },
+      "gained_beyond_baseline": {
+        "count": 3,
+        "tiles": [
+          [
+            0,
+            7,
+            18
+          ],
+          [
+            0,
+            21,
+            16
+          ],
+          [
+            0,
+            27,
+            21
+          ]
+        ]
+      },
+      "pairwise": [
+        {
+          "intersection": 740,
+          "left": "NN",
+          "left_only": 12,
+          "right": "DD",
+          "right_only": 17,
+          "union": 769
+        },
+        {
+          "intersection": 745,
+          "left": "NN",
+          "left_only": 7,
+          "right": "ND",
+          "right_only": 4,
+          "union": 756
+        },
+        {
+          "intersection": 739,
+          "left": "NN",
+          "left_only": 13,
+          "right": "DN",
+          "right_only": 17,
+          "union": 769
+        },
+        {
+          "intersection": 737,
+          "left": "DD",
+          "left_only": 20,
+          "right": "ND",
+          "right_only": 12,
+          "union": 769
+        },
+        {
+          "intersection": 752,
+          "left": "DD",
+          "left_only": 5,
+          "right": "DN",
+          "right_only": 4,
+          "union": 761
+        },
+        {
+          "intersection": 735,
+          "left": "ND",
+          "left_only": 14,
+          "right": "DN",
+          "right_only": 21,
+          "union": 770
+        }
+      ]
+    },
+    "semantics": {
+      "capture_barrier": "all four correlated lane emissions complete before any lane advances to the next physical capture",
+      "evidence": "one vote per physical capture/cell inside each lane; no LLR values cross lanes",
+      "merge": "syndrome+CRC certificates only; conflicts are fatal"
+    },
+    "workers": 2
+  },
+  "experiment": "e023c-scale-space-factorial-v1",
+  "full_capture_set": true,
+  "gates": {
+    "DD_frozen_anchor_exact": true,
+    "NN_DD_union_frozen_anchor_exact": true,
+    "NN_frozen_anchor_exact": true,
+    "all_certificates_ground_truth_correct": true,
+    "all_external_box3_pixels_exact": true,
+    "all_transferred_authoritative_cores_in_bounds": true,
+    "complete_state_sha256_pins": true,
+    "ground_truth_loaded_after_blind_outputs": true,
+    "no_certificate_conflicts": true,
+    "no_cross_lane_llr_merge": true,
+    "physical_capture_pairing": true,
+    "same_view_live_pava_exact_to_frozen": true,
+    "source_files_match_frozen_identities": true
+  },
+  "gates_ok": true,
+  "ground_truth": {
+    "all_certificates_correct": true,
+    "certificate_audits": {
+      "DD": {
+        "certificates": 757,
+        "wrong_count": 0,
+        "wrong_tiles": []
+      },
+      "DN": {
+        "certificates": 756,
+        "wrong_count": 0,
+        "wrong_tiles": []
+      },
+      "ND": {
+        "certificates": 749,
+        "wrong_count": 0,
+        "wrong_tiles": []
+      },
+      "NN": {
+        "certificates": 752,
+        "wrong_count": 0,
+        "wrong_tiles": []
+      }
+    },
+    "emitted_payload": {
+      "DD": {
+        "ber": 0.013509028657161738,
+        "cells": 6110654,
+        "wrong": 82549
+      },
+      "DN": {
+        "ber": 0.013191714012935441,
+        "cells": 6110654,
+        "wrong": 80610
+      },
+      "ND": {
+        "ber": 0.02374717630002585,
+        "cells": 6139551,
+        "wrong": 145797
+      },
+      "NN": {
+        "ber": 0.0187572348531676,
+        "cells": 6139551,
+        "wrong": 115161
+      }
+    },
+    "loaded_after_all_blind_outputs": true,
+    "sha256": "6c6f54b7a8dec9d5b5d4e75ce5a29af4323bb91da5eca50391cc5d5eebc5cc82"
+  },
+  "implementation": {
+    "arms_qualifier_sha256": "49c06c30d939e4ae6dc7090eb80b0d806c14fbc6dcae9663a8ba310823c20d2b",
+    "design_sha256": "39d0ed636810529ccdc51c70e6b8c1b66bf23852780b68f84b4c1011a3b27e2d",
+    "multiview_qualifier_sha256": "4d54cf782ab7f205fe25cc77553d2657ab4f79229422a3b8a08062d85fcc13f8",
+    "payloaddec_sha256": "b6eb0f52ae1efc5be0f6be7576c728b1167728ea3136150726c9887bce4b3a65",
+    "qualifier_sha256": "9452497cb029d834684e0d79f1b2970edba80addbdcc5f7233d1dc6372bd875a",
+    "receiver_sha256": "ce45760956228c8be9936de1f741b5acd60adf50d0d5ff3c01aa0a52100c0b86",
+    "scale_space_sha256": "4b5dd54bef560750ebed55ab877e07ebd6b893e9c4885cc57ca2bb59831aa151"
+  },
+  "inputs": {
+    "decimated_state": {
+      "algorithm_id": "e023b.0-qualified-core",
+      "legacy_implementation_rows": 22,
+      "legacy_implementation_sha256": "e89d65ae5d24a7a0dd3d11a7c6b4738677d712d27e01f927b8659d3125f8a959",
+      "path": "experiments/023b-integrated-receiver/build/e023b_decimated.pkl",
+      "sha256": "a34baa9379e23788c013b1772ef44b6f7d964c0e7aa25ef46b4d983a5880ee30",
+      "state_magic": "e023b-session-v1",
+      "state_version": 1
+    },
+    "native_state": {
+      "algorithm_id": "e023b.0-qualified-core",
+      "legacy_implementation_rows": 22,
+      "legacy_implementation_sha256": "e89d65ae5d24a7a0dd3d11a7c6b4738677d712d27e01f927b8659d3125f8a959",
+      "path": "experiments/023b-integrated-receiver/build/e023b_native.pkl",
+      "sha256": "328e9ce6b1c6d01e722d90b0fa92324c3f280e86273a4470ba361aa505e1282e",
+      "state_magic": "e023b-session-v1",
+      "state_version": 1
+    }
+  },
+  "preflight": {
+    "captures": [
+      {
+        "box3": {
+          "compared_pixels": 254629490,
+          "derived_shape": [
+            18709,
+            13610
+          ],
+          "expected_shape": [
+            18709,
+            13610
+          ],
+          "factor": 3,
+          "first_mismatch_yx": null,
+          "max_abs_difference": 0,
+          "mismatched_pixels": 0,
+          "source_shape": [
+            56128,
+            40832
+          ],
+          "uncompared_pixels": 0
+        },
+        "capture_id": "confetti-1",
+        "sources": {
+          "decimated": {
+            "dpi": 1600.0,
+            "path": "scratch/e018/decimated-1_1600.tiff",
+            "sha256": "cd087916bf9fb241514d87353168741f0b976befd05610290c70aa73ce305af1",
+            "shape": [
+              18709,
+              13610
+            ],
+            "size": 254629746
+          },
+          "native": {
+            "dpi": 4800.0,
+            "path": "scratch/e018/hp-e018-canon-4800-confetti-1.tiff",
+            "sha256": "293c6c9490f03923b3f73c86bd5034cee22c13d6bbf620446403ac714a9a1381",
+            "shape": [
+              56128,
+              40832
+            ],
+            "size": 2291818718
+          }
+        }
+      },
+      {
+        "box3": {
+          "compared_pixels": 254629490,
+          "derived_shape": [
+            18709,
+            13610
+          ],
+          "expected_shape": [
+            18709,
+            13610
+          ],
+          "factor": 3,
+          "first_mismatch_yx": null,
+          "max_abs_difference": 0,
+          "mismatched_pixels": 0,
+          "source_shape": [
+            56128,
+            40832
+          ],
+          "uncompared_pixels": 0
+        },
+        "capture_id": "confetti-1b",
+        "sources": {
+          "decimated": {
+            "dpi": 1600.0,
+            "path": "scratch/e018/decimated-1-2nd_1600.tiff",
+            "sha256": "527e96db65d4ae19f55ad827dd999088bf683e29647ca6c0116a81181f47ac53",
+            "shape": [
+              18709,
+              13610
+            ],
+            "size": 254629746
+          },
+          "native": {
+            "dpi": 4800.0,
+            "path": "scratch/e018/hp-e018-canon-4800-confetti-1-2ndtake.tiff",
+            "sha256": "b0a9fd56b11bb8d840bf84e38a8446f4d8a119199b66b526e2eeeb93713941d3",
+            "shape": [
+              56128,
+              40832
+            ],
+            "size": 2291818718
+          }
+        }
+      },
+      {
+        "box3": {
+          "compared_pixels": 254629490,
+          "derived_shape": [
+            18709,
+            13610
+          ],
+          "expected_shape": [
+            18709,
+            13610
+          ],
+          "factor": 3,
+          "first_mismatch_yx": null,
+          "max_abs_difference": 0,
+          "mismatched_pixels": 0,
+          "source_shape": [
+            56128,
+            40832
+          ],
+          "uncompared_pixels": 0
+        },
+        "capture_id": "confetti-2",
+        "sources": {
+          "decimated": {
+            "dpi": 1600.0,
+            "path": "scratch/e018/decimated-2_1600.tiff",
+            "sha256": "634e593963ccd1b723b104fee650ce31a791bb5d3ff29f13865dac621a341051",
+            "shape": [
+              18709,
+              13610
+            ],
+            "size": 254629746
+          },
+          "native": {
+            "dpi": 4800.0,
+            "path": "scratch/e018/hp-e018-canon-4800-confetti-2.tiff",
+            "sha256": "240624d157b0e5eaeb34f5492d66ce8a6dc2f706a6cc44e4dbcd5b203fdf64f9",
+            "shape": [
+              56128,
+              40832
+            ],
+            "size": 2291818718
+          }
+        }
+      },
+      {
+        "box3": {
+          "compared_pixels": 254629490,
+          "derived_shape": [
+            18709,
+            13610
+          ],
+          "expected_shape": [
+            18709,
+            13610
+          ],
+          "factor": 3,
+          "first_mismatch_yx": null,
+          "max_abs_difference": 0,
+          "mismatched_pixels": 0,
+          "source_shape": [
+            56128,
+            40832
+          ],
+          "uncompared_pixels": 0
+        },
+        "capture_id": "confetti-2b",
+        "sources": {
+          "decimated": {
+            "dpi": 1600.0,
+            "path": "scratch/e018/decimated-2-2nd_1600.tiff",
+            "sha256": "a9edb61c74f350d4dff5ed3589021a61280d17f1af16a2a78e9a496c75ead732",
+            "shape": [
+              18709,
+              13610
+            ],
+            "size": 254629746
+          },
+          "native": {
+            "dpi": 4800.0,
+            "path": "scratch/e018/hp-e018-canon-4800-confetti-2-2ndtake.tiff",
+            "sha256": "ea8403ff5425857aecc624400e053473c8e99b92e12659aa97fdd77018148ef3",
+            "shape": [
+              56128,
+              40832
+            ],
+            "size": 2291818718
+          }
+        }
+      },
+      {
+        "box3": {
+          "compared_pixels": 254629490,
+          "derived_shape": [
+            18709,
+            13610
+          ],
+          "expected_shape": [
+            18709,
+            13610
+          ],
+          "factor": 3,
+          "first_mismatch_yx": null,
+          "max_abs_difference": 0,
+          "mismatched_pixels": 0,
+          "source_shape": [
+            56128,
+            40832
+          ],
+          "uncompared_pixels": 0
+        },
+        "capture_id": "confetti-3",
+        "sources": {
+          "decimated": {
+            "dpi": 1600.0,
+            "path": "scratch/e018/decimated-3_1600.tiff",
+            "sha256": "c946b481b5fcf05bdf722bfac05073c1bf3d0dce82c5a9c72ccde592b4210844",
+            "shape": [
+              18709,
+              13610
+            ],
+            "size": 254629746
+          },
+          "native": {
+            "dpi": 4800.0,
+            "path": "scratch/e018/hp-e018-canon-4800-confetti-3.tiff",
+            "sha256": "bc1889249fd7ef519b65ceca215cecded46b5cf0c42107c88d19cd08074f1f08",
+            "shape": [
+              56128,
+              40832
+            ],
+            "size": 2291818718
+          }
+        }
+      },
+      {
+        "box3": {
+          "compared_pixels": 254629490,
+          "derived_shape": [
+            18709,
+            13610
+          ],
+          "expected_shape": [
+            18709,
+            13610
+          ],
+          "factor": 3,
+          "first_mismatch_yx": null,
+          "max_abs_difference": 0,
+          "mismatched_pixels": 0,
+          "source_shape": [
+            56128,
+            40832
+          ],
+          "uncompared_pixels": 0
+        },
+        "capture_id": "confetti-3b",
+        "sources": {
+          "decimated": {
+            "dpi": 1600.0,
+            "path": "scratch/e018/decimated-3-2nd_1600.tiff",
+            "sha256": "74c7654cb29b47e005e253c814ad89147f5aaad4f2029427385825cb8685dc19",
+            "shape": [
+              18709,
+              13610
+            ],
+            "size": 254629746
+          },
+          "native": {
+            "dpi": 4800.0,
+            "path": "scratch/e018/hp-e018-canon-4800-confetti-3-2ndtake.tiff",
+            "sha256": "5e26220dfde73e5a713f89775bd6ff22e50774249e24e9465cd78995a3210910",
+            "shape": [
+              56128,
+              40832
+            ],
+            "size": 2291818718
+          }
+        }
+      }
+    ],
+    "totals": {
+      "all_box3_pixels_exact": true,
+      "all_sources_match_frozen_identity": true,
+      "derived_pixels": 1527776940,
+      "mismatched_pixels": 0,
+      "pairs": 6,
+      "uncompared_pixels": 0
+    }
+  },
+  "production_entrypoint_built": false,
+  "qualification_only": true,
+  "status": "QUALIFIED"
+}

@@ -1,0 +1,109 @@
+=== START bm-post-w4 (run_decode_gil.py, arm=post, W=4) Mon Aug 17 07:25:40 CEST 2026 ===
+[bm] arm=post — twin's rule 2 is the lockstep berlekamp_massey_many
+format   c2-r0700@3392x2368 · codec k-v1 · 1 page domain · streams main · PROVISIONAL
+capture  1 ingested · cf29e165ebe4… · done coverage 69.0% (5542455/8034771 cells)
+queue    ready 170[payload:69,place:101] · running 0 · sleeping 340 · retired 1359 · declined 0 (re-offerable 0) · pool 4/free
+work     commits 1924 (scheduled 1923) · fires 2332 · wakes/commit 0.71 · useful 0.68 · peak 4 · stale 16
+tiles    UNKNOWN 0 · ADDRESSED 395 · ATTEMPTED 7 · CERTIFIED 1359 · crc exposure 1366 spends/1366 attempts
+close    verified · certified 1359 · K 1359/1356 · metadata rank 24/24 · blocks 1/1
+[bm-post-w4] RESULT VERIFIED certified=1359 commits=1923 fires=2332 wall=145s workers=4 switch_ms=5.0
+[bm-post-w4] payload 465580 B sha e5021f8d099587c3
+[bm-post-w4] vs w1a-gc-serial.bin: BYTE-IDENTICAL
+[bm-post-w4] FIRES 2349 wall 347.9s cpu 136.6s offcore 211.3s (60.7% of fire wall) | fire-cpu/wall 0.944 cores
+[bm-post-w4] FIRE wall p50 54.26ms p90 250.87ms | cpu p50 1.50ms p90 83.97ms
+[bm-post-w4] --- per family/route ---
+[bm-post-w4]   place/pull/source    n=  643 cpu=   133.4s ( 97.7%) wall=   227.5s cpu-p50=   79.14ms cpu-p90=   733.30ms wall-p90=   868.62ms
+[bm-post-w4]   payload/scan           n= 1706 cpu=     3.2s (  2.3%) wall=   120.4s cpu-p50=    1.34ms cpu-p90=     2.46ms wall-p90=    95.98ms
+[bm-post-w4] MAIN thread cpu 98.2s of wall 144.8s (67.9%)
+[bm-post-w4]   main.fill       n=  1922 wall=     9.8s cpu=     8.9s p50=   0.53ms p90=   31.95ms
+[bm-post-w4]   main.admit      n=  1922 wall=   129.8s cpu=    84.6s p50=  58.56ms p90=  116.65ms
+[bm-post-w4]   main.apply      n=  2332 wall=    85.4s cpu=    82.0s p50=  46.97ms p90=   65.34ms
+[bm-post-w4]   main.ctx.apply  n=  1923 wall=     3.2s cpu=     1.6s p50=   0.96ms p90=    4.75ms
+[bm-post-w4]   main.is_current n=  2348 wall=     2.6s cpu=     2.5s p50=   0.06ms p90=    0.09ms
+[bm-post-w4] GIL-LATENCY probe n=14392 period=5.0ms mean=4.81ms p50=2.55ms p90=10.04ms p99=22.75ms max=262.3ms
+[bm-post-w4] IN-FIRE THREADS per sample: 0:5%, 4:95%
+[bm-post-w4] --- stack sampler: 54596 pool-thread samples ---
+[bm-post-w4]   34.37%  thread:_worker:116
+[bm-post-w4]    5.58%  bch_batch:chien_root_mask:357
+[bm-post-w4]    4.24%  bch_batch:berlekamp_massey_many:310
+[bm-post-w4]    3.91%  _interpolation:map_coordinates:474
+[bm-post-w4]    3.86%  bch_batch:berlekamp_massey_many:312
+[bm-post-w4]    3.10%  bch_batch:chien_root_mask:358
+[bm-post-w4]    2.21%  bch_batch:berlekamp_massey_many:291
+[bm-post-w4]    2.19%  bch_batch:berlekamp_massey_many:296
+[bm-post-w4]    1.62%  decode:_bp_loop:72
+[bm-post-w4]    1.41%  bch_batch:berlekamp_massey_many:316
+[bm-post-w4]    1.31%  decode:_bp_loop:99
+[bm-post-w4]    1.27%  bch_batch:berlekamp_massey_many:293
+[bm-post-w4]    1.21%  pose_fit:_fit_phase:492
+[bm-post-w4]    1.02%  decode:_bp_loop:101
+[bm-post-w4]    0.99%  words:_gather_slot:288
+[bm-post-w4]    0.94%  pose_audit:parity_mask:220
+[bm-post-w4]    0.88%  decode:_bp_loop:100
+[bm-post-w4]    0.87%  decode:_bp_loop:80
+[bm-post-w4]    0.80%  decode:_bp_loop:94
+[bm-post-w4]    0.74%  tile:cell_map:102
+[bm-post-w4] --- top stacks ---
+[bm-post-w4]   34.37%  thread:_worker
+[bm-post-w4]   18.24%  bch_batch:berlekamp_massey_many < bch_batch:decode_many < words:_decode_candidates < words:stage_a < words:stage_a_patch < placement:decode_word_address
+[bm-post-w4]   11.88%  decode:_bp_loop < decode:_run < decode:decode < tile:decode_tile < tiles:attempt_k_tile < payload_h3bis:run
+[bm-post-w4]    8.77%  bch_batch:chien_root_mask < bch_batch:decode_many < words:_decode_candidates < words:stage_a < words:stage_a_patch < placement:decode_word_address
+[bm-post-w4]    2.25%  pose_audit:parity_score < pose_audit:candidate < pose_audit:local_search < place_job:_search < place_job:run < orchestrator:_propose
+[bm-post-w4]    1.96%  keystream:counters < keystream:bits < tiles:_tile_scramble_bits_for < tiles:_tile_scramble_bits < tiles:_descramble_validated < tiles:attempt_k_tile
+[bm-post-w4]    1.94%  words:_gather_slot < words:_decode_candidates < words:stage_a < words:stage_a_patch < placement:decode_word_address < place_job:run
+[bm-post-w4]    1.73%  _interpolation:map_coordinates < pose_audit:_batched_refine_scan < pose_audit:refine_patch_pose < place_shared:place_addressed < place_job:run < orchestrator:_propose
+[bm-post-w4]    1.70%  pose_fit:_fit_phase < pose_fit:fit_window_pose < place_shared:sample_window < place_job:run < orchestrator:_propose < thread:run
+[bm-post-w4]    1.54%  pose_fit:lattice_reciprocal < pose_fit:fit_window_pose < place_shared:sample_window < place_job:run < orchestrator:_propose < thread:run
+[bm-post-w4]    1.49%  _interpolation:map_coordinates < pose_fit:_fit_phase < pose_fit:fit_window_pose < place_shared:sample_window < place_job:run < orchestrator:_propose
+[bm-post-w4]    1.29%  bch:_syndromes_many_words < bch_batch:decode_many < words:_decode_candidates < words:stage_a < words:stage_a_patch < placement:decode_word_address
+[bm-post-w4] --- stack sampler: 14392 MAIN-thread samples ---
+[bm-post-w4]   36.78%  threading:wait:369
+[bm-post-w4]   10.15%  keys:<genexpr>:253
+[bm-post-w4]    8.40%  <string>:__lt__:14
+[bm-post-w4]    4.57%  keys:parse_key:257
+[bm-post-w4]    3.38%  keys:key_parts:134
+[bm-post-w4]    2.67%  journal:append:343
+[bm-post-w4]    2.54%  keys:<genexpr>:198
+[bm-post-w4]    2.41%  <string>:__init__:2
+[bm-post-w4]    2.37%  journal:append:345
+[bm-post-w4]    1.80%  blobs:put:221
+[bm-post-w4]    1.73%  _filters:correlate1d:610
+[bm-post-w4]    1.37%  <string>:__hash__:38
+[bm-post-w4]    1.36%  <string>:__init__:3
+[bm-post-w4]    1.22%  <string>:__hash__:39
+[bm-post-w4]    1.18%  <string>:__init__:4
+[bm-post-w4]    0.99%  keys:key_parts:116
+[bm-post-w4]    0.84%  payload_h3bis:evidence_footing:164
+[bm-post-w4]    0.75%  keys:build_key:223
+[bm-post-w4]    0.75%  keys:tile_key:80
+[bm-post-w4]    0.66%  keys:parse_evidence_key:131
+[bm-post-w4]   S 36.80%  orchestrator:_admit_completed < orchestrator:_run_pool < orchestrator:_run < orchestrator:run < cli:decode < <frozen runpy>:_run_code
+[bm-post-w4]   S  6.37%  <string>:__lt__ < store:keys < tilemap:build < plane:index < plane:tiles < plane:tiles
+[bm-post-w4]   S  4.61%  journal:append < store:mark_start < orchestrator:_dispatch < orchestrator:_fill < orchestrator:_run_pool < orchestrator:_run
+[bm-post-w4]   S  4.21%  keys:<genexpr> < keys:parse_key < keys:parse_evidence_key < tilemap:build < plane:index < plane:tiles
+[bm-post-w4]   S  4.16%  keys:key_parts < keys:build_key < keys:tile_key < tilemap:build < plane:index < plane:tiles
+[bm-post-w4]   S  2.69%  blobs:put < store:put_staged < commit:apply < session:apply < orchestrator:_commit < orchestrator:_apply
+[bm-post-w4]   S  2.59%  keys:<genexpr> < keys:parse_key < keys:parse_evidence_key < payload_h3bis:evidence_footing < payload_h3bis:union_tags < payload_h3bis:expand
+[bm-post-w4]   S  2.42%  keys:<genexpr> < keys:parse_key < keys:parse_evidence_key < payload_h3bis:evidence_footing < payload_h3bis:resident_footings < payload_h3bis:expand
+[bm-post-w4] wrote bm-post-w4.gil.json
+[bm] arm=post: batched blocks 3680 (7,762,900 candidate rows); scalar rows 0; H per block min 81 median 576 max 4096
+      145.26 real       228.09 user        10.33 sys
+          2796486656  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              194510  page reclaims
+               94307  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   4  messages sent
+                   4  messages received
+                   0  signals received
+               13154  voluntary context switches
+             2186084  involuntary context switches
+       3288308382403  instructions retired
+        729044829183  cycles elapsed
+          1118079712  peak memory footprint
+EXIT_CODE=0
+=== END bm-post-w4 Mon Aug 17 07:28:05 CEST 2026 ===

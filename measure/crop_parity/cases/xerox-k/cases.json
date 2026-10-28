@@ -1,0 +1,1072 @@
+{
+  "volume": "xerox-k",
+  "label": "xerox c2-k (c2-r0700)",
+  "step": "5",
+  "format_ref": "L:c2-r0700@3392x2368",
+  "tile_matrix": [
+    53,
+    37
+  ],
+  "cells_yx": [
+    3392,
+    2368
+  ],
+  "streams": [
+    "main"
+  ],
+  "colour": false,
+  "classes": [
+    "miss",
+    "gain"
+  ],
+  "captures": [
+    {
+      "ordinal": 0,
+      "capture_id": "57a261454cc04e66bd333310df4d17ede867eaa862fe6cff20e5395799d927e3",
+      "path": "scratch/in/xerox-canon-c2-bw.tiff",
+      "dpi": 4800.0,
+      "shape_yx": [
+        56128,
+        40832
+      ],
+      "channels": 1,
+      "affine_cell_to_px": [
+        [
+          -16.01197280831216,
+          -0.021686477926872012,
+          38440.88367916739
+        ],
+        [
+          0.012730317804272747,
+          -16.02035307060019,
+          55282.307079452854
+        ]
+      ],
+      "affine_fit": {
+        "n_accepted_poses": 1497,
+        "px_per_cell": 16.01617101000631,
+        "residual_median_px": 7.673168740460824,
+        "residual_p99_px": 38.596328920571665,
+        "residual_max_px": 77.49316539661231
+      }
+    }
+  ],
+  "tile_convention": "tile [ty, tx] exactly as the parity record prints them: ty along the tall cell axis, tx along the wide one; page is 0 on every declared volume and is carried explicitly in target/control addresses as [page, ty, tx, stream].",
+  "cell_axes": "cell y runs 0..cells_y, cell x runs 0..cells_x; cell_bbox and px_bbox are x-first half-open [x0, y0, x1, y1]; px x is the capture column (numpy axis 1) and px y the row (axis 0), so a crop is capture[py0:py1, px0:px1]; affine_cell_to_px maps px_x = a*cx + b*cy + c (row 0), px_y = d*cx + e*cy + f (row 1).",
+  "halo_cells": 240,
+  "merge_gap_tiles": 2,
+  "max_span_cells": 768,
+  "px_pad_cells": 32,
+  "control_rim_cells": 32,
+  "gap_counts": {
+    "holo1": 1930,
+    "holo3": 1927,
+    "both": 1925,
+    "miss": 5,
+    "gain": 2,
+    "neither": 29,
+    "holo3_run": "post-5",
+    "events": {
+      "tile_outcome_rows": 9900,
+      "results": {
+        "below_attempt_floor": 774,
+        "certified": 1927,
+        "attempted_failed": 7199
+      }
+    }
+  },
+  "payload": {
+    "path": "<checkout>/_distill/verify/parity/out-5.bin",
+    "sha256": "e5021f8d099587c38c95185d51e82ab7cab29db0dfe68e502f1ab9dd165787af",
+    "bytes": 465580,
+    "gt_validated_certificates": 1930
+  },
+  "generator": {
+    "tree": "88a530c9b270e1fc30409e28c36cb6b7a105d8cd",
+    "dirty_sha": ""
+  },
+  "cases": [
+    {
+      "case_id": "xerox-k-c01",
+      "cell_bbox": [
+        0,
+        16,
+        304,
+        752
+      ],
+      "tiles": [
+        [
+          4,
+          0
+        ],
+        [
+          7,
+          0
+        ]
+      ],
+      "crops": [
+        {
+          "ordinal": 0,
+          "capture_id": "57a261454cc04e66bd333310df4d17ede867eaa862fe6cff20e5395799d927e3",
+          "capture_path": "scratch/in/xerox-canon-c2-bw.tiff",
+          "crop_file": "xerox-k-c01-0.tiff",
+          "px_bbox": [
+            33044,
+            42722,
+            38954,
+            55543
+          ],
+          "shape_yx": [
+            12821,
+            5910
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "address": [
+            0,
+            4,
+            0,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            7,
+            0,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        }
+      ],
+      "controls": [
+        [
+          0,
+          1,
+          1,
+          "main"
+        ],
+        [
+          0,
+          1,
+          2,
+          "main"
+        ],
+        [
+          0,
+          1,
+          3,
+          "main"
+        ],
+        [
+          0,
+          2,
+          1,
+          "main"
+        ],
+        [
+          0,
+          2,
+          2,
+          "main"
+        ],
+        [
+          0,
+          2,
+          3,
+          "main"
+        ],
+        [
+          0,
+          3,
+          1,
+          "main"
+        ],
+        [
+          0,
+          3,
+          2,
+          "main"
+        ],
+        [
+          0,
+          3,
+          3,
+          "main"
+        ],
+        [
+          0,
+          4,
+          1,
+          "main"
+        ],
+        [
+          0,
+          4,
+          2,
+          "main"
+        ],
+        [
+          0,
+          4,
+          3,
+          "main"
+        ],
+        [
+          0,
+          5,
+          1,
+          "main"
+        ],
+        [
+          0,
+          5,
+          2,
+          "main"
+        ],
+        [
+          0,
+          5,
+          3,
+          "main"
+        ],
+        [
+          0,
+          6,
+          1,
+          "main"
+        ],
+        [
+          0,
+          6,
+          2,
+          "main"
+        ],
+        [
+          0,
+          6,
+          3,
+          "main"
+        ],
+        [
+          0,
+          7,
+          1,
+          "main"
+        ],
+        [
+          0,
+          7,
+          2,
+          "main"
+        ],
+        [
+          0,
+          7,
+          3,
+          "main"
+        ],
+        [
+          0,
+          8,
+          1,
+          "main"
+        ],
+        [
+          0,
+          8,
+          2,
+          "main"
+        ],
+        [
+          0,
+          8,
+          3,
+          "main"
+        ],
+        [
+          0,
+          9,
+          1,
+          "main"
+        ],
+        [
+          0,
+          9,
+          2,
+          "main"
+        ],
+        [
+          0,
+          9,
+          3,
+          "main"
+        ],
+        [
+          0,
+          10,
+          1,
+          "main"
+        ],
+        [
+          0,
+          10,
+          2,
+          "main"
+        ],
+        [
+          0,
+          10,
+          3,
+          "main"
+        ]
+      ]
+    },
+    {
+      "case_id": "xerox-k-c02",
+      "cell_bbox": [
+        2064,
+        1296,
+        2368,
+        1840
+      ],
+      "tiles": [
+        [
+          24,
+          36
+        ]
+      ],
+      "crops": [
+        {
+          "ordinal": 0,
+          "capture_id": "57a261454cc04e66bd333310df4d17ede867eaa862fe6cff20e5395799d927e3",
+          "capture_path": "scratch/in/xerox-canon-c2-bw.tiff",
+          "crop_file": "xerox-k-c02-0.tiff",
+          "px_bbox": [
+            0,
+            25318,
+            5877,
+            35063
+          ],
+          "shape_yx": [
+            9745,
+            5877
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "address": [
+            0,
+            24,
+            36,
+            "main"
+          ],
+          "classes": [
+            "miss"
+          ],
+          "full_sheet": {
+            "holo1": "certified",
+            "holo3": "uncertified"
+          }
+        }
+      ],
+      "controls": [
+        [
+          0,
+          21,
+          33,
+          "main"
+        ],
+        [
+          0,
+          21,
+          34,
+          "main"
+        ],
+        [
+          0,
+          21,
+          35,
+          "main"
+        ],
+        [
+          0,
+          22,
+          33,
+          "main"
+        ],
+        [
+          0,
+          22,
+          34,
+          "main"
+        ],
+        [
+          0,
+          22,
+          35,
+          "main"
+        ],
+        [
+          0,
+          23,
+          33,
+          "main"
+        ],
+        [
+          0,
+          23,
+          34,
+          "main"
+        ],
+        [
+          0,
+          23,
+          35,
+          "main"
+        ],
+        [
+          0,
+          24,
+          33,
+          "main"
+        ],
+        [
+          0,
+          24,
+          34,
+          "main"
+        ],
+        [
+          0,
+          24,
+          35,
+          "main"
+        ],
+        [
+          0,
+          25,
+          33,
+          "main"
+        ],
+        [
+          0,
+          25,
+          34,
+          "main"
+        ],
+        [
+          0,
+          25,
+          35,
+          "main"
+        ],
+        [
+          0,
+          26,
+          33,
+          "main"
+        ],
+        [
+          0,
+          26,
+          34,
+          "main"
+        ],
+        [
+          0,
+          26,
+          35,
+          "main"
+        ],
+        [
+          0,
+          27,
+          33,
+          "main"
+        ],
+        [
+          0,
+          27,
+          34,
+          "main"
+        ],
+        [
+          0,
+          27,
+          35,
+          "main"
+        ]
+      ]
+    },
+    {
+      "case_id": "xerox-k-c03",
+      "cell_bbox": [
+        0,
+        1552,
+        304,
+        2096
+      ],
+      "tiles": [
+        [
+          28,
+          0
+        ]
+      ],
+      "crops": [
+        {
+          "ordinal": 0,
+          "capture_id": "57a261454cc04e66bd333310df4d17ede867eaa862fe6cff20e5395799d927e3",
+          "capture_path": "scratch/in/xerox-canon-c2-bw.tiff",
+          "crop_file": "xerox-k-c03-0.tiff",
+          "px_bbox": [
+            33015,
+            21191,
+            38920,
+            30936
+          ],
+          "shape_yx": [
+            9745,
+            5905
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "address": [
+            0,
+            28,
+            0,
+            "main"
+          ],
+          "classes": [
+            "miss"
+          ],
+          "full_sheet": {
+            "holo1": "certified",
+            "holo3": "uncertified"
+          }
+        }
+      ],
+      "controls": [
+        [
+          0,
+          25,
+          1,
+          "main"
+        ],
+        [
+          0,
+          25,
+          2,
+          "main"
+        ],
+        [
+          0,
+          25,
+          3,
+          "main"
+        ],
+        [
+          0,
+          26,
+          1,
+          "main"
+        ],
+        [
+          0,
+          26,
+          2,
+          "main"
+        ],
+        [
+          0,
+          26,
+          3,
+          "main"
+        ],
+        [
+          0,
+          27,
+          1,
+          "main"
+        ],
+        [
+          0,
+          27,
+          2,
+          "main"
+        ],
+        [
+          0,
+          27,
+          3,
+          "main"
+        ],
+        [
+          0,
+          28,
+          1,
+          "main"
+        ],
+        [
+          0,
+          28,
+          2,
+          "main"
+        ],
+        [
+          0,
+          28,
+          3,
+          "main"
+        ],
+        [
+          0,
+          29,
+          1,
+          "main"
+        ],
+        [
+          0,
+          29,
+          2,
+          "main"
+        ],
+        [
+          0,
+          29,
+          3,
+          "main"
+        ],
+        [
+          0,
+          30,
+          1,
+          "main"
+        ],
+        [
+          0,
+          30,
+          2,
+          "main"
+        ],
+        [
+          0,
+          30,
+          3,
+          "main"
+        ],
+        [
+          0,
+          31,
+          1,
+          "main"
+        ],
+        [
+          0,
+          31,
+          2,
+          "main"
+        ],
+        [
+          0,
+          31,
+          3,
+          "main"
+        ]
+      ]
+    },
+    {
+      "case_id": "xerox-k-c04",
+      "cell_bbox": [
+        0,
+        1936,
+        304,
+        2480
+      ],
+      "tiles": [
+        [
+          34,
+          0
+        ]
+      ],
+      "crops": [
+        {
+          "ordinal": 0,
+          "capture_id": "57a261454cc04e66bd333310df4d17ede867eaa862fe6cff20e5395799d927e3",
+          "capture_path": "scratch/in/xerox-canon-c2-bw.tiff",
+          "crop_file": "xerox-k-c04-0.tiff",
+          "px_bbox": [
+            33006,
+            15039,
+            38912,
+            24784
+          ],
+          "shape_yx": [
+            9745,
+            5906
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "address": [
+            0,
+            34,
+            0,
+            "main"
+          ],
+          "classes": [
+            "miss"
+          ],
+          "full_sheet": {
+            "holo1": "certified",
+            "holo3": "uncertified"
+          }
+        }
+      ],
+      "controls": [
+        [
+          0,
+          31,
+          1,
+          "main"
+        ],
+        [
+          0,
+          31,
+          2,
+          "main"
+        ],
+        [
+          0,
+          31,
+          3,
+          "main"
+        ],
+        [
+          0,
+          32,
+          1,
+          "main"
+        ],
+        [
+          0,
+          32,
+          2,
+          "main"
+        ],
+        [
+          0,
+          32,
+          3,
+          "main"
+        ],
+        [
+          0,
+          33,
+          1,
+          "main"
+        ],
+        [
+          0,
+          33,
+          2,
+          "main"
+        ],
+        [
+          0,
+          33,
+          3,
+          "main"
+        ],
+        [
+          0,
+          34,
+          1,
+          "main"
+        ],
+        [
+          0,
+          34,
+          2,
+          "main"
+        ],
+        [
+          0,
+          34,
+          3,
+          "main"
+        ],
+        [
+          0,
+          35,
+          1,
+          "main"
+        ],
+        [
+          0,
+          35,
+          2,
+          "main"
+        ],
+        [
+          0,
+          35,
+          3,
+          "main"
+        ],
+        [
+          0,
+          36,
+          1,
+          "main"
+        ],
+        [
+          0,
+          36,
+          2,
+          "main"
+        ],
+        [
+          0,
+          36,
+          3,
+          "main"
+        ],
+        [
+          0,
+          37,
+          1,
+          "main"
+        ],
+        [
+          0,
+          37,
+          2,
+          "main"
+        ],
+        [
+          0,
+          37,
+          3,
+          "main"
+        ]
+      ]
+    },
+    {
+      "case_id": "xerox-k-c05",
+      "cell_bbox": [
+        0,
+        2832,
+        304,
+        3392
+      ],
+      "tiles": [
+        [
+          48,
+          0
+        ],
+        [
+          49,
+          0
+        ]
+      ],
+      "crops": [
+        {
+          "ordinal": 0,
+          "capture_id": "57a261454cc04e66bd333310df4d17ede867eaa862fe6cff20e5395799d927e3",
+          "capture_path": "scratch/in/xerox-canon-c2-bw.tiff",
+          "crop_file": "xerox-k-c05-0.tiff",
+          "px_bbox": [
+            32987,
+            428,
+            38892,
+            10430
+          ],
+          "shape_yx": [
+            10002,
+            5905
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "address": [
+            0,
+            48,
+            0,
+            "main"
+          ],
+          "classes": [
+            "miss"
+          ],
+          "full_sheet": {
+            "holo1": "certified",
+            "holo3": "uncertified"
+          }
+        },
+        {
+          "address": [
+            0,
+            49,
+            0,
+            "main"
+          ],
+          "classes": [
+            "miss"
+          ],
+          "full_sheet": {
+            "holo1": "certified",
+            "holo3": "uncertified"
+          }
+        }
+      ],
+      "controls": [
+        [
+          0,
+          45,
+          1,
+          "main"
+        ],
+        [
+          0,
+          45,
+          2,
+          "main"
+        ],
+        [
+          0,
+          45,
+          3,
+          "main"
+        ],
+        [
+          0,
+          46,
+          1,
+          "main"
+        ],
+        [
+          0,
+          46,
+          2,
+          "main"
+        ],
+        [
+          0,
+          46,
+          3,
+          "main"
+        ],
+        [
+          0,
+          47,
+          1,
+          "main"
+        ],
+        [
+          0,
+          47,
+          2,
+          "main"
+        ],
+        [
+          0,
+          47,
+          3,
+          "main"
+        ],
+        [
+          0,
+          48,
+          1,
+          "main"
+        ],
+        [
+          0,
+          48,
+          2,
+          "main"
+        ],
+        [
+          0,
+          48,
+          3,
+          "main"
+        ],
+        [
+          0,
+          49,
+          1,
+          "main"
+        ],
+        [
+          0,
+          49,
+          2,
+          "main"
+        ],
+        [
+          0,
+          49,
+          3,
+          "main"
+        ],
+        [
+          0,
+          50,
+          1,
+          "main"
+        ],
+        [
+          0,
+          50,
+          2,
+          "main"
+        ],
+        [
+          0,
+          50,
+          3,
+          "main"
+        ],
+        [
+          0,
+          51,
+          1,
+          "main"
+        ],
+        [
+          0,
+          51,
+          2,
+          "main"
+        ],
+        [
+          0,
+          51,
+          3,
+          "main"
+        ]
+      ]
+    }
+  ]
+}

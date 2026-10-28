@@ -1,0 +1,111 @@
+{
+ "name": "gil-w1b",
+ "workers": 1,
+ "wall": 563.8344379169866,
+ "switch_ms": 0.0,
+ "fire_wall": 463.95932497130707,
+ "fire_cpu": 459.37811099200184,
+ "main_cpu": 556.999069416,
+ "n_fires": 2323,
+ "by_route": {
+  "place/pull/source": {
+   "n": 622,
+   "wall": 461.9091085824184,
+   "cpu": 457.3497165420001
+  },
+  "payload/scan": {
+   "n": 1701,
+   "wall": 2.050216388888657,
+   "cpu": 2.028394450001713
+  }
+ },
+ "main": {
+  "ctx.apply": {
+   "n": 1918,
+   "wall": 1.9144071210175753,
+   "cpu": 1.4684092360010732
+  },
+  "apply": {
+   "n": 2323,
+   "wall": 83.15844792034477,
+   "cpu": 81.78758084900015
+  }
+ },
+ "gil_latency_ms": {
+  "n": 50977,
+  "mean": 5.9791327377227965,
+  "p50": 7.460874859243631,
+  "p90": 7.559874914586544,
+  "p99": 7.596124783158302,
+  "max": 279.5569592900574
+ },
+ "busy_threads": {
+  "0": 50977
+ },
+ "leaves": {},
+ "stacks": {},
+ "main_leaves": {
+  "bch:_chien_roots:300": 15277,
+  "bch:_berlekamp_massey:255": 6093,
+  "bch:_berlekamp_massey:267": 2691,
+  "_interpolation:map_coordinates:474": 2306,
+  "bch:_berlekamp_massey:265": 2124,
+  "words:_gather_slot:268": 1865,
+  "keys:<genexpr>:253": 1558,
+  "bch:_berlekamp_massey:252": 1156,
+  "journal:append:343": 1094,
+  "pose_audit:evaluate:504": 949,
+  "keys:parse_key:257": 717,
+  "bch:_berlekamp_massey:271": 709,
+  "bch:_decode_syndromes:308": 633,
+  "_methods:_any:61": 552,
+  "numeric:_flatnonzero_dispatcher:670": 458,
+  "keys:key_parts:134": 458,
+  "keys:<genexpr>:198": 411,
+  "<string>:__lt__:14": 411,
+  "<string>:__init__:2": 399,
+  "words:_gather_slot:269": 395,
+  "words:_gather_slot:267": 355,
+  "pose_audit:evaluate:513": 338,
+  "pose_audit:evaluate:510": 320,
+  "fromnumeric:_wrapfunc:54": 318,
+  "_filters:correlate1d:610": 298,
+  "pose_audit:parity_mask:197": 273,
+  "pose_fit:_fit_phase:492": 264,
+  "bch:_berlekamp_massey:242": 251,
+  "words:_gather_slot:266": 236,
+  "_pocketfft:_raw_fft:101": 214,
+  "bch:_berlekamp_massey:258": 204,
+  "bch:_syndromes_many_words:225": 201,
+  "pose_fit:lattice_reciprocal:421": 189,
+  "<string>:__init__:4": 187,
+  "<string>:__init__:3": 177,
+  "<string>:__hash__:39": 161,
+  "pose_fit:_windowed_gradient:359": 159,
+  "<string>:__hash__:38": 154,
+  "keys:tile_key:80": 152,
+  "payload_h3bis:evidence_footing:164": 150
+ },
+ "main_stacks": {
+  "bch:_chien_roots < bch:_decode_syndromes < bch:decode_many < words:_decode_candidates < words:stage_a < words:stage_a_patch": 15611,
+  "bch:_berlekamp_massey < bch:_decode_syndromes < bch:decode_many < words:_decode_candidates < words:stage_a < words:stage_a_patch": 13392,
+  "words:_gather_slot < words:_decode_candidates < words:stage_a < words:stage_a_patch < placement:decode_word_address < place_job:run": 2854,
+  "pose_audit:evaluate < pose_audit:refine_patch_pose < place_shared:place_addressed < place_job:run < orchestrator:_propose < orchestrator:_run_serial": 1607,
+  "_interpolation:map_coordinates < pose_audit:evaluate < pose_audit:refine_patch_pose < place_shared:place_addressed < place_job:run < orchestrator:_propose": 1498,
+  "journal:append < store:mark_start < orchestrator:_dispatch < orchestrator:_run_serial < orchestrator:_run < orchestrator:run": 1170,
+  "bch:_decode_syndromes < bch:decode_many < words:_decode_candidates < words:stage_a < words:stage_a_patch < placement:decode_word_address": 729,
+  "keys:<genexpr> < keys:parse_key < keys:parse_evidence_key < tilemap:build < plane:index < plane:tiles": 636,
+  "keys:key_parts < keys:build_key < keys:tile_key < tilemap:build < plane:index < plane:tiles": 555,
+  "pose_fit:lattice_reciprocal < pose_fit:fit_window_pose < place_shared:sample_window < place_job:run < orchestrator:_propose < orchestrator:_run_serial": 527,
+  "_interpolation:map_coordinates < pose_fit:_fit_phase < pose_fit:fit_window_pose < place_shared:sample_window < place_job:run < orchestrator:_propose": 509,
+  "_methods:_any < bch:_decode_syndromes < bch:decode_many < words:_decode_candidates < words:stage_a < words:stage_a_patch": 486,
+  "numeric:_flatnonzero_dispatcher < bch:_chien_roots < bch:_decode_syndromes < bch:decode_many < words:_decode_candidates < words:stage_a": 458,
+  "pose_audit:parity_score < pose_audit:candidate < pose_audit:local_search < place_job:_search < place_job:run < orchestrator:_propose": 415,
+  "keys:<genexpr> < keys:parse_key < keys:parse_evidence_key < payload_h3bis:evidence_footing < payload_h3bis:resident_footings < payload_h3bis:expand": 408,
+  "keys:parse_key < keys:parse_evidence_key < tilemap:build < plane:index < plane:tiles < plane:tiles": 388,
+  "keys:<genexpr> < keys:parse_key < keys:parse_evidence_key < payload_h3bis:evidence_footing < payload_h3bis:union_tags < payload_h3bis:expand": 359,
+  "pose_fit:_fit_phase < pose_fit:fit_window_pose < place_shared:sample_window < place_job:run < orchestrator:_propose < orchestrator:_run_serial": 358,
+  "bch:_syndromes_many_words < bch:decode_many < words:_decode_candidates < words:stage_a < words:stage_a_patch < placement:decode_word_address": 347,
+  "_filters:correlate1d < _filters:gaussian_filter1d < _filters:gaussian_filter < _survey_tensor:_minor_eigen_work < _survey_tensor:_minor_eigen_score_array < _survey_tensor:_score_crop": 298
+ }
+}

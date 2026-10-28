@@ -1,0 +1,557 @@
+{
+  "volume": "e029",
+  "label": "e029 HP K (c2-r0700)",
+  "step": "2",
+  "format_ref": "L:c2-r0700@3392x2368",
+  "tile_matrix": [
+    53,
+    37
+  ],
+  "cells_yx": [
+    3392,
+    2368
+  ],
+  "streams": [
+    "main"
+  ],
+  "colour": false,
+  "classes": [
+    "miss",
+    "gain"
+  ],
+  "captures": [
+    {
+      "ordinal": 0,
+      "capture_id": "d9c4e932b904b8173ef0bf08165f384ed2ce644105f58965d2dca14165672c22",
+      "path": "scratch/e028/hp-canon-c2-ink-counting.tiff",
+      "dpi": 4800.0,
+      "shape_yx": [
+        56128,
+        40832
+      ],
+      "channels": 1,
+      "affine_cell_to_px": [
+        [
+          16.003050831828457,
+          -0.029247119306416953,
+          933.0168822751644
+        ],
+        [
+          0.01703789135261148,
+          15.991594451105934,
+          643.5682245495559
+        ]
+      ],
+      "affine_fit": {
+        "n_accepted_poses": 1479,
+        "px_per_cell": 15.997337190678806,
+        "residual_median_px": 5.202694087258351,
+        "residual_p99_px": 29.996912675774666,
+        "residual_max_px": 40.53267199151014
+      }
+    }
+  ],
+  "tile_convention": "tile [ty, tx] exactly as the parity record prints them: ty along the tall cell axis, tx along the wide one; page is 0 on every declared volume and is carried explicitly in target/control addresses as [page, ty, tx, stream].",
+  "cell_axes": "cell y runs 0..cells_y, cell x runs 0..cells_x; cell_bbox and px_bbox are x-first half-open [x0, y0, x1, y1]; px x is the capture column (numpy axis 1) and px y the row (axis 0), so a crop is capture[py0:py1, px0:px1]; affine_cell_to_px maps px_x = a*cx + b*cy + c (row 0), px_y = d*cx + e*cy + f (row 1).",
+  "halo_cells": 240,
+  "merge_gap_tiles": 2,
+  "max_span_cells": 768,
+  "px_pad_cells": 32,
+  "control_rim_cells": 32,
+  "gap_counts": {
+    "holo1": 1940,
+    "holo3": 1938,
+    "both": 1938,
+    "miss": 2,
+    "gain": 0,
+    "neither": 21,
+    "holo3_run": "post-2",
+    "events": {
+      "tile_outcome_rows": 17261,
+      "results": {
+        "below_attempt_floor": 995,
+        "certified": 1938,
+        "attempted_failed": 14328
+      }
+    }
+  },
+  "payload": {
+    "path": "<checkout>/_distill/verify/parity/out-2.bin",
+    "sha256": "e5021f8d099587c38c95185d51e82ab7cab29db0dfe68e502f1ab9dd165787af",
+    "bytes": 465580,
+    "gt_validated_certificates": 1940
+  },
+  "generator": {
+    "tree": "e3f7640c26355d978ccdef4819d9928491ad5717",
+    "dirty_sha": "19f74a2fa3e2bcacb48d66cf0bea5a3a567b7153f043c507a3d7f3abcaea80fb"
+  },
+  "cases": [
+    {
+      "case_id": "e029-c01",
+      "cell_bbox": [
+        528,
+        2448,
+        1264,
+        2992
+      ],
+      "tiles": [
+        [
+          42,
+          12
+        ],
+        [
+          42,
+          15
+        ]
+      ],
+      "crops": [
+        {
+          "ordinal": 0,
+          "capture_id": "d9c4e932b904b8173ef0bf08165f384ed2ce644105f58965d2dca14165672c22",
+          "capture_path": "scratch/e028/hp-canon-c2-ink-counting.tiff",
+          "crop_file": "e029-c01-0.tiff",
+          "px_bbox": [
+            8783,
+            39288,
+            21602,
+            49024
+          ],
+          "shape_yx": [
+            9736,
+            12819
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "address": [
+            0,
+            42,
+            12,
+            "main"
+          ],
+          "classes": [
+            "miss"
+          ],
+          "full_sheet": {
+            "holo1": "certified",
+            "holo3": "uncertified"
+          }
+        },
+        {
+          "address": [
+            0,
+            42,
+            15,
+            "main"
+          ],
+          "classes": [
+            "miss"
+          ],
+          "full_sheet": {
+            "holo1": "certified",
+            "holo3": "uncertified"
+          }
+        }
+      ],
+      "controls": [
+        [
+          0,
+          39,
+          9,
+          "main"
+        ],
+        [
+          0,
+          39,
+          10,
+          "main"
+        ],
+        [
+          0,
+          39,
+          11,
+          "main"
+        ],
+        [
+          0,
+          39,
+          12,
+          "main"
+        ],
+        [
+          0,
+          39,
+          13,
+          "main"
+        ],
+        [
+          0,
+          39,
+          14,
+          "main"
+        ],
+        [
+          0,
+          39,
+          15,
+          "main"
+        ],
+        [
+          0,
+          39,
+          16,
+          "main"
+        ],
+        [
+          0,
+          39,
+          17,
+          "main"
+        ],
+        [
+          0,
+          39,
+          18,
+          "main"
+        ],
+        [
+          0,
+          40,
+          9,
+          "main"
+        ],
+        [
+          0,
+          40,
+          10,
+          "main"
+        ],
+        [
+          0,
+          40,
+          11,
+          "main"
+        ],
+        [
+          0,
+          40,
+          12,
+          "main"
+        ],
+        [
+          0,
+          40,
+          13,
+          "main"
+        ],
+        [
+          0,
+          40,
+          14,
+          "main"
+        ],
+        [
+          0,
+          40,
+          15,
+          "main"
+        ],
+        [
+          0,
+          40,
+          16,
+          "main"
+        ],
+        [
+          0,
+          40,
+          17,
+          "main"
+        ],
+        [
+          0,
+          40,
+          18,
+          "main"
+        ],
+        [
+          0,
+          41,
+          9,
+          "main"
+        ],
+        [
+          0,
+          41,
+          10,
+          "main"
+        ],
+        [
+          0,
+          41,
+          11,
+          "main"
+        ],
+        [
+          0,
+          41,
+          12,
+          "main"
+        ],
+        [
+          0,
+          41,
+          13,
+          "main"
+        ],
+        [
+          0,
+          41,
+          14,
+          "main"
+        ],
+        [
+          0,
+          41,
+          15,
+          "main"
+        ],
+        [
+          0,
+          41,
+          16,
+          "main"
+        ],
+        [
+          0,
+          41,
+          17,
+          "main"
+        ],
+        [
+          0,
+          41,
+          18,
+          "main"
+        ],
+        [
+          0,
+          42,
+          9,
+          "main"
+        ],
+        [
+          0,
+          42,
+          13,
+          "main"
+        ],
+        [
+          0,
+          42,
+          14,
+          "main"
+        ],
+        [
+          0,
+          42,
+          16,
+          "main"
+        ],
+        [
+          0,
+          42,
+          17,
+          "main"
+        ],
+        [
+          0,
+          42,
+          18,
+          "main"
+        ],
+        [
+          0,
+          43,
+          9,
+          "main"
+        ],
+        [
+          0,
+          43,
+          10,
+          "main"
+        ],
+        [
+          0,
+          43,
+          11,
+          "main"
+        ],
+        [
+          0,
+          43,
+          12,
+          "main"
+        ],
+        [
+          0,
+          43,
+          13,
+          "main"
+        ],
+        [
+          0,
+          43,
+          14,
+          "main"
+        ],
+        [
+          0,
+          43,
+          15,
+          "main"
+        ],
+        [
+          0,
+          43,
+          16,
+          "main"
+        ],
+        [
+          0,
+          43,
+          17,
+          "main"
+        ],
+        [
+          0,
+          43,
+          18,
+          "main"
+        ],
+        [
+          0,
+          44,
+          9,
+          "main"
+        ],
+        [
+          0,
+          44,
+          10,
+          "main"
+        ],
+        [
+          0,
+          44,
+          11,
+          "main"
+        ],
+        [
+          0,
+          44,
+          12,
+          "main"
+        ],
+        [
+          0,
+          44,
+          13,
+          "main"
+        ],
+        [
+          0,
+          44,
+          14,
+          "main"
+        ],
+        [
+          0,
+          44,
+          15,
+          "main"
+        ],
+        [
+          0,
+          44,
+          16,
+          "main"
+        ],
+        [
+          0,
+          44,
+          17,
+          "main"
+        ],
+        [
+          0,
+          44,
+          18,
+          "main"
+        ],
+        [
+          0,
+          45,
+          9,
+          "main"
+        ],
+        [
+          0,
+          45,
+          10,
+          "main"
+        ],
+        [
+          0,
+          45,
+          11,
+          "main"
+        ],
+        [
+          0,
+          45,
+          12,
+          "main"
+        ],
+        [
+          0,
+          45,
+          13,
+          "main"
+        ],
+        [
+          0,
+          45,
+          14,
+          "main"
+        ],
+        [
+          0,
+          45,
+          15,
+          "main"
+        ],
+        [
+          0,
+          45,
+          16,
+          "main"
+        ],
+        [
+          0,
+          45,
+          17,
+          "main"
+        ],
+        [
+          0,
+          45,
+          18,
+          "main"
+        ]
+      ]
+    }
+  ]
+}

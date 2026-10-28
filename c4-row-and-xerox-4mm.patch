@@ -1,0 +1,239 @@
+Proposed, NOT applied: the c4 format row + a 4mm-margin AltaLink row.
+Generated 2026-08-18 against dec3cb5. Apply with `git apply <this file>`.
+
+Two independent changes — split them if only one is wanted:
+
+1. FORMAT AXIS — the c4-r0550 row (format/layout.py, format/descriptor.py,
+   format/registry.py, receive/discovery_state.py, tests, HOLO-DESIGN §4.1).
+   c4 = 4 dots/cell at 600 dpi = the c2 cell of a 300 dpi grid; the
+   robustness rung below c3, 26x18 = 468 tiles on A4. The tile stays 64x64
+   cells, so every layer above the raster is bit-identical in construction
+   to c2/c3 — only the solid-cell dot expansion changes. Every edit either
+   widens an accept-set or appends a row: no existing row's bits move, no
+   golden edited, DEFAULT_DISCOVERY_ROW_IDS unchanged (cold-start discovery
+   still trials exactly c3-r0550/c2-r0550/c2-r0700, same null budget), so
+   decode needs an explicit --coding c4-r0550.
+   Verified 2026-08-18, simulation only: cell-domain round trip byte-exact
+   with 30% of tiles dropped (golden-pinned test_c4_r0550_roundtrip_byte_exact);
+   blind pixel-domain receiver run on a synthetic 7x7-tile c4 page,
+   byte-exact; blind run on a full emitted A4 c4 page's ground truth,
+   32,622 B byte-exact. Suite 1229 passed / 42 skipped.
+   UNQUALIFIED ON PAPER: no c4 sheet has ever been printed.
+
+2. DEVICE DATA — xerox-altalink-c8245-ink (devices/registry.py), a 4.0mm
+   geometry probe mirroring hp-m281-ink. Capability data, no code path.
+   Only c2 gains from it (1872 -> 1961 tiles, borders ~4.91/4.74mm); the
+   c3 and c4 fields are quantization-identical at 4.0 and 6.0mm. The
+   AltaLink's printable clip has never been measured the way e028 measured
+   the M281 — 007.6 only says ticks survive to 4mm.
+
+The sheets in scratch/xerox-v1-20260818/ were generated with this applied;
+the c4 sheet (A) cannot be regenerated or decoded without it.
+
+diff --git a/docs/HOLO-DESIGN.md b/docs/HOLO-DESIGN.md
+index 0efb366..10aaf39 100644
+--- a/docs/HOLO-DESIGN.md
++++ b/docs/HOLO-DESIGN.md
+@@ -125,7 +125,7 @@ class; the tiles_x page-width acquisition hole (closed by F10).
+ 
+ ### 4.1 Page geometry
+ 
+-For a format row (printer/media class, cell size c ∈ {c2, c3}):
++For a format row (printer/media class, cell size c ∈ {c2, c3, c4}):
+ 
+ - printable rectangle = media size minus the registry's measured per-edge
+   **payload-safe margins** (maximize; provenance required — canary-measured
+@@ -148,6 +148,23 @@ Example rows (A4, 6.0 mm policy — illustrative until Phase C):
+ |-----|------------|-----------|-----------|---------------------|
+ | a4-c2 | 3328 × 2304 | 52×36 = 1,872 | 5.42 mm | 140 |
+ | a4-c3 | 2240 × 1536 | 35×24 = 840 | 8.13 mm | 312 |
++| a4-c4 | 1664 × 1152 | 26×18 = 468 | 10.84 mm | 560 |
++
++**c4 amendment (2026-08-18, PROPOSED — awaiting ratification).** `c4` = 4
++dots per cell edge at 600 dpi (169 µm), i.e. exactly the c2 cell of a
++300 dpi grid (user observation). It is the robustness rung below c3 and
++is a pure cell-size row: the tile stays 64×64 cells, so every layer above
++the raster (sites, words, slot permutation, LDPC, metadata, fountain,
++envelope) is bit-identical in construction to the c2/c3 rows — only the
++solid-cell dot expansion changes. Landed as `c4-r0550`: an APPEND-ONLY
++catalog row (`FORMAT_ROWS`), deliberately NOT in
++`DEFAULT_DISCOVERY_ROW_IDS`, so cold-start discovery's null budget is
++unchanged and decode needs `--coding c4-r0550`. No existing row's bits
++move; no golden was edited. Verified 2026-08-18: cell-domain round trip
++byte-exact with 30% of tiles dropped (golden-pinned,
++`test_c4_r0550_roundtrip_byte_exact`) and one blind pixel-domain receiver
++run on a synthetic 7×7-tile c4 page recovered the payload byte-exact.
++**Unqualified on paper** — no c4 sheet has ever been printed.
+ 
+ ### 4.2 Pilot sites
+ 
+diff --git a/src/holo/devices/registry.py b/src/holo/devices/registry.py
+index 63f51b8..b8db811 100644
+--- a/src/holo/devices/registry.py
++++ b/src/holo/devices/registry.py
+@@ -116,6 +116,31 @@ PRINTERS: dict[str, Printer] = {p.printer_id: p for p in (
+         print_path="raw 9100; PS RIP fixed-600, no resolution unlock on "
+                    "any path (007.6/009)",
+     ),
++    # Tight-margin geometry probe for the AltaLink, mirroring the
++    # hp-m281-ink row.  Not a FORMAT_ROWS entry and not a payload-safe
++    # promotion: discovery without --coding still refuses.  Use:
++    #   --coding c2-r0700 --printer xerox-altalink-c8245-ink
++    Printer(
++        printer_id="xerox-altalink-c8245-ink",
++        name="Xerox AltaLink C8245 ink-tight (geometry probe)",
++        usable_dpi=600,
++        media_ids=("a4",),
++        payload_safe_margin_mm=4.0,
++        margin_footing="probe, NOT qualified: 007.6 ticks survive to "
++                       "4mm on this engine; the printable clip was "
++                       "never measured here the way e028 measured the "
++                       "M281.  The 4.0mm request selects the same "
++                       "64-quantum field as hp-m281-ink (c2: 3392x2368 "
++                       "cells, actual borders ~4.91/4.74mm); the c3 "
++                       "field is quantization-identical to 6.0mm",
++        bw="same engine as xerox-altalink-c8245; geometry probe only",
++        color="same engine as xerox-altalink-c8245 (healthy CMY, "
++              "yellow tracking dots on colour pages)",
++        print_path="raw 9100; PS RIP fixed-600, no resolution unlock on "
++                   "any path (007.6/009)",
++        notes=("edge tiles may clip: the clip radius is unmeasured on "
++               "this engine — the fountain dial is the cushion",),
++    ),
+ )}
+ 
+ SCANNERS: dict[str, Scanner] = {s.scanner_id: s for s in (
+diff --git a/src/holo/format/descriptor.py b/src/holo/format/descriptor.py
+index adc88f9..8216e47 100644
+--- a/src/holo/format/descriptor.py
++++ b/src/holo/format/descriptor.py
+@@ -46,7 +46,9 @@ from .profiles import (
+ @dataclass(frozen=True)
+ class Coding:
+     coding_id: str
+-    cell_dots: int          # 2 (c2, 200 um cells) | 3 (c3, 127 um cells)
++    cell_dots: int          # dots per cell edge at 600 dpi: 2 (c2,
++                            # 84.7 um) | 3 (c3, 127 um) | 4 (c4, 169 um
++                            # -- the c2 cell of a 300 dpi grid)
+     rate_id: str | None     # established scalar K rung; None for color
+     n_filler: int = 0       # known sites above the 100-site word floor
+     codec: CodecProfile | None = None
+@@ -63,8 +65,9 @@ class Coding:
+     def __post_init__(self) -> None:
+         if not isinstance(self.coding_id, str) or not self.coding_id:
+             raise ValueError("coding_id must be a non-empty string")
+-        if self.cell_dots not in (2, 3):
+-            raise ValueError("v1 supports cell_dots 2 (c2) and 3 (c3)")
++        if self.cell_dots not in (2, 3, 4):
++            raise ValueError(
++                "v1 supports cell_dots 2 (c2), 3 (c3), and 4 (c4)")
+         if self.n_filler < 0:
+             raise ValueError("n_filler must be >= 0")
+         if self.codec is None:
+@@ -198,6 +201,7 @@ def _build_codings(*codings: Coding) -> Mapping[str, Coding]:
+ 
+ 
+ CODINGS: Mapping[str, Coding] = _build_codings(
++    Coding("c4-r0550", cell_dots=4, rate_id="r0550"),
+     Coding("c3-r0550", cell_dots=3, rate_id="r0550"),
+     Coding("c2-r0550", cell_dots=2, rate_id="r0550"),
+     Coding("c2-r0700", cell_dots=2, rate_id="r0700"),
+diff --git a/src/holo/format/layout.py b/src/holo/format/layout.py
+index bc9ef6c..52aff38 100644
+--- a/src/holo/format/layout.py
++++ b/src/holo/format/layout.py
+@@ -26,7 +26,7 @@ MM_PER_DOT = MM_PER_INCH / HW_DPI
+ A4_MM: tuple[float, float] = (210.0, 297.0)
+ MEDIA_MM: dict[str, tuple[float, float]] = {"a4": A4_MM}
+ TILE_CELLS = 64                # tile edge, cells (F1)
+-VALID_CELL_DOTS = (2, 3)       # c2 / c3 (§4.1)
++VALID_CELL_DOTS = (2, 3, 4)    # c2 / c3 / c4 (§4.1)
+ COUNTER_BITS = 18              # F12: flat tile counter width
+ MAX_TILES = 1 << COUNTER_BITS
+ DEFAULT_MARGIN_MM = 6.0        # pre-Phase-C margin policy (§4.1)
+diff --git a/src/holo/format/registry.py b/src/holo/format/registry.py
+index 2b9c1e2..03116e0 100644
+--- a/src/holo/format/registry.py
++++ b/src/holo/format/registry.py
+@@ -36,6 +36,7 @@ def _build_rows(*rows: FormatSpec) -> dict[str, FormatSpec]:
+ 
+ 
+ FORMAT_ROWS: Mapping[str, FormatSpec] = MappingProxyType(_build_rows(
++    _row("c4-r0550"),
+     _row("c3-r0550"),
+     _row("c2-r0550"),
+     _row("c2-r0700"),
+diff --git a/src/holo/receive/discovery_state.py b/src/holo/receive/discovery_state.py
+index c430004..7474b17 100644
+--- a/src/holo/receive/discovery_state.py
++++ b/src/holo/receive/discovery_state.py
+@@ -50,8 +50,9 @@ class DiscoverySurvey:
+     def __post_init__(self) -> None:
+         if not isinstance(self.facts, CaptureFacts):
+             raise TypeError("discovery survey facts must be CaptureFacts")
+-        if self.c_dots is not None and self.c_dots not in (2, 3):
+-            raise ValueError("discovery c must be c2, c3, or absent")
++        if self.c_dots is not None and self.c_dots not in (2, 3, 4):
++            raise ValueError(
++                "discovery c must be c2, c3, c4, or absent")
+ 
+ 
+ @dataclass(frozen=True, slots=True)
+diff --git a/tests/holo/test_layout.py b/tests/holo/test_layout.py
+index 8171f96..1def40b 100644
+--- a/tests/holo/test_layout.py
++++ b/tests/holo/test_layout.py
+@@ -52,7 +52,7 @@ def test_defaults_are_a4_6mm():
+     assert derive_field(cell_dots=2) == derive_field(A4_MM, DEFAULT_MARGIN_MM, 2)
+ 
+ 
+-@pytest.mark.parametrize("cell_dots", [2, 3])
++@pytest.mark.parametrize("cell_dots", [2, 3, 4])
+ def test_field_geometry_consistent(cell_dots):
+     f = derive_field(A4_MM, 6.0, cell_dots)
+     page_x, page_y = f.page_dots_xy
+@@ -84,7 +84,7 @@ def test_invalid_inputs():
+     with pytest.raises(ValueError):
+         derive_field(A4_MM, 6.0, cell_dots=1)
+     with pytest.raises(ValueError):
+-        derive_field(A4_MM, 6.0, cell_dots=4)
++        derive_field(A4_MM, 6.0, cell_dots=5)
+     with pytest.raises(ValueError):
+         derive_field(A4_MM, -1.0, cell_dots=2)
+     with pytest.raises(ValueError):
+diff --git a/tests/holo/test_roundtrip.py b/tests/holo/test_roundtrip.py
+index 85f9ab2..23d6897 100644
+--- a/tests/holo/test_roundtrip.py
++++ b/tests/holo/test_roundtrip.py
+@@ -32,6 +32,8 @@ GOLDEN_C2_R0700_PAGE0 = ("9231bbe836d07062fd1d3a2a645f22aa"
+                          "c1929e3c6cf04ebd21e57a0f0c5f5397")
+ GOLDEN_C2_R0550_PAGE0 = ("714f9dd6a8a6c50bf8b40e1304f8b067"
+                          "3f6c95bb22bd6a9d6ec95b4e67092235")
++GOLDEN_C4_R0550_PAGE0 = ("133ff5f65685a9625012830e2cf0d9d6"
++                         "a0d9bc6268dfbaf00f935e2cdf826cff")
+ 
+ 
+ def _compose_pages(row, payload, q, pages=(0,)):
+@@ -161,6 +163,22 @@ def test_c2_r0700_roundtrip_byte_exact():
+     _fountain_close(symbols, md, vplan.symbol_bits, row, 0.20, payload)
+ 
+ 
++def test_c4_r0550_roundtrip_byte_exact():
++    """The c4 rung (4 dots/cell = the c2 cell of a 300 dpi grid): the
++    robustness step below c3, 26x18 tiles, through the whole stack."""
++    row = make_spec("c4-r0550")
++    assert row.cell_dots == 4 and row.tiles_per_page == 468
++    payload = hashlib.sha256(b"holo-c4").digest() * 200  # 6,400 bytes
++    vplan, pages = _compose_pages(row, payload, 0.35, pages=(0,))
++    digest = hashlib.sha256(np.packbits(pages[0]).tobytes()).hexdigest()
++    assert digest == GOLDEN_C4_R0550_PAGE0, "format fork"
++    n_ok, observations, symbols = reference_decode_page(pages[0], row)
++    assert n_ok == row.tiles_per_page
++    md = metadata.decode_metadata(observations)
++    assert md.ok and md.k == vplan.k_total
++    _fountain_close(symbols, md, vplan.symbol_bits, row, 0.30, payload)
++
++
+ def test_c2_r0550_compose_golden():
+     row = make_spec("c2-r0550")
+     payload = hashlib.sha256(b"holo-c2-r0550").digest() * 32

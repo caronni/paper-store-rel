@@ -1,0 +1,38 @@
+# The ONE virtualenv for this repo: `env/`, built on the FREE-THREADED
+# CPython 3.14 (`python3.14t`, homebrew `python-freethreading`). holo3's
+# worker pool is the reason — jobs are pure functions over immutable
+# inputs, so the GIL is the ceiling, not the design (holo3/API.md).
+#
+#   rm -rf env && python3.14t -m venv env && env/bin/pip install -r requirements.txt
+#
+# Verify the build is the free-threaded one:
+#   env/bin/python -c "import sys; print(sys._is_gil_enabled())"   # -> False
+#
+# There is no second venv. holo3 used to carry its own (`env314t`);
+# unified here 2026-09-02. Neither holo nor paperholo is pip-installed
+# (KISS ruling; conftest.py + pyproject pythonpath do the work) — do NOT
+# `pip install -e .` into this env.
+
+# Core stack (CLAUDE.md: numpy/scipy core, pillow for image I/O; no GPU).
+# Floors are the versions holo3's measured test constants were taken
+# under (2026-08-29); going below them re-opens frozen numbers.
+numpy>=2.5.2
+scipy>=1.18.1
+pillow>=12
+tifffile>=2026.8
+cryptography>=50
+# util/scrap_pack.py only (TIFF/JPEG codecs beyond pillow's set)
+imagecodecs>=2026.8
+
+# Test suite
+pytest>=9
+# holo2/measure/verdicts + pyproject's dev extra
+pytest-xdist>=3
+# Static undefined-name gate (tests/holo/test_trust_boundaries.py,
+# holo3 merge gate C-13)
+pyflakes>=3
+# Strict-typing gate (holo2/tests/test_typing.py); skips if absent
+mypy>=2.3
+
+# Note: ghostscript (brew install ghostscript) is a system dependency used only to
+# pre-flight-render generated PostScript for pixel-exact verification before printing.

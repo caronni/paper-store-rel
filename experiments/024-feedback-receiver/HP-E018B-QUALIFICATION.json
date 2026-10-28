@@ -1,0 +1,318 @@
+{
+  "magic": "e024-hp-e018b-retention-v1",
+  "version": 1,
+  "date": "2026-07-17",
+  "scope": "Two separate single-page HP 1200-dpi E018b physical captures (C3 and C2), comparing standalone E023b followed by E024 refine with production E023c scale-space followed by independent per-lane E024 refine overlays. This is capture-specific evidence, not cross-scanner generalization.",
+  "boundary": {
+    "recovery_uses_ground_truth": false,
+    "ground_truth_use": "Post-hoc certificate correctness only, after result state and observer-report bytes were frozen.",
+    "strong_bound_reaudit": "The v2 bound reaudits replayed and re-froze every cascade, export, official-union, lane, E024 state, observer report, baseline, manifest, and ground-truth hash before using ground truth.",
+    "fountain_use": "Post-hoc useful-versus-inert classification and payload verification only; no fountain-derived E024 stop condition.",
+    "raw_states_and_frames_tracked": false,
+    "raw_states_and_frames_location": "scratch/e024-hp-e018b-20260717",
+    "raw_states_and_frames_size_gib": 4.7
+  },
+  "digest_conventions": {
+    "certificate_set_sha256": "Canonical sorted tile-key identity; directly cross-comparable between the E023c qualifier and E024 bridge.",
+    "certificate_bits_sha256": "E024 bridge convention: sorted tile keys plus explicit bit length and little-bitorder packed bytes. E023c qualification reports use big-bitorder packed bytes without the explicit bit length, so their bits digests are intentionally different; the v2 bound audit proves value equality by replay."
+  },
+  "implementation": {
+    "run_commit": "bdc9c54b52545be2a0b733c3a1e3ced91dbd4bb1",
+    "e024_commit": "916c7d8cbf38aa605db80adf232ff004ab2eb4e0",
+    "post_run_observer_instrumentation": {
+      "commit": "5ee753a9b3b330c6e8201b823153135075ec137c",
+      "fresh_blind_requalification": false,
+      "interpretation": "The C3/C2 numerical states and qualification reports remain pinned to run_commit. The later commit adds live observer callbacks and excludes observer time; exact fingerprint deltas are pinned by tests and observer-on/off tests prove identical authoritative state. Any further fingerprint delta requires a fresh review or blind qualification.",
+      "changed_fingerprint_keys": ["e023c:cascade", "e023c:run", "lower:paperholo.pilotsearch"],
+      "neutrality_tests": [
+        "tests/test_e022.py::test_search_survey_window_progress_is_timing_and_state_neutral",
+        "tests/test_e023c_cascade.py::test_process_level_without_observer_disables_all_fine_callbacks",
+        "tests/test_e023c_cascade.py::test_production_diagnostics_are_authoritatively_neutral"
+      ]
+    },
+    "bridge_at_run": {
+      "path": "experiments/024-feedback-receiver/e023c_e024_bridge_v1.py",
+      "sha256": "ecb60174fc5afca9afe45d25fd704cb6bb822e2ba3be6bc6b354de90405b0980",
+      "version": 1
+    },
+    "bridge_current": {
+      "path": "experiments/024-feedback-receiver/e023c_e024_bridge.py",
+      "sha256": "4132d6d418e3f80f954443023d43bd69398462b37a35941d19c46563c04a54ea",
+      "version": 2
+    }
+  },
+  "captures": {
+    "c3": {
+      "path_at_run": "scratch/e018b/hp-e018b-c3-hp-1200-page.tiff.png",
+      "sha256": "dca3cdff39049949cbb83b3bd9a594c2d27d46229d3bfef708eeeda254dbf282",
+      "format_id": "e018b-v3-c3",
+      "manifest_path_at_run": "experiments/018b-payload-sheet/build/e018b-c3-012d9e3ae693_manifest.json",
+      "manifest_sha256": "d86861ccffd364d1e4004613415607c3cdf9780a455fe9adc7c188f3094d160a",
+      "ground_truth_path_at_run": "experiments/018b-payload-sheet/build/e018b-c3-012d9e3ae693_gt/K__e018b_c3_012d9e3ae693_field.npy",
+      "ground_truth_sha256": "6014881ce5001253804cc11423c8db19b84ff324a8cdd5b33a288830e01d3acc",
+      "fountain_symbols_total": 782
+    },
+    "c2": {
+      "path_at_run": "scratch/e018b/hp-e018b-c2-hp-1200-page.tiff.png",
+      "sha256": "51b2841d044d939b2355c4d9069141ba5ced709a76986a492f0b2b4d514b2798",
+      "format_id": "e018b-v3-c2",
+      "manifest_path_at_run": "experiments/018b-payload-sheet/build/e018b-c2-424e41a28257_manifest.json",
+      "manifest_sha256": "3b2b4813147ef8d4226490076b57db495a2113b94b6793d2aebd1bb6bf0d07bb",
+      "ground_truth_path_at_run": "experiments/018b-payload-sheet/build/e018b-c2-424e41a28257_gt/K__e018b_c2_424e41a28257_field.npy",
+      "ground_truth_sha256": "5c3d8553af9f24c02043668e13009c7b3fff058848ac02c37d3da4b4724688c6",
+      "fountain_symbols_total": 1734
+    }
+  },
+  "source_artifacts": {
+    "ignored_audits": {
+      "e023b_c3_e024": {
+        "path_at_run": "scratch/e024-hp-e018b-20260717/e023b/c3/e024-audit.json",
+        "sha256": "41a22c0188a994d84985147bd724b423e02c0de4e1f706c40a47f0227c0f728b",
+        "proof_status": "historical_v1_unbound_observer",
+        "gates_ok": true
+      },
+      "e023b_c2_e024": {
+        "path_at_run": "scratch/e024-hp-e018b-20260717/e023b/c2/e024-audit.json",
+        "sha256": "6cd16a0131b5473f307972af03e25f77f26b0f0bca11211535b9839c6a14f8b7",
+        "proof_status": "historical_v1_unbound_observer",
+        "gates_ok": true
+      },
+      "e023c_c3_qualification": {
+        "path_at_run": "scratch/e024-hp-e018b-20260717/e023c/c3/qualification.json",
+        "sha256": "de82a4a62ad44d6917393980a2af69930fa7627cd74f868c5d173c8c70af2176",
+        "proof_status": "historical_single_capture_qualification",
+        "gates_ok": true
+      },
+      "e023c_c3_e024": {
+        "path_at_run": "scratch/e024-hp-e018b-20260717/e023c/c3/e024/portfolio-audit.json",
+        "sha256": "cad2dded7bda0bc06b0cafd875b3f41961aa26c779e715463d917a4f8377a8c9",
+        "proof_status": "historical_v1_unbound_observer",
+        "gates_ok": true
+      },
+      "e023c_c2_qualification_before_scope_correction": {
+        "path_at_run": "scratch/e024-hp-e018b-20260717/e023c/c2/qualification.json",
+        "sha256": "1be5d720da62e8b1352f43873597855a99343f86a34f5b6cff123481b68405a9",
+        "proof_status": "historical_single_capture_qualification_before_scope_correction",
+        "gates_ok": true,
+        "caveat": "All numerical, certificate, implementation, and payload gates passed, but the observer-only scope text incorrectly said C3. A profile-aware requalification is tracked separately."
+      },
+      "e023c_c2_e024": {
+        "path_at_run": "scratch/e024-hp-e018b-20260717/e023c/c2/e024/portfolio-audit.json",
+        "sha256": "02c4994df5652fae81db609c3ea34585082206deac6a64ad6b3f3fed166f58f1",
+        "proof_status": "historical_v1_unbound_observer",
+        "gates_ok": true
+      }
+    },
+    "bound_v2_reaudits": {
+      "e023c_c3_e024": {
+        "status": "QUALIFIED_BOUND",
+        "gates_ok": true,
+        "audit_path_at_run": "scratch/e024-hp-e018b-20260717/e023c/c3/bound-v2-final/portfolio-audit.json",
+        "audit_sha256": "2b70cdaabe5c60f4a2ffee75b77d4abe980a3e4bacd1880659f4a733694375a4",
+        "export_manifest_path_at_run": "scratch/e024-hp-e018b-20260717/e023c/c3/bound-v2-final/lanes.json",
+        "export_manifest_sha256": "566c16af69ee557134e672573a25a348d54e4afbc8bbe31164cd46ef3c12fe3e",
+        "certificate_union_path_at_run": "scratch/e024-hp-e018b-20260717/e023c/c3/bound-v2-final/portfolio.json",
+        "certificate_union_sha256": "f70ecc1b5d875429b4086c735dd762e5590848118ddee4dcbeff0c2879cb5050"
+      },
+      "e023c_c2_e024": {
+        "status": "QUALIFIED_BOUND",
+        "gates_ok": true,
+        "audit_path_at_run": "scratch/e024-hp-e018b-20260717/e023c/c2/bound-v2-final/portfolio-audit.json",
+        "audit_sha256": "8f54ac717cf661bbb227f6e169b9f818357fa70b918ca89f05dd15d51e3511f2",
+        "export_manifest_path_at_run": "scratch/e024-hp-e018b-20260717/e023c/c2/bound-v2-final/lanes.json",
+        "export_manifest_sha256": "ecef93b2c95baf19681285392539885afbeed9174722595f982e08344c3b3bd3",
+        "certificate_union_path_at_run": "scratch/e024-hp-e018b-20260717/e023c/c2/bound-v2-final/portfolio.json",
+        "certificate_union_sha256": "4ae3c1ddc44798a602b26a0f97e583fb250fca509931422bcaeaaecb851a900b"
+      }
+    },
+    "tracked_c3_qualification": {
+      "path": "experiments/023c-scale-space-receiver/E023C-CASCADE-HP1200.json",
+      "sha256": "84276f235ab38548c916270dc2517c7ca659cd49d9968e2e82115ecadc37b8c9",
+      "gates_ok": true,
+      "scope_profile": "c3"
+    },
+    "tracked_c2_qualification": {
+      "path": "experiments/023c-scale-space-receiver/E023C-CASCADE-HP1200-C2.json",
+      "sha256": "ede948168a737d67f268f3ce340639e8951914bfc515e0b1ff825efbf6f3867c",
+      "gates_ok": true,
+      "scope_profile": "c2"
+    }
+  },
+  "results": {
+    "standalone_e023b_then_e024_refine": {
+      "c3": {
+        "generation_zero": {
+          "ldpc_certificates": 730,
+          "useful_symbols": 709,
+          "inert_certificates": 21,
+          "certificate_set_sha256": "c79e05cbfe54d1a0b020f9f53aaa1064b337304ecda558c781c425c01f9bbf6e",
+          "certificate_bits_sha256": "d7156ec32c20950012b2d38e691e7a84bd02c27b6263fb1ae2d9fc9d5a55853c"
+        },
+        "final": {
+          "ldpc_certificates": 734,
+          "useful_symbols": 712,
+          "inert_certificates": 22,
+          "certificate_set_sha256": "891e7345ef4d26e991ed57ac0ee3a0577f1d1d081625714bd33b4547c6b94b70",
+          "certificate_bits_sha256": "9fed342327c2c7219910f54fe53e762ad65e74e0b92b04b5f4f25826bc31dc3e"
+        },
+        "new": {
+          "ldpc_certificates": 4,
+          "useful_symbols": 3,
+          "useful_tile_keys": [[0, 0, 17], [0, 15, 8], [0, 15, 9]],
+          "inert_certificates": 1,
+          "inert_tile_keys": [[0, 34, 1]]
+        },
+        "work": {
+          "accepted_revisions": 16,
+          "refused_revisions": 100,
+          "changed_cells": 237989,
+          "owner_changes": 44169,
+          "feedback_attempt_records": 68,
+          "crc_calls": 65,
+          "bp_iterations": 13220
+        },
+        "safety": {
+          "gates_ok": true,
+          "wrong_certificates": 0,
+          "conflicts": 0,
+          "lost_certificates": 0,
+          "changed_generation_zero_values": 0
+        }
+      },
+      "c2": {
+        "generation_zero": {
+          "ldpc_certificates": 1416,
+          "useful_symbols": 1358,
+          "inert_certificates": 58,
+          "certificate_set_sha256": "0daabf1f6a72cada3d4ff403a4473ec92bda4a5fda727d384d002b05077b27ef",
+          "certificate_bits_sha256": "946c49c1289ca5d4fbbeba353b8b4012335dd82cef07a4c5fd86a52e5bbdd672"
+        },
+        "final": {
+          "ldpc_certificates": 1423,
+          "useful_symbols": 1358,
+          "inert_certificates": 65,
+          "certificate_set_sha256": "a6de4b272fcafb685da8d001ec7d2c4862157ced7392366f4373dde63be4eac3",
+          "certificate_bits_sha256": "c928a23d07a3e86b16e0140717eb46e6070d8b0a949701edfab397c7cf3e446f"
+        },
+        "new": {
+          "ldpc_certificates": 7,
+          "useful_symbols": 0,
+          "useful_tile_keys": [],
+          "inert_certificates": 7,
+          "inert_tile_keys": [[0, 8, 34], [0, 19, 34], [0, 21, 34], [0, 23, 34], [0, 24, 34], [0, 31, 34], [0, 38, 34]]
+        },
+        "work": {
+          "accepted_revisions": 67,
+          "refused_revisions": 387,
+          "changed_cells": 1408273,
+          "owner_changes": 51186,
+          "feedback_attempt_records": 379,
+          "crc_calls": 379,
+          "bp_iterations": 78173
+        },
+        "safety": {
+          "gates_ok": true,
+          "wrong_certificates": 0,
+          "conflicts": 0,
+          "lost_certificates": 0,
+          "changed_generation_zero_values": 0
+        }
+      }
+    },
+    "production_e023c_then_per_lane_e024_refine": {
+      "c3": {
+        "e023c_ordered_lane_contributions": [671, 74, 9],
+        "generation_zero": {
+          "ldpc_certificates": 754,
+          "useful_symbols": 731,
+          "inert_certificates": 23,
+          "certificate_set_sha256": "70ed14f8e9582535632ca8fc803dc5848d6e1238a24f44fc289b05995aa80324",
+          "certificate_bits_sha256": "400593241c265b22635f8b3353071c160d9a1693d388837f4b3ebf67b064bd5b"
+        },
+        "final": {
+          "ldpc_certificates": 754,
+          "useful_symbols": 731,
+          "inert_certificates": 23,
+          "certificate_set_sha256": "70ed14f8e9582535632ca8fc803dc5848d6e1238a24f44fc289b05995aa80324",
+          "certificate_bits_sha256": "400593241c265b22635f8b3353071c160d9a1693d388837f4b3ebf67b064bd5b"
+        },
+        "new": {
+          "ldpc_certificates": 0,
+          "useful_symbols": 0,
+          "useful_tile_keys": [],
+          "inert_certificates": 0,
+          "inert_tile_keys": []
+        },
+        "work_across_all_lanes": {
+          "accepted_revisions": 24,
+          "refused_revisions": 113,
+          "changed_cells": 250806,
+          "owner_changes": 42472,
+          "feedback_attempt_records": 70,
+          "crc_calls": 58,
+          "bp_iterations": 12180
+        },
+        "safety": {
+          "gates_ok": true,
+          "wrong_certificates": 0,
+          "conflicts": 0,
+          "lost_certificates": 0,
+          "changed_generation_zero_values": 0
+        }
+      },
+      "c2": {
+        "e023c_ordered_lane_contributions": [1310, 128],
+        "generation_zero": {
+          "ldpc_certificates": 1438,
+          "useful_symbols": 1363,
+          "inert_certificates": 75,
+          "certificate_set_sha256": "1c2d01a42ff1ed91088d8757bf253a45f3dcf5f4ae37b4dba9e71c9a89c00d73",
+          "certificate_bits_sha256": "d8ffed2c4d43a65c8821df5c513053344ad99b353c0a6d30fbe4304ab28b8bdc"
+        },
+        "final": {
+          "ldpc_certificates": 1439,
+          "useful_symbols": 1364,
+          "inert_certificates": 75,
+          "certificate_set_sha256": "70eeb34d25391f2b87391b5d169a35b44792931367c536ad563b695e3284b702",
+          "certificate_bits_sha256": "0a9eea9ec41d95957c7ffd36de80eaa6c23fbb5eec2f7101a3f70b3ab80c1ce0"
+        },
+        "new": {
+          "ldpc_certificates": 1,
+          "useful_symbols": 1,
+          "useful_tile_keys": [[0, 18, 26]],
+          "inert_certificates": 0,
+          "inert_tile_keys": []
+        },
+        "work_across_all_lanes": {
+          "accepted_revisions": 102,
+          "refused_revisions": 624,
+          "changed_cells": 1696545,
+          "owner_changes": 78072,
+          "feedback_attempt_records": 471,
+          "crc_calls": 461,
+          "bp_iterations": 96682
+        },
+        "safety": {
+          "gates_ok": true,
+          "wrong_certificates": 0,
+          "conflicts": 0,
+          "lost_certificates": 0,
+          "changed_generation_zero_values": 0
+        }
+      }
+    }
+  },
+  "comparisons": {
+    "c3_standalone_e023b_e024_final_is_strict_subset_of_e023c_e024_final": true,
+    "c2_standalone_e023b_e024_final_is_strict_subset_of_e023c_e024_final": true,
+    "c3_e023c_advantage_in_final_ldpc_certificates": 20,
+    "c2_e023c_advantage_in_final_ldpc_certificates": 16
+  },
+  "conclusions": [
+    "Scale-space E023c recovers materially more than standalone E023b followed by E024 on both captures.",
+    "E024 remains useful on a weaker standalone baseline, but most of its raw C2 certificate gain is fountain-inert right-edge recovery.",
+    "After E023c has combined complementary scale evidence, broad E024 refine has sharply diminishing return: zero C3 gain and one useful C2 gain at substantial work.",
+    "The safe architecture is an immutable E023c certificate union plus independent per-lane E024 overlays; never feed one E024 overlay into another lane.",
+    "The next bounded recovery mechanism should target piecewise/seam-aware pose or support extension rather than simply broadening global affine feedback, BP, or context search."
+  ]
+}

@@ -1,0 +1,48 @@
+{
+ "head": "28cf0c29c0d2fc4720a9248fbd29dd181fc2dc2b",
+ "captured_at": "2026-08-29",
+ "python": "3.14.7 free-threaded (env314t)",
+ "command": "cd <checkout> && env314t/bin/python -m pytest holo3/tests -q",
+ "lanes": {
+  "fast": {
+   "env": {},
+   "passed": 1182,
+   "failed": 1,
+   "skipped": 356,
+   "wall_s": 8.08,
+   "wall_tripwire_s": 15.0,
+   "tripwire_tripped": false
+  },
+  "slow": {
+   "env": {"HOLO3_RUN_SLOW_TESTS": "1"},
+   "passed": 1534,
+   "failed": 1,
+   "skipped": 4,
+   "wall_s": 64.24,
+   "wall_tripwire_s": 100.0,
+   "tripwire_tripped": false
+  }
+ },
+ "pre_existing_failure": {
+  "nodeid": "holo3/tests/test_h3_conventions.py::test_holo3_test_basenames_are_unique_against_every_tracked_repo_file",
+  "lanes": ["fast", "slow"],
+  "deterministic": true,
+  "introduced_by": "28cf0c2 (the commit that made holo3/tests tracked)",
+  "mechanism": "the pin counts basenames over `git ls-files '*.py'` and asserts each holo3/tests basename appears 0 times; every one of the 35 committed holo3/tests modules now matches itself exactly once, so the count is 1 by construction",
+  "production_implicated": false,
+  "note": "Wave 0 makes no edits; reported to the lead, not fixed here"
+ },
+ "pyflakes": {
+  "command_as_ruled": "env314t/bin/python -m pyflakes holo3/",
+  "exit_code": 1,
+  "messages": [
+   "holo3/conversion_docs/verify/verify_pilots_identity.py:11:1: 'types' imported but unused",
+   "holo3/conversion_docs/verify/verify_pilots_identity.py:23:1: 'holo3.format' imported but unused"
+  ],
+  "excluding_conversion_docs": {
+   "exit_code": 0,
+   "messages": []
+  },
+  "note": "conversion_docs is the in-tree historical archive; the suite's own sweep (test_h3_hygiene.py) excludes it and gates undefined-names only"
+ }
+}

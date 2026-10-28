@@ -1,0 +1,30 @@
+[project]
+name = "paperholo"
+version = "0.0.1"
+description = "Fiducial-free holographic data storage on laser-printed paper"
+requires-python = ">=3.11"
+# INERT metadata: paperholo is never installed (see the note below), so
+# nothing resolves these. requirements.txt at the repo root is the single
+# source of truth for the one venv (`env/`, free-threaded 3.14); these
+# mirror its floors only so the two files cannot silently disagree.
+dependencies = ["numpy>=2.5.2", "scipy>=1.18.1", "pillow>=12", "cryptography>=50"]
+
+[project.optional-dependencies]
+dev = ["pytest>=9", "pytest-xdist>=3", "pyflakes>=3", "mypy>=2.3"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+# Neither holo nor paperholo is pip-installed: both import from src/
+# directly (pytest pythonpath below + repo-root conftest.py exporting
+# PYTHONPATH to subprocesses; ./confetti.py and src/holo/cli.py
+# self-locate). Standalone scripts run as `PYTHONPATH=src env/bin/python
+# …`. KISS ruling 2026-07-19; env honesty 2026-07-30.
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["paperholo*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests", "holo2/tests"]
+pythonpath = ["src", "holo2/src"]

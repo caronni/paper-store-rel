@@ -1,0 +1,107 @@
+=== START gil-w4-sw50 Sun Aug 16 20:49:55 CEST 2026 ===
+format   c2-r0700@3392x2368 · codec k-v1 · 1 page domain · streams main · PROVISIONAL
+capture  1 ingested · cf29e165ebe4… · done coverage 68.8% (5530908/8034771 cells)
+queue    ready 172[payload:71,place:101] · running 0 · sleeping 341 · retired 1356 · declined 0 (re-offerable 0) · pool 4/free
+work     commits 1923 (scheduled 1922) · fires 2338 · wakes/commit 0.71 · useful 0.68 · peak 4 · stale 33
+tiles    UNKNOWN 0 · ADDRESSED 398 · ATTEMPTED 7 · CERTIFIED 1356 · crc exposure 1363 spends/1363 attempts
+close    verified · certified 1356 · K 1356/1356 · metadata rank 24/24 · blocks 1/1
+[gil-w4-sw50] RESULT VERIFIED certified=1356 commits=1922 fires=2338 wall=541s workers=4 switch_ms=50.0
+[gil-w4-sw50] payload 465580 B sha e5021f8d099587c3
+[gil-w4-sw50] vs w1a-gc-serial.bin: BYTE-IDENTICAL
+[gil-w4-sw50] FIRES 2374 wall 1975.5s cpu 503.2s offcore 1472.3s (74.5% of fire wall) | fire-cpu/wall 0.930 cores
+[gil-w4-sw50] FIRE wall p50 59.87ms p90 604.81ms | cpu p50 1.43ms p90 150.53ms
+[gil-w4-sw50] --- per family/route ---
+[gil-w4-sw50]   place/pull/source    n=  670 cpu=   500.2s ( 99.4%) wall=  1820.1s cpu-p50=  146.14ms cpu-p90=  3219.11ms wall-p90= 11610.98ms
+[gil-w4-sw50]   payload/scan           n= 1704 cpu=     3.1s (  0.6%) wall=   155.4s cpu-p50=    1.26ms cpu-p90=     2.52ms wall-p90=   118.67ms
+[gil-w4-sw50] MAIN thread cpu 89.8s of wall 540.9s (16.6%)
+[gil-w4-sw50]   main.fill       n=  2071 wall=    14.6s cpu=     8.9s p50=   0.55ms p90=   28.83ms
+[gil-w4-sw50]   main.admit      n=  2071 wall=   521.4s cpu=    76.2s p50=  54.17ms p90=  193.33ms
+[gil-w4-sw50]   main.apply      n=  2338 wall=    77.4s cpu=    74.6s p50=  42.18ms p90=   58.18ms
+[gil-w4-sw50]   main.ctx.apply  n=  1922 wall=     4.1s cpu=     1.6s p50=   0.88ms p90=    6.91ms
+[gil-w4-sw50]   main.is_current n=  2371 wall=     1.6s cpu=     1.6s p50=   0.06ms p90=    0.09ms
+[gil-w4-sw50] GIL-LATENCY probe n=13120 period=5.0ms mean=36.02ms p50=25.74ms p90=91.58ms p99=211.92ms max=451.5ms
+[gil-w4-sw50] IN-FIRE THREADS per sample: 0:4%, 3:0%, 4:96%
+[gil-w4-sw50] --- stack sampler: 50263 pool-thread samples ---
+[gil-w4-sw50]   12.44%  _interpolation:map_coordinates:474
+[gil-w4-sw50]    9.49%  pose_audit:evaluate:504
+[gil-w4-sw50]    9.39%  pose_audit:evaluate:510
+[gil-w4-sw50]    8.48%  pose_audit:evaluate:513
+[gil-w4-sw50]    8.11%  thread:_worker:116
+[gil-w4-sw50]    6.82%  words:_gather_slot:268
+[gil-w4-sw50]    3.38%  bch:_chien_roots:300
+[gil-w4-sw50]    2.90%  pose_fit:_fit_phase:492
+[gil-w4-sw50]    2.80%  words:_gather_slot:269
+[gil-w4-sw50]    2.21%  bch:_syndromes_many_words:225
+[gil-w4-sw50]    1.52%  _arraysetops_impl:_isin:891
+[gil-w4-sw50]    1.51%  pose_audit:parity_mask:197
+[gil-w4-sw50]    1.44%  bch:_syndromes_many_words:224
+[gil-w4-sw50]    1.12%  bch:_berlekamp_massey:255
+[gil-w4-sw50]    1.04%  pose_audit:parity_score:274
+[gil-w4-sw50]    1.00%  _arraysetops_impl:_isin:874
+[gil-w4-sw50]    0.98%  pose_audit:parity_score:284
+[gil-w4-sw50]    0.95%  pose_audit:parity_score:275
+[gil-w4-sw50]    0.94%  plane:prepared_region:380
+[gil-w4-sw50]    0.89%  words:_decode_candidates:335
+[gil-w4-sw50] --- top stacks ---
+[gil-w4-sw50]   27.35%  pose_audit:evaluate < pose_audit:refine_patch_pose < place_shared:place_addressed < place_job:run < orchestrator:_propose < thread:run
+[gil-w4-sw50]   10.07%  words:_gather_slot < words:_decode_candidates < words:stage_a < words:stage_a_patch < placement:decode_word_address < place_job:run
+[gil-w4-sw50]    8.74%  _interpolation:map_coordinates < pose_audit:evaluate < pose_audit:refine_patch_pose < place_shared:place_addressed < place_job:run < orchestrator:_propose
+[gil-w4-sw50]    8.11%  thread:_worker
+[gil-w4-sw50]    4.43%  decode:_bp_loop < decode:_run < decode:decode < tile:decode_tile < tiles:attempt_k_tile < payload_h3bis:run
+[gil-w4-sw50]    4.00%  pose_fit:_fit_phase < pose_fit:fit_window_pose < place_shared:sample_window < place_job:run < orchestrator:_propose < thread:run
+[gil-w4-sw50]    3.79%  pose_audit:parity_score < pose_audit:candidate < pose_audit:local_search < place_job:_search < place_job:run < orchestrator:_propose
+[gil-w4-sw50]    3.66%  bch:_syndromes_many_words < bch:decode_many < words:_decode_candidates < words:stage_a < words:stage_a_patch < placement:decode_word_address
+[gil-w4-sw50]    3.56%  _arraysetops_impl:_isin < _arraysetops_impl:isin < bch:_as_words < bch:decode_many < words:_decode_candidates < words:stage_a
+[gil-w4-sw50]    3.44%  bch:_chien_roots < bch:_decode_syndromes < bch:decode_many < words:_decode_candidates < words:stage_a < words:stage_a_patch
+[gil-w4-sw50]    2.74%  _interpolation:map_coordinates < pose_fit:_fit_phase < pose_fit:fit_window_pose < place_shared:sample_window < place_job:run < orchestrator:_propose
+[gil-w4-sw50]    2.55%  bch:_berlekamp_massey < bch:_decode_syndromes < bch:decode_many < words:_decode_candidates < words:stage_a < words:stage_a_patch
+[gil-w4-sw50] --- stack sampler: 13120 MAIN-thread samples ---
+[gil-w4-sw50]   78.68%  threading:wait:369
+[gil-w4-sw50]    7.76%  journal:append:345
+[gil-w4-sw50]    4.69%  journal:append:343
+[gil-w4-sw50]    2.54%  blobs:put:221
+[gil-w4-sw50]    1.84%  _filters:correlate1d:610
+[gil-w4-sw50]    0.52%  blobs:put:226
+[gil-w4-sw50]    0.32%  _methods:_mean:132
+[gil-w4-sw50]    0.32%  blobs:put:224
+[gil-w4-sw50]    0.27%  _pocketfft:_raw_fft:101
+[gil-w4-sw50]    0.19%  codec:sha256_hex:84
+[gil-w4-sw50]    0.12%  scan:_raw_luma:77
+[gil-w4-sw50]    0.12%  lattice:estimate_lattice:104
+[gil-w4-sw50]    0.11%  _function_base_impl:gradient:1324
+[gil-w4-sw50]    0.11%  lattice:estimate_lattice:100
+[gil-w4-sw50]    0.09%  lattice:estimate_lattice:108
+[gil-w4-sw50]    0.08%  _survey_tensor:_minor_eigen_work:66
+[gil-w4-sw50]    0.08%  _measurements:label:218
+[gil-w4-sw50]    0.08%  _morphology:_binary_erosion:269
+[gil-w4-sw50]    0.08%  keys:<genexpr>:253
+[gil-w4-sw50]    0.08%  orchestrator:_refresh:477
+[gil-w4-sw50]   S 78.68%  orchestrator:_admit_completed < orchestrator:_run_pool < orchestrator:_run < orchestrator:run < cli:decode
+[gil-w4-sw50]   S 11.94%  journal:append < store:mark_start < orchestrator:_dispatch < orchestrator:_fill < orchestrator:_run_pool < orchestrator:_run
+[gil-w4-sw50]   S  3.39%  blobs:put < store:put_staged < commit:apply < session:apply < orchestrator:_commit < orchestrator:_apply
+[gil-w4-sw50]   S  1.84%  _filters:correlate1d < _filters:gaussian_filter1d < _filters:gaussian_filter < _survey_tensor:_minor_eigen_work < _survey_tensor:_minor_eigen_score_array < _survey_tensor:_score_crop
+[gil-w4-sw50]   S  0.51%  journal:append < store:apply_committed < commit:apply < session:apply < orchestrator:_commit < orchestrator:_apply
+[gil-w4-sw50]   S  0.37%  lattice:estimate_lattice < lattice:measure_cell_pitch < survey:_pitch_vote < survey:_global_pitch < survey:survey_raster < ingest:ingest_capture
+[gil-w4-sw50]   S  0.20%  _methods:_mean < _survey_tensor:_block_mean < _survey_tensor:_minor_eigen_score_array < _survey_tensor:_score_crop < _survey_tensor:_score_tile < _survey_tensor:<genexpr>
+[gil-w4-sw50]   S  0.18%  codec:sha256_hex < blobs:put < store:put_staged < commit:apply < session:apply < orchestrator:_commit
+[gil-w4-sw50] wrote gil-w4-sw50.gil.json
+      541.31 real       571.44 user        24.79 sys
+          2795569152  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              187048  page reclaims
+               94307  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   4  messages sent
+                   4  messages received
+                   0  signals received
+               12983  voluntary context switches
+             6050323  involuntary context switches
+       8599279035760  instructions retired
+       1876861524164  cycles elapsed
+          1100400968  peak memory footprint
+EXIT_CODE=0
+=== END gil-w4-sw50 Sun Aug 16 20:58:56 CEST 2026 ===

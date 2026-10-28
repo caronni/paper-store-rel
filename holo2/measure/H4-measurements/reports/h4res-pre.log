@@ -1,0 +1,31 @@
+=== START h4res-pre Mon Aug 17 12:39:27 CEST 2026 ===
+[h4res-pre] wrote scratch/holo2-demo/cards-profile.pstats
+format   c2-r0700@3392x2368 · codec k-v1 · 1 page domain · streams main · PROVISIONAL
+capture  1 ingested · cf29e165ebe4… · done coverage 68.9% (5534263/8034771 cells)
+queue    ready 175[payload:74,place:101] · running 0 · sleeping 337 · retired 1357 · declined 0 (re-offerable 0) · pool 1/free
+work     commits 1919 (scheduled 1918) · fires 2323 · wakes/commit 0.71 · useful 0.68 · peak 0 · stale 0
+tiles    UNKNOWN 0 · ADDRESSED 397 · ATTEMPTED 7 · CERTIFIED 1357 · crc exposure 1364 spends/1364 attempts
+close    verified · certified 1357 · K 1357/1356 · metadata rank 24/24 · blocks 1/1
+[h4res-pre] RESULT VERIFIED certified=1357 commits=1918 fires=2323 wall=143s workers=1 (PROFILED — wall is DISQUALIFIED as a timing number)
+[h4res-pre] payload 465580 B sha e5021f8d099587c3
+[h4res-pre] vs w1a-gc-serial.bin: BYTE-IDENTICAL
+      143.73 real       138.28 user         2.50 sys
+          2742550528  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              178897  page reclaims
+               94307  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   4  messages sent
+                   4  messages received
+                   0  signals received
+               13439  voluntary context switches
+               90012  involuntary context switches
+       2063813744753  instructions retired
+        444696966097  cycles elapsed
+          1047104104  peak memory footprint
+EXIT_CODE=0
+=== END h4res-pre Mon Aug 17 12:41:51 CEST 2026 ===

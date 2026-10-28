@@ -1,0 +1,75 @@
+=== START gil-w1b Sun Aug 16 20:59:32 CEST 2026 ===
+format   c2-r0700@3392x2368 · codec k-v1 · 1 page domain · streams main · PROVISIONAL
+capture  1 ingested · cf29e165ebe4… · done coverage 68.9% (5534263/8034771 cells)
+queue    ready 175[payload:74,place:101] · running 0 · sleeping 337 · retired 1357 · declined 0 (re-offerable 0) · pool 1/free
+work     commits 1919 (scheduled 1918) · fires 2323 · wakes/commit 0.71 · useful 0.68 · peak 0 · stale 0
+tiles    UNKNOWN 0 · ADDRESSED 397 · ATTEMPTED 7 · CERTIFIED 1357 · crc exposure 1364 spends/1364 attempts
+close    verified · certified 1357 · K 1357/1356 · metadata rank 24/24 · blocks 1/1
+[gil-w1b] RESULT VERIFIED certified=1357 commits=1918 fires=2323 wall=564s workers=1 switch_ms=5.0
+[gil-w1b] payload 465580 B sha e5021f8d099587c3
+[gil-w1b] vs w1a-gc-serial.bin: BYTE-IDENTICAL
+[gil-w1b] FIRES 2323 wall 464.0s cpu 459.4s offcore 4.6s (1.0% of fire wall) | fire-cpu/wall 0.815 cores
+[gil-w1b] FIRE wall p50 0.97ms p90 82.77ms | cpu p50 0.96ms p90 81.63ms
+[gil-w1b] --- per family/route ---
+[gil-w1b]   place/pull/source    n=  622 cpu=   457.3s ( 99.6%) wall=   461.9s cpu-p50=   80.11ms cpu-p90=  3223.90ms wall-p90=  3246.14ms
+[gil-w1b]   payload/scan           n= 1701 cpu=     2.0s (  0.4%) wall=     2.1s cpu-p50=    0.90ms cpu-p90=     1.66ms wall-p90=     1.67ms
+[gil-w1b] MAIN thread cpu 557.0s of wall 563.8s (98.8%)
+[gil-w1b]   main.fill       n=     0 wall=     0.0s cpu=     0.0s p50=   0.00ms p90=    0.00ms
+[gil-w1b]   main.admit      n=     0 wall=     0.0s cpu=     0.0s p50=   0.00ms p90=    0.00ms
+[gil-w1b]   main.apply      n=  2323 wall=    83.2s cpu=    81.8s p50=  45.83ms p90=   64.51ms
+[gil-w1b]   main.ctx.apply  n=  1918 wall=     1.9s cpu=     1.5s p50=   0.50ms p90=    3.79ms
+[gil-w1b]   main.is_current n=     0 wall=     0.0s cpu=     0.0s p50=   0.00ms p90=    0.00ms
+[gil-w1b] GIL-LATENCY probe n=50977 period=5.0ms mean=5.98ms p50=7.46ms p90=7.56ms p99=7.60ms max=279.6ms
+[gil-w1b] IN-FIRE THREADS per sample: 0:100%
+[gil-w1b] --- stack sampler: 0 pool-thread samples ---
+[gil-w1b] --- top stacks ---
+[gil-w1b] --- stack sampler: 50977 MAIN-thread samples ---
+[gil-w1b]   29.97%  bch:_chien_roots:300
+[gil-w1b]   11.95%  bch:_berlekamp_massey:255
+[gil-w1b]    5.28%  bch:_berlekamp_massey:267
+[gil-w1b]    4.52%  _interpolation:map_coordinates:474
+[gil-w1b]    4.17%  bch:_berlekamp_massey:265
+[gil-w1b]    3.66%  words:_gather_slot:268
+[gil-w1b]    3.06%  keys:<genexpr>:253
+[gil-w1b]    2.27%  bch:_berlekamp_massey:252
+[gil-w1b]    2.15%  journal:append:343
+[gil-w1b]    1.86%  pose_audit:evaluate:504
+[gil-w1b]    1.41%  keys:parse_key:257
+[gil-w1b]    1.39%  bch:_berlekamp_massey:271
+[gil-w1b]    1.24%  bch:_decode_syndromes:308
+[gil-w1b]    1.08%  _methods:_any:61
+[gil-w1b]    0.90%  numeric:_flatnonzero_dispatcher:670
+[gil-w1b]    0.90%  keys:key_parts:134
+[gil-w1b]    0.81%  keys:<genexpr>:198
+[gil-w1b]    0.81%  <string>:__lt__:14
+[gil-w1b]    0.78%  <string>:__init__:2
+[gil-w1b]    0.77%  words:_gather_slot:269
+[gil-w1b]   S 30.62%  bch:_chien_roots < bch:_decode_syndromes < bch:decode_many < words:_decode_candidates < words:stage_a < words:stage_a_patch
+[gil-w1b]   S 26.27%  bch:_berlekamp_massey < bch:_decode_syndromes < bch:decode_many < words:_decode_candidates < words:stage_a < words:stage_a_patch
+[gil-w1b]   S  5.60%  words:_gather_slot < words:_decode_candidates < words:stage_a < words:stage_a_patch < placement:decode_word_address < place_job:run
+[gil-w1b]   S  3.15%  pose_audit:evaluate < pose_audit:refine_patch_pose < place_shared:place_addressed < place_job:run < orchestrator:_propose < orchestrator:_run_serial
+[gil-w1b]   S  2.94%  _interpolation:map_coordinates < pose_audit:evaluate < pose_audit:refine_patch_pose < place_shared:place_addressed < place_job:run < orchestrator:_propose
+[gil-w1b]   S  2.30%  journal:append < store:mark_start < orchestrator:_dispatch < orchestrator:_run_serial < orchestrator:_run < orchestrator:run
+[gil-w1b]   S  1.43%  bch:_decode_syndromes < bch:decode_many < words:_decode_candidates < words:stage_a < words:stage_a_patch < placement:decode_word_address
+[gil-w1b]   S  1.25%  keys:<genexpr> < keys:parse_key < keys:parse_evidence_key < tilemap:build < plane:index < plane:tiles
+[gil-w1b] wrote gil-w1b.gil.json
+      564.39 real       555.93 user         5.95 sys
+          2796011520  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              184167  page reclaims
+               94307  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   4  messages sent
+                   4  messages received
+                   0  signals received
+               13258  voluntary context switches
+              401175  involuntary context switches
+       8290452985208  instructions retired
+       1786525429862  cycles elapsed
+          1096731240  peak memory footprint
+EXIT_CODE=0
+=== END gil-w1b Sun Aug 16 21:08:56 CEST 2026 ===

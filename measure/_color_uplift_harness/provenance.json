@@ -1,0 +1,1408 @@
+{
+ "captures": {
+  "hp-c2-cmy7": {
+   "artifacts": {
+    "gt": {
+     "bytes": 11501696,
+     "path": "e030/holo-c2-cmy7-q05-counting/page000_gt.npy",
+     "sha256": "4b87922a4506fef38f0701fb160abb6a30f14aa7e707b62cffee05352db276ba"
+    },
+    "manifest": {
+     "bytes": 2562,
+     "path": "e030/holo-c2-cmy7-q05-counting/manifest.json",
+     "sha256": "af44645e28d79fbac7848c81686179f8a5effa138fd664d82d0e1d6d2597dcf5"
+    },
+    "payload_bin": {
+     "bytes": 686859,
+     "path": "e030/holo-c2-cmy7-q05-counting/payload-counting.bin",
+     "sha256": "5963b9d16abca48d66a05f80eb137ce76624b8fdedb48ce13c3ee0cf8f24c993"
+    },
+    "recovered": null,
+    "state": {
+     "bytes": 2222275,
+     "path": "in/holo-hp-c2-cmy7-counting-receive.state",
+     "sha256": "4042d3fb6d67a7b8b9abd365ec2a2852949f2a572f090f954c22571f4f9bfb3e"
+    },
+    "tiff": {
+     "bytes": 6875455728,
+     "path": "in/hp-canon-c2-cmy7.tiff",
+     "sha256": "c05354349a4ba844b2c1d0d69686f4b97e3ca1f2c0b2ff4fca84cba7f76c0e32"
+    }
+   },
+   "baseline": {
+    "archived_certificates": 0,
+    "archived_close_row": "received 0 \u00b7 K unavailable \u00b7 metadata rank 0/24 \u00b7 +48 checks to trust \u00b7 close deferred \u00b7 rank/solve deferred",
+    "archived_retry150_certificates": 0,
+    "flag_sources": {
+     "coding": "state format row IS registry-resolvable, so --coding/--printer were optional; the CLI records no argv",
+     "complete": "events.jsonl close.check shape: one deferred row => --complete, one row per barrier => --complete absent",
+     "page": "report.json page_domain (explicit subset)",
+     "refine": "events.jsonl level.open lane ids",
+     "scan_dpi": "status.json lane row native dpi"
+    },
+    "flags": {
+     "coding": "unknown",
+     "complete": true,
+     "diag": true,
+     "mopup": "implied by --refine (plan-prefix law)",
+     "out": "unknown",
+     "page": [
+      0
+     ],
+     "printer": "unknown",
+     "refine": true,
+     "scan_dpi": [
+      4800.0
+     ],
+     "scans": [
+      "scratch/in/hp-canon-c2-cmy7.tiff"
+     ],
+     "source_sha256": "unknown",
+     "state": "scratch/in/holo-hp-c2-cmy7-counting-receive.state",
+     "workers": "unknown"
+    },
+    "lanes_executed": [
+     "l00-2ppc-600dpi",
+     "l01-4ppc-1200dpi",
+     "l02-8ppc-2400dpi",
+     "l03-16ppc-4800dpi",
+     "m00-2ppc-600dpi",
+     "m01-4ppc-1200dpi",
+     "m02-8ppc-2400dpi",
+     "m03-16ppc-4800dpi",
+     "r00-2ppc-600dpi",
+     "r01-4ppc-1200dpi",
+     "r02-8ppc-2400dpi",
+     "r03-16ppc-4800dpi"
+    ],
+    "last_lane_id": "r03-16ppc-4800dpi",
+    "level_ordinals_in_last_invocation": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11
+    ],
+    "levels_executed": 12,
+    "levels_total": 12,
+    "multi_invocation": false,
+    "receiver_policy_id": "holo/track3/kiss-v1/survey=holo/e021-survey/paperholo-e021-v1;address=holo/production-address/v6-phased-schedule/candidate/holo-v1-e026+e022/requires-physical-null/kiss-v1;payload=holo/e023b-e023c-color/provisional-v8-r-lane/rgb-furniture-qda-sparse-split-pava-tiepool-classbal-planezero-dust20-priorcert-label-rows-register-rect2-q010-shift5-localcrop-anchor512-binleft-cmy7linf20-certrefine-planecal-frozen-stripes-xy-furniture-nonregress-r-lane-audited-committed-pose-domain-affected-region-delta-nonzero-floor-max60-preclose-selective-retry150;scheduler=holo/phased-session/rung-major-v2-r-lanes;close=holo/e023-close/fountain-v2-sha256-v1",
+    "state_status": "open",
+    "unknown_flags": [
+     "coding",
+     "printer",
+     "source_sha256",
+     "workers"
+    ]
+   },
+   "codec_id": "cmy7-pack7-p120-v0",
+   "coding_id": "c2-cmy7-p120-v0",
+   "engine": "hp",
+   "events_scan": {
+    "available": true,
+    "close_checks": 1,
+    "close_deferred": true,
+    "close_status": "open",
+    "lanes_executed": [
+     "l00-2ppc-600dpi",
+     "l01-4ppc-1200dpi",
+     "l02-8ppc-2400dpi",
+     "l03-16ppc-4800dpi",
+     "m00-2ppc-600dpi",
+     "m01-4ppc-1200dpi",
+     "m02-8ppc-2400dpi",
+     "m03-16ppc-4800dpi",
+     "r00-2ppc-600dpi",
+     "r01-4ppc-1200dpi",
+     "r02-8ppc-2400dpi",
+     "r03-16ppc-4800dpi"
+    ],
+    "level_ordinals_executed": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11
+    ]
+   },
+   "format_row_id": "c2-cmy7-p120-v0@3328x2304",
+   "gt": {
+    "cell_dots": 2,
+    "gt_bitorder": "big",
+    "gt_packed_shape": [
+     3,
+     6656,
+     576
+    ],
+    "gt_plane_order": [
+     "C",
+     "M",
+     "Y"
+    ],
+    "gt_sha256": "78bec3937cca889146f0f6eb10fc953cfd40d003379cc7be0f2185f04a1df5d3",
+    "page_cells_yx": [
+     3328,
+     2304
+    ],
+    "tiles_yx": [
+     52,
+     36
+    ]
+   },
+   "key": "hp-c2-cmy7",
+   "kind": "cmy7",
+   "payload_bytes": 686859,
+   "payload_sha256": "5963b9d16abca48d66a05f80eb137ce76624b8fdedb48ce13c3ee0cf8f24c993",
+   "printer_id": "hp-m281",
+   "role": "address-dead no-op control (60.3% footprint, 0 LDPC calls)",
+   "scan_dpi": 4800.0,
+   "stream_ids": [
+    "main"
+   ]
+  },
+  "hp-c2-cmy8": {
+   "artifacts": {
+    "gt": {
+     "bytes": 11501696,
+     "path": "e030/holo-c2-cmy8-q05-counting/page000_gt.npy",
+     "sha256": "e70fcf205847e36aa7640f6f81a09270c80fb37c7e5ca78e9993def1a173afc2"
+    },
+    "manifest": {
+     "bytes": 2876,
+     "path": "e030/holo-c2-cmy8-q05-counting/manifest.json",
+     "sha256": "c6847b767cb4dc68035202964b7aba051614ece2545aa023e2bef56adea54890"
+    },
+    "payload_bin": {
+     "bytes": 718413,
+     "path": "e030/holo-c2-cmy8-q05-counting/payload-counting.bin",
+     "sha256": "f13c34db6c96796e65c812b7bb99e7618625e49a34640fcee58bc4627e38ecca"
+    },
+    "recovered": null,
+    "state": {
+     "bytes": 81096384,
+     "path": "e030/holo-c2-cmy8-q05-counting/receive.state",
+     "sha256": "354048b266c9d65c1b4bcabd7320a43e332a305a40501fe8c81e82076fcf0b34"
+    },
+    "tiff": {
+     "bytes": 6875455728,
+     "path": "e030/hp-canon-c2-cmy8-q05-counting.tiff",
+     "sha256": "cbd6c94d3a20c1ffbb9f426115dfe3611510b9f097f50c2f3d434f8f55fee1c9"
+    }
+   },
+   "baseline": {
+    "archived_certificates": 0,
+    "archived_close_row": "received 0 \u00b7 K unavailable \u00b7 metadata rank 0/24 \u00b7 +48 checks to trust \u00b7 close deferred \u00b7 rank/solve deferred",
+    "archived_retry150_certificates": 0,
+    "flag_sources": {
+     "coding": "state format row IS registry-resolvable, so --coding/--printer were optional; the CLI records no argv",
+     "complete": "events.jsonl close.check shape: one deferred row => --complete, one row per barrier => --complete absent",
+     "page": "report.json page_domain (explicit subset)",
+     "refine": "events.jsonl level.open lane ids",
+     "scan_dpi": "status.json lane row native dpi"
+    },
+    "flags": {
+     "coding": "unknown",
+     "complete": false,
+     "diag": true,
+     "mopup": "implied by --refine (plan-prefix law)",
+     "out": "unknown",
+     "page": [
+      0
+     ],
+     "printer": "unknown",
+     "refine": true,
+     "scan_dpi": [
+      4800.0
+     ],
+     "scans": [
+      "scratch/e030/hp-canon-c2-cmy8-q05-counting.tiff"
+     ],
+     "source_sha256": "unknown",
+     "state": "scratch/e030/holo-c2-cmy8-q05-counting/receive.state",
+     "workers": "unknown"
+    },
+    "lanes_executed": [
+     "l00-2ppc-600dpi",
+     "l01-4ppc-1200dpi",
+     "l02-8ppc-2400dpi",
+     "l03-16ppc-4800dpi",
+     "m00-2ppc-600dpi",
+     "m01-4ppc-1200dpi",
+     "m02-8ppc-2400dpi",
+     "m03-16ppc-4800dpi",
+     "r00-2ppc-600dpi",
+     "r01-4ppc-1200dpi",
+     "r02-8ppc-2400dpi",
+     "r03-16ppc-4800dpi"
+    ],
+    "last_lane_id": "r03-16ppc-4800dpi",
+    "level_ordinals_in_last_invocation": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11
+    ],
+    "levels_executed": 12,
+    "levels_total": 12,
+    "multi_invocation": false,
+    "receiver_policy_id": "holo/track3/kiss-v1/survey=holo/e021-survey/paperholo-e021-v1;address=holo/production-address/v6-phased-schedule/candidate/holo-v1-e026+e022/requires-physical-null/kiss-v1;payload=holo/e023b-e023c-color/provisional-v8-r-lane/rgb-furniture-qda-sparse-split-pava-tiepool-classbal-planezero-dust20-priorcert-label-rows-register-rect2-q010-shift5-localcrop-anchor512-binleft-cmy7linf20-certrefine-planecal-frozen-stripes-xy-furniture-nonregress-r-lane-audited-committed-pose-domain-affected-region-delta-nonzero-floor-max60-preclose-selective-retry150;scheduler=holo/phased-session/rung-major-v2-r-lanes;close=holo/e023-close/fountain-v2-sha256-v1",
+    "state_status": "open",
+    "unknown_flags": [
+     "coding",
+     "printer",
+     "source_sha256",
+     "workers"
+    ]
+   },
+   "codec_id": "cmy8-presence-p120-v0",
+   "coding_id": "c2-cmy8-p120-v0",
+   "engine": "hp",
+   "events_scan": {
+    "available": true,
+    "close_checks": 12,
+    "close_deferred": false,
+    "close_status": "open",
+    "lanes_executed": [
+     "l00-2ppc-600dpi",
+     "l01-4ppc-1200dpi",
+     "l02-8ppc-2400dpi",
+     "l03-16ppc-4800dpi",
+     "m00-2ppc-600dpi",
+     "m01-4ppc-1200dpi",
+     "m02-8ppc-2400dpi",
+     "m03-16ppc-4800dpi",
+     "r00-2ppc-600dpi",
+     "r01-4ppc-1200dpi",
+     "r02-8ppc-2400dpi",
+     "r03-16ppc-4800dpi"
+    ],
+    "level_ordinals_executed": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11
+    ]
+   },
+   "format_row_id": "c2-cmy8-p120-v0@3328x2304",
+   "gt": {
+    "cell_dots": 2,
+    "gt_bitorder": "big",
+    "gt_packed_shape": [
+     3,
+     6656,
+     576
+    ],
+    "gt_plane_order": [
+     "C",
+     "M",
+     "Y"
+    ],
+    "gt_sha256": "8b80451feb8f28c89d41978e732d9bb822125a163a18ff8ca8bd4557edc9ab15",
+    "page_cells_yx": [
+     3328,
+     2304
+    ],
+    "tiles_yx": [
+     52,
+     36
+    ]
+   },
+   "key": "hp-c2-cmy8",
+   "kind": "cmy8",
+   "payload_bytes": 718413,
+   "payload_sha256": "f13c34db6c96796e65c812b7bb99e7618625e49a34640fcee58bc4627e38ecca",
+   "printer_id": "hp-m281",
+   "role": "payload-reached negative control (6586 LDPC calls, 0 certs)",
+   "scan_dpi": 4800.0,
+   "stream_ids": [
+    "C",
+    "M",
+    "Y"
+   ]
+  },
+  "hp-c2-k": {
+   "artifacts": {
+    "gt": {
+     "bytes": 4016256,
+     "path": "e028/holo-c2-r0700-q07-ink-counting/page000_gt.npy",
+     "sha256": "ef36cd487426fef2906d91a5e89dd1515b5dcfbbfba72fb3a00151a8072311db"
+    },
+    "manifest": {
+     "bytes": 1261,
+     "path": "e028/holo-c2-r0700-q07-ink-counting/manifest.json",
+     "sha256": "317260895c9d14fac7bfe9e749b2eee7a9166c0180ad068d95911eef35423deb"
+    },
+    "payload_bin": {
+     "bytes": 465580,
+     "path": "e028/holo-c2-r0700-q07-ink-counting/payload-counting.bin",
+     "sha256": "e5021f8d099587c38c95185d51e82ab7cab29db0dfe68e502f1ab9dd165787af"
+    },
+    "recovered": {
+     "bytes": 465580,
+     "path": "e028/holo-c2-r0700-q07-ink-counting/recovered.bin",
+     "sha256": "e5021f8d099587c38c95185d51e82ab7cab29db0dfe68e502f1ab9dd165787af"
+    },
+    "state": {
+     "bytes": 8206654,
+     "path": "e028/holo-c2-r0700-q07-ink-counting/receive.state",
+     "sha256": "bdd7b293fefee87c61aadec843c3ca293bf1a262f917f7564246e2b282d05427"
+    },
+    "tiff": {
+     "bytes": 2291818718,
+     "path": "e028/hp-canon-c2-ink-counting.tiff",
+     "sha256": "d9c4e932b904b8173ef0bf08165f384ed2ce644105f58965d2dca14165672c22"
+    }
+   },
+   "baseline": {
+    "archived_certificates": 1940,
+    "archived_close_row": "close VERIFIED \u00b7 465580 bytes \u00b7 sha e5021f8d099587c3\u2026",
+    "archived_retry150_certificates": 5,
+    "flag_sources": {
+     "coding": "state format row is NOT in FORMAT_ROWS => --coding/--printer were REQUIRED; values from the emit manifest",
+     "complete": "events.jsonl close.check shape: one deferred row => --complete, one row per barrier => --complete absent",
+     "page": "report.json page_domain == range(max_pages) => --page absent",
+     "refine": "events.jsonl level.open lane ids",
+     "scan_dpi": "status.json lane row native dpi"
+    },
+    "flags": {
+     "coding": "c2-r0700",
+     "complete": true,
+     "diag": true,
+     "mopup": "implied by --refine (plan-prefix law)",
+     "out": "scratch/e028/holo-c2-r0700-q07-ink-counting/recovered.bin",
+     "page": null,
+     "printer": "hp-m281-ink",
+     "refine": true,
+     "scan_dpi": [
+      4800.0
+     ],
+     "scans": [
+      "scratch/e028/hp-canon-c2-ink-counting.tiff"
+     ],
+     "source_sha256": "unknown",
+     "state": "scratch/e028/holo-c2-r0700-q07-ink-counting/receive.state",
+     "workers": "unknown"
+    },
+    "lanes_executed": [
+     "m00-2ppc-600dpi",
+     "m01-4ppc-1200dpi",
+     "m02-8ppc-2400dpi",
+     "m03-16ppc-4800dpi",
+     "r00-2ppc-600dpi",
+     "r01-4ppc-1200dpi",
+     "r02-8ppc-2400dpi",
+     "r03-16ppc-4800dpi"
+    ],
+    "last_lane_id": "r03-16ppc-4800dpi",
+    "level_ordinals_in_last_invocation": [
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11
+    ],
+    "levels_executed": 12,
+    "levels_total": 12,
+    "multi_invocation": true,
+    "receiver_policy_id": "holo/track3/kiss-v1/survey=holo/e021-survey/paperholo-e021-v1;address=holo/production-address/v6-phased-schedule/candidate/holo-v1-e026+e022/requires-physical-null/kiss-v1;payload=holo/e023b-e023c-payload/paperholo-e023b-e023c-v12-r-lane/needmap-region-prune-label-rows-owner-prune-acquisition-components-max60-preclose-selective-retry150-unified-cert-identity-stripes-xy;scheduler=holo/phased-session/rung-major-v2-r-lanes;close=holo/e023-close/fountain-v2-sha256-v1",
+    "state_status": "verified",
+    "unknown_flags": [
+     "flags of the earlier invocation(s)",
+     "source_sha256",
+     "workers"
+    ]
+   },
+   "codec_id": "k-v1",
+   "coding_id": "c2-r0700",
+   "engine": "hp",
+   "events_scan": {
+    "available": true,
+    "close_checks": 1,
+    "close_deferred": true,
+    "close_status": "verified",
+    "lanes_executed": [
+     "m00-2ppc-600dpi",
+     "m01-4ppc-1200dpi",
+     "m02-8ppc-2400dpi",
+     "m03-16ppc-4800dpi",
+     "r00-2ppc-600dpi",
+     "r01-4ppc-1200dpi",
+     "r02-8ppc-2400dpi",
+     "r03-16ppc-4800dpi"
+    ],
+    "level_ordinals_executed": [
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11
+    ]
+   },
+   "format_row_id": "c2-r0700@3392x2368",
+   "gt": {
+    "cell_dots": 2,
+    "gt_bitorder": "big",
+    "gt_packed_shape": [
+     6784,
+     592
+    ],
+    "gt_plane_order": null,
+    "gt_sha256": "3e48560378b5613ec58a7948934512091ba9baff878393f1543a09e4751cb2f8",
+    "page_cells_yx": [
+     3392,
+     2368
+    ],
+    "tiles_yx": [
+     53,
+     37
+    ]
+   },
+   "key": "hp-c2-k",
+   "kind": "k",
+   "payload_bytes": 465580,
+   "payload_sha256": "e5021f8d099587c38c95185d51e82ab7cab29db0dfe68e502f1ab9dd165787af",
+   "printer_id": "hp-m281-ink",
+   "role": "non-regression K (1940 certs, VERIFIED 465,580 B)",
+   "scan_dpi": 4800.0,
+   "stream_ids": [
+    "main"
+   ]
+  },
+  "hp-c3-cmy8": {
+   "artifacts": {
+    "gt": {
+     "bytes": 11612288,
+     "path": "e030/holo-c3-cmy8-q05-counting/page000_gt.npy",
+     "sha256": "ef7d220862c29fd0ca0be4cf7eb091e10a273d14530e2aba8a313add07fc3603"
+    },
+    "manifest": {
+     "bytes": 2875,
+     "path": "e030/holo-c3-cmy8-q05-counting/manifest.json",
+     "sha256": "f75de3315eac61f2158647ce00b273602c297f9bdbbaebb6c72d32abd85c8733"
+    },
+    "payload_bin": {
+     "bytes": 314579,
+     "path": "e030/holo-c3-cmy8-q05-counting/payload-c3-counting.bin",
+     "sha256": "a98e993583f9e8fa3564f6e543a04aff07b415bcaaa6f195dd9aeed3a683df78"
+    },
+    "recovered": null,
+    "state": {
+     "bytes": 633828523,
+     "path": "e030/holo-c3-cmy8-q05-counting/receive.state",
+     "sha256": "f75ff8e0e5accf979baf0a2c160f7a302437eda39f843a9cdc7c793909ce3906"
+    },
+    "tiff": {
+     "bytes": 6875455728,
+     "path": "e030/hp-canon-c3-cmy8-q05-counting.tiff",
+     "sha256": "a8cc39ec48e7b8aab6ead1fd27ccb8d6c03645935d970ae6c3eb259450b62b2a"
+    }
+   },
+   "baseline": {
+    "archived_certificates": 663,
+    "archived_close_row": "received 663/402 K \u00b7 reach 663/1206 over 3 block(s) \u00b7 metadata trusted \u00b7 close deferred \u00b7 rank/solve deferred",
+    "archived_retry150_certificates": 42,
+    "flag_sources": {
+     "coding": "state format row IS registry-resolvable, so --coding/--printer were optional; the CLI records no argv",
+     "complete": "events.jsonl close.check shape: one deferred row => --complete, one row per barrier => --complete absent",
+     "page": "report.json page_domain (explicit subset)",
+     "refine": "events.jsonl level.open lane ids",
+     "scan_dpi": "status.json lane row native dpi"
+    },
+    "flags": {
+     "coding": "unknown",
+     "complete": false,
+     "diag": true,
+     "mopup": "implied by --refine (plan-prefix law)",
+     "out": "unknown",
+     "page": [
+      0
+     ],
+     "printer": "unknown",
+     "refine": true,
+     "scan_dpi": [
+      4800.0
+     ],
+     "scans": [
+      "scratch/e030/hp-canon-c3-cmy8-q05-counting.tiff"
+     ],
+     "source_sha256": "unknown",
+     "state": "scratch/e030/holo-c3-cmy8-q05-counting/receive.state",
+     "workers": "unknown"
+    },
+    "lanes_executed": [
+     "l00-2ppc-400dpi",
+     "l01-4ppc-800dpi",
+     "l02-8ppc-1600dpi",
+     "l03-12ppc-2400dpi",
+     "l04-24ppc-4800dpi",
+     "m00-2ppc-400dpi",
+     "m01-4ppc-800dpi",
+     "m02-8ppc-1600dpi",
+     "m03-12ppc-2400dpi",
+     "m04-24ppc-4800dpi",
+     "r00-2ppc-400dpi",
+     "r01-4ppc-800dpi",
+     "r02-8ppc-1600dpi",
+     "r03-12ppc-2400dpi",
+     "r04-24ppc-4800dpi"
+    ],
+    "last_lane_id": "r04-24ppc-4800dpi",
+    "level_ordinals_in_last_invocation": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14
+    ],
+    "levels_executed": 15,
+    "levels_total": 15,
+    "multi_invocation": false,
+    "receiver_policy_id": "holo/track3/kiss-v1/survey=holo/e021-survey/paperholo-e021-v1;address=holo/production-address/v6-phased-schedule/candidate/holo-v1-e026+e022/requires-physical-null/kiss-v1;payload=holo/e023b-e023c-color/provisional-v8-r-lane/rgb-furniture-qda-sparse-split-pava-tiepool-classbal-planezero-dust20-priorcert-label-rows-register-rect2-q010-shift5-localcrop-anchor512-binleft-cmy7linf20-certrefine-planecal-frozen-stripes-xy-furniture-nonregress-r-lane-audited-committed-pose-domain-affected-region-delta-nonzero-floor-max60-preclose-selective-retry150;scheduler=holo/phased-session/rung-major-v2-r-lanes;close=holo/e023-close/fountain-v2-sha256-v1",
+    "state_status": "open",
+    "unknown_flags": [
+     "coding",
+     "printer",
+     "source_sha256",
+     "workers"
+    ]
+   },
+   "codec_id": "cmy8-presence-p120-v0",
+   "coding_id": "c3-cmy8-p120-v0",
+   "engine": "hp",
+   "events_scan": {
+    "available": true,
+    "close_checks": 15,
+    "close_deferred": false,
+    "close_status": "open",
+    "lanes_executed": [
+     "l00-2ppc-400dpi",
+     "l01-4ppc-800dpi",
+     "l02-8ppc-1600dpi",
+     "l03-12ppc-2400dpi",
+     "l04-24ppc-4800dpi",
+     "m00-2ppc-400dpi",
+     "m01-4ppc-800dpi",
+     "m02-8ppc-1600dpi",
+     "m03-12ppc-2400dpi",
+     "m04-24ppc-4800dpi",
+     "r00-2ppc-400dpi",
+     "r01-4ppc-800dpi",
+     "r02-8ppc-1600dpi",
+     "r03-12ppc-2400dpi",
+     "r04-24ppc-4800dpi"
+    ],
+    "level_ordinals_executed": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14
+    ]
+   },
+   "format_row_id": "c3-cmy8-p120-v0@2240x1536",
+   "gt": {
+    "cell_dots": 3,
+    "gt_bitorder": "big",
+    "gt_packed_shape": [
+     3,
+     6720,
+     576
+    ],
+    "gt_plane_order": [
+     "C",
+     "M",
+     "Y"
+    ],
+    "gt_sha256": "dd9ec22ba6e7e89c6fc6a1b1975315ab824b8a7c4cb755aee3ce748aee70a5b2",
+    "page_cells_yx": [
+     2240,
+     1536
+    ],
+    "tiles_yx": [
+     35,
+     24
+    ]
+   },
+   "key": "hp-c3-cmy8",
+   "kind": "cmy8",
+   "payload_bytes": 314579,
+   "payload_sha256": "a98e993583f9e8fa3564f6e543a04aff07b415bcaaa6f195dd9aeed3a683df78",
+   "printer_id": "hp-m281",
+   "role": "uplift target (663 certs C620/M43/Y0; close OPEN)",
+   "scan_dpi": 4800.0,
+   "stream_ids": [
+    "C",
+    "M",
+    "Y"
+   ]
+  },
+  "xerox-c2-cmy7": {
+   "artifacts": {
+    "gt": {
+     "bytes": 11501696,
+     "path": "e030/holo-c2-cmy7-q05-counting/page000_gt.npy",
+     "sha256": "4b87922a4506fef38f0701fb160abb6a30f14aa7e707b62cffee05352db276ba"
+    },
+    "manifest": {
+     "bytes": 2562,
+     "path": "e030/holo-c2-cmy7-q05-counting/manifest.json",
+     "sha256": "af44645e28d79fbac7848c81686179f8a5effa138fd664d82d0e1d6d2597dcf5"
+    },
+    "payload_bin": {
+     "bytes": 686859,
+     "path": "e030/holo-c2-cmy7-q05-counting/payload-counting.bin",
+     "sha256": "5963b9d16abca48d66a05f80eb137ce76624b8fdedb48ce13c3ee0cf8f24c993"
+    },
+    "recovered": null,
+    "state": {
+     "bytes": 1664114915,
+     "path": "in/holo-xerox-c2-cmy7-counting-receive.state",
+     "sha256": "b412250546b047ce4ce99aed12f7c281e1917afe442794b15c8af57dbe7a026a"
+    },
+    "tiff": {
+     "bytes": 6875455728,
+     "path": "in/xerox-canon-c2-cmy7.tiff",
+     "sha256": "01abdd8785c55616faa89958632c84c5d66711492ef643d031af330773f7e426"
+    }
+   },
+   "baseline": {
+    "archived_certificates": 83,
+    "archived_close_row": "received 83/920 K \u00b7 reach 83/920 over 1 block(s) \u00b7 metadata trusted \u00b7 close deferred \u00b7 rank/solve deferred",
+    "archived_retry150_certificates": 5,
+    "flag_sources": {
+     "coding": "state format row IS registry-resolvable, so --coding/--printer were optional; the CLI records no argv",
+     "complete": "events.jsonl close.check shape: one deferred row => --complete, one row per barrier => --complete absent",
+     "page": "report.json page_domain (explicit subset)",
+     "refine": "events.jsonl level.open lane ids",
+     "scan_dpi": "status.json lane row native dpi"
+    },
+    "flags": {
+     "coding": "unknown",
+     "complete": true,
+     "diag": true,
+     "mopup": "implied by --refine (plan-prefix law)",
+     "out": "unknown",
+     "page": [
+      0
+     ],
+     "printer": "unknown",
+     "refine": true,
+     "scan_dpi": [
+      4800.0
+     ],
+     "scans": [
+      "scratch/in/xerox-canon-c2-cmy7.tiff"
+     ],
+     "source_sha256": "unknown",
+     "state": "scratch/in/holo-xerox-c2-cmy7-counting-receive.state",
+     "workers": "unknown"
+    },
+    "lanes_executed": [
+     "l00-2ppc-600dpi",
+     "l01-4ppc-1200dpi",
+     "l02-8ppc-2400dpi",
+     "l03-16ppc-4800dpi",
+     "m00-2ppc-600dpi",
+     "m01-4ppc-1200dpi",
+     "m02-8ppc-2400dpi",
+     "m03-16ppc-4800dpi",
+     "r00-2ppc-600dpi",
+     "r01-4ppc-1200dpi",
+     "r02-8ppc-2400dpi",
+     "r03-16ppc-4800dpi"
+    ],
+    "last_lane_id": "r03-16ppc-4800dpi",
+    "level_ordinals_in_last_invocation": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11
+    ],
+    "levels_executed": 12,
+    "levels_total": 12,
+    "multi_invocation": false,
+    "receiver_policy_id": "holo/track3/kiss-v1/survey=holo/e021-survey/paperholo-e021-v1;address=holo/production-address/v6-phased-schedule/candidate/holo-v1-e026+e022/requires-physical-null/kiss-v1;payload=holo/e023b-e023c-color/provisional-v8-r-lane/rgb-furniture-qda-sparse-split-pava-tiepool-classbal-planezero-dust20-priorcert-label-rows-register-rect2-q010-shift5-localcrop-anchor512-binleft-cmy7linf20-certrefine-planecal-frozen-stripes-xy-furniture-nonregress-r-lane-audited-committed-pose-domain-affected-region-delta-nonzero-floor-max60-preclose-selective-retry150;scheduler=holo/phased-session/rung-major-v2-r-lanes;close=holo/e023-close/fountain-v2-sha256-v1",
+    "state_status": "open",
+    "unknown_flags": [
+     "coding",
+     "printer",
+     "source_sha256",
+     "workers"
+    ]
+   },
+   "codec_id": "cmy7-pack7-p120-v0",
+   "coding_id": "c2-cmy7-p120-v0",
+   "engine": "xerox",
+   "events_scan": {
+    "available": true,
+    "close_checks": 1,
+    "close_deferred": true,
+    "close_status": "open",
+    "lanes_executed": [
+     "l00-2ppc-600dpi",
+     "l01-4ppc-1200dpi",
+     "l02-8ppc-2400dpi",
+     "l03-16ppc-4800dpi",
+     "m00-2ppc-600dpi",
+     "m01-4ppc-1200dpi",
+     "m02-8ppc-2400dpi",
+     "m03-16ppc-4800dpi",
+     "r00-2ppc-600dpi",
+     "r01-4ppc-1200dpi",
+     "r02-8ppc-2400dpi",
+     "r03-16ppc-4800dpi"
+    ],
+    "level_ordinals_executed": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11
+    ]
+   },
+   "format_row_id": "c2-cmy7-p120-v0@3328x2304",
+   "gt": {
+    "cell_dots": 2,
+    "gt_bitorder": "big",
+    "gt_packed_shape": [
+     3,
+     6656,
+     576
+    ],
+    "gt_plane_order": [
+     "C",
+     "M",
+     "Y"
+    ],
+    "gt_sha256": "78bec3937cca889146f0f6eb10fc953cfd40d003379cc7be0f2185f04a1df5d3",
+    "page_cells_yx": [
+     3328,
+     2304
+    ],
+    "tiles_yx": [
+     52,
+     36
+    ]
+   },
+   "key": "xerox-c2-cmy7",
+   "kind": "cmy7",
+   "payload_bytes": 686859,
+   "payload_sha256": "5963b9d16abca48d66a05f80eb137ce76624b8fdedb48ce13c3ee0cf8f24c993",
+   "printer_id": "hp-m281",
+   "role": "report-only negative (83 certs; print-frozen cell error)",
+   "scan_dpi": 4800.0,
+   "stream_ids": [
+    "main"
+   ]
+  },
+  "xerox-c2-cmy8": {
+   "artifacts": {
+    "gt": {
+     "bytes": 11501696,
+     "path": "e030/holo-c2-cmy8-q05-counting/page000_gt.npy",
+     "sha256": "e70fcf205847e36aa7640f6f81a09270c80fb37c7e5ca78e9993def1a173afc2"
+    },
+    "manifest": {
+     "bytes": 2876,
+     "path": "e030/holo-c2-cmy8-q05-counting/manifest.json",
+     "sha256": "c6847b767cb4dc68035202964b7aba051614ece2545aa023e2bef56adea54890"
+    },
+    "payload_bin": {
+     "bytes": 718413,
+     "path": "e030/holo-c2-cmy8-q05-counting/payload-counting.bin",
+     "sha256": "f13c34db6c96796e65c812b7bb99e7618625e49a34640fcee58bc4627e38ecca"
+    },
+    "recovered": {
+     "bytes": 718413,
+     "path": "in/holo-xerox-c2-cmy8-q05-counting-recovered.bin",
+     "sha256": "f13c34db6c96796e65c812b7bb99e7618625e49a34640fcee58bc4627e38ecca"
+    },
+    "state": {
+     "bytes": 1309153068,
+     "path": "in/holo-xerox-c2-cmy8-q05-counting-receive.state",
+     "sha256": "175b5166f88e4fef88ecee593ac92729222b4815fae9a73c251709c653dccdd4"
+    },
+    "tiff": {
+     "bytes": 6875455728,
+     "path": "in/xerox-canon-c2-cmy8.tiff",
+     "sha256": "cf6427d0d66a3cb9af0b74f7162f5b163dd2f2f75bcf162940326ef6cc8aec47"
+    }
+   },
+   "baseline": {
+    "archived_certificates": 5370,
+    "archived_close_row": "close VERIFIED \u00b7 718413 bytes \u00b7 sha f13c34db6c96796e\u2026",
+    "archived_retry150_certificates": 80,
+    "flag_sources": {
+     "coding": "state format row IS registry-resolvable, so --coding/--printer were optional; the CLI records no argv",
+     "complete": "events.jsonl close.check shape: one deferred row => --complete, one row per barrier => --complete absent",
+     "page": "report.json page_domain (explicit subset)",
+     "refine": "events.jsonl level.open lane ids",
+     "scan_dpi": "status.json lane row native dpi"
+    },
+    "flags": {
+     "coding": "unknown",
+     "complete": true,
+     "diag": true,
+     "mopup": "implied by --refine (plan-prefix law)",
+     "out": "scratch/in/holo-xerox-c2-cmy8-q05-counting-recovered.bin",
+     "page": [
+      0
+     ],
+     "printer": "unknown",
+     "refine": true,
+     "scan_dpi": [
+      4800.0
+     ],
+     "scans": [
+      "scratch/in/xerox-canon-c2-cmy8.tiff"
+     ],
+     "source_sha256": "unknown",
+     "state": "scratch/in/holo-xerox-c2-cmy8-q05-counting-receive.state",
+     "workers": "unknown"
+    },
+    "lanes_executed": [
+     "l00-2ppc-600dpi",
+     "l01-4ppc-1200dpi",
+     "l02-8ppc-2400dpi",
+     "l03-16ppc-4800dpi",
+     "m00-2ppc-600dpi",
+     "m01-4ppc-1200dpi",
+     "m02-8ppc-2400dpi",
+     "m03-16ppc-4800dpi",
+     "r00-2ppc-600dpi",
+     "r01-4ppc-1200dpi",
+     "r02-8ppc-2400dpi",
+     "r03-16ppc-4800dpi"
+    ],
+    "last_lane_id": "r03-16ppc-4800dpi",
+    "level_ordinals_in_last_invocation": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11
+    ],
+    "levels_executed": 12,
+    "levels_total": 12,
+    "multi_invocation": false,
+    "receiver_policy_id": "holo/track3/kiss-v1/survey=holo/e021-survey/paperholo-e021-v1;address=holo/production-address/v6-phased-schedule/candidate/holo-v1-e026+e022/requires-physical-null/kiss-v1;payload=holo/e023b-e023c-color/provisional-v8-r-lane/rgb-furniture-qda-sparse-split-pava-tiepool-classbal-planezero-dust20-priorcert-label-rows-register-rect2-q010-shift5-localcrop-anchor512-binleft-cmy7linf20-certrefine-planecal-frozen-stripes-xy-furniture-nonregress-r-lane-audited-committed-pose-domain-affected-region-delta-nonzero-floor-max60-preclose-selective-retry150;scheduler=holo/phased-session/rung-major-v2-r-lanes;close=holo/e023-close/fountain-v2-sha256-v1",
+    "state_status": "verified",
+    "unknown_flags": [
+     "coding",
+     "printer",
+     "source_sha256",
+     "workers"
+    ]
+   },
+   "codec_id": "cmy8-presence-p120-v0",
+   "coding_id": "c2-cmy8-p120-v0",
+   "engine": "xerox",
+   "events_scan": {
+    "available": true,
+    "close_checks": 1,
+    "close_deferred": true,
+    "close_status": "verified",
+    "lanes_executed": [
+     "l00-2ppc-600dpi",
+     "l01-4ppc-1200dpi",
+     "l02-8ppc-2400dpi",
+     "l03-16ppc-4800dpi",
+     "m00-2ppc-600dpi",
+     "m01-4ppc-1200dpi",
+     "m02-8ppc-2400dpi",
+     "m03-16ppc-4800dpi",
+     "r00-2ppc-600dpi",
+     "r01-4ppc-1200dpi",
+     "r02-8ppc-2400dpi",
+     "r03-16ppc-4800dpi"
+    ],
+    "level_ordinals_executed": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11
+    ]
+   },
+   "format_row_id": "c2-cmy8-p120-v0@3328x2304",
+   "gt": {
+    "cell_dots": 2,
+    "gt_bitorder": "big",
+    "gt_packed_shape": [
+     3,
+     6656,
+     576
+    ],
+    "gt_plane_order": [
+     "C",
+     "M",
+     "Y"
+    ],
+    "gt_sha256": "8b80451feb8f28c89d41978e732d9bb822125a163a18ff8ca8bd4557edc9ab15",
+    "page_cells_yx": [
+     3328,
+     2304
+    ],
+    "tiles_yx": [
+     52,
+     36
+    ]
+   },
+   "key": "xerox-c2-cmy8",
+   "kind": "cmy8",
+   "payload_bytes": 718413,
+   "payload_sha256": "f13c34db6c96796e65c812b7bb99e7618625e49a34640fcee58bc4627e38ecca",
+   "printer_id": "hp-m281",
+   "role": "non-regression (5370 certs, VERIFIED 718,413 B)",
+   "scan_dpi": 4800.0,
+   "stream_ids": [
+    "C",
+    "M",
+    "Y"
+   ]
+  },
+  "xerox-c2-k": {
+   "artifacts": {
+    "gt": {
+     "bytes": 4016256,
+     "path": "e028/holo-c2-r0700-q07-ink-counting/page000_gt.npy",
+     "sha256": "ef36cd487426fef2906d91a5e89dd1515b5dcfbbfba72fb3a00151a8072311db"
+    },
+    "manifest": {
+     "bytes": 1261,
+     "path": "e028/holo-c2-r0700-q07-ink-counting/manifest.json",
+     "sha256": "317260895c9d14fac7bfe9e749b2eee7a9166c0180ad068d95911eef35423deb"
+    },
+    "payload_bin": {
+     "bytes": 465580,
+     "path": "e028/holo-c2-r0700-q07-ink-counting/payload-counting.bin",
+     "sha256": "e5021f8d099587c38c95185d51e82ab7cab29db0dfe68e502f1ab9dd165787af"
+    },
+    "recovered": {
+     "bytes": 465580,
+     "path": "in/holo-xerox-c2-counting-recovered.bin",
+     "sha256": "e5021f8d099587c38c95185d51e82ab7cab29db0dfe68e502f1ab9dd165787af"
+    },
+    "state": {
+     "bytes": 9429553,
+     "path": "in/holo-xerox-c2-counting-receive.state",
+     "sha256": "db797c2ed8535890f5dd68b04d22f1b537d8b40cb5f51d47ce44c428e37748e6"
+    },
+    "tiff": {
+     "bytes": 2291818718,
+     "path": "in/xerox-canon-c2-bw.tiff",
+     "sha256": "57a261454cc04e66bd333310df4d17ede867eaa862fe6cff20e5395799d927e3"
+    }
+   },
+   "baseline": {
+    "archived_certificates": 1930,
+    "archived_close_row": "close VERIFIED \u00b7 465580 bytes \u00b7 sha e5021f8d099587c3\u2026",
+    "archived_retry150_certificates": 1,
+    "flag_sources": {
+     "coding": "state format row is NOT in FORMAT_ROWS => --coding/--printer were REQUIRED; values from the emit manifest",
+     "complete": "events.jsonl close.check shape: one deferred row => --complete, one row per barrier => --complete absent",
+     "page": "report.json page_domain (explicit subset)",
+     "refine": "events.jsonl level.open lane ids",
+     "scan_dpi": "status.json lane row native dpi"
+    },
+    "flags": {
+     "coding": "c2-r0700",
+     "complete": true,
+     "diag": true,
+     "mopup": "implied by --refine (plan-prefix law)",
+     "out": "scratch/in/holo-xerox-c2-counting-recovered.bin",
+     "page": [
+      0
+     ],
+     "printer": "hp-m281-ink",
+     "refine": true,
+     "scan_dpi": [
+      4800.0
+     ],
+     "scans": [
+      "scratch/in/xerox-canon-c2-bw.tiff"
+     ],
+     "source_sha256": "unknown",
+     "state": "scratch/in/holo-xerox-c2-counting-receive.state",
+     "workers": "unknown"
+    },
+    "lanes_executed": [
+     "l00-2ppc-600dpi",
+     "l01-4ppc-1200dpi",
+     "l02-8ppc-2400dpi",
+     "l03-16ppc-4800dpi",
+     "m00-2ppc-600dpi",
+     "m01-4ppc-1200dpi",
+     "m02-8ppc-2400dpi",
+     "m03-16ppc-4800dpi",
+     "r00-2ppc-600dpi",
+     "r01-4ppc-1200dpi",
+     "r02-8ppc-2400dpi",
+     "r03-16ppc-4800dpi"
+    ],
+    "last_lane_id": "r03-16ppc-4800dpi",
+    "level_ordinals_in_last_invocation": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11
+    ],
+    "levels_executed": 12,
+    "levels_total": 12,
+    "multi_invocation": false,
+    "receiver_policy_id": "holo/track3/kiss-v1/survey=holo/e021-survey/paperholo-e021-v1;address=holo/production-address/v6-phased-schedule/candidate/holo-v1-e026+e022/requires-physical-null/kiss-v1;payload=holo/e023b-e023c-payload/paperholo-e023b-e023c-v12-r-lane/needmap-region-prune-label-rows-owner-prune-acquisition-components-max60-preclose-selective-retry150-unified-cert-identity-stripes-xy;scheduler=holo/phased-session/rung-major-v2-r-lanes;close=holo/e023-close/fountain-v2-sha256-v1",
+    "state_status": "verified",
+    "unknown_flags": [
+     "source_sha256",
+     "workers"
+    ]
+   },
+   "codec_id": "k-v1",
+   "coding_id": "c2-r0700",
+   "engine": "xerox",
+   "events_scan": {
+    "available": true,
+    "close_checks": 1,
+    "close_deferred": true,
+    "close_status": "verified",
+    "lanes_executed": [
+     "l00-2ppc-600dpi",
+     "l01-4ppc-1200dpi",
+     "l02-8ppc-2400dpi",
+     "l03-16ppc-4800dpi",
+     "m00-2ppc-600dpi",
+     "m01-4ppc-1200dpi",
+     "m02-8ppc-2400dpi",
+     "m03-16ppc-4800dpi",
+     "r00-2ppc-600dpi",
+     "r01-4ppc-1200dpi",
+     "r02-8ppc-2400dpi",
+     "r03-16ppc-4800dpi"
+    ],
+    "level_ordinals_executed": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11
+    ]
+   },
+   "format_row_id": "c2-r0700@3392x2368",
+   "gt": {
+    "cell_dots": 2,
+    "gt_bitorder": "big",
+    "gt_packed_shape": [
+     6784,
+     592
+    ],
+    "gt_plane_order": null,
+    "gt_sha256": "3e48560378b5613ec58a7948934512091ba9baff878393f1543a09e4751cb2f8",
+    "page_cells_yx": [
+     3392,
+     2368
+    ],
+    "tiles_yx": [
+     53,
+     37
+    ]
+   },
+   "key": "xerox-c2-k",
+   "kind": "k",
+   "payload_bytes": 465580,
+   "payload_sha256": "e5021f8d099587c38c95185d51e82ab7cab29db0dfe68e502f1ab9dd165787af",
+   "printer_id": "hp-m281-ink",
+   "role": "non-regression K (1930 certs, VERIFIED 465,580 B)",
+   "scan_dpi": 4800.0,
+   "stream_ids": [
+    "main"
+   ]
+  },
+  "xerox-c3-cmy7": {
+   "artifacts": {
+    "gt": {
+     "bytes": 11612288,
+     "path": "e030/holo-c3-cmy7-q05-counting/page000_gt.npy",
+     "sha256": "fba5308121a4a15333408c17e6da72af8da161dc3e6fa7d70e69f9436046851c"
+    },
+    "manifest": {
+     "bytes": 2561,
+     "path": "e030/holo-c3-cmy7-q05-counting/manifest.json",
+     "sha256": "ae06dd11b3a00f6503b59040aed338b8ccc1c0dac8a8f104d57c2e8eee98cad0"
+    },
+    "payload_bin": {
+     "bytes": 301600,
+     "path": "e030/holo-c3-cmy7-q05-counting/payload-counting.bin",
+     "sha256": "4f68dbf932324aa85c1af576b9724504eb5dff85039a66a062ff9c9adc4e50c2"
+    },
+    "recovered": {
+     "bytes": 301600,
+     "path": "in/holo-xerox-c3-cmy7-counting-recovered.bin",
+     "sha256": "4f68dbf932324aa85c1af576b9724504eb5dff85039a66a062ff9c9adc4e50c2"
+    },
+    "state": {
+     "bytes": 138019450,
+     "path": "in/holo-xerox-c3-cmy7-counting-receive.state",
+     "sha256": "45ecb351ca8c05eb9b9b4c2c83d2816e5e965ba89b4d302173a291814468e3d6"
+    },
+    "tiff": {
+     "bytes": 1718864112,
+     "path": "in/xerox-canon-c3-cmy7-2400dpi.tiff",
+     "sha256": "20fc40cd483277a4cad81d3299e228b2f89a16058c64666d8953b00ab0b6babf"
+    }
+   },
+   "baseline": {
+    "archived_certificates": 720,
+    "archived_close_row": "close VERIFIED \u00b7 301600 bytes \u00b7 sha 4f68dbf932324aa8\u2026",
+    "archived_retry150_certificates": 8,
+    "flag_sources": {
+     "coding": "state format row IS registry-resolvable, so --coding/--printer were optional; the CLI records no argv",
+     "complete": "events.jsonl close.check shape: one deferred row => --complete, one row per barrier => --complete absent",
+     "page": "report.json page_domain (explicit subset)",
+     "refine": "events.jsonl level.open lane ids",
+     "scan_dpi": "status.json lane row native dpi"
+    },
+    "flags": {
+     "coding": "unknown",
+     "complete": true,
+     "diag": true,
+     "mopup": "implied by --refine (plan-prefix law)",
+     "out": "scratch/in/holo-xerox-c3-cmy7-counting-recovered.bin",
+     "page": [
+      0
+     ],
+     "printer": "unknown",
+     "refine": true,
+     "scan_dpi": [
+      2400.0
+     ],
+     "scans": [
+      "scratch/in/xerox-canon-c3-cmy7-2400dpi.tiff"
+     ],
+     "source_sha256": "unknown",
+     "state": "scratch/in/holo-xerox-c3-cmy7-counting-receive.state",
+     "workers": "unknown"
+    },
+    "lanes_executed": [
+     "l00-2ppc-400dpi",
+     "l01-4ppc-800dpi",
+     "l02-6ppc-1200dpi",
+     "l03-12ppc-2400dpi",
+     "m00-2ppc-400dpi",
+     "m01-4ppc-800dpi",
+     "m02-6ppc-1200dpi",
+     "m03-12ppc-2400dpi",
+     "r00-2ppc-400dpi",
+     "r01-4ppc-800dpi",
+     "r02-6ppc-1200dpi",
+     "r03-12ppc-2400dpi"
+    ],
+    "last_lane_id": "r03-12ppc-2400dpi",
+    "level_ordinals_in_last_invocation": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11
+    ],
+    "levels_executed": 12,
+    "levels_total": 12,
+    "multi_invocation": false,
+    "receiver_policy_id": "holo/track3/kiss-v1/survey=holo/e021-survey/paperholo-e021-v1;address=holo/production-address/v6-phased-schedule/candidate/holo-v1-e026+e022/requires-physical-null/kiss-v1;payload=holo/e023b-e023c-color/provisional-v8-r-lane/rgb-furniture-qda-sparse-split-pava-tiepool-classbal-planezero-dust20-priorcert-label-rows-register-rect2-q010-shift5-localcrop-anchor512-binleft-cmy7linf20-certrefine-planecal-frozen-stripes-xy-furniture-nonregress-r-lane-audited-committed-pose-domain-affected-region-delta-nonzero-floor-max60-preclose-selective-retry150;scheduler=holo/phased-session/rung-major-v2-r-lanes;close=holo/e023-close/fountain-v2-sha256-v1",
+    "state_status": "verified",
+    "unknown_flags": [
+     "coding",
+     "printer",
+     "source_sha256",
+     "workers"
+    ]
+   },
+   "codec_id": "cmy7-pack7-p120-v0",
+   "coding_id": "c3-cmy7-p120-v0",
+   "engine": "xerox",
+   "events_scan": {
+    "available": true,
+    "close_checks": 1,
+    "close_deferred": true,
+    "close_status": "verified",
+    "lanes_executed": [
+     "l00-2ppc-400dpi",
+     "l01-4ppc-800dpi",
+     "l02-6ppc-1200dpi",
+     "l03-12ppc-2400dpi",
+     "m00-2ppc-400dpi",
+     "m01-4ppc-800dpi",
+     "m02-6ppc-1200dpi",
+     "m03-12ppc-2400dpi",
+     "r00-2ppc-400dpi",
+     "r01-4ppc-800dpi",
+     "r02-6ppc-1200dpi",
+     "r03-12ppc-2400dpi"
+    ],
+    "level_ordinals_executed": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11
+    ]
+   },
+   "format_row_id": "c3-cmy7-p120-v0@2240x1536",
+   "gt": {
+    "cell_dots": 3,
+    "gt_bitorder": "big",
+    "gt_packed_shape": [
+     3,
+     6720,
+     576
+    ],
+    "gt_plane_order": [
+     "C",
+     "M",
+     "Y"
+    ],
+    "gt_sha256": "716479a2c0c053a1d7b293fd539e4dacce499a8b1f3c0f4c662102e7afa48728",
+    "page_cells_yx": [
+     2240,
+     1536
+    ],
+    "tiles_yx": [
+     35,
+     24
+    ]
+   },
+   "key": "xerox-c3-cmy7",
+   "kind": "cmy7",
+   "payload_bytes": 301600,
+   "payload_sha256": "4f68dbf932324aa85c1af576b9724504eb5dff85039a66a062ff9c9adc4e50c2",
+   "printer_id": "hp-m281",
+   "role": "non-regression (cheap iteration canary; 720 certs, VERIFIED)",
+   "scan_dpi": 2400.0,
+   "stream_ids": [
+    "main"
+   ]
+  }
+ },
+ "corpus_root_at_write": "scratch",
+ "e030_tiff_sha_cross_check": {
+  "agree": true,
+  "file": "e030/tiff-shas.txt",
+  "rows_checked": 2,
+  "rows_recorded": 2
+ },
+ "note": "COLOR-UPLIFT-PLAN v1.3 \u00a74 corpus. Paths are relative to the READ-ONLY corpus root; hashes are of the exact archived bytes. Flags are extracted from the archived diagnostics; 'unknown' means the run recorded no evidence for it.",
+ "schema": "color-uplift-provenance-1"
+}

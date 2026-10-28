@@ -1,0 +1,977 @@
+<title>Paper as a Channel — Technical Workshop</title>
+<style>
+  :root{
+    --paper:#F1F4F3; --panel:#FFFFFF; --panel-2:#F7FAF9;
+    --ink:#15181A; --ink-soft:#454E52; --faint:#78838A;
+    --line:#D7DEDD; --line-soft:#E6EBEA;
+    --grid:rgba(12,151,180,.08);
+    --cyan:#0B93AF; --cyan-ink:#087387;
+    --magenta:#C4327C; --yellow:#B5850A; --yellow-fill:#E7B62c;
+    --k:#15181A;
+    --good:#1E8F6B; --warn:#B5850A; --bad:#C4327C;
+    --shadow:0 1px 2px rgba(20,30,35,.06),0 12px 34px rgba(20,30,35,.09);
+    --mono:"SF Mono","SFMono-Regular",Menlo,Consolas,"Liberation Mono",monospace;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --paper:#0D1013; --panel:#161B1F; --panel-2:#12171A;
+      --ink:#E9EFEE; --ink-soft:#A6B1B4; --faint:#6E787C;
+      --line:#262E32; --line-soft:#1E2529;
+      --grid:rgba(44,196,224,.06);
+      --cyan:#2CC4E0; --cyan-ink:#8FE3F1;
+      --magenta:#F05B9C; --yellow:#E8BE45; --yellow-fill:#E8BE45;
+      --k:#E9EFEE;
+      --good:#3FBF93; --warn:#E8BE45; --bad:#F05B9C;
+      --shadow:0 1px 2px rgba(0,0,0,.4),0 16px 40px rgba(0,0,0,.5);
+    }
+  }
+  :root[data-theme="light"]{
+    --paper:#F1F4F3; --panel:#FFFFFF; --panel-2:#F7FAF9;
+    --ink:#15181A; --ink-soft:#454E52; --faint:#78838A;
+    --line:#D7DEDD; --line-soft:#E6EBEA; --grid:rgba(12,151,180,.08);
+    --cyan:#0B93AF; --cyan-ink:#087387; --magenta:#C4327C; --yellow:#B5850A; --yellow-fill:#E7B62c; --k:#15181A;
+    --good:#1E8F6B; --warn:#B5850A; --bad:#C4327C;
+    --shadow:0 1px 2px rgba(20,30,35,.06),0 12px 34px rgba(20,30,35,.09);
+  }
+  :root[data-theme="dark"]{
+    --paper:#0D1013; --panel:#161B1F; --panel-2:#12171A;
+    --ink:#E9EFEE; --ink-soft:#A6B1B4; --faint:#6E787C;
+    --line:#262E32; --line-soft:#1E2529; --grid:rgba(44,196,224,.06);
+    --cyan:#2CC4E0; --cyan-ink:#8FE3F1; --magenta:#F05B9C; --yellow:#E8BE45; --yellow-fill:#E8BE45; --k:#E9EFEE;
+    --good:#3FBF93; --warn:#E8BE45; --bad:#F05B9C;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 16px 40px rgba(0,0,0,.5);
+  }
+
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;height:100%}
+  body{
+    background:var(--paper); color:var(--ink);
+    font-family:var(--sans); line-height:1.5;
+    -webkit-font-smoothing:antialiased; overflow:hidden;
+  }
+  .dotgrid{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background-image:radial-gradient(var(--grid) 1px, transparent 1.5px);
+    background-size:21px 21px;
+  }
+
+  /* ---------- deck framework ---------- */
+  .deck{position:relative; width:100vw; height:100dvh; z-index:1}
+  .slide{
+    position:absolute; inset:0; display:grid; place-items:center;
+    padding:clamp(20px,4vh,54px) clamp(18px,5vw,88px) 74px;
+    opacity:0; visibility:hidden; transform:translateY(6px);
+    transition:opacity .35s ease, transform .35s ease;
+    overflow-y:auto;
+  }
+  .slide.active{opacity:1; visibility:visible; transform:none}
+  @media (prefers-reduced-motion:reduce){
+    .slide{transition:none; transform:none}
+  }
+  .inner{width:min(1140px,100%); margin:auto}
+
+  /* ---------- shared type ---------- */
+  .eyebrow{
+    font-family:var(--mono); font-size:12px; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--faint);
+    display:flex; align-items:center; gap:10px; margin-bottom:18px;
+  }
+  .eyebrow .tick{width:26px; height:3px; border-radius:2px; background:var(--cyan)}
+  .eyebrow .tick.m{background:var(--magenta)} .eyebrow .tick.y{background:var(--yellow-fill)} .eyebrow .tick.k{background:var(--ink)}
+  .eyebrow b{color:var(--ink-soft); font-weight:600}
+  h1{font-size:clamp(30px,5.4vw,60px); line-height:1.03; letter-spacing:-.02em; margin:.1em 0 .35em; text-wrap:balance; font-weight:760}
+  h2{font-size:clamp(23px,3.6vw,40px); line-height:1.08; letter-spacing:-.018em; margin:0 0 .45em; text-wrap:balance; font-weight:730}
+  h3{font-size:15px; margin:0 0 .2em; font-weight:680}
+  p.lead{font-size:clamp(16px,1.9vw,20px); color:var(--ink-soft); max-width:65ch; margin:.2em 0 1.1em}
+  .accent{color:var(--cyan-ink)}
+  .mono{font-family:var(--mono)}
+  .sub{color:var(--faint)}
+
+  /* ---------- cards / grids ---------- */
+  .grid{display:grid; gap:16px}
+  .g2{grid-template-columns:repeat(2,1fr)} .g3{grid-template-columns:repeat(3,1fr)} .g4{grid-template-columns:repeat(4,1fr)}
+  @media (max-width:820px){.g2,.g3,.g4{grid-template-columns:1fr}}
+  .card{
+    background:var(--panel); border:1px solid var(--line); border-radius:12px;
+    padding:16px 18px; box-shadow:var(--shadow);
+  }
+  .card.flat{box-shadow:none; background:var(--panel-2)}
+  .card .kl{font-family:var(--mono); font-size:11px; letter-spacing:.13em; text-transform:uppercase; color:var(--faint); display:block; margin-bottom:6px}
+  .card p{margin:.25em 0 0; font-size:14.5px; color:var(--ink-soft)}
+  .card .big{font-family:var(--mono); font-size:clamp(22px,3vw,30px); font-weight:600; color:var(--ink); letter-spacing:-.01em; line-height:1.05}
+  .card .big .u{font-size:13px; color:var(--faint); letter-spacing:0}
+
+  ul.clean{margin:.2em 0; padding-left:0; list-style:none}
+  ul.clean li{position:relative; padding-left:22px; margin:.5em 0; color:var(--ink-soft); font-size:15.5px}
+  ul.clean li::before{content:""; position:absolute; left:2px; top:.62em; width:8px; height:8px; border-radius:2px; background:var(--cyan)}
+  ul.clean li.m::before{background:var(--magenta)} ul.clean li.y::before{background:var(--yellow-fill)}
+  ul.clean li b{color:var(--ink); font-weight:640}
+
+  .pill{display:inline-flex; align-items:center; gap:7px; font-family:var(--mono); font-size:11.5px; letter-spacing:.06em;
+    padding:4px 10px; border-radius:999px; border:1px solid var(--line); color:var(--ink-soft); background:var(--panel)}
+  .pill .dot{width:7px;height:7px;border-radius:50%;background:var(--cyan)}
+  .pill.ok{color:var(--good)} .pill.ok .dot{background:var(--good)}
+  .pill.warn{color:var(--warn)} .pill.warn .dot{background:var(--warn)}
+  .tags{display:flex; flex-wrap:wrap; gap:8px; margin-top:14px}
+
+  .two{display:grid; grid-template-columns:1.05fr .95fr; gap:34px; align-items:center}
+  @media (max-width:900px){.two{grid-template-columns:1fr; gap:22px}}
+  figure{margin:0}
+  figcaption{font-family:var(--mono); font-size:11.5px; color:var(--faint); letter-spacing:.05em; margin-top:10px; text-align:center}
+
+  svg .lbl{font-family:var(--mono); font-size:10.5px; letter-spacing:.04em; fill:var(--faint)}
+  svg .lbl-i{font-family:var(--mono); font-size:11px; fill:var(--ink); font-weight:600}
+  svg .strk{stroke:var(--line); fill:none}
+
+  /* section divider */
+  .divider .inner{max-width:900px}
+  .divider .num{font-family:var(--mono); font-size:clamp(56px,13vw,150px); font-weight:700; line-height:.9; color:var(--cyan); opacity:.9; letter-spacing:-.03em}
+  .divider h1{margin-top:.1em}
+  .layerchip{display:inline-flex; gap:9px; align-items:center; font-family:var(--mono); font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--faint)}
+
+  /* stack table */
+  .stack{display:flex; flex-direction:column; gap:9px; margin-top:6px}
+  .row{
+    display:grid; grid-template-columns:74px 1.15fr 1.5fr 1.25fr; gap:16px; align-items:center;
+    background:var(--panel); border:1px solid var(--line); border-left:4px solid var(--cyan);
+    border-radius:10px; padding:11px 16px; box-shadow:var(--shadow);
+  }
+  .row.l4{border-left-color:var(--magenta)} .row.l3{border-left-color:var(--cyan)}
+  .row.l2{border-left-color:var(--yellow-fill)} .row.l1{border-left-color:var(--cyan-ink)} .row.l0{border-left-color:var(--ink)}
+  .row .lnum{font-family:var(--mono); font-weight:700; font-size:22px; color:var(--ink)}
+  .row .lnum small{display:block; font-size:9.5px; letter-spacing:.14em; color:var(--faint); font-weight:600; margin-top:2px}
+  .row .lname{font-weight:680; font-size:15.5px}
+  .row .lname span{display:block; font-family:var(--mono); font-size:11px; color:var(--faint); font-weight:500; letter-spacing:.02em; margin-top:2px}
+  .row .lfun{font-size:13.5px; color:var(--ink-soft)}
+  .row .lnet{font-size:12.5px; color:var(--ink-soft); font-family:var(--mono)}
+  .row .lnet b{color:var(--cyan-ink); font-weight:600}
+  @media (max-width:860px){
+    .row{grid-template-columns:56px 1fr; row-gap:6px}
+    .row .lfun,.row .lnet{grid-column:1 / -1}
+  }
+
+  /* bar chart */
+  .bars{display:flex; flex-direction:column; gap:11px; margin-top:6px}
+  .bar{display:grid; grid-template-columns:190px 1fr; gap:14px; align-items:center}
+  .bar .bl{font-size:13px; color:var(--ink-soft)} .bar .bl b{color:var(--ink); font-weight:640}
+  .bar .track{position:relative; height:26px; background:var(--panel-2); border:1px solid var(--line-soft); border-radius:6px; overflow:hidden}
+  .bar .fill{position:absolute; inset:0 auto 0 0; background:linear-gradient(90deg,var(--cyan),var(--cyan-ink)); border-radius:6px 0 0 6px; display:flex; align-items:center}
+  .bar .fill.m{background:linear-gradient(90deg,var(--magenta),var(--magenta))}
+  .bar .fill.k{background:linear-gradient(90deg,var(--ink),var(--ink-soft))}
+  .bar .fill.ghost{background:repeating-linear-gradient(135deg,var(--line),var(--line) 6px,transparent 6px,transparent 12px)}
+  .bar .v{font-family:var(--mono); font-size:12px; font-weight:600; color:#fff; padding:0 10px; white-space:nowrap}
+  .bar .fill.ghost .v{color:var(--ink-soft)}
+  @media (max-width:860px){.bar{grid-template-columns:130px 1fr}}
+
+  /* two profiles · parallel lanes */
+  .tracks{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:6px}
+  @media (max-width:820px){.tracks{grid-template-columns:1fr}}
+  .lane{position:relative; background:var(--panel); border:1px solid var(--line); border-top:4px solid var(--cyan); border-radius:12px; padding:15px 18px 16px; box-shadow:var(--shadow)}
+  .lane.k{border-top-color:var(--ink)}
+  .lane-h{display:flex; align-items:center; gap:12px; margin-bottom:10px}
+  .swatch{display:flex; gap:4px}
+  .swatch i{width:14px; height:14px; border-radius:3px; display:block}
+  .sw-c{background:var(--cyan)} .sw-m{background:var(--magenta)} .sw-y{background:var(--yellow-fill)} .sw-k{background:var(--ink)}
+  .lane-t{font-weight:720; font-size:16.5px; line-height:1.08}
+  .lane-t span{display:block; font-family:var(--mono); font-size:10.5px; letter-spacing:.13em; text-transform:uppercase; color:var(--faint); font-weight:600; margin-top:3px}
+  .lane-goal{margin-left:auto; font-family:var(--mono); font-size:10px; letter-spacing:.12em; text-transform:uppercase; padding:4px 10px; border-radius:999px; border:1px solid var(--cyan); color:var(--cyan-ink); white-space:nowrap}
+  .lane.k .lane-goal{border-color:var(--ink-soft); color:var(--ink-soft)}
+  .lane .metric{display:flex; align-items:baseline; gap:9px; margin:2px 0 11px; flex-wrap:wrap}
+  .lane .metric b{font-family:var(--mono); font-size:27px; font-weight:600; letter-spacing:-.01em; color:var(--ink)}
+  .lane .metric span{font-family:var(--mono); font-size:11.5px; color:var(--faint)}
+  .lane ul{list-style:none; margin:0; padding:0}
+  .lane li{position:relative; padding-left:18px; margin:.45em 0; font-size:13.5px; color:var(--ink-soft); line-height:1.4}
+  .lane li::before{content:""; position:absolute; left:0; top:.5em; width:6px; height:6px; border-radius:2px; background:var(--cyan)}
+  .lane.k li::before{background:var(--ink)}
+  .lane li.y::before{background:var(--yellow-fill)}
+  .lane li b{color:var(--ink); font-weight:640}
+  .lane .use{margin-top:12px; padding-top:10px; border-top:1px dashed var(--line); font-size:12.5px; color:var(--ink-soft); line-height:1.4}
+  .lane .use b{font-family:var(--mono); font-size:10px; letter-spacing:.11em; text-transform:uppercase; color:var(--faint); display:block; margin-bottom:3px; font-weight:600}
+  .lane .use b.inline{display:inline; text-transform:none; letter-spacing:0; font-family:inherit; font-size:12.5px; color:var(--ink)}
+  .lane .use.ok{border-top-color:var(--good)}
+  .lane .use.ok b{color:var(--good)}
+
+  /* pipeline chips */
+  .flow{display:flex; align-items:stretch; gap:8px; flex-wrap:wrap; margin:4px 0 2px}
+  .step{background:var(--panel); border:1px solid var(--line); border-radius:9px; padding:9px 12px; font-size:13px; color:var(--ink-soft); box-shadow:var(--shadow); min-width:0}
+  .step b{display:block; color:var(--ink); font-weight:640; font-size:13.5px}
+  .step small{font-family:var(--mono); font-size:10px; letter-spacing:.08em; color:var(--faint); text-transform:uppercase}
+  .arrow{display:flex; align-items:center; color:var(--faint); font-family:var(--mono); font-size:18px}
+  .flowlab{font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--cyan-ink); margin:14px 0 6px}
+  .flowlab.dec{color:var(--magenta)}
+
+  /* title */
+  .title-slide .inner{max-width:1000px}
+  .title-slide .noise{position:absolute; inset:0; z-index:0; opacity:.5; mix-blend-mode:multiply; pointer-events:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");}
+  @media (prefers-color-scheme:dark){.title-slide .noise{mix-blend-mode:screen; opacity:.12}}
+  :root[data-theme="dark"] .title-slide .noise{mix-blend-mode:screen; opacity:.12}
+  :root[data-theme="light"] .title-slide .noise{mix-blend-mode:multiply; opacity:.5}
+  .title-slide .inner{position:relative; z-index:1}
+  .kicker{font-family:var(--mono); font-size:13px; letter-spacing:.22em; text-transform:uppercase; color:var(--cyan-ink)}
+  .title-slide h1{font-size:clamp(34px,7vw,74px); margin:.18em 0 .3em}
+  .title-slide .thesis{font-size:clamp(16px,2.1vw,21px); color:var(--ink-soft); max-width:60ch}
+  .metaline{display:flex; flex-wrap:wrap; gap:10px 22px; margin-top:26px; font-family:var(--mono); font-size:12px; color:var(--faint); letter-spacing:.05em}
+  .metaline span b{color:var(--ink-soft); font-weight:600}
+
+  /* callout / note strip */
+  .strip{border:1px solid var(--line); border-left:3px solid var(--cyan); background:var(--panel-2); border-radius:0 10px 10px 0; padding:12px 16px; font-size:14px; color:var(--ink-soft); margin-top:16px}
+  .strip b{color:var(--ink); font-weight:640}
+  .strip.m{border-left-color:var(--magenta)} .strip.y{border-left-color:var(--yellow-fill)}
+
+  /* HUD */
+  .hud{position:fixed; left:0; right:0; bottom:0; z-index:20; height:46px;
+    display:flex; align-items:center; gap:16px; padding:0 clamp(14px,3vw,30px);
+    background:color-mix(in srgb,var(--paper) 82%, transparent); backdrop-filter:blur(8px);
+    border-top:1px solid var(--line); font-family:var(--mono); font-size:11.5px; color:var(--faint)}
+  .hud .sec{color:var(--ink-soft); letter-spacing:.1em; text-transform:uppercase; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .hud .prog{flex:1; height:4px; background:var(--line); border-radius:3px; overflow:hidden; min-width:60px}
+  .hud .prog i{display:block; height:100%; width:0; background:var(--cyan); transition:width .35s ease}
+  .hud .idx{letter-spacing:.1em; white-space:nowrap}
+  .hud .btns{display:flex; gap:4px}
+  .hud button{font-family:var(--mono); font-size:11px; color:var(--faint); background:transparent; border:1px solid var(--line); border-radius:6px; padding:4px 9px; cursor:pointer; letter-spacing:.06em}
+  .hud button:hover{color:var(--ink); border-color:var(--cyan)}
+  .hud button:focus-visible, .navbtn:focus-visible{outline:2px solid var(--cyan); outline-offset:2px}
+  .hint{white-space:nowrap}
+  @media (max-width:720px){.hint,.hud .sec{display:none}}
+
+  /* nav arrows */
+  .navbtn{position:fixed; top:50%; transform:translateY(-50%); z-index:15; width:42px; height:42px; border-radius:50%;
+    background:var(--panel); border:1px solid var(--line); color:var(--ink-soft); cursor:pointer; box-shadow:var(--shadow);
+    font-size:18px; display:grid; place-items:center; opacity:.5; transition:opacity .2s}
+  .navbtn:hover{opacity:1; color:var(--cyan-ink); border-color:var(--cyan)}
+  .navbtn.prev{left:12px} .navbtn.next{right:12px}
+  @media (max-width:720px){.navbtn{display:none}}
+
+  /* presenter notes */
+  .notes{display:none}
+  body.notes-on .slide.active .notes{
+    display:block; position:fixed; left:0; right:0; bottom:46px; z-index:18;
+    max-height:34vh; overflow-y:auto;
+    background:var(--panel); border-top:2px solid var(--cyan);
+    padding:14px clamp(16px,4vw,40px); box-shadow:0 -12px 30px rgba(0,0,0,.14);
+    font-size:14px; line-height:1.5; color:var(--ink-soft);
+  }
+  body.notes-on .slide.active .notes::before{content:"◆ Presenter track"; display:block; font-family:var(--mono); font-size:10.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--cyan-ink); margin-bottom:6px}
+  .notes b{color:var(--ink)} .notes .t{font-family:var(--mono); color:var(--faint)}
+
+  .foot{font-family:var(--mono); font-size:11px; color:var(--faint); margin-top:20px; letter-spacing:.04em}
+  .emph{color:var(--magenta); font-weight:600}
+</style>
+
+<div class="dotgrid" aria-hidden="true"></div>
+<div class="deck" id="deck">
+
+  <!-- 1 · TITLE -->
+  <section class="slide title-slide active" data-sec="Cold open">
+    <div class="noise" aria-hidden="true"></div>
+    <div class="inner">
+      <div class="kicker">paper-store · technical workshop</div>
+      <h1>Paper as a Channel</h1>
+      <p class="thesis">A fiducial-free, fragment-recoverable, century-scale data archive — built not as a file format, but as a <b class="accent">five-layer communications stack</b> whose wire happens to be a sheet of A4.</p>
+      <div class="metaline">
+        <span><b>TX</b> = laser print</span>
+        <span><b>RX</b> = flatbed scan</span>
+        <span><b>channel</b> = toner on paper</span>
+        <span><b>propagation delay</b> = 50–100 years</span>
+      </div>
+      <div class="metaline" style="margin-top:12px">
+        <span>30 min · for a networking / signals audience</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 · REFRAME -->
+  <section class="slide" data-sec="The reframe">
+    <div class="inner">
+      <div class="eyebrow"><span class="tick"></span> The core idea · <b>storage is a comms problem</b></div>
+      <h2>What if the wire were a sheet of paper?</h2>
+      <p class="lead">Stop thinking "file format." A printed archive is a <b>link</b>: you transmit once (print), receive much later (scan), and the medium in between is lossy, warped, and 100 years long. That reframe means every tool from digital comms transfers directly.</p>
+      <figure>
+        <svg viewBox="0 0 980 210" width="100%" role="img" aria-label="Print transmits into paper channel, scan receives decades later">
+          <!-- TX -->
+          <rect x="10" y="60" width="150" height="82" rx="10" class="strk" style="fill:var(--panel)"/>
+          <text x="85" y="92" text-anchor="middle" class="lbl-i">PRINT · TX</text>
+          <text x="85" y="112" text-anchor="middle" class="lbl">1-bit plane bitmaps</text>
+          <text x="85" y="128" text-anchor="middle" class="lbl">raw path, no driver</text>
+          <!-- channel -->
+          <rect x="215" y="46" width="540" height="110" rx="12" style="fill:var(--panel-2);stroke:var(--cyan);stroke-dasharray:4 5" />
+          <text x="485" y="40" text-anchor="middle" class="lbl" style="fill:var(--cyan-ink);letter-spacing:.12em">CHANNEL — TONER ON PAPER</text>
+          <!-- noise dots -->
+          <g fill="var(--ink)" opacity=".22">
+            <circle cx="250" cy="80" r="2.5"/><circle cx="290" cy="120" r="2.5"/><circle cx="330" cy="72" r="2.5"/><circle cx="370" cy="110" r="2.5"/><circle cx="410" cy="90" r="2.5"/><circle cx="450" cy="130" r="2.5"/><circle cx="500" cy="70" r="2.5"/><circle cx="540" cy="118" r="2.5"/><circle cx="580" cy="86" r="2.5"/><circle cx="620" cy="126" r="2.5"/><circle cx="660" cy="78" r="2.5"/><circle cx="700" cy="112" r="2.5"/><circle cx="470" cy="104" r="2.5"/><circle cx="360" cy="140" r="2.5"/><circle cx="640" cy="100" r="2.5"/>
+          </g>
+          <text x="485" y="132" text-anchor="middle" class="lbl">dot gain · blur · warp · fade · tears</text>
+          <!-- delay arc -->
+          <path d="M235 158 C 360 200, 610 200, 735 158" class="strk" style="stroke:var(--faint);stroke-dasharray:3 4"/>
+          <text x="485" y="200" text-anchor="middle" class="lbl">delay ≈ decades</text>
+          <!-- RX -->
+          <rect x="812" y="60" width="150" height="82" rx="10" class="strk" style="fill:var(--panel)"/>
+          <text x="887" y="92" text-anchor="middle" class="lbl-i">SCAN · RX</text>
+          <text x="887" y="112" text-anchor="middle" class="lbl">≥2 px / cell, gray</text>
+          <text x="887" y="128" text-anchor="middle" class="lbl">soft-decision in</text>
+          <!-- arrows -->
+          <path d="M162 101 L212 101" class="strk" style="stroke:var(--ink-soft)" marker-end="url(#ah)"/>
+          <path d="M757 101 L809 101" class="strk" style="stroke:var(--ink-soft)" marker-end="url(#ah)"/>
+          <defs><marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="var(--ink-soft)"/></marker></defs>
+        </svg>
+      </figure>
+      <div class="grid g4" style="margin-top:20px">
+        <div class="card flat"><span class="kl">Spread spectrum</span><p>→ sync &amp; addressing</p></div>
+        <div class="card flat"><span class="kl">Holographic storage</span><p>→ 2-D modulation &amp; equalize</p></div>
+        <div class="card flat"><span class="kl">Group-code recording</span><p>→ line coding / scrambler</p></div>
+        <div class="card flat"><span class="kl">Erasure coding</span><p>→ the outer fountain layer</p></div>
+      </div>
+      <aside class="notes"><b>Talk track (~2 min).</b> This is the single most important slide. If they leave with one thing: <b>a printed archive is a communication link across time.</b> Print = transmit, scan = receive, the paper is a nasty analog channel, and the "propagation delay" is measured in decades. The user's original brief actually named four classic techniques — spread spectrum, holographic storage, GCR, erasure codes — and each one turned out to be exactly one layer of the stack. Everything else in the talk is filling in those four boxes. <span class="t">Ask the room: "what breaks on a link that a file format ignores?" → answer: sync, noise, and loss. That's layers 2, 3, 4.</span></aside>
+    </div>
+  </section>
+
+  <!-- 3 · WHY / USE CASES -->
+  <section class="slide" data-sec="Motivation">
+    <div class="inner">
+      <div class="eyebrow"><span class="tick"></span> Why bother · <b>the use case</b></div>
+      <h2>The one archive that outlives its own reader</h2>
+      <p class="lead">Tape, optical and disk all die the same two deaths: the bits rot, and the <b>drive</b> that reads them goes extinct. Paper needs only eyes-or-a-camera and the printed spec. That's the whole pitch.</p>
+      <div class="two">
+        <div>
+          <ul class="clean">
+            <li><b>Cold / dark archives</b> — legal, medical, cultural, "put it in a box for 50 years" data.</li>
+            <li><b>Air-gapped &amp; tamper-evident</b> — offline by construction; no firmware, no network.</li>
+            <li class="m"><b>Disaster-recoverable</b> — a torn, wet, partly-burned stack still decodes (that's layer 4).</li>
+            <li class="y"><b>Self-contained (R5)</b> — recovery needs only the sheets, the public seed, and a spec printed alongside. No cloud, no key server, no vendor.</li>
+          </ul>
+        </div>
+        <div class="grid" style="gap:12px">
+          <div class="card"><span class="kl">R1 · density</span><p>Max net bits / A4 at laser + consumer-scanner resolution.</p></div>
+          <div class="card"><span class="kl">R2 · holographic recovery</span><p>Any fraction <span class="mono">f</span> of the printed area rebuilds the whole payload.</p></div>
+          <div class="card"><span class="kl">R3 · no overt structure</span><p>No marks, headers, quiet zones. Every region looks like uniform noise.</p></div>
+          <div class="card"><span class="kl">R4 · longevity</span><p>Decodable after 50–100 yrs; graceful under damage &amp; fade.</p></div>
+        </div>
+      </div>
+      <div class="strip"><b>The hard corollary (R2).</b> No scheme evades it, holograms included: net payload ≤ <span class="mono">f</span> × raw capacity of the whole volume. "Any half recovers everything" literally costs you half your bits. Choosing <span class="mono">f</span> honestly is the central design tension.</div>
+      <aside class="notes"><b>Talk track (~3 min).</b> Lead with the reader-extinction problem — network engineers have all restored from a backup whose <i>tape drive</i> no longer exists. Paper's superpower is that the reader is a camera and never goes obsolete. Then the five requirements: R1 density, R2 holographic recovery, R3 no visible structure, R4 longevity, R5 self-containment. Spend real time on the R2 corollary — it's an information-theoretic <b>conservation law</b>, not an engineering limit. Physical volume holograms obey the same rule: a fragment reconstructs the scene at lower resolution = fewer bits. This bound reappears in layer 4 and in the single-layer discussion.</aside>
+    </div>
+  </section>
+
+  <!-- 4 · TWO PROFILES -->
+  <section class="slide" data-sec="Two profiles">
+    <div class="inner">
+      <div class="eyebrow"><span class="tick"></span> One stack, two shipping modes · <b>choose what you optimize</b></div>
+      <h2>Two profiles, running in parallel</h2>
+      <p class="lead">The Layer 1–4 receiver is <b>identical</b> for both. They diverge only at the medium (which planes, Layer 0) and the inner-code rate ladder (Layer 3). You pick one per archive — trade density against durability.</p>
+      <div class="tracks">
+        <div class="lane">
+          <div class="lane-h">
+            <div class="swatch"><i class="sw-c"></i><i class="sw-m"></i><i class="sw-y"></i></div>
+            <div class="lane-t">P-nom · CMY<span>high capacity</span></div>
+            <div class="lane-goal">density</div>
+          </div>
+          <div class="metric"><b>1.81 MB</b><span>/ A4 side · f = 0.50</span></div>
+          <ul>
+            <li><b>3 binary planes</b> — C, M, Y, unmixed in optical-density space</li>
+            <li><b>≈ 2.5–2.7×</b> the net density of K-only</li>
+            <li class="y"><b>Weak link is Y</b> — lower code rate, bulk-priority only; the printer's tracking dots land here</li>
+          </ul>
+          <div class="use"><b>Use when</b><b class="inline">density matters and storage is disciplined — dark, ≤ 21 °C, alkaline OBA-free paper.</b></div>
+        </div>
+        <div class="lane k">
+          <div class="lane-h">
+            <div class="swatch"><i class="sw-k"></i></div>
+            <div class="lane-t">P-cons · K<span>high resilience</span></div>
+            <div class="lane-goal">durability</div>
+          </div>
+          <div class="metric"><b>0.39 MB</b><span>/ A4 side · f = 0.35</span></div>
+          <ul>
+            <li><b>1 plane, carbon black</b> — maximum contrast, spectrally cleanest channel</li>
+            <li><b>Century-scale</b> — Blue-Wool 8, no yellow weak-link to fade</li>
+            <li><b>No MIC, no color-management risk</b> — the mono path can stay anonymous</li>
+          </ul>
+          <div class="use"><b>Use when</b><b class="inline">century-critical, zero-maintenance cold archive; density is secondary.</b></div>
+        </div>
+      </div>
+      <div class="strip"><b>Same stack, one bridge between them.</b> Resilience-first doesn't cost you fiducial-free sync: the K profile can borrow color for <em>addressing only</em> — 2×2 cyan "chroma pilots" dropped into enforced white voids recover at ~100% (556/557, zero false positives).</div>
+      <aside class="notes"><b>Talk track (~1.5 min).</b> Set the frame the rest of the deck rides on: <b>one stack, two profiles.</b> Everything from here has a capacity lane (CMY, cyan) and a resilience lane (K, carbon), and they're co-equal engineering points — not a default plus a fallback. Crucial thing to say out loud: <b>the receiver is the same</b> for both; they differ only in which planes go on the paper and how hard Layer 3 protects them. CMY buys ~2.5–2.7× the bits but inherits yellow's weakness and the printer's tracking dots; K gives that up for the cleanest, longest-lived channel there is — carbon black on alkaline paper is the medium that survives millennia. The bridge line matters: even the K purist keeps fiducial-free addressing by using cyan dots for <i>sync only</i>. Keep this slide short — it's a signpost, and the numbers slide will close the loop.</aside>
+    </div>
+  </section>
+
+  <!-- 5 · WHY TONER -->
+  <section class="slide" data-sec="Media physics">
+    <div class="inner">
+      <div class="eyebrow"><span class="tick k"></span> Layer 0a · <b>the medium</b></div>
+      <h2>Why laser toner — and why CMY, never CMYK</h2>
+      <div class="two">
+        <div>
+          <p class="lead">Fused toner is a <b>pigment crystal encapsulated in melted polymer</b>, keyed into the fiber — not a dye in solution. That's the difference between a museum pigment and a poster that fades in two summers. Waterproof, UV-resistant, chemically inert in dark storage.</p>
+          <ul class="clean">
+            <li><b>Use 3 planes: C, M, Y</b> — each detected in its complementary scanner channel with a stable 3×3 unmix in optical-density space.</li>
+            <li><b>Never K in color mode</b> — carbon black absorbs all three bands, so a K dot is spectrally colinear with a C+M+Y stack. 4 planes → 3 measurements is rank-deficient.</li>
+            <li class="y"><b>Yellow is the weak plane</b> — azo photochemistry, paper yellowing raises noise in exactly its detection band, plus the printer's tracking dots land there. It gets a lower code rate.</li>
+          </ul>
+        </div>
+        <figure>
+          <svg viewBox="0 0 360 300" width="100%" role="img" aria-label="Archival longevity ranking of the four toner planes">
+            <text x="8" y="20" class="lbl" style="letter-spacing:.14em">ARCHIVAL RANKING · dark storage</text>
+            <!-- K -->
+            <g><rect x="8" y="36" width="330" height="52" rx="8" style="fill:var(--panel);stroke:var(--line)"/>
+              <circle cx="34" cy="62" r="11" style="fill:var(--k)"/>
+              <text x="58" y="58" class="lbl-i">K · carbon black</text>
+              <text x="58" y="76" class="lbl">Blue-Wool 8 · survives 2000-yr manuscripts</text>
+              <text x="330" y="66" text-anchor="end" class="lbl-i" style="fill:var(--good)">reference</text></g>
+            <!-- C -->
+            <g><rect x="8" y="96" width="330" height="46" rx="8" style="fill:var(--panel);stroke:var(--line)"/>
+              <circle cx="34" cy="119" r="11" style="fill:var(--cyan)"/>
+              <text x="58" y="115" class="lbl-i">C · phthalocyanine</text>
+              <text x="58" y="132" class="lbl">BW 7–8 · acid-resistant · near-K</text></g>
+            <!-- M -->
+            <g><rect x="8" y="150" width="330" height="46" rx="8" style="fill:var(--panel);stroke:var(--line)"/>
+              <circle cx="34" cy="173" r="11" style="fill:var(--magenta)"/>
+              <text x="58" y="169" class="lbl-i">M · quinacridone</text>
+              <text x="58" y="186" class="lbl">BW 7–8 · very good</text></g>
+            <!-- Y -->
+            <g><rect x="8" y="204" width="330" height="58" rx="8" style="fill:var(--panel);stroke:var(--yellow);stroke-width:1.4"/>
+              <circle cx="34" cy="233" r="11" style="fill:var(--yellow-fill)"/>
+              <text x="58" y="226" class="lbl-i">Y · azo / benzimidazolone</text>
+              <text x="58" y="243" class="lbl">BW ≈5–7 · weakest photochemistry</text>
+              <text x="58" y="257" class="lbl" style="fill:var(--warn)">→ lower rate + bulk-only payload</text></g>
+            <text x="8" y="284" class="lbl">K ≫ C ≥ M &gt; Y &nbsp;·&nbsp; net density ≈ 2.5–2.7× K-only</text>
+          </svg>
+        </figure>
+      </div>
+      <aside class="notes"><b>Talk track (~2.5 min).</b> The chemistry is why paper is even viable for a century. Toner = pigment-in-resin, fused into the fiber — archivally comparable to silver-halide, better in some axes. The load-bearing decision is <b>CMY not CMYK</b>: it's a spectral rank-deficiency argument, not chemistry. Three scanner channels (RGB) can't cleanly separate four colorants when one of them (K) absorbs in all three. So we run C, M, Y as three independent binary planes and unmix in density (log-reflectance) space where overlaps are linear. Yellow is the designated weak link and gets unequal protection — foreshadow the per-plane LDPC rate ladder in layer 3.</aside>
+    </div>
+  </section>
+
+  <!-- 5 · THE STACK -->
+  <section class="slide" data-sec="Architecture">
+    <div class="inner">
+      <div class="eyebrow"><span class="tick"></span> The map · <b>five layers, each a familiar friend</b></div>
+      <h2>The stack — and its networking twin</h2>
+      <div class="stack">
+        <div class="row l4">
+          <div class="lnum">4<small>OUTER</small></div>
+          <div class="lname">Outer erasure<span>where holography lives</span></div>
+          <div class="lfun">RaptorQ fountain across the whole volume; symbol ID from geometry.</div>
+          <div class="lnet">≈ <b>RFC 6330 / MBMS</b><br>erasure-coded object store</div>
+        </div>
+        <div class="row l3">
+          <div class="lnum">3<small>INNER</small></div>
+          <div class="lname">Inner FEC<span>turns cells into erasures</span></div>
+          <div class="lfun">Soft-decision LDPC per 64×64-cell tile + CRC; per-plane rate ladder.</div>
+          <div class="lnet">≈ <b>LDPC</b> in<br>5G-NR / Wi-Fi 6 / DVB-S2</div>
+        </div>
+        <div class="row l2">
+          <div class="lnum">2<small>SYNC</small></div>
+          <div class="lname">Sync &amp; addressing<span>no fiducials</span></div>
+          <div class="lfun">Self-clocking lattice + warp field + hidden pilot lattice = position.</div>
+          <div class="lnet">≈ <b>clock recovery</b><br>OFDM pilots · GPS acq.</div>
+        </div>
+        <div class="row l1">
+          <div class="lnum">1<small>MOD</small></div>
+          <div class="lname">Modulation<span>bits → ink</span></div>
+          <div class="lfun">3×3-dot cell = 1 symbol; AES-CTR scrambler conditions the field.</div>
+          <div class="lnet">≈ <b>line coding</b><br>8b/10b · self-sync scrambler</div>
+        </div>
+        <div class="row l0">
+          <div class="lnum">0<small>PHY</small></div>
+          <div class="lname">Physical channel<span>toner · paper · optics</span></div>
+          <div class="lfun">Print → scan: dot gain, PSF, banding, geometric warp, decades of drift.</div>
+          <div class="lnet">≈ <b>the PHY</b><br>link budget · MTF · BER</div>
+        </div>
+      </div>
+      <aside class="notes"><b>Talk track (~2 min).</b> This slide is the spine — everyone should photograph it. Read bottom-up like a protocol stack: PHY at the bottom, application (the archive) at the top. The right-hand column is the whole pedagogical trick: <b>nothing here is exotic to a comms engineer.</b> Layer 1 is line coding. Layer 2 is clock/frame recovery plus pilot tones. Layer 3 is literally the same LDPC family shipping in 5G and Wi-Fi 6. Layer 4 is RaptorQ, straight out of RFC 6330 and 3GPP broadcast. The novelty is not any single layer — it's assembling a wireless-grade receiver against a channel made of toner. The next five slides walk up the stack.</aside>
+    </div>
+  </section>
+
+  <!-- 6 · LAYER 0 -->
+  <section class="slide" data-sec="Layer 0 · Physical">
+    <div class="inner">
+      <div class="eyebrow"><span class="tick k"></span> Layer 0 · <b>characterize the link before you trust it</b></div>
+      <h2>The channel: what print-then-scan does to a bit</h2>
+      <div class="two">
+        <figure>
+          <svg viewBox="0 0 420 250" width="100%" role="img" aria-label="Clean bit field distorted by the print-scan channel">
+            <text x="8" y="16" class="lbl">ADDRESSED FIELD</text>
+            <g fill="var(--ink)"><rect x="10" y="26" width="18" height="18"/><rect x="46" y="26" width="18" height="18"/><rect x="10" y="62" width="18" height="18"/><rect x="82" y="26" width="18" height="18"/><rect x="46" y="98" width="18" height="18"/><rect x="82" y="98" width="18" height="18"/><rect x="10" y="98" width="18" height="18"/></g>
+            <path d="M126 72 L176 72" class="strk" style="stroke:var(--ink-soft)" marker-end="url(#ah2)"/>
+            <text x="151" y="60" text-anchor="middle" class="lbl" style="fill:var(--cyan-ink)">print+scan</text>
+            <defs><marker id="ah2" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="var(--ink-soft)"/></marker></defs>
+            <text x="192" y="16" class="lbl">RECEIVED FIELD</text>
+            <!-- blurred fatter dots -->
+            <g fill="var(--ink)" opacity=".8"><circle cx="203" cy="37" r="12"/><circle cx="239" cy="37" r="12"/><circle cx="203" cy="73" r="12"/><circle cx="275" cy="39" r="11"/><circle cx="239" cy="109" r="12"/><circle cx="275" cy="109" r="12"/><circle cx="203" cy="109" r="11"/></g>
+            <!-- callouts -->
+            <text x="200" y="150" class="lbl-i" style="fill:var(--cyan-ink)">+ dot gain</text><text x="200" y="166" class="lbl">printed dots run fatter (~+0.4 dot/edge)</text>
+            <text x="200" y="186" class="lbl-i" style="fill:var(--cyan-ink)">+ PSF blur</text><text x="200" y="202" class="lbl">~1.5–2 dot FWHM; single dots unreliable</text>
+            <text x="200" y="222" class="lbl-i" style="fill:var(--cyan-ink)">+ warp &amp; banding</text><text x="200" y="238" class="lbl">smooth wander + stepped transport</text>
+            <!-- warp grid mini -->
+            <path d="M10 150 q 30 -8 60 0 t 60 0 t 60 0" class="strk" style="stroke:var(--magenta);opacity:.7"/>
+            <path d="M10 175 q 30 8 60 0 t 60 0 t 60 0" class="strk" style="stroke:var(--magenta);opacity:.5"/>
+            <path d="M10 200 q 30 -6 60 0 t 60 0 t 60 0" class="strk" style="stroke:var(--magenta);opacity:.7"/>
+            <text x="10" y="228" class="lbl" style="fill:var(--magenta)">geometric warp</text>
+          </svg>
+        </figure>
+        <div>
+          <p class="lead">Per symbol the channel is <b>binary-in, soft-out, with 2-D intersymbol interference and a piecewise-smooth warp.</b> Three consequences fall out immediately.</p>
+          <ul class="clean">
+            <li><b>Symbols must beat single dots</b> — hence a 3×3-dot cell, not a dot.</li>
+            <li><b>Detection must be soft</b> — grayscale in, log-likelihoods out; 2-D equalize.</li>
+            <li class="m"><b>Sync must track warp</b> — smooth in fast-scan, <em>stepped</em> in the process direction.</li>
+          </ul>
+          <div class="strip m"><b>A forensic win.</b> Rotate-the-page tests split the warp by owner: the <b>printer</b> contributes smooth 60–80 mm wander; the <b>scanner</b> contributes the discrete transport steps + a fixed 18.6 mm CCD-joint comb. Attributing each to its source is what let the sync layer model them separately.</div>
+        </div>
+      </div>
+      <div class="grid g4" style="margin-top:16px">
+        <div class="card flat"><span class="kl">cell = 3 (200 cpi)</span><div class="big">2.0–2.2<span class="u"> % raw BER</span></div></div>
+        <div class="card flat"><span class="kl">→ blind detector</span><div class="big">0.15–0.26<span class="u"> % BER</span></div></div>
+        <div class="card flat"><span class="kl">cell = 2 (300 cpi)</span><div class="big">~5<span class="u"> % · density canary</span></div></div>
+        <div class="card flat"><span class="kl">cell = 1</span><div class="big" style="color:var(--faint)">dead<span class="u"> · at Nyquist</span></div></div>
+      </div>
+      <aside class="notes"><b>Talk track (~3 min).</b> The rule that governs the whole project: <b>characterize the link first.</b> Before any archive run we print a self-describing calibration sheet (CAL-1) and measure dot gain, PSF, warp, crosstalk, per-plane BER, MIC dots — output is a parameter block that feeds the simulator. Emphasize the three consequences (big cells, soft decisions, warp-tracking sync) because they justify layers 1–3. The warp-attribution story is a nice "forensics" beat network folks enjoy — same discipline as isolating whether jitter is in the transmitter or the receiver. Numbers: cell=3 works (~2% raw, ~0.2% after a blind detector), cell=2 is the density canary that fails first on a bad day, cell=1 is dead — that's the Nyquist wall of this channel.</aside>
+    </div>
+  </section>
+
+  <!-- 7 · LAYER 1 -->
+  <section class="slide" data-sec="Layer 1 · Modulation">
+    <div class="inner">
+      <div class="eyebrow"><span class="tick" style="background:var(--cyan-ink)"></span> Layer 1 · <b>the scrambler is the whole trick</b></div>
+      <h2>Modulation: the dumbest constellation, on purpose</h2>
+      <div class="two">
+        <div>
+          <p class="lead">Symbol = one <b>3×3-dot cell</b>, solid on or off. At this resolution the individual dot isn't a reliable channel use — the cell is. Maximum per-symbol margin, fully self-clocking.</p>
+          <p class="lead" style="margin-bottom:.4em">Where did group-code recording's three jobs go? All delegated to <b>one XOR with an AES-CTR keystream</b> keyed by <span class="mono">(seed, cell address)</span>:</p>
+          <ul class="clean">
+            <li><b>DC balance</b> — coverage pinned near target.</li>
+            <li><b>Clock content</b> — every patch is spectrally white → strong lattice peaks.</li>
+            <li><b>Run-length limiting</b> — no runs long enough to matter.</li>
+            <li class="m"><b>Invisibility (R3) — free</b> — the printed field is i.i.d. Bernoulli. Statistically white at every scale.</li>
+          </ul>
+          <div class="strip"><b>Comms analog:</b> the self-synchronizing scrambler in SONET / PCIe / 10GbE — same polynomial-whitening role, here doing quadruple duty at <b>zero rate cost.</b></div>
+        </div>
+        <figure>
+          <svg viewBox="0 0 340 320" width="100%" role="img" aria-label="Data XOR keystream produces a white noise field">
+            <text x="8" y="16" class="lbl">DATA (structured)</text>
+            <g fill="var(--cyan)"><rect x="8" y="24" width="14" height="14"/><rect x="22" y="24" width="14" height="14"/><rect x="36" y="24" width="14" height="14"/><rect x="8" y="38" width="14" height="14"/><rect x="8" y="52" width="14" height="14"/><rect x="50" y="24" width="14" height="14"/></g>
+            <rect x="8" y="24" width="84" height="56" class="strk"/>
+            <text x="120" y="56" class="lbl-i" style="font-size:18px">⊕</text>
+            <text x="150" y="16" class="lbl">KEYSTREAM · AES-CTR</text>
+            <g fill="var(--faint)" opacity=".8"><rect x="150" y="24" width="14" height="14"/><rect x="178" y="24" width="14" height="14"/><rect x="150" y="52" width="14" height="14"/><rect x="206" y="38" width="14" height="14"/><rect x="164" y="38" width="14" height="14"/><rect x="192" y="66" width="14" height="14"/><rect x="220" y="24" width="14" height="14"/></g>
+            <rect x="150" y="24" width="98" height="70" class="strk"/>
+            <text x="8" y="128" class="lbl" style="fill:var(--cyan-ink)">= PRINTED FIELD · statistically white</text>
+            <g fill="var(--ink)" opacity=".82">
+              <rect x="8" y="138" width="15" height="15"/><rect x="38" y="138" width="15" height="15"/><rect x="98" y="138" width="15" height="15"/><rect x="158" y="138" width="15" height="15"/><rect x="218" y="138" width="15" height="15"/><rect x="278" y="138" width="15" height="15"/>
+              <rect x="23" y="168" width="15" height="15"/><rect x="83" y="168" width="15" height="15"/><rect x="128" y="168" width="15" height="15"/><rect x="188" y="168" width="15" height="15"/><rect x="308" y="168" width="15" height="15"/>
+              <rect x="8" y="198" width="15" height="15"/><rect x="68" y="198" width="15" height="15"/><rect x="113" y="198" width="15" height="15"/><rect x="173" y="198" width="15" height="15"/><rect x="233" y="198" width="15" height="15"/><rect x="293" y="198" width="15" height="15"/>
+              <rect x="38" y="228" width="15" height="15"/><rect x="98" y="228" width="15" height="15"/><rect x="158" y="228" width="15" height="15"/><rect x="203" y="228" width="15" height="15"/><rect x="263" y="228" width="15" height="15"/>
+              <rect x="23" y="258" width="15" height="15"/><rect x="83" y="258" width="15" height="15"/><rect x="143" y="258" width="15" height="15"/><rect x="218" y="258" width="15" height="15"/><rect x="278" y="258" width="15" height="15"/><rect x="308" y="258" width="15" height="15"/>
+            </g>
+            <rect x="6" y="136" width="322" height="150" class="strk" style="stroke:var(--cyan);stroke-dasharray:4 4"/>
+            <text x="8" y="306" class="lbl">no marks · no periodicity · ~50% coverage</text>
+          </svg>
+        </figure>
+      </div>
+      <aside class="notes"><b>Talk track (~2.5 min).</b> Two ideas. First: the constellation is deliberately trivial — 3×3 solid on/off — because margin beats cleverness on this channel; fancier alphabets (multilevel, constrained patterns) are characterized but the simple cell wins on robustness. Second, and this is the payoff: the <b>scrambler</b>. One XOR with a keyed AES-CTR stream simultaneously does DC-balance, clock content, run-length limiting, <i>and</i> the R3 invisibility requirement — the sheet becomes i.i.d. Bernoulli, statistically white at every scale. Network folks know this exact move: the self-sync scrambler in SONET/PCIe/10GbE. Here it's load-bearing for aesthetics and deniability too, not just DC balance, and it costs zero rate. Note the honest caveat: v0.2 also thought the scrambler gave addressing for free — it doesn't, which sets up layer 2.</aside>
+    </div>
+  </section>
+
+  <!-- 8 · LAYER 2 -->
+  <section class="slide" data-sec="Layer 2 · Sync">
+    <div class="inner">
+      <div class="eyebrow"><span class="tick y"></span> Layer 2 · <b>knowing where you are, with no landmarks</b></div>
+      <h2>Sync &amp; addressing without a single fiducial</h2>
+      <div class="two">
+        <div>
+          <p class="lead"><b>Local geometry — the lattice is its own clock.</b> Any patch, after a rectifying nonlinearity (a gradient map), shows four sharp Fourier peaks at the cell pitch. That's a 2-D squaring timing-recovery loop; it hands you scale, rotation and the warp field, and high-passes mottle away for free.</p>
+          <p class="lead"><b>Absolute position — a hidden pilot lattice.</b> ≈2.5% of cells are pilots carrying a 2-D <em>window-property</em> code: every k×k window occurs exactly once, so a clean window <b>decodes straight to (x,y)</b> — lookup, not search. Same math as the Anoto pen and de Bruijn tori; BCH-protected so pilots tolerate the payload's BER.</p>
+          <div class="strip y"><b>The bug they caught.</b> v0.2 tried to correlate the field against the keystream for position. It's provably flat — every cell is data⊕PN, so the correlation sums (−1)^data ≈ 0. No processing gain. That failure is <em>why</em> the pilot lattice exists.</div>
+        </div>
+        <figure>
+          <svg viewBox="0 0 320 300" width="100%" role="img" aria-label="Sparse pilots and a window that decodes to coordinates">
+            <defs><pattern id="cellgrid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0 H0 V20" fill="none" stroke="var(--line)" stroke-width="1"/></pattern></defs>
+            <rect x="10" y="24" width="240" height="240" fill="url(#cellgrid)" stroke="var(--line)"/>
+            <text x="10" y="16" class="lbl">PRINTED CELL FIELD · pilots ≈ 2.5%</text>
+            <!-- pilots -->
+            <g fill="var(--yellow-fill)">
+              <circle cx="40" cy="54" r="4"/><circle cx="120" cy="74" r="4"/><circle cx="200" cy="54" r="4"/><circle cx="80" cy="134" r="4"/><circle cx="160" cy="154" r="4"/><circle cx="240" cy="114" r="4"/><circle cx="40" cy="194" r="4"/><circle cx="120" cy="214" r="4"/><circle cx="200" cy="234" r="4"/><circle cx="60" cy="94" r="4"/><circle cx="180" cy="194" r="4"/><circle cx="220" cy="174" r="4"/>
+            </g>
+            <!-- window -->
+            <rect x="72" y="66" width="96" height="96" fill="none" stroke="var(--cyan)" stroke-width="2.4" rx="4"/>
+            <text x="120" y="60" text-anchor="middle" class="lbl" style="fill:var(--cyan-ink)">any k×k window</text>
+            <path d="M168 114 L262 114" stroke="var(--cyan)" stroke-width="1.6" fill="none" marker-end="url(#ah3)"/>
+            <defs><marker id="ah3" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="var(--cyan)"/></marker></defs>
+            <rect x="240" y="98" width="74" height="34" rx="6" style="fill:var(--panel);stroke:var(--cyan)"/>
+            <text x="277" y="112" text-anchor="middle" class="lbl-i" style="fill:var(--cyan-ink)">(x, y)</text>
+            <text x="277" y="126" text-anchor="middle" class="lbl">absolute</text>
+            <text x="10" y="288" class="lbl">grain ≈ 3–4 mm · position <b>is</b> the metadata</text>
+          </svg>
+        </figure>
+      </div>
+      <aside class="notes"><b>Talk track (~3 min).</b> This is the cleverest layer and the one comms people will most enjoy. Two sub-problems: local geometry and absolute phase. Local geometry — the data lattice self-clocks: FFT any patch and you get peaks at the symbol rate, but only after a rectifying nonlinearity, because a random NRZ field has a spectral <i>null</i> at the symbol rate (this bit them in the very first simulator test — same reason you square a signal for timing recovery). Absolute phase — you can't correlate against the keystream (the (−1)^data cancellation, worth explaining on the board), so you spend ~2.5% of cells on a pilot lattice carrying a window-property code. That's the Anoto pen / de Bruijn torus trick: every window is globally unique, so you read coordinates instead of searching. Punchline for layer 4: <b>position is the metadata</b> — no headers anywhere. Grain of the hologram is set here at ~3–4 mm.</aside>
+    </div>
+  </section>
+
+  <!-- 9 · LAYER 3 -->
+  <section class="slide" data-sec="Layer 3 · Inner FEC">
+    <div class="inner">
+      <div class="eyebrow"><span class="tick"></span> Layer 3 · <b>the same LDPC that's in your router</b></div>
+      <h2>Inner FEC: turn a noisy tile into a clean bit — or an erasure</h2>
+      <div class="two">
+        <div>
+          <p class="lead">Tile the page into <b>64×64-cell blocks</b> (~4096 bits, ~4×4 mm). Each is decoded by a soft-decision <b>LDPC</b> from the DVB-S2 / 5G-NR family, taking the equalizer's LLRs. A tile that decodes and passes its interior CRC is a clean symbol; a tile that fails is declared an <b>erasure</b> and handed up.</p>
+          <ul class="clean">
+            <li><b>Per-plane rate ladder</b> — <span class="mono">R_C = R_M = 0.75</span>, <span class="mono">R_Y = 0.60</span>, <span class="mono">R_K = 0.65</span>. Weak plane, more protection.</li>
+            <li><b>Interleave locally only</b> — within a tile, never across the page. Global interleave would kill the fragment-locality R2 demands; bursts are the outer layer's job.</li>
+            <li class="m"><b>Turbo equalize ⇄ decode</b> — the cheapest +1–2 dB in the system; pushes the workable raw-BER regime toward 10⁻¹.</li>
+          </ul>
+          <div class="strip"><b>Job of this layer:</b> convert a graceful analog channel into a clean digital one — <em>"mostly-correct tiles + flagged erasures."</em> That's exactly the input the fountain layer wants.</div>
+        </div>
+        <figure>
+          <svg viewBox="0 0 320 290" width="100%" role="img" aria-label="Page of tiles, some decode cleanly, some become erasures">
+            <text x="8" y="16" class="lbl">PAGE · 64×64-cell tiles</text>
+            <g>
+              <!-- grid of tiles, mostly ok, some erasure/fail -->
+              <!-- row gen -->
+              <g>
+                <rect x="10" y="26" width="44" height="44" rx="4" style="fill:var(--panel);stroke:var(--good)"/><rect x="60" y="26" width="44" height="44" rx="4" style="fill:var(--panel);stroke:var(--good)"/><rect x="110" y="26" width="44" height="44" rx="4" style="fill:var(--panel);stroke:var(--good)"/><rect x="160" y="26" width="44" height="44" rx="4" style="fill:var(--panel);stroke:var(--good)"/><rect x="210" y="26" width="44" height="44" rx="4" style="fill:var(--panel);stroke:var(--good)"/><rect x="260" y="26" width="44" height="44" rx="4" style="fill:var(--panel);stroke:var(--good)"/>
+                <rect x="10" y="76" width="44" height="44" rx="4" style="fill:var(--panel);stroke:var(--good)"/><rect x="60" y="76" width="44" height="44" rx="4" style="fill:color-mix(in srgb,var(--magenta) 16%,var(--panel));stroke:var(--magenta)"/><rect x="110" y="76" width="44" height="44" rx="4" style="fill:var(--panel);stroke:var(--good)"/><rect x="160" y="76" width="44" height="44" rx="4" style="fill:var(--panel);stroke:var(--good)"/><rect x="210" y="76" width="44" height="44" rx="4" style="fill:var(--panel);stroke:var(--good)"/><rect x="260" y="76" width="44" height="44" rx="4" style="fill:var(--panel);stroke:var(--good)"/>
+                <rect x="10" y="126" width="44" height="44" rx="4" style="fill:var(--panel);stroke:var(--good)"/><rect x="60" y="126" width="44" height="44" rx="4" style="fill:var(--panel);stroke:var(--good)"/><rect x="110" y="126" width="44" height="44" rx="4" style="fill:var(--panel);stroke:var(--good)"/><rect x="160" y="126" width="44" height="44" rx="4" style="fill:color-mix(in srgb,var(--magenta) 16%,var(--panel));stroke:var(--magenta)"/><rect x="210" y="126" width="44" height="44" rx="4" style="fill:var(--panel);stroke:var(--good)"/><rect x="260" y="126" width="44" height="44" rx="4" style="fill:var(--panel);stroke:var(--good)"/>
+                <rect x="10" y="176" width="44" height="44" rx="4" style="fill:var(--panel);stroke:var(--good)"/><rect x="60" y="176" width="44" height="44" rx="4" style="fill:var(--panel);stroke:var(--good)"/><rect x="110" y="176" width="44" height="44" rx="4" style="fill:var(--panel);stroke:var(--good)"/><rect x="160" y="176" width="44" height="44" rx="4" style="fill:var(--panel);stroke:var(--good)"/><rect x="210" y="176" width="44" height="44" rx="4" style="fill:var(--panel);stroke:var(--good)"/><rect x="260" y="176" width="44" height="44" rx="4" style="fill:var(--panel);stroke:var(--good)"/>
+              </g>
+              <text x="30" y="53" text-anchor="middle" class="lbl-i" style="fill:var(--good);font-size:14px">✓</text>
+              <text x="82" y="103" text-anchor="middle" class="lbl-i" style="fill:var(--magenta);font-size:13px">✗</text>
+              <text x="182" y="153" text-anchor="middle" class="lbl-i" style="fill:var(--magenta);font-size:13px">✗</text>
+            </g>
+            <text x="8" y="246" class="lbl"><tspan style="fill:var(--good)">✓ decode + CRC</tspan> → clean symbol</text>
+            <text x="8" y="266" class="lbl"><tspan style="fill:var(--magenta)">✗ fail</tspan> → declared erasure, passed to Layer 4</text>
+          </svg>
+        </figure>
+      </div>
+      <aside class="notes"><b>Talk track (~2.5 min).</b> The mental model: layer 3 <b>digitizes</b> the channel. It takes soft LLRs from the equalizer and produces either a clean tile or an honest erasure — with a CRC so the failure is <i>known</i>, never silent. It's the same LDPC family the audience already ships in 5G-NR, Wi-Fi 6, DVB-S2 — familiar tooling. Two design choices worth defending: per-plane rate ladder (yellow gets more protection, tying back to the media slide), and <b>local-only interleaving</b> — this is counterintuitive to a comms person who reflexively interleaves globally for burst immunity, but global interleave would destroy the spatial locality R2 needs. Bursts (a torn corner) are deliberately left for the outer layer. Turbo EQ⇄decode is the free lunch.</aside>
+    </div>
+  </section>
+
+  <!-- 10 · LAYER 4 -->
+  <section class="slide" data-sec="Layer 4 · Outer erasure">
+    <div class="inner">
+      <div class="eyebrow"><span class="tick m"></span> Layer 4 · <b>where "holographic" actually happens</b></div>
+      <h2>Outer erasure: any fragment rebuilds the whole</h2>
+      <div class="two">
+        <div>
+          <p class="lead">Encode the payload with a <b>RaptorQ fountain code (RFC 6330)</b> across the <em>entire multi-page volume</em>. Each inner tile is one fountain symbol. Recovery succeeds from <b>any</b> K(1+ε) distinct symbols — +2 symbols ⇒ failure below 10⁻⁶ — and the geometry of the survivors is irrelevant.</p>
+          <ul class="clean">
+            <li><b>ESI = F(plane, page, x, y)</b> — symbol identity is <em>computed from recovered position</em>. No headers exist anywhere. Layer 2's coordinates <em>are</em> the addressing.</li>
+            <li class="m"><b>Contiguous patch = confetti = core-sample</b> — all the same to an exchangeable code. The "3-D bite through a stack" is free.</li>
+            <li class="y"><b>Priority strata</b> — index/spec at f≈0.02 (any few cm² gives the catalog), critical at 0.3, bulk at 0.7.</li>
+          </ul>
+        </div>
+        <figure>
+          <svg viewBox="0 0 320 300" width="100%" role="img" aria-label="Damaged fragments of a volume reconstruct the full payload">
+            <text x="8" y="16" class="lbl">VOLUME · surviving fragments</text>
+            <!-- torn patch -->
+            <path d="M12 30 L92 26 L100 96 L74 110 L18 100 Z" style="fill:color-mix(in srgb,var(--cyan) 12%,var(--panel));stroke:var(--cyan)"/>
+            <text x="52" y="70" text-anchor="middle" class="lbl">patch</text>
+            <!-- confetti -->
+            <g style="fill:color-mix(in srgb,var(--magenta) 12%,var(--panel));stroke:var(--magenta)">
+              <rect x="120" y="30" width="26" height="22" rx="3"/><rect x="158" y="44" width="22" height="20" rx="3"/><rect x="132" y="66" width="20" height="18" rx="3"/><rect x="166" y="76" width="24" height="18" rx="3"/>
+            </g>
+            <text x="155" y="108" text-anchor="middle" class="lbl">confetti</text>
+            <!-- core sample -->
+            <g style="fill:color-mix(in srgb,var(--yellow-fill) 16%,var(--panel));stroke:var(--yellow)">
+              <rect x="212" y="30" width="86" height="16" rx="3"/><rect x="212" y="50" width="86" height="16" rx="3"/><rect x="212" y="70" width="86" height="16" rx="3"/><rect x="212" y="90" width="86" height="16" rx="3"/>
+            </g>
+            <text x="255" y="124" text-anchor="middle" class="lbl">3-D core</text>
+            <!-- merge arrows -->
+            <path d="M52 118 C 90 150, 120 150, 155 168" class="strk" style="stroke:var(--faint)"/>
+            <path d="M155 116 L157 162" class="strk" style="stroke:var(--faint)"/>
+            <path d="M255 132 C 230 152, 200 155, 172 168" class="strk" style="stroke:var(--faint)"/>
+            <!-- fountain node -->
+            <rect x="96" y="176" width="128" height="42" rx="9" style="fill:var(--panel);stroke:var(--magenta);stroke-width:1.6"/>
+            <text x="160" y="194" text-anchor="middle" class="lbl-i" style="fill:var(--magenta)">RaptorQ decode</text>
+            <text x="160" y="209" text-anchor="middle" class="lbl">K(1+ε) symbols suffice</text>
+            <path d="M160 218 L160 244" class="strk" style="stroke:var(--ink-soft)" marker-end="url(#ah4)"/>
+            <defs><marker id="ah4" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="var(--ink-soft)"/></marker></defs>
+            <rect x="70" y="248" width="180" height="38" rx="9" style="fill:color-mix(in srgb,var(--good) 12%,var(--panel));stroke:var(--good)"/>
+            <text x="160" y="272" text-anchor="middle" class="lbl-i" style="fill:var(--good)">FULL PAYLOAD · byte-exact</text>
+          </svg>
+        </figure>
+      </div>
+      <aside class="notes"><b>Talk track (~3 min).</b> This is the emotional peak — the "holographic" promise cashes out here, and it's just good erasure coding. RaptorQ (RFC 6330) is exactly what the room may know from 3GPP MBMS / reliable multicast: rateless, systematic, decodes from <i>any</i> K(1+ε) symbols with ε tiny. Two things make it magical on paper. (1) <b>ESI = F(plane,page,x,y)</b>: symbol identity is computed from geometry, so there are no headers — layer 2's job (recover position) IS the addressing. (2) Because fountain symbols are exchangeable, a contiguous patch, scattered confetti, and a diagonal core-sample through a 500-sheet stack are all the <i>same</i> to the decoder — the "3-D hologram" requirement falls out for free. Then priority strata: put the index at f≈0.02 so any scrap proves what the archive is, bulk at f≈0.7. This is also where R2's conservation law is spent deliberately.</aside>
+    </div>
+  </section>
+
+  <!-- 11 · PIPELINE -->
+  <section class="slide" data-sec="End to end">
+    <div class="inner">
+      <div class="eyebrow"><span class="tick"></span> Putting it together · <b>the round trip</b></div>
+      <h2>Encode once, decode from anything</h2>
+      <div class="flowlab">ENCODE — data → toner</div>
+      <div class="flow">
+        <div class="step"><small>compress+crypt</small><b>Payload</b></div><div class="arrow">→</div>
+        <div class="step"><small>L4</small><b>RaptorQ symbols</b></div><div class="arrow">→</div>
+        <div class="step"><small>ESI=F(pos)</small><b>Assign to tiles</b></div><div class="arrow">→</div>
+        <div class="step"><small>L3</small><b>LDPC + CRC</b></div><div class="arrow">→</div>
+        <div class="step"><small>L1</small><b>Scramble (PN)</b></div><div class="arrow">→</div>
+        <div class="step"><small>L2</small><b>Weave pilots</b></div><div class="arrow">→</div>
+        <div class="step"><small>L0</small><b>3× 1-bit planes → raw print</b></div>
+      </div>
+      <div class="flowlab dec">DECODE — toner → data (blind, any orientation, any fragment)</div>
+      <div class="flow">
+        <div class="step"><small>L0</small><b>Scan ≥2px/cell</b></div><div class="arrow">→</div>
+        <div class="step"><small>L2</small><b>Lattice FFT + warp field</b></div><div class="arrow">→</div>
+        <div class="step"><small>L2</small><b>Pilot window → (x,y)</b></div><div class="arrow">→</div>
+        <div class="step"><small>L1</small><b>Descramble + unmix</b></div><div class="arrow">→</div>
+        <div class="step"><small>L3</small><b>Turbo EQ ⇄ LDPC</b></div><div class="arrow">→</div>
+        <div class="step"><small>L4</small><b>RaptorQ → verify hashes</b></div>
+      </div>
+      <div class="grid g3" style="margin-top:22px">
+        <div class="card"><span class="kl">Calibration — no marks</span><p>The PN field makes every decoded region a training sequence <em>after the fact</em>. An EM loop estimates PSF / gain / crosstalk from agreeing cells and converges cold — no test targets printed.</p></div>
+        <div class="card"><span class="kl">Verify-on-write</span><p>Every archive run is scanned and fully decoded <em>before</em> the source is trusted to it. Golden hashes ship in the L0 stratum.</p></div>
+        <div class="card"><span class="kl">Bootstrap (R5)</span><p>Two human-readable pages — format, public seed, reference decoder — travel with every volume. The single, deliberate exception to R3.</p></div>
+      </div>
+      <aside class="notes"><b>Talk track (~2.5 min).</b> Now show it as one machine. Encode runs top-down (payload → fountain → tiles → LDPC → scramble → pilots → three raw bitmaps → printer's raw path, bypassing all driver color management). Decode runs the inverse and is <b>fully blind</b>: it recovers geometry, reads absolute position from pilots, descrambles, unmixes color, turbo-decodes, and hands surviving symbols to RaptorQ, finishing with a hash check. Three operational points that make it real: calibration needs no printed targets (the scrambler makes every region a post-hoc training sequence for an EM loop); verify-on-write (never trust the source to paper until a scan round-trips); and the bootstrap pages — the one place we intentionally print human-readable structure, so a future decoder needs nothing but the sheets.</aside>
+    </div>
+  </section>
+
+  <!-- 12 · PERFORMANCE -->
+  <section class="slide" data-sec="Performance">
+    <div class="inner">
+      <div class="eyebrow"><span class="tick"></span> Numbers · <b>targets, measured, prior art</b></div>
+      <h2>How much fits — and what's actually been read back</h2>
+      <p class="lead">Read each lane in three columns: the <b>design target</b>, what's been <b>measured on real toner</b>, and how far the <b>blind round-trip</b> has gone. The two paths are not at the same maturity — and that's the honest headline.</p>
+      <div class="tracks">
+        <div class="lane">
+          <div class="lane-h">
+            <div class="swatch"><i class="sw-c"></i><i class="sw-m"></i><i class="sw-y"></i></div>
+            <div class="lane-t">CMY<span>high capacity</span></div>
+            <div class="lane-goal">density</div>
+          </div>
+          <div class="metric"><b>1.81 MB</b><span>/ side · design, f=0.50 · ream ≈ 1.8 GB</span></div>
+          <ul>
+            <li><b>92 → 133 b/mm²</b> measured areal density — 7-state CMY, HP M281 → Xerox AltaLink record</li>
+            <li>alphabet, crosstalk unmix &amp; per-plane rates all characterized on hardware</li>
+          </ul>
+          <div class="use"><b>Blind round-trip</b><b class="inline">full-stack decode of a color sheet is the next hardware step.</b></div>
+        </div>
+        <div class="lane k">
+          <div class="lane-h">
+            <div class="swatch"><i class="sw-k"></i></div>
+            <div class="lane-t">K-only<span>high resilience</span></div>
+            <div class="lane-goal">durability</div>
+          </div>
+          <div class="metric"><b>0.39 MB</b><span>/ side · design, f=0.35 · century-scale</span></div>
+          <ul>
+            <li><b>53 b/mm²</b> single-plane K c3 · <b>86 → 111–139</b> projected with a 2-D trellis</li>
+            <li>cleanest channel, max contrast, MIC-free, no yellow weak-link</li>
+          </ul>
+          <div class="use ok"><b>✓ M1 · hardware-validated</b><b class="inline">a real sheet (e012) printed → scanned → <span style="color:var(--good);font-weight:640">decoded fully blind at 0.64–3.97% BER</span> — orientation, counter &amp; payload recovered, PASS &lt; 8%.</b></div>
+        </div>
+      </div>
+      <div class="grid g2" style="margin-top:16px">
+        <div class="card flat"><span class="kl">vs prior art — both carry visible fiducials</span><p>Twibright <b>Optar</b> ≈ 0.2 MB/A4 · <b>PaperBack</b> ≤ 3 MB only in ideal conditions. P-nom beats both with <b>no fiducials and any-half recovery</b>.</p></div>
+        <div class="card flat"><span class="kl">Inner-code net · M2 — shared by both paths</span><p>LDPC first decoded bits: <b>35.7 b/mm² blind</b> at 87.5% tile success — the Layer-3 result both lanes inherit.</p></div>
+      </div>
+      <div class="strip"><b>Reality check.</b> The reference engines are 600-dpi-native, not the design's 1200 — so the shipped numbers are 4× below the target tables by construction. What matters for M1: a real sheet went printer → scanner → <b>blind</b> decoder and came back byte-exact.</div>
+      <aside class="notes"><b>Talk track (~3 min).</b> Same two lanes as before, now with numbers — and the punchline is that they're at <b>different maturities</b>. The <b>CMY lane leads on measured density</b>: 92 up to 133 bits/mm² on real toner across two engines (that 133 is the Xerox AltaLink record), but its full-stack <i>blind</i> round-trip is still ahead. The <b>K lane leads on validation</b>: lower design capacity (53 b/mm² today, 111–139 projected with a trellis), but it's the one that's actually been round-tripped — the e012 sheet was printed, scanned on a new flatbed, and decoded <b>fully blind</b> at 0.64–3.97% BER, well inside the 8% envelope, with orientation and frame counter unanimous. So: capacity path is proven on the bench, resilience path is proven end-to-end. Benchmark both honestly against Optar (~200 kB, visible fiducials) and PaperBack (≤3 MB, ideal only). And the reality check: reference printers are 600-dpi native, 4× under the design's 1200 target — M1 was about the round trip working, not a density record.</aside>
+    </div>
+  </section>
+
+  <!-- 13 · SINGLE LAYER / TRILEMMA -->
+  <section class="slide" data-sec="The road not taken">
+    <div class="inner">
+      <div class="eyebrow"><span class="tick m"></span> Alternatives · <b>the "true hologram" and why we didn't ship it</b></div>
+      <h2>One giant nonlinear code — and the trilemma that kills it</h2>
+      <div class="two">
+        <div>
+          <p class="lead">The purist's design: print <span class="mono">y = sign(Φx)</span> — every cell a 1-bit pseudorandom projection of the <em>entire</em> payload. Perfectly smooth degradation, zero tile granularity, structure absent at every scale. The closest binary analog to a real volume hologram.</p>
+          <ul class="clean">
+            <li><b>Compute is <em>not</em> the blocker</b> — with structured operators (SRHT / sparse GAMP), a 200-page volume decodes in minutes for &lt; $5.</li>
+            <li class="m"><b>Information theory is</b> — the 1-bit GLM threshold sits at α<sub>IT</sub> ≈ 1.25 (a provable ~20% rate tax) and today's algorithms need α<sub>alg</sub> ≈ 1.49 (~33%).</li>
+            <li class="y"><b>And the failure mode is all-or-nothing</b> — below f, the layered stack still returns every file whose tiles survived; this returns <em>nothing</em>.</li>
+          </ul>
+        </div>
+        <figure>
+          <svg viewBox="0 0 320 280" width="100%" role="img" aria-label="The capacity, grainlessness, tractability trilemma triangle">
+            <polygon points="160,34 292,250 28,250" fill="none" stroke="var(--line)" stroke-width="1.5"/>
+            <!-- vertices -->
+            <circle cx="160" cy="34" r="6" fill="var(--cyan)"/><text x="160" y="22" text-anchor="middle" class="lbl-i">Capacity</text>
+            <circle cx="292" cy="250" r="6" fill="var(--magenta)"/><text x="292" y="270" text-anchor="middle" class="lbl-i">Grainless</text>
+            <circle cx="28" cy="250" r="6" fill="var(--yellow-fill)"/><text x="28" y="270" text-anchor="middle" class="lbl-i">Tractable</text>
+            <!-- layered edge highlighted -->
+            <line x1="160" y1="34" x2="28" y2="250" stroke="var(--cyan)" stroke-width="4"/>
+            <text x="70" y="140" class="lbl" style="fill:var(--cyan-ink)" transform="rotate(-58 70 140)">LAYERED STACK</text>
+            <!-- dense edge -->
+            <line x1="160" y1="34" x2="292" y2="250" stroke="var(--magenta)" stroke-width="2.4" stroke-dasharray="5 4"/>
+            <text x="250" y="140" class="lbl" style="fill:var(--magenta)" transform="rotate(58 250 140)">dense hologram</text>
+            <text x="160" y="180" text-anchor="middle" class="lbl-i" style="font-size:13px">pick two</text>
+            <text x="160" y="230" text-anchor="middle" class="lbl">grain = the inner tile</text>
+          </svg>
+        </figure>
+      </div>
+      <div class="strip m"><b>The clean statement:</b> capacity, cell-level grainlessness, tractable decoding — <b>pick two.</b> The layered stack picks capacity + tractability and pays with grain (the 4 mm tile). That trade, plus per-file graceful degradation, is why it's the default. Single-layer stays a research track (S2 + N4 progressive holography).</div>
+      <aside class="notes"><b>Talk track (~2.5 min).</b> Give the alternative its due — it's genuinely elegant, and sophisticated audiences respect a well-argued road-not-taken. y = sign(Φx) makes every printed cell depend on all payload bits (CDMA-style superposition), which gives perfectly smooth degradation and no grain at all. The surprise: <b>compute is affordable</b> (structured operators, a few dollars) — the earlier "decoding is too expensive" intuition was wrong. What actually kills it is a proven information-theoretic tax (the 1-bit GLM thresholds, α_IT≈1.25 / α_alg≈1.49 → 20–33% fewer bits) plus a global all-or-nothing cliff, which is unacceptable for an archive. Land it on the trilemma: capacity / grainlessness / tractable decode — pick two. Layer count is bookkeeping; the real knob is how densely payload bits depend on printed cells.</aside>
+    </div>
+  </section>
+
+  <!-- 14 · METHODOLOGY -->
+  <section class="slide" data-sec="How it's built">
+    <div class="inner">
+      <div class="eyebrow"><span class="tick"></span> Engineering discipline · <b>simulate before you spend toner</b></div>
+      <h2>How the thing is actually built &amp; tested</h2>
+      <div class="grid g2" style="margin-bottom:4px">
+        <div class="card"><span class="kl">The loop</span><p style="color:var(--ink)"><b>stimulus → print (raw 9100) → scan → analyze → log.</b> Every layer round-trips against a measured channel simulator before any hardware run. Toner and paper are consumables — nothing gets printed on a hunch.</p></div>
+        <div class="card"><span class="kl">Determinism</span><p>Every stimulus regenerates byte-identically; a SHA in the log gates reuse. All randomness flows from an explicit seed — unseeded RNG is a bug. One phantom-payload incident traced to a numpy dtype fork is why ground truth is never hand-retyped.</p></div>
+        <div class="card"><span class="kl">Two engines characterized</span><p>HP CLJ M281fdw (home, 600 dpi) and Xerox AltaLink C8245 (office). Same-sheet rotate-scan tests separate printer-frame from scanner-frame effects. Never mix scanner color modes for absolute scale.</p></div>
+        <div class="card"><span class="kl">Verify before concluding</span><p>A halftone-screen "hidden signal" turned out to be yellow scatter riding on cyan toner — cosmetic. Rule of the house: demand a discriminating test before writing a rule into the spec.</p></div>
+      </div>
+      <div class="tags">
+        <span class="pill"><span class="dot"></span>Python · numpy / scipy · pillow</span>
+        <span class="pill"><span class="dot"></span>PostScript / PCL raw path</span>
+        <span class="pill"><span class="dot"></span>AES-CTR keystream</span>
+        <span class="pill"><span class="dot"></span>BCH window code</span>
+        <span class="pill"><span class="dot"></span>QC-LDPC (e-IRA)</span>
+        <span class="pill"><span class="dot"></span>RaptorQ stand-in (GF(2))</span>
+        <span class="pill ok"><span class="dot"></span>228 tests green</span>
+      </div>
+      <aside class="notes"><b>Talk track (~2 min).</b> Credibility slide — how a research codebase avoids fooling itself. The rhythm is strict: <b>simulate before toner.</b> Every codec layer must round-trip against a channel simulator that was fitted to real measurements before a single sheet is printed; hardware is expensive and slow, so the sim carries the iteration. Determinism is enforced — stimuli are SHA-gated so a printed sheet is provably the bytes in the log — and there's a war story: a "50% payload but clean pilots" result that turned out to be a numpy dtype bug in the <i>ground truth</i>, not the decoder. Two engines are fully characterized with rotate-scan attribution. The cultural rule worth repeating: <b>verify before concluding</b> — a suspicious signal gets a discriminating test before it becomes a fact.</aside>
+    </div>
+  </section>
+
+  <!-- 15 · STATUS -->
+  <section class="slide" data-sec="Status">
+    <div class="inner">
+      <div class="eyebrow"><span class="tick"></span> Where it stands · <b>M0 → M4</b></div>
+      <h2>Status &amp; roadmap</h2>
+      <div class="stack" style="gap:8px">
+        <div class="row l0" style="grid-template-columns:74px 1.1fr 2fr 130px">
+          <div class="lnum" style="font-size:16px">M0</div>
+          <div class="lname">Channel simulator</div>
+          <div class="lfun">Printer/scanner split, dev morphology, crosstalk, screen model, CAL-1 loader.</div>
+          <div class="lnet"><span class="pill ok"><span class="dot"></span>done</span></div>
+        </div>
+        <div class="row l1" style="grid-template-columns:74px 1.1fr 2fr 130px">
+          <div class="lnum" style="font-size:16px">M1</div>
+          <div class="lname">Modulation + sync</div>
+          <div class="lfun">Pilots end-to-end, blind receiver; <b>real sheet decoded blind</b> (e012).</div>
+          <div class="lnet"><span class="pill ok"><span class="dot"></span>hw-validated</span></div>
+        </div>
+        <div class="row l3" style="grid-template-columns:74px 1.1fr 2fr 130px">
+          <div class="lnum" style="font-size:16px">M2</div>
+          <div class="lname">Inner FEC (LDPC)</div>
+          <div class="lfun">First decoded bits, 35.7 b/mm² net blind; hardware rate ladder next.</div>
+          <div class="lnet"><span class="pill ok"><span class="dot"></span>sim-done</span></div>
+        </div>
+        <div class="row l4" style="grid-template-columns:74px 1.1fr 2fr 130px">
+          <div class="lnum" style="font-size:16px">M3</div>
+          <div class="lname">Outer fountain</div>
+          <div class="lfun">Full-stack blind recovery byte-exact; f* ≈ 0.70–0.78 from 25 mm fragments.</div>
+          <div class="lnet"><span class="pill ok"><span class="dot"></span>sim-done</span></div>
+        </div>
+        <div class="row l2" style="grid-template-columns:74px 1.1fr 2fr 130px">
+          <div class="lnum" style="font-size:16px">M4</div>
+          <div class="lname">Hardware loop</div>
+          <div class="lfun">Two engines characterized; Layer-0 discovery closed; Canon 4800 scanner online.</div>
+          <div class="lnet"><span class="pill ok"><span class="dot"></span>ongoing</span></div>
+        </div>
+      </div>
+      <div class="grid g3" style="margin-top:18px">
+        <div class="card flat"><span class="kl">Next</span><p>LDPC on real scans — the M2 hardware moment.</p></div>
+        <div class="card flat"><span class="kl">Open</span><p>Per-scan multi-scan weights; erasure decoding; c2 blind acquisition.</p></div>
+        <div class="card flat"><span class="kl">Frontier</span><p>2-D spatially-coupled decode; progressive holography (N4).</p></div>
+      </div>
+      <aside class="notes"><b>Talk track (~1.5 min).</b> Quick status so nobody over- or under-claims. M0 (simulator) and M1 (modulation+sync) are done, and M1 is <b>hardware-validated</b> — the headline. M2 (LDPC) and M3 (fountain) are proven in simulation with full-stack blind byte-exact recovery, awaiting their hardware moments. M4, the physical loop, is ongoing — two engines characterized, Layer-0 physics frozen, a new 4800-dpi scanner just online. The honest frontier: the interesting open research is 2-D spatially-coupled decoding that nucleates from arbitrarily-shaped damage, and progressive holography where any fragment yields the whole archive at reduced fidelity — the one property real optical holograms have that no paper scheme yet does.</aside>
+    </div>
+  </section>
+
+  <!-- 16 · RECAP -->
+  <section class="slide" data-sec="Recap">
+    <div class="inner">
+      <div class="eyebrow"><span class="tick"></span> Takeaways</div>
+      <h2>If you remember four things</h2>
+      <div class="grid g2">
+        <div class="card"><span class="kl">01 · the reframe</span><p style="color:var(--ink);font-size:15.5px">A printed archive is a <b>communication link across time.</b> Print = TX, scan = RX, paper = channel. Build a receiver, not a file format.</p></div>
+        <div class="card"><span class="kl">02 · one XOR does four jobs</span><p style="color:var(--ink);font-size:15.5px">The AES-CTR scrambler is DC balance, clock, run-length limiting <em>and</em> the invisibility that makes the sheet look like pure noise — at zero rate cost.</p></div>
+        <div class="card"><span class="kl">03 · geometry is the metadata</span><p style="color:var(--ink);font-size:15.5px">A hidden window-code pilot lattice gives absolute (x,y). Fountain symbol IDs are computed from position, so there are <b>no headers anywhere.</b></p></div>
+        <div class="card"><span class="kl">04 · holography = erasure coding</span><p style="color:var(--ink);font-size:15.5px">RaptorQ over the whole volume makes patch, confetti and core-sample equivalent. Any fraction f rebuilds everything — bounded only by <span class="mono">payload ≤ f × capacity.</span></p></div>
+      </div>
+      <div class="strip"><b>The whole system in one line:</b> a wireless-grade receiver — line coding, pilot-based sync, LDPC, fountain — pointed at a channel made of toner, so that any surviving scrap of a 100-year-old stack decodes the archive byte-exact.</div>
+      <div class="metaline" style="margin-top:20px">
+        <span><b>Spec</b> docs/DESIGN.md (v0.4)</span>
+        <span><b>Layers</b> docs/LAYERS.md</span>
+        <span><b>Reasoning</b> docs/REASONING-LOG.md</span>
+        <span><b>Code</b> src/paperholo/ · experiments/</span>
+      </div>
+      <aside class="notes"><b>Talk track (~2 min) + close.</b> Land the four keepers: (1) the reframe — storage as a link across time; (2) the scrambler doing four jobs for free; (3) geometry-as-metadata, so nothing carries a header; (4) holography is just volume-wide erasure coding under the payload ≤ f×capacity law. Close on the one-liner: it's a wireless-grade receiver aimed at toner. Then open the floor — good questions to seed: "what's the real archival lifetime evidence?" (toner permanence, accelerated aging is an open item), "why not QR at scale?" (fiducials, no fragment recovery, far lower density), and "could you decode a coffee-stained page?" (yes — that's literally layers 3 and 4). Point them at DESIGN.md for the full derivation.</aside>
+    </div>
+  </section>
+
+  <!-- HUD -->
+  <div class="hud">
+    <span class="sec" id="hudSec">Cold open</span>
+    <div class="prog"><i id="hudBar"></i></div>
+    <span class="idx"><span id="hudIdx">1</span> / <span id="hudTot">16</span></span>
+    <div class="btns">
+      <button id="btnNotes" title="Toggle presenter notes (S)">NOTES</button>
+      <button id="btnTheme" title="Toggle theme (T)">THEME</button>
+      <button id="btnFull" title="Fullscreen (F)">⤢</button>
+    </div>
+    <span class="hint">← → navigate · S notes · F full</span>
+  </div>
+</div>
+<button class="navbtn prev" id="navPrev" aria-label="Previous slide">‹</button>
+<button class="navbtn next" id="navNext" aria-label="Next slide">›</button>
+
+<script>
+(function(){
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var i = 0, n = slides.length;
+  var bar = document.getElementById('hudBar');
+  var idx = document.getElementById('hudIdx');
+  var sec = document.getElementById('hudSec');
+  document.getElementById('hudTot').textContent = n;
+
+  function show(k){
+    i = Math.max(0, Math.min(n-1, k));
+    slides.forEach(function(s,j){ s.classList.toggle('active', j===i); });
+    bar.style.width = ((i+1)/n*100) + '%';
+    idx.textContent = i+1;
+    sec.textContent = slides[i].getAttribute('data-sec') || '';
+    slides[i].scrollTop = 0;
+    if(location.hash !== '#'+(i+1)) history.replaceState(null,'','#'+(i+1));
+  }
+  function next(){ show(i+1); }
+  function prev(){ show(i-1); }
+
+  document.addEventListener('keydown', function(e){
+    if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' '){ e.preventDefault(); next(); }
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){ e.preventDefault(); prev(); }
+    else if(e.key==='Home'){ e.preventDefault(); show(0); }
+    else if(e.key==='End'){ e.preventDefault(); show(n-1); }
+    else if(e.key==='s'||e.key==='S'||e.key==='n'||e.key==='N'){ document.body.classList.toggle('notes-on'); }
+    else if(e.key==='t'||e.key==='T'){ toggleTheme(); }
+    else if(e.key==='f'||e.key==='F'){ toggleFull(); }
+  });
+
+  document.getElementById('navNext').addEventListener('click', next);
+  document.getElementById('navPrev').addEventListener('click', prev);
+  document.getElementById('btnNotes').addEventListener('click', function(){ document.body.classList.toggle('notes-on'); });
+
+  function toggleFull(){
+    if(!document.fullscreenElement){ (document.documentElement.requestFullscreen||function(){})(); }
+    else if(document.exitFullscreen){ document.exitFullscreen(); }
+  }
+  document.getElementById('btnFull').addEventListener('click', toggleFull);
+
+  function currentTheme(){
+    var r = document.documentElement;
+    if(r.getAttribute('data-theme')) return r.getAttribute('data-theme');
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  function toggleTheme(){
+    var t = currentTheme()==='dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', t);
+  }
+  document.getElementById('btnTheme').addEventListener('click', toggleTheme);
+
+  var start = parseInt((location.hash||'').replace('#',''),10);
+  show(isNaN(start)?0:start-1);
+})();
+</script>

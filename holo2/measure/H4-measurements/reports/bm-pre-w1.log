@@ -1,0 +1,35 @@
+=== START bm-pre-w1 (run_decode_ab.py, arm=pre, W=1) Mon Aug 17 07:11:25 CEST 2026 ===
+[bm] arm=pre — twin's rule 2 is bch._berlekamp_massey per row, from 6c241cd (246 lines)
+format   c2-r0700@3392x2368 · codec k-v1 · 1 page domain · streams main · PROVISIONAL
+capture  1 ingested · cf29e165ebe4… · done coverage 68.9% (5534263/8034771 cells)
+queue    ready 175[payload:74,place:101] · running 0 · sleeping 337 · retired 1357 · declined 0 (re-offerable 0) · pool 1/free
+work     commits 1919 (scheduled 1918) · fires 2323 · wakes/commit 0.71 · useful 0.68 · peak 0 · stale 0
+tiles    UNKNOWN 0 · ADDRESSED 397 · ATTEMPTED 7 · CERTIFIED 1357 · crc exposure 1364 spends/1364 attempts
+close    verified · certified 1357 · K 1357/1356 · metadata rank 24/24 · blocks 1/1
+[bm-pre-w1] RESULT VERIFIED certified=1357 commits=1918 fires=2323 wall=339s workers=1
+[bm-pre-w1] payload 465580 B sha e5021f8d099587c3
+[bm-pre-w1] vs w1a-gc-serial.bin: BYTE-IDENTICAL
+[bm-pre-w1] FIRES 2323 busy 242.5s wall*W 339.0s utilisation 71.5% (residual = idle + main-thread phases)
+[bm-pre-w1]   fire wall: median 0.8ms p90 62.0ms max 2573.3ms
+[bm-pre-w1] ROUNDS none (continuous admission)
+[bm] arm=pre: batched blocks 3640 (7,599,060 candidate rows); scalar rows 0; H per block min 81 median 576 max 4096
+      339.46 real       335.06 user         2.44 sys
+          2723102720  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              180767  page reclaims
+               94315  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   4  messages sent
+                   4  messages received
+                   0  signals received
+               12856  voluntary context switches
+               45806  involuntary context switches
+       5090518825693  instructions retired
+       1081837942215  cycles elapsed
+          1035569312  peak memory footprint
+EXIT_CODE=0
+=== END bm-pre-w1 Mon Aug 17 07:17:05 CEST 2026 ===

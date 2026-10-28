@@ -1,0 +1,33 @@
+=== START cards-real-w8 (W=8, port=8703, tree=<checkout>) Mon Aug 17 08:47:31 CEST 2026 ===
+format   c2-r0700@3392x2368 · codec k-v1 · 1 page domain · streams main · PROVISIONAL
+capture  1 ingested · 57a261454cc0… · done coverage 69.2% (5571653/8048178 cells)
+queue    ready 776[payload:773,place:3] · running 0 · sleeping 20 · retired 1357 · declined 0 (re-offerable 0) · pool 8/free
+work     commits 1891 (scheduled 1890) · fires 1903 · wakes/commit 0.82 · useful 0.99 · peak 8 · stale 49
+tiles    UNKNOWN 0 · ADDRESSED 409 · ATTEMPTED 192 · CERTIFIED 1357 · crc exposure 1549 spends/1549 attempts
+close    verified · certified 1357 · K 1357/1356 · metadata rank 24/24 · blocks 1/1
+[cards-real-w8] RESULT VERIFIED certified=1357 commits=1890 fires=1903 wall=231s workers=8
+[cards-real-w8] payload 465580 B sha e5021f8d099587c3
+[cards-real-w8] vs c2bw-waved.bin: BYTE-IDENTICAL
+[cards-real-w8] FIRES 1959 busy 1537.3s wall*W 1844.2s utilisation 83.4% (residual = idle + main-thread phases)
+[cards-real-w8]   fire wall: median 328.2ms p90 1544.6ms max 35415.0ms
+[cards-real-w8] ROUNDS none (continuous admission)
+      231.05 real       282.47 user        42.64 sys
+         32129564672  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+             1861794  page reclaims
+             1518024  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   4  messages sent
+                   4  messages received
+                   0  signals received
+               55258  voluntary context switches
+             4742581  involuntary context switches
+       3797893915531  instructions retired
+        982223158912  cycles elapsed
+          5537864184  peak memory footprint
+EXIT_CODE=0
+=== END cards-real-w8 Mon Aug 17 08:51:22 CEST 2026 ===

@@ -1,0 +1,549 @@
+diff --git a/holo3/data.py b/holo3/data.py
+index c5c883a..108d705 100644
+--- a/holo3/data.py
++++ b/holo3/data.py
+@@ -90,6 +90,10 @@ class LatticeSeed:
+     window_ordinal: int = 0
+ 
+ 
++def lattice_seed_ordinal(seed: LatticeSeed) -> tuple[int, int]:
++    return (int(seed.support_cells), -int(seed.window_ordinal))
++
++
+ @dataclass(frozen=True)
+ class Placement:
+     window_id: tuple[str, int, int, tuple[int, int, int, int]]
+@@ -104,9 +108,18 @@ class Placement:
+     pitch_px: float
+     route: str
+     local_cells_yx: np.ndarray
++    quality: float = 0.0
+     refine_basis: RefineBasis = ()
+ 
+ 
++ROUTE_REFINE: str = "refine"
++
++
++def placement_ordinal(placement: Placement) -> tuple[int, int, float]:
++    return (int(placement.route == ROUTE_REFINE),
++            len(placement.refine_basis), -float(placement.quality))
++
++
+ @dataclass(frozen=True)
+ class WindowEvidence:
+     window_id: tuple[str, int, int, tuple[int, int, int, int]]
+@@ -137,6 +150,15 @@ class RegionCtx:
+     offsets: np.ndarray
+     adopted: bool
+     reason: str
++    validation_logloss: float | None = None
++
++
++def region_ctx_ordinal(ctx: RegionCtx) -> tuple[int, float]:
++    if not ctx.adopted:
++        return (0, -float("inf"))
++    if ctx.validation_logloss is None:
++        return (1, -float("inf"))
++    return (1, -float(ctx.validation_logloss))
+ 
+ 
+ @dataclass(frozen=True)
+diff --git a/holo3/plugins/calibrate.py b/holo3/plugins/calibrate.py
+index a8bd8dc..347697e 100644
+--- a/holo3/plugins/calibrate.py
++++ b/holo3/plugins/calibrate.py
+@@ -531,9 +531,9 @@ def apply_region_context(
+     if not fitted:
+         return base, _region_ctx(base[0], np.zeros(N_CONTEXT_BINS, np.float64),
+                                  False, "no_accepted_windows")
+-    offsets, adopted, reason, _baseline, _candidate = context_decision(
++    offsets, adopted, reason, _baseline, candidate = context_decision(
+         _pool(search_parts), _pool(validation_parts))
+-    ctx = _region_ctx(base[0], offsets, adopted, reason)
++    ctx = _region_ctx(base[0], offsets, adopted, reason, candidate)
+     if not adopted:
+         return base, ctx
+     out = list(base)
+@@ -551,9 +551,10 @@ def apply_region_context(
+ 
+ 
+ def _region_ctx(row: WindowEvidence, offsets: np.ndarray, adopted: bool,
+-                reason: str) -> RegionCtx:
++                reason: str,
++                validation_logloss: float | None = None) -> RegionCtx:
+     return RegionCtx(row.capture_id, row.level_index, row.region_index,
+-                     offsets, adopted, reason)
++                     offsets, adopted, reason, validation_logloss)
+ 
+ 
+ def freeze_owners(rows: Sequence[WindowEvidence],
+diff --git a/holo3/plugins/place.py b/holo3/plugins/place.py
+index ae3286d..d911a42 100644
+--- a/holo3/plugins/place.py
++++ b/holo3/plugins/place.py
+@@ -806,7 +806,8 @@ def run_window_pass(job: WindowPass) -> WindowPassResult:
+         native_affine=native,
+         pitch_px=pitch_native,
+         route=str(route),
+-        local_cells_yx=local_cells)
++        local_cells_yx=local_cells,
++        quality=float(mismatch))
+     local_shape = (int(np.asarray(audited).shape[0]),
+                    int(np.asarray(audited).shape[1]))
+     event = data.PoseCommitted(
+diff --git a/holo3/store.py b/holo3/store.py
+index 07203ba..e911f0e 100644
+--- a/holo3/store.py
++++ b/holo3/store.py
+@@ -1,5 +1,8 @@
+ from __future__ import annotations
+ 
++from dataclasses import replace
++from typing import Callable
++
+ import numpy as np
+ 
+ from . import data
+@@ -33,6 +36,11 @@ from .plugins import (
+ )
+ 
+ 
++def _adopts(standing: object | None, fact: object,
++            ordinal: Callable[[object], tuple]) -> bool:
++    return standing is None or ordinal(fact) > ordinal(standing)
++
++
+ def _update_cover(forward: dict, inverse: dict, member: object,
+                   new_keys: tuple) -> None:
+     old_keys = inverse.get(member, ())
+@@ -418,6 +426,8 @@ class _Store:
+                                                  str]:
+         wid = fact.window_id
+         standing = self._placements.get(wid)
++        if not _adopts(standing, fact, data.placement_ordinal):
++            return False, (), "pose"
+         affine_changed = (
+             standing is None
+             or standing.page != fact.page
+@@ -429,8 +439,6 @@ class _Store:
+             or not np.array_equal(standing.local_cells_yx,
+                                   fact.local_cells_yx))
+         route_changed = standing is None or standing.route != fact.route
+-        if not affine_changed and not route_changed:
+-            return False, (), "pose"
+         self._placements[wid] = fact
+         keys: list[FactKey] = []
+         if affine_changed:
+@@ -473,13 +481,9 @@ class _Store:
+                                              str]:
+         key: RegionKey = (fact.capture_id, fact.level_index,
+                           fact.region_index)
+-        standing = self._lattice_seeds.get(key)
+-        if standing is not None:
+-            if standing.support_cells > fact.support_cells:
+-                return False, (), "other"
+-            if (standing.support_cells == fact.support_cells
+-                    and standing.window_ordinal <= fact.window_ordinal):
+-                return False, (), "other"
++        if not _adopts(self._lattice_seeds.get(key), fact,
++                       data.lattice_seed_ordinal):
++            return False, (), "other"
+         self._lattice_seeds[key] = fact
+         return True, ((KEY_LATTICE_SEED,) + tuple(key),), "other"
+ 
+@@ -533,6 +537,14 @@ class _Store:
+             self,
+             fact: calibrate.CtxOutcome) -> tuple[bool, tuple[FactKey, ...],
+                                                  str]:
++        standing = self._region_ctx.get(fact.region_key)
++        adopts = _adopts(standing, fact.ctx, data.region_ctx_ordinal)
++        held = (standing is not None
++                and standing.adopted == fact.ctx.adopted
++                and np.array_equal(standing.offsets, fact.ctx.offsets,
++                                   equal_nan=True))
++        if not adopts and not held:
++            return False, (), "other"
+         keys: list[FactKey] = []
+         for before, after in zip(fact.inputs, fact.outputs):
+             if before is after:
+@@ -541,14 +553,7 @@ class _Store:
+             if changed:
+                 self._births(after)
+                 keys.extend(evidence_keys)
+-        standing = self._region_ctx.get(fact.region_key)
+-        ctx_changed = (standing is None
+-                       or not np.array_equal(standing.offsets,
+-                                             fact.ctx.offsets,
+-                                             equal_nan=True)
+-                       or standing.adopted != fact.ctx.adopted
+-                       or standing.reason != fact.ctx.reason)
+-        if ctx_changed:
++        if adopts:
+             self._region_ctx[fact.region_key] = fact.ctx
+             keys.append((KEY_REGION_CTX,) + tuple(fact.region_key))
+         return True, tuple(keys), "other"
+@@ -561,8 +566,12 @@ class _Store:
+             return True, (), "other"
+         placement = self._placements[fact.window_id]
+         revised = refine.revised_placement(placement, fact.revision)
+-        _changed, keys, _kind = self._fold_placement(revised)
+-        self._births(revised)
++        if fact.revision.candidate_logloss is not None:
++            revised = replace(
++                revised, quality=float(fact.revision.candidate_logloss))
++        changed, keys, _kind = self._fold_placement(revised)
++        if changed:
++            self._births(revised)
+         return True, keys, "pose"
+ 
+     def _fold_attempt(
+diff --git a/holo3/tests/test_h3_engine_contract.py b/holo3/tests/test_h3_engine_contract.py
+index 9939d7a..c82ff74 100644
+--- a/holo3/tests/test_h3_engine_contract.py
++++ b/holo3/tests/test_h3_engine_contract.py
+@@ -1052,3 +1052,45 @@ def test_a_fully_certified_reach_retires_the_refine_worker(refine_lift):
+     assert refine_lift["full"]["retired"] is True
+     assert refine_lift["second"]["retired"] is False
+     assert refine_lift["born"]["retired"] is False
++
++
++def test_the_store_consults_the_schema_ordinals_as_the_one_gatekeeper(
++        monkeypatch):
++    calls: list[str] = []
++
++    def spy(name: str, ordinal: object) -> object:
++        def wrapped(value: object) -> tuple:
++            calls.append(name)
++            return ordinal(value)
++
++        return wrapped
++
++    monkeypatch.setattr(data, "placement_ordinal",
++                        spy("placement", data.placement_ordinal))
++    monkeypatch.setattr(data, "region_ctx_ordinal",
++                        spy("region_ctx", data.region_ctx_ordinal))
++    monkeypatch.setattr(data, "lattice_seed_ordinal",
++                        spy("lattice_seed", data.lattice_seed_ordinal))
++    instance = _h3_facts.seeded_engine("Placement")
++    instance._ingest(_h3_facts.placement())
++    instance._ingest(_h3_facts.placement(origin_yx=(8.0, 8.0)))
++    instance._ingest(_h3_facts.lattice_seed(support_cells=10))
++    instance._ingest(_h3_facts.lattice_seed(support_cells=9))
++    instance._ingest(_h3_facts.ctx_outcome())
++    instance._ingest(_h3_facts.ctx_outcome(offset=0.25))
++    assert set(calls) == {"placement", "region_ctx", "lattice_seed"}, (
++        "every decision cell's mutator consults the ordinal its schema "
++        "declares in holo3.data: one gatekeeper shape, three cells")
++
++
++def test_an_adopted_revision_publishes_its_held_out_loss_as_quality():
++    instance = _h3_facts.seeded_engine("RefineOutcome")
++    revision = refine.Revision(
++        adopted=True, reason=refine.OUTCOME_ADOPTED,
++        affine=(4.0, 0.0, 9.0, 0.0, 4.0, 9.0), candidate_logloss=0.42,
++        basis=((0, 0, 0),))
++    instance._ingest(refine.RefineOutcome(_h3_facts.WINDOW_ID, revision))
++    placement = instance.placement(_h3_facts.WINDOW_ID)
++    assert placement.quality == 0.42
++    assert placement.route == refine.ROUTE_REFINE
++    assert placement.refine_basis == ((0, 0, 0),)
+diff --git a/holo3/tests/test_h3_cell_classes.py b/holo3/tests/test_h3_cell_classes.py
+new file mode 100644
+index 0000000..81414db
+--- /dev/null
++++ b/holo3/tests/test_h3_cell_classes.py
+@@ -0,0 +1,294 @@
++from __future__ import annotations
++
++import dataclasses
++
++import numpy as np
++
++from holo3 import data
++from holo3.descriptor import (
++    KEY_LATTICE_SEED,
++    KEY_POSE_AFFINE,
++    KEY_POSE_ROUTE,
++    KEY_REGION_CTX,
++    WorkerBookmark,
++)
++from holo3.plugins import refine
++from holo3.tests import _h3_facts
++
++CAPTURE_ID = _h3_facts.CAPTURE_ID
++WID = _h3_facts.WINDOW_ID
++WID_B = (CAPTURE_ID, 0, 0, (64, 0, 128, 64))
++REGION = (CAPTURE_ID, 0, 0)
++
++ORIGIN_A = (0.0, 0.0)
++ORIGIN_B = (8.0, 8.0)
++BASIS_ONE = ((0, 0, 0),)
++BASIS_TWO = ((0, 0, 0), (0, 0, 1))
++
++
++class _Wakes:
++
++    def __init__(self, engine: object) -> None:
++        self.engine = engine
++        self.pushed: list = []
++        engine._push_worker = self.pushed.append
++
++    def subscribe(self, *keys: tuple) -> WorkerBookmark:
++        subject = ("probe", len(self.engine._bookmarks))
++        worker = WorkerBookmark(plugin="probe", subject=subject, reads=keys)
++        self.engine._bookmarks[("probe", subject)] = worker
++        self.engine._register_reads(worker, keys)
++        return worker
++
++
++def _wakes(fact_name: str) -> tuple[object, _Wakes]:
++    engine = _h3_facts.seeded_engine(fact_name)
++    return engine, _Wakes(engine)
++
++
++def _placement(quality: float, origin: tuple[float, float] = ORIGIN_A,
++               route: str = "word",
++               basis: tuple = ()) -> data.Placement:
++    return dataclasses.replace(
++        _h3_facts.placement(origin_yx=origin, route=route),
++        quality=quality, refine_basis=basis)
++
++
++def _ctx(loss: float | None, offset: float = 0.0,
++         adopted: bool = True) -> data.RegionCtx:
++    return dataclasses.replace(
++        _h3_facts.region_ctx(adopted=adopted, offset=offset),
++        validation_logloss=loss)
++
++
++def _ctx_outcome(loss: float | None, offset: float = 0.0,
++                 adopted: bool = True) -> object:
++    return dataclasses.replace(
++        _h3_facts.ctx_outcome(adopted=adopted, offset=offset),
++        ctx=_ctx(loss, offset, adopted))
++
++
++def _seed(support: int, ordinal: int) -> data.LatticeSeed:
++    return dataclasses.replace(
++        _h3_facts.lattice_seed(support_cells=support,
++                               window_ordinal=ordinal),
++        rows=np.full((2, 2), float(ordinal), np.float64))
++
++
++def test_the_ordinals_are_owned_by_the_cell_schema_not_any_plugin():
++    assert data.ROUTE_REFINE == refine.ROUTE_REFINE
++    original = _placement(0.25)
++    revision = _placement(0.90, basis=BASIS_ONE, route=data.ROUTE_REFINE)
++    assert data.placement_ordinal(revision) > data.placement_ordinal(
++        original), (
++        "an adopted revision outranks any original — its held-out gate "
++        "already proved it better; the route rank keeps mismatch and "
++        "logloss units from ever being compared")
++    assert data.placement_ordinal(
++        _placement(0.90, route=data.ROUTE_REFINE)) > data.placement_ordinal(
++        _placement(0.01)), (
++        "the rank holds even for a revision that carries no basis: the "
++        "producer's adoption gate is the proof, not the scalar")
++    assert data.placement_ordinal(_placement(0.1)) > data.placement_ordinal(
++        _placement(0.2))
++    assert data.region_ctx_ordinal(_ctx(0.3)) > data.region_ctx_ordinal(
++        _ctx(0.4))
++    assert data.region_ctx_ordinal(_ctx(9.9)) > data.region_ctx_ordinal(
++        _ctx(None, adopted=False))
++    assert data.lattice_seed_ordinal(_seed(20, 7)) > \
++        data.lattice_seed_ordinal(_seed(19, 0))
++    assert data.lattice_seed_ordinal(_seed(20, 3)) > \
++        data.lattice_seed_ordinal(_seed(20, 7))
++
++
++def test_a_worse_placement_is_a_no_op_that_wakes_nobody():
++    engine, wakes = _wakes("Placement")
++    affine = wakes.subscribe((KEY_POSE_AFFINE, WID))
++    route = wakes.subscribe((KEY_POSE_ROUTE, WID))
++    assert engine._ingest(_placement(0.10))[0] is True
++    before = (affine.version, route.version, len(wakes.pushed))
++    changed, _kind = engine._ingest(_placement(0.20, origin=ORIGIN_B,
++                                               route="chain"))
++    assert changed is False
++    assert (affine.version, route.version, len(wakes.pushed)) == before
++    assert engine.placement(WID).quality == 0.10
++    assert engine.placement(WID).native_affine[2] == ORIGIN_A[0]
++    assert engine.placement(WID).route == "word"
++
++
++def test_a_better_placement_lands_and_wakes_its_keys():
++    engine, wakes = _wakes("Placement")
++    affine = wakes.subscribe((KEY_POSE_AFFINE, WID))
++    engine._ingest(_placement(0.20))
++    changed, _kind = engine._ingest(_placement(0.10, origin=ORIGIN_B))
++    assert changed is True
++    assert affine.version == 2
++    assert engine.placement(WID).quality == 0.10
++
++
++def test_the_placement_tie_break_is_deterministic_first_writer_stands():
++    for first, second in ((ORIGIN_A, ORIGIN_B), (ORIGIN_B, ORIGIN_A)):
++        engine, wakes = _wakes("Placement")
++        affine = wakes.subscribe((KEY_POSE_AFFINE, WID))
++        assert engine._ingest(_placement(0.10, origin=first))[0] is True
++        changed, _kind = engine._ingest(_placement(0.10, origin=second))
++        assert changed is False
++        assert affine.version == 1
++        assert engine.placement(WID).native_affine[2] == first[0]
++
++
++def test_a_placement_a_b_a_cycle_is_unrepresentable():
++    engine, wakes = _wakes("Placement")
++    affine = wakes.subscribe((KEY_POSE_AFFINE, WID))
++    first = _placement(0.20)
++    better = _placement(0.10, origin=ORIGIN_B)
++    engine._ingest(first)
++    engine._ingest(better)
++    assert affine.version == 2
++    changed, _kind = engine._ingest(first)
++    assert changed is False
++    assert affine.version == 2
++    assert engine.placement(WID).quality == better.quality
++    assert engine.placement(WID).native_affine == better.native_affine
++
++
++def test_a_grown_basis_lands_even_at_slightly_worse_scalar_quality():
++    engine, _wakes_unused = _wakes("Placement")
++    engine._ingest(_placement(0.30, basis=BASIS_ONE, route="refine"))
++    changed, _kind = engine._ingest(
++        _placement(0.35, origin=ORIGIN_B, basis=BASIS_TWO, route="refine"))
++    assert changed is True
++    assert engine.placement(WID).refine_basis == BASIS_TWO
++    shrunk, _kind = engine._ingest(_placement(0.01, basis=BASIS_ONE,
++                                              route="refine"))
++    assert shrunk is False
++    assert engine.placement(WID).refine_basis == BASIS_TWO
++
++
++def test_an_adopted_revision_outranks_the_original_across_units():
++    engine, wakes = _wakes("Placement")
++    affine = wakes.subscribe((KEY_POSE_AFFINE, WID))
++    engine._ingest(_placement(0.05))
++    changed, _kind = engine._ingest(
++        _placement(0.90, origin=ORIGIN_B, route=refine.ROUTE_REFINE,
++                   basis=BASIS_ONE))
++    assert changed is True
++    assert affine.version == 2
++    assert engine.placement(WID).route == refine.ROUTE_REFINE
++
++
++def test_a_worse_ctx_fit_is_a_no_op_that_wakes_nobody():
++    engine, wakes = _wakes("CtxOutcome")
++    ctx = wakes.subscribe((KEY_REGION_CTX,) + REGION)
++    assert engine._ingest(_ctx_outcome(0.40, offset=0.1))[0] is True
++    assert ctx.version == 1
++    before = len(wakes.pushed)
++    changed, _kind = engine._ingest(_ctx_outcome(0.50, offset=0.2))
++    assert changed is False
++    assert ctx.version == 1 and len(wakes.pushed) == before
++    assert engine.region_ctx(REGION).validation_logloss == 0.40
++
++
++def test_a_better_ctx_fit_lands_and_wakes_the_region_key():
++    engine, wakes = _wakes("CtxOutcome")
++    ctx = wakes.subscribe((KEY_REGION_CTX,) + REGION)
++    engine._ingest(_ctx_outcome(0.40, offset=0.1))
++    changed, _kind = engine._ingest(_ctx_outcome(0.30, offset=0.2))
++    assert changed is True
++    assert ctx.version == 2
++    assert engine.region_ctx(REGION).validation_logloss == 0.30
++
++
++def test_an_adopted_ctx_never_falls_back_to_a_refused_refit():
++    engine, wakes = _wakes("CtxOutcome")
++    ctx = wakes.subscribe((KEY_REGION_CTX,) + REGION)
++    engine._ingest(_ctx_outcome(0.40, offset=0.1))
++    changed, _kind = engine._ingest(_ctx_outcome(None, adopted=False))
++    assert changed is False
++    assert ctx.version == 1
++    assert engine.region_ctx(REGION).adopted is True
++    lands, _kind = engine._ingest(_ctx_outcome(0.20, offset=0.3))
++    assert lands is True and ctx.version == 2
++
++
++def test_the_ctx_tie_break_is_deterministic_first_writer_stands():
++    for first, second in ((0.1, 0.2), (0.2, 0.1)):
++        engine, wakes = _wakes("CtxOutcome")
++        ctx = wakes.subscribe((KEY_REGION_CTX,) + REGION)
++        engine._ingest(_ctx_outcome(0.40, offset=first))
++        changed, _kind = engine._ingest(_ctx_outcome(0.40, offset=second))
++        assert changed is False
++        assert ctx.version == 1
++        assert float(engine.region_ctx(REGION).offsets[0]) == np.float32(
++            first)
++
++
++def test_a_ctx_a_b_a_cycle_is_unrepresentable():
++    engine, wakes = _wakes("CtxOutcome")
++    ctx = wakes.subscribe((KEY_REGION_CTX,) + REGION)
++    first = _ctx_outcome(0.40, offset=0.1)
++    engine._ingest(first)
++    engine._ingest(_ctx_outcome(0.30, offset=0.2))
++    changed, _kind = engine._ingest(first)
++    assert changed is False
++    assert ctx.version == 2
++    assert engine.region_ctx(REGION).validation_logloss == 0.30
++
++
++def test_outputs_derived_under_the_standing_decision_still_land():
++    engine, wakes = _wakes("CtxOutcome")
++    ctx = wakes.subscribe((KEY_REGION_CTX,) + REGION)
++    engine._ingest(_ctx_outcome(0.40, offset=0.1))
++    assert ctx.version == 1
++    late = dataclasses.replace(
++        _ctx_outcome(0.40, offset=0.1),
++        inputs=(_h3_facts.evidence(wid=WID_B),),
++        outputs=(_h3_facts.evidence(wid=WID_B, ctx_adopted=True,
++                                    printed=2.0),))
++    changed, _kind = engine._ingest(late)
++    assert changed is True, (
++        "a re-fit reproducing the standing decision carries corrections "
++        "for windows that arrived since: the derived rows land, the "
++        "decision itself no-ops")
++    assert engine.evidence(WID_B) is not None
++    assert engine.evidence(WID_B).ctx_adopted is True
++    assert ctx.version == 1
++
++
++def test_a_weaker_lattice_seed_is_a_no_op_that_wakes_nobody():
++    engine, wakes = _wakes("LatticeSeed")
++    seed = wakes.subscribe((KEY_LATTICE_SEED,) + REGION)
++    assert engine._ingest(_seed(20, 5))[0] is True
++    assert seed.version == 1
++    changed, _kind = engine._ingest(_seed(5, 0))
++    assert changed is False and seed.version == 1
++
++
++def test_a_stronger_lattice_seed_lands_and_wakes():
++    engine, wakes = _wakes("LatticeSeed")
++    seed = wakes.subscribe((KEY_LATTICE_SEED,) + REGION)
++    engine._ingest(_seed(20, 5))
++    changed, _kind = engine._ingest(_seed(21, 9))
++    assert changed is True and seed.version == 2
++    assert engine.lattice_seed(REGION).support_cells == 21
++
++
++def test_the_seed_tie_break_is_the_window_ordinal_in_either_order():
++    for first, second in ((5, 3), (3, 5)):
++        engine, _probe = _wakes("LatticeSeed")
++        engine._ingest(_seed(20, first))
++        engine._ingest(_seed(20, second))
++        assert engine.lattice_seed(REGION).window_ordinal == 3, (
++            "equal support resolves on the producing window ordinal: both "
++            "arrival orders converge on the same seed")
++
++
++def test_a_seed_a_b_a_cycle_is_unrepresentable():
++    engine, wakes = _wakes("LatticeSeed")
++    seed = wakes.subscribe((KEY_LATTICE_SEED,) + REGION)
++    engine._ingest(_seed(20, 5))
++    engine._ingest(_seed(20, 3))
++    assert seed.version == 2
++    changed, _kind = engine._ingest(_seed(20, 5))
++    assert changed is False and seed.version == 2
++    assert engine.lattice_seed(REGION).window_ordinal == 3

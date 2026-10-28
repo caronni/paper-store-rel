@@ -1,0 +1,33 @@
+=== START h4b-gc-serial Mon Aug 17 12:03:33 CEST 2026 ===
+format   c2-r0700@3392x2368 · codec k-v1 · 1 page domain · streams main · PROVISIONAL
+capture  1 ingested · cf29e165ebe4… · done coverage 68.9% (5534263/8034771 cells)
+queue    ready 175[payload:74,place:101] · running 0 · sleeping 337 · retired 1357 · declined 0 (re-offerable 0) · pool 1/free
+work     commits 1919 (scheduled 1918) · fires 2323 · wakes/commit 0.71 · useful 0.68 · peak 0 · stale 0
+tiles    UNKNOWN 0 · ADDRESSED 397 · ATTEMPTED 7 · CERTIFIED 1357 · crc exposure 1364 spends/1364 attempts
+close    verified · certified 1357 · K 1357/1356 · metadata rank 24/24 · blocks 1/1
+[h4b-gc-serial] RESULT VERIFIED certified=1357 commits=1918 fires=2323 wall=125s workers=1
+[h4b-gc-serial] payload 465580 B sha e5021f8d099587c3
+[h4b-gc-serial] vs w1a-gc-serial.bin: BYTE-IDENTICAL
+[h4b-gc-serial] FIRES 2323 busy 114.4s wall*W 125.2s utilisation 91.4% (residual = idle + main-thread phases)
+[h4b-gc-serial]   fire wall: median 0.8ms p90 58.4ms max 2414.6ms
+[h4b-gc-serial] ROUNDS none (continuous admission)
+      125.72 real       120.83 user         2.58 sys
+          2736095232  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              174172  page reclaims
+               97794  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   4  messages sent
+                   4  messages received
+                   0  signals received
+               13511  voluntary context switches
+               41790  involuntary context switches
+       1918162202520  instructions retired
+        389622856577  cycles elapsed
+          1040632352  peak memory footprint
+EXIT_CODE=0
+=== END h4b-gc-serial Mon Aug 17 12:05:38 CEST 2026 ===

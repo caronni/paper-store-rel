@@ -1,0 +1,372 @@
+{
+ "captured_at": "2026-08-29T14:20:38+0200",
+ "head": "28cf0c29c0d2fc4720a9248fbd29dd181fc2dc2b",
+ "numpy": "2.5.2",
+ "python": "3.14.7 free-threading build (main, Aug  5 2026, 10:29:49) [Clang 21.0.0 (clang-2100.1.1.101)]",
+ "runs": {
+  "color-w1": {
+   "certificate_signature_sha256": "a418a9a5230d1eec698a79e567c45e95ce5ad373a5ac107bef65805789184376",
+   "certified": 279,
+   "event_counts": {
+    "CalibrateAdopted": 22,
+    "CaptureOpen": 1,
+    "CloseCheck": 95,
+    "JobDone": 808,
+    "PoseCommitted": 47,
+    "RunDone": 1,
+    "RunOpen": 1,
+    "SurveyDone": 1,
+    "TileOutcome": 763,
+    "WindowSettled": 395
+   },
+   "exit_code": 0,
+   "job_counts_per_row": {
+    "color": 22,
+    "place": 429,
+    "refine.color": 14,
+    "revisit": 13,
+    "survey": 1,
+    "tiles.freeze": 20,
+    "tiles.retry": 80,
+    "tiles.scan": 229
+   },
+   "n_events": 2134,
+   "payload_bytes": 20000,
+   "payload_matches_source": true,
+   "payload_sha256": "ddf7acebcd86ae52aea2a61224c80cf3dee3746083a616a4a28e9b333754e1d6",
+   "plugin_rows": {
+    "color": {
+     "certificates": 0,
+     "cpu_seconds": 48.691,
+     "jobs": 22,
+     "poses": 0,
+     "words": 0
+    },
+    "place": {
+     "certificates": 0,
+     "cpu_seconds": 35.6,
+     "jobs": 429,
+     "poses": 47,
+     "words": 1
+    },
+    "refine.color": {
+     "certificates": 0,
+     "cpu_seconds": 2.058,
+     "jobs": 14,
+     "poses": 2,
+     "words": 0
+    },
+    "revisit": {
+     "certificates": 0,
+     "cpu_seconds": 0.331,
+     "jobs": 13,
+     "poses": 0,
+     "words": 0
+    },
+    "survey": {
+     "certificates": 0,
+     "cpu_seconds": 1.749,
+     "jobs": 1,
+     "poses": 0,
+     "words": 0
+    },
+    "tiles.freeze": {
+     "certificates": 0,
+     "cpu_seconds": 0.203,
+     "jobs": 20,
+     "poses": 0,
+     "words": 0
+    },
+    "tiles.retry": {
+     "certificates": 0,
+     "cpu_seconds": 10.971,
+     "jobs": 80,
+     "poses": 0,
+     "words": 0
+    },
+    "tiles.scan": {
+     "certificates": 279,
+     "cpu_seconds": 4.955,
+     "jobs": 229,
+     "poses": 0,
+     "words": 0
+    }
+   },
+   "status": "verified",
+   "wall_s": 107.42,
+   "workers": 1
+  },
+  "color-w8": {
+   "certificate_signature_sha256": "a418a9a5230d1eec698a79e567c45e95ce5ad373a5ac107bef65805789184376",
+   "certified": 279,
+   "event_counts": {
+    "CalibrateAdopted": 21,
+    "CaptureOpen": 1,
+    "CloseCheck": 92,
+    "JobDone": 755,
+    "PoseCommitted": 47,
+    "RunDone": 1,
+    "RunOpen": 1,
+    "SurveyDone": 1,
+    "TileOutcome": 669,
+    "WindowSettled": 392
+   },
+   "exit_code": 0,
+   "job_counts_per_row": {
+    "color": 21,
+    "place": 432,
+    "refine.color": 13,
+    "revisit": 7,
+    "survey": 1,
+    "tiles.freeze": 20,
+    "tiles.retry": 57,
+    "tiles.scan": 204
+   },
+   "n_events": 1980,
+   "payload_bytes": 20000,
+   "payload_matches_source": true,
+   "payload_sha256": "ddf7acebcd86ae52aea2a61224c80cf3dee3746083a616a4a28e9b333754e1d6",
+   "plugin_rows": {
+    "color": {
+     "certificates": 0,
+     "cpu_seconds": 506.477,
+     "jobs": 21,
+     "poses": 0,
+     "words": 0
+    },
+    "place": {
+     "certificates": 0,
+     "cpu_seconds": 44.107,
+     "jobs": 432,
+     "poses": 47,
+     "words": 3
+    },
+    "refine.color": {
+     "certificates": 0,
+     "cpu_seconds": 2.405,
+     "jobs": 13,
+     "poses": 1,
+     "words": 0
+    },
+    "revisit": {
+     "certificates": 0,
+     "cpu_seconds": 0.383,
+     "jobs": 7,
+     "poses": 0,
+     "words": 0
+    },
+    "survey": {
+     "certificates": 0,
+     "cpu_seconds": 1.759,
+     "jobs": 1,
+     "poses": 0,
+     "words": 0
+    },
+    "tiles.freeze": {
+     "certificates": 0,
+     "cpu_seconds": 0.339,
+     "jobs": 20,
+     "poses": 0,
+     "words": 0
+    },
+    "tiles.retry": {
+     "certificates": 0,
+     "cpu_seconds": 8.918,
+     "jobs": 57,
+     "poses": 0,
+     "words": 0
+    },
+    "tiles.scan": {
+     "certificates": 279,
+     "cpu_seconds": 4.323,
+     "jobs": 204,
+     "poses": 0,
+     "words": 0
+    }
+   },
+   "status": "verified",
+   "wall_s": 21.101,
+   "workers": 8
+  },
+  "k-w1": {
+   "certificate_signature_sha256": "028cee2647bdd0ba68976559f69993a6a6182853c2e537130e14ddea92c45c36",
+   "certified": 49,
+   "event_counts": {
+    "CalibrateAdopted": 31,
+    "CaptureOpen": 1,
+    "CloseCheck": 50,
+    "JobDone": 191,
+    "PoseCommitted": 18,
+    "RunDone": 1,
+    "RunOpen": 1,
+    "SurveyDone": 1,
+    "TileOutcome": 63,
+    "WindowSettled": 65
+   },
+   "exit_code": 0,
+   "job_counts_per_row": {
+    "calibrate": 27,
+    "ctx": 4,
+    "place": 83,
+    "survey": 1,
+    "tiles.freeze": 13,
+    "tiles.scan": 63
+   },
+   "n_events": 422,
+   "payload_bytes": 6000,
+   "payload_matches_source": true,
+   "payload_sha256": "59495601d00fa78145f5400e97eb53ee31424c57d6be905f00f2f62a7699848f",
+   "plugin_rows": {
+    "calibrate": {
+     "certificates": 0,
+     "cpu_seconds": 0.207,
+     "jobs": 27,
+     "poses": 0,
+     "words": 0
+    },
+    "ctx": {
+     "certificates": 0,
+     "cpu_seconds": 0.391,
+     "jobs": 4,
+     "poses": 0,
+     "words": 0
+    },
+    "place": {
+     "certificates": 0,
+     "cpu_seconds": 9.574,
+     "jobs": 83,
+     "poses": 18,
+     "words": 1
+    },
+    "survey": {
+     "certificates": 0,
+     "cpu_seconds": 1.236,
+     "jobs": 1,
+     "poses": 0,
+     "words": 0
+    },
+    "tiles.freeze": {
+     "certificates": 0,
+     "cpu_seconds": 0.351,
+     "jobs": 13,
+     "poses": 0,
+     "words": 0
+    },
+    "tiles.scan": {
+     "certificates": 49,
+     "cpu_seconds": 0.026,
+     "jobs": 63,
+     "poses": 0,
+     "words": 0
+    }
+   },
+   "status": "verified",
+   "wall_s": 12.976,
+   "workers": 1
+  },
+  "k-w8": {
+   "certificate_signature_sha256": "028cee2647bdd0ba68976559f69993a6a6182853c2e537130e14ddea92c45c36",
+   "certified": 49,
+   "event_counts": {
+    "CalibrateAdopted": 33,
+    "CaptureOpen": 1,
+    "CloseCheck": 46,
+    "JobDone": 199,
+    "PoseCommitted": 18,
+    "RunDone": 1,
+    "RunOpen": 1,
+    "SurveyDone": 1,
+    "TileOutcome": 71,
+    "WindowSettled": 69
+   },
+   "exit_code": 0,
+   "job_counts_per_row": {
+    "calibrate": 27,
+    "ctx": 6,
+    "place": 87,
+    "survey": 1,
+    "tiles.freeze": 7,
+    "tiles.retry": 7,
+    "tiles.scan": 64
+   },
+   "n_events": 440,
+   "payload_bytes": 6000,
+   "payload_matches_source": true,
+   "payload_sha256": "59495601d00fa78145f5400e97eb53ee31424c57d6be905f00f2f62a7699848f",
+   "plugin_rows": {
+    "calibrate": {
+     "certificates": 0,
+     "cpu_seconds": 0.253,
+     "jobs": 27,
+     "poses": 0,
+     "words": 0
+    },
+    "ctx": {
+     "certificates": 0,
+     "cpu_seconds": 0.531,
+     "jobs": 6,
+     "poses": 0,
+     "words": 0
+    },
+    "place": {
+     "certificates": 0,
+     "cpu_seconds": 11.187,
+     "jobs": 87,
+     "poses": 18,
+     "words": 6
+    },
+    "survey": {
+     "certificates": 0,
+     "cpu_seconds": 1.209,
+     "jobs": 1,
+     "poses": 0,
+     "words": 0
+    },
+    "tiles.freeze": {
+     "certificates": 0,
+     "cpu_seconds": 0.152,
+     "jobs": 7,
+     "poses": 0,
+     "words": 0
+    },
+    "tiles.retry": {
+     "certificates": 0,
+     "cpu_seconds": 1.055,
+     "jobs": 7,
+     "poses": 0,
+     "words": 0
+    },
+    "tiles.scan": {
+     "certificates": 49,
+     "cpu_seconds": 0.535,
+     "jobs": 64,
+     "poses": 0,
+     "words": 0
+    }
+   },
+   "status": "verified",
+   "wall_s": 3.744,
+   "workers": 8
+  }
+ },
+ "sims": {
+  "color": {
+   "dpi": 1200,
+   "format_ref": "c3-cmy8-r0550x0550x0547@10x10",
+   "payload": "<checkout>/_distill/verify/sim/sim-color-payload.bin",
+   "payload_bytes": 20000,
+   "payload_sha256": "ddf7acebcd86ae52aea2a61224c80cf3dee3746083a616a4a28e9b333754e1d6",
+   "tiff": "<checkout>/_distill/verify/sim/sim-color-1200dpi.tiff",
+   "tiff_sha256": "0426723038cb165302a5fdd707f409abc2b9f470183744f769d6707862a5991a"
+  },
+  "k": {
+   "dpi": 1200,
+   "format_ref": "c3-k-r0550@7x7",
+   "payload": "<checkout>/_distill/verify/sim/sim-k-payload.bin",
+   "payload_bytes": 6000,
+   "payload_sha256": "59495601d00fa78145f5400e97eb53ee31424c57d6be905f00f2f62a7699848f",
+   "tiff": "<checkout>/_distill/verify/sim/sim-k-1200dpi.tiff",
+   "tiff_sha256": "7f56e7e2b9dfd5bb7d6fe5faf46af9186383895d292b8a1a007bb78e01090534"
+  }
+ }
+}

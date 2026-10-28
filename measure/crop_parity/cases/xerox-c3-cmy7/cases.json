@@ -1,0 +1,4295 @@
+{
+  "volume": "xerox-c3-cmy7",
+  "label": "xerox c3-cmy7",
+  "step": "3",
+  "format_ref": "L:c3-cmy7-p120-v0@2240x1536",
+  "tile_matrix": [
+    35,
+    24
+  ],
+  "cells_yx": [
+    2240,
+    1536
+  ],
+  "streams": [
+    "main"
+  ],
+  "colour": true,
+  "classes": [
+    "miss",
+    "gain"
+  ],
+  "captures": [
+    {
+      "ordinal": 0,
+      "capture_id": "20fc40cd483277a4cad81d3299e228b2f89a16058c64666d8953b00ab0b6babf",
+      "path": "scratch/in/xerox-canon-c3-cmy7-2400dpi.tiff",
+      "dpi": 2400.0,
+      "shape_yx": [
+        28064,
+        20416
+      ],
+      "channels": 3,
+      "affine_cell_to_px": [
+        [
+          -12.001624727522197,
+          -0.0265048443693308,
+          18948.862992347757
+        ],
+        [
+          0.01750655482185426,
+          -12.014368899496304,
+          27468.71681769715
+        ]
+      ],
+      "affine_fit": {
+        "n_accepted_poses": 808,
+        "px_per_cell": 12.00801444362387,
+        "residual_median_px": 3.8983595445479295,
+        "residual_p99_px": 19.323803485713725,
+        "residual_max_px": 34.56885306897675
+      }
+    }
+  ],
+  "tile_convention": "tile [ty, tx] exactly as the parity record prints them: ty along the tall cell axis, tx along the wide one; page is 0 on every declared volume and is carried explicitly in target/control addresses as [page, ty, tx, stream].",
+  "cell_axes": "cell y runs 0..cells_y, cell x runs 0..cells_x; cell_bbox and px_bbox are x-first half-open [x0, y0, x1, y1]; px x is the capture column (numpy axis 1) and px y the row (axis 0), so a crop is capture[py0:py1, px0:px1]; affine_cell_to_px maps px_x = a*cx + b*cy + c (row 0), px_y = d*cx + e*cy + f (row 1).",
+  "halo_cells": 240,
+  "merge_gap_tiles": 2,
+  "max_span_cells": 768,
+  "px_pad_cells": 32,
+  "control_rim_cells": 32,
+  "gap_counts": {
+    "holo1": 720,
+    "holo3": 815,
+    "both": 720,
+    "miss": 0,
+    "gain": 95,
+    "neither": 25,
+    "holo3_run": "post-3",
+    "events": {
+      "tile_outcome_rows": 6534,
+      "results": {
+        "below_attempt_floor": 312,
+        "certified": 815,
+        "attempted_failed": 5407
+      }
+    }
+  },
+  "payload": {
+    "path": "<checkout>/_distill/verify/parity/out-3.bin",
+    "sha256": "4f68dbf932324aa85c1af576b9724504eb5dff85039a66a062ff9c9adc4e50c2",
+    "bytes": 301600,
+    "gt_validated_certificates": 720
+  },
+  "generator": {
+    "tree": "88a530c9b270e1fc30409e28c36cb6b7a105d8cd",
+    "dirty_sha": ""
+  },
+  "cases": [
+    {
+      "case_id": "xerox-c3-cmy7-c01",
+      "cell_bbox": [
+        336,
+        0,
+        880,
+        496
+      ],
+      "tiles": [
+        [
+          0,
+          9
+        ],
+        [
+          3,
+          9
+        ]
+      ],
+      "crops": [
+        {
+          "ordinal": 0,
+          "capture_id": "20fc40cd483277a4cad81d3299e228b2f89a16058c64666d8953b00ab0b6babf",
+          "capture_path": "scratch/in/xerox-canon-c3-cmy7-2400dpi.tiff",
+          "crop_file": "xerox-c3-cmy7-c01-0.tiff",
+          "px_bbox": [
+            7990,
+            21131,
+            15301,
+            27869
+          ],
+          "shape_yx": [
+            6738,
+            7311
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "address": [
+            0,
+            0,
+            9,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            3,
+            9,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        }
+      ],
+      "controls": [
+        [
+          0,
+          1,
+          6,
+          "main"
+        ],
+        [
+          0,
+          1,
+          7,
+          "main"
+        ],
+        [
+          0,
+          1,
+          8,
+          "main"
+        ],
+        [
+          0,
+          1,
+          9,
+          "main"
+        ],
+        [
+          0,
+          1,
+          10,
+          "main"
+        ],
+        [
+          0,
+          1,
+          11,
+          "main"
+        ],
+        [
+          0,
+          1,
+          12,
+          "main"
+        ],
+        [
+          0,
+          2,
+          6,
+          "main"
+        ],
+        [
+          0,
+          2,
+          7,
+          "main"
+        ],
+        [
+          0,
+          2,
+          8,
+          "main"
+        ],
+        [
+          0,
+          2,
+          9,
+          "main"
+        ],
+        [
+          0,
+          2,
+          10,
+          "main"
+        ],
+        [
+          0,
+          2,
+          11,
+          "main"
+        ],
+        [
+          0,
+          2,
+          12,
+          "main"
+        ],
+        [
+          0,
+          3,
+          6,
+          "main"
+        ],
+        [
+          0,
+          3,
+          7,
+          "main"
+        ],
+        [
+          0,
+          3,
+          8,
+          "main"
+        ],
+        [
+          0,
+          3,
+          10,
+          "main"
+        ],
+        [
+          0,
+          3,
+          11,
+          "main"
+        ],
+        [
+          0,
+          3,
+          12,
+          "main"
+        ],
+        [
+          0,
+          4,
+          6,
+          "main"
+        ],
+        [
+          0,
+          4,
+          7,
+          "main"
+        ],
+        [
+          0,
+          4,
+          8,
+          "main"
+        ],
+        [
+          0,
+          4,
+          9,
+          "main"
+        ],
+        [
+          0,
+          4,
+          10,
+          "main"
+        ],
+        [
+          0,
+          4,
+          11,
+          "main"
+        ],
+        [
+          0,
+          4,
+          12,
+          "main"
+        ],
+        [
+          0,
+          5,
+          6,
+          "main"
+        ],
+        [
+          0,
+          5,
+          7,
+          "main"
+        ],
+        [
+          0,
+          5,
+          8,
+          "main"
+        ],
+        [
+          0,
+          5,
+          9,
+          "main"
+        ],
+        [
+          0,
+          5,
+          10,
+          "main"
+        ],
+        [
+          0,
+          5,
+          11,
+          "main"
+        ],
+        [
+          0,
+          5,
+          12,
+          "main"
+        ],
+        [
+          0,
+          6,
+          6,
+          "main"
+        ],
+        [
+          0,
+          6,
+          7,
+          "main"
+        ],
+        [
+          0,
+          6,
+          8,
+          "main"
+        ],
+        [
+          0,
+          6,
+          9,
+          "main"
+        ],
+        [
+          0,
+          6,
+          10,
+          "main"
+        ],
+        [
+          0,
+          6,
+          11,
+          "main"
+        ],
+        [
+          0,
+          6,
+          12,
+          "main"
+        ]
+      ]
+    },
+    {
+      "case_id": "xerox-c3-cmy7-c02",
+      "cell_bbox": [
+        1040,
+        0,
+        1536,
+        1008
+      ],
+      "tiles": [
+        [
+          0,
+          20
+        ],
+        [
+          0,
+          21
+        ],
+        [
+          0,
+          22
+        ],
+        [
+          1,
+          22
+        ],
+        [
+          3,
+          20
+        ],
+        [
+          3,
+          21
+        ],
+        [
+          4,
+          21
+        ],
+        [
+          5,
+          21
+        ],
+        [
+          5,
+          23
+        ],
+        [
+          6,
+          21
+        ],
+        [
+          7,
+          20
+        ],
+        [
+          7,
+          22
+        ],
+        [
+          8,
+          20
+        ],
+        [
+          8,
+          22
+        ],
+        [
+          9,
+          21
+        ],
+        [
+          9,
+          22
+        ],
+        [
+          10,
+          21
+        ],
+        [
+          10,
+          23
+        ],
+        [
+          11,
+          20
+        ],
+        [
+          11,
+          21
+        ]
+      ],
+      "crops": [
+        {
+          "ordinal": 0,
+          "capture_id": "20fc40cd483277a4cad81d3299e228b2f89a16058c64666d8953b00ab0b6babf",
+          "capture_path": "scratch/in/xerox-canon-c3-cmy7-2400dpi.tiff",
+          "crop_file": "xerox-c3-cmy7-c02-0.tiff",
+          "px_bbox": [
+            103,
+            14992,
+            6852,
+            27880
+          ],
+          "shape_yx": [
+            12888,
+            6749
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "address": [
+            0,
+            0,
+            20,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            0,
+            21,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            0,
+            22,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            1,
+            22,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            3,
+            20,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            3,
+            21,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            4,
+            21,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            5,
+            21,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            5,
+            23,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            6,
+            21,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            7,
+            20,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            7,
+            22,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            8,
+            20,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            8,
+            22,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            9,
+            21,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            9,
+            22,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            10,
+            21,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            10,
+            23,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            11,
+            20,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            11,
+            21,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        }
+      ],
+      "controls": [
+        [
+          0,
+          1,
+          17,
+          "main"
+        ],
+        [
+          0,
+          1,
+          18,
+          "main"
+        ],
+        [
+          0,
+          1,
+          19,
+          "main"
+        ],
+        [
+          0,
+          1,
+          20,
+          "main"
+        ],
+        [
+          0,
+          1,
+          21,
+          "main"
+        ],
+        [
+          0,
+          2,
+          17,
+          "main"
+        ],
+        [
+          0,
+          2,
+          18,
+          "main"
+        ],
+        [
+          0,
+          2,
+          19,
+          "main"
+        ],
+        [
+          0,
+          2,
+          20,
+          "main"
+        ],
+        [
+          0,
+          2,
+          21,
+          "main"
+        ],
+        [
+          0,
+          3,
+          17,
+          "main"
+        ],
+        [
+          0,
+          3,
+          18,
+          "main"
+        ],
+        [
+          0,
+          3,
+          19,
+          "main"
+        ],
+        [
+          0,
+          4,
+          17,
+          "main"
+        ],
+        [
+          0,
+          4,
+          18,
+          "main"
+        ],
+        [
+          0,
+          4,
+          19,
+          "main"
+        ],
+        [
+          0,
+          4,
+          20,
+          "main"
+        ],
+        [
+          0,
+          5,
+          17,
+          "main"
+        ],
+        [
+          0,
+          5,
+          18,
+          "main"
+        ],
+        [
+          0,
+          5,
+          19,
+          "main"
+        ],
+        [
+          0,
+          5,
+          20,
+          "main"
+        ],
+        [
+          0,
+          5,
+          22,
+          "main"
+        ],
+        [
+          0,
+          6,
+          17,
+          "main"
+        ],
+        [
+          0,
+          6,
+          18,
+          "main"
+        ],
+        [
+          0,
+          6,
+          19,
+          "main"
+        ],
+        [
+          0,
+          6,
+          20,
+          "main"
+        ],
+        [
+          0,
+          6,
+          22,
+          "main"
+        ],
+        [
+          0,
+          7,
+          17,
+          "main"
+        ],
+        [
+          0,
+          7,
+          18,
+          "main"
+        ],
+        [
+          0,
+          7,
+          19,
+          "main"
+        ],
+        [
+          0,
+          8,
+          17,
+          "main"
+        ],
+        [
+          0,
+          8,
+          18,
+          "main"
+        ],
+        [
+          0,
+          8,
+          19,
+          "main"
+        ],
+        [
+          0,
+          9,
+          17,
+          "main"
+        ],
+        [
+          0,
+          9,
+          18,
+          "main"
+        ],
+        [
+          0,
+          9,
+          19,
+          "main"
+        ],
+        [
+          0,
+          9,
+          20,
+          "main"
+        ],
+        [
+          0,
+          10,
+          17,
+          "main"
+        ],
+        [
+          0,
+          10,
+          18,
+          "main"
+        ],
+        [
+          0,
+          10,
+          19,
+          "main"
+        ],
+        [
+          0,
+          10,
+          20,
+          "main"
+        ],
+        [
+          0,
+          11,
+          17,
+          "main"
+        ],
+        [
+          0,
+          11,
+          18,
+          "main"
+        ],
+        [
+          0,
+          11,
+          19,
+          "main"
+        ],
+        [
+          0,
+          12,
+          17,
+          "main"
+        ],
+        [
+          0,
+          12,
+          18,
+          "main"
+        ],
+        [
+          0,
+          12,
+          19,
+          "main"
+        ],
+        [
+          0,
+          13,
+          17,
+          "main"
+        ],
+        [
+          0,
+          13,
+          18,
+          "main"
+        ],
+        [
+          0,
+          13,
+          19,
+          "main"
+        ],
+        [
+          0,
+          14,
+          17,
+          "main"
+        ],
+        [
+          0,
+          14,
+          18,
+          "main"
+        ],
+        [
+          0,
+          14,
+          19,
+          "main"
+        ],
+        [
+          0,
+          14,
+          20,
+          "main"
+        ]
+      ]
+    },
+    {
+      "case_id": "xerox-c3-cmy7-c03",
+      "cell_bbox": [
+        0,
+        0,
+        304,
+        1008
+      ],
+      "tiles": [
+        [
+          1,
+          0
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          7,
+          0
+        ],
+        [
+          8,
+          0
+        ],
+        [
+          9,
+          0
+        ],
+        [
+          11,
+          0
+        ]
+      ],
+      "crops": [
+        {
+          "ordinal": 0,
+          "capture_id": "20fc40cd483277a4cad81d3299e228b2f89a16058c64666d8953b00ab0b6babf",
+          "capture_path": "scratch/in/xerox-canon-c3-cmy7-2400dpi.tiff",
+          "crop_file": "xerox-c3-cmy7-c03-0.tiff",
+          "px_bbox": [
+            14889,
+            14973,
+            19334,
+            27859
+          ],
+          "shape_yx": [
+            12886,
+            4445
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "address": [
+            0,
+            1,
+            0,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            3,
+            0,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            4,
+            0,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            7,
+            0,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            8,
+            0,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            9,
+            0,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            11,
+            0,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        }
+      ],
+      "controls": [
+        [
+          0,
+          1,
+          1,
+          "main"
+        ],
+        [
+          0,
+          1,
+          2,
+          "main"
+        ],
+        [
+          0,
+          1,
+          3,
+          "main"
+        ],
+        [
+          0,
+          2,
+          1,
+          "main"
+        ],
+        [
+          0,
+          2,
+          2,
+          "main"
+        ],
+        [
+          0,
+          2,
+          3,
+          "main"
+        ],
+        [
+          0,
+          3,
+          1,
+          "main"
+        ],
+        [
+          0,
+          3,
+          2,
+          "main"
+        ],
+        [
+          0,
+          3,
+          3,
+          "main"
+        ],
+        [
+          0,
+          4,
+          1,
+          "main"
+        ],
+        [
+          0,
+          4,
+          2,
+          "main"
+        ],
+        [
+          0,
+          4,
+          3,
+          "main"
+        ],
+        [
+          0,
+          5,
+          1,
+          "main"
+        ],
+        [
+          0,
+          5,
+          2,
+          "main"
+        ],
+        [
+          0,
+          5,
+          3,
+          "main"
+        ],
+        [
+          0,
+          6,
+          1,
+          "main"
+        ],
+        [
+          0,
+          6,
+          2,
+          "main"
+        ],
+        [
+          0,
+          6,
+          3,
+          "main"
+        ],
+        [
+          0,
+          7,
+          1,
+          "main"
+        ],
+        [
+          0,
+          7,
+          2,
+          "main"
+        ],
+        [
+          0,
+          7,
+          3,
+          "main"
+        ],
+        [
+          0,
+          8,
+          1,
+          "main"
+        ],
+        [
+          0,
+          8,
+          2,
+          "main"
+        ],
+        [
+          0,
+          8,
+          3,
+          "main"
+        ],
+        [
+          0,
+          9,
+          1,
+          "main"
+        ],
+        [
+          0,
+          9,
+          2,
+          "main"
+        ],
+        [
+          0,
+          9,
+          3,
+          "main"
+        ],
+        [
+          0,
+          10,
+          1,
+          "main"
+        ],
+        [
+          0,
+          10,
+          2,
+          "main"
+        ],
+        [
+          0,
+          10,
+          3,
+          "main"
+        ],
+        [
+          0,
+          11,
+          1,
+          "main"
+        ],
+        [
+          0,
+          11,
+          2,
+          "main"
+        ],
+        [
+          0,
+          11,
+          3,
+          "main"
+        ],
+        [
+          0,
+          12,
+          1,
+          "main"
+        ],
+        [
+          0,
+          12,
+          2,
+          "main"
+        ],
+        [
+          0,
+          12,
+          3,
+          "main"
+        ],
+        [
+          0,
+          13,
+          1,
+          "main"
+        ],
+        [
+          0,
+          13,
+          2,
+          "main"
+        ],
+        [
+          0,
+          13,
+          3,
+          "main"
+        ],
+        [
+          0,
+          14,
+          1,
+          "main"
+        ],
+        [
+          0,
+          14,
+          2,
+          "main"
+        ],
+        [
+          0,
+          14,
+          3,
+          "main"
+        ]
+      ]
+    },
+    {
+      "case_id": "xerox-c3-cmy7-c04",
+      "cell_bbox": [
+        0,
+        528,
+        304,
+        1712
+      ],
+      "tiles": [
+        [
+          12,
+          0
+        ],
+        [
+          14,
+          0
+        ],
+        [
+          16,
+          0
+        ],
+        [
+          17,
+          0
+        ],
+        [
+          18,
+          0
+        ],
+        [
+          19,
+          0
+        ],
+        [
+          22,
+          0
+        ]
+      ],
+      "crops": [
+        {
+          "ordinal": 0,
+          "capture_id": "20fc40cd483277a4cad81d3299e228b2f89a16058c64666d8953b00ab0b6babf",
+          "capture_path": "scratch/in/xerox-canon-c3-cmy7-2400dpi.tiff",
+          "crop_file": "xerox-c3-cmy7-c04-0.tiff",
+          "px_bbox": [
+            14870,
+            6515,
+            19320,
+            21515
+          ],
+          "shape_yx": [
+            15000,
+            4450
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "address": [
+            0,
+            12,
+            0,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            14,
+            0,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            16,
+            0,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            17,
+            0,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            18,
+            0,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            19,
+            0,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            22,
+            0,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        }
+      ],
+      "controls": [
+        [
+          0,
+          9,
+          1,
+          "main"
+        ],
+        [
+          0,
+          9,
+          2,
+          "main"
+        ],
+        [
+          0,
+          9,
+          3,
+          "main"
+        ],
+        [
+          0,
+          10,
+          1,
+          "main"
+        ],
+        [
+          0,
+          10,
+          2,
+          "main"
+        ],
+        [
+          0,
+          10,
+          3,
+          "main"
+        ],
+        [
+          0,
+          11,
+          1,
+          "main"
+        ],
+        [
+          0,
+          11,
+          2,
+          "main"
+        ],
+        [
+          0,
+          11,
+          3,
+          "main"
+        ],
+        [
+          0,
+          12,
+          1,
+          "main"
+        ],
+        [
+          0,
+          12,
+          2,
+          "main"
+        ],
+        [
+          0,
+          12,
+          3,
+          "main"
+        ],
+        [
+          0,
+          13,
+          1,
+          "main"
+        ],
+        [
+          0,
+          13,
+          2,
+          "main"
+        ],
+        [
+          0,
+          13,
+          3,
+          "main"
+        ],
+        [
+          0,
+          14,
+          1,
+          "main"
+        ],
+        [
+          0,
+          14,
+          2,
+          "main"
+        ],
+        [
+          0,
+          14,
+          3,
+          "main"
+        ],
+        [
+          0,
+          15,
+          1,
+          "main"
+        ],
+        [
+          0,
+          15,
+          2,
+          "main"
+        ],
+        [
+          0,
+          15,
+          3,
+          "main"
+        ],
+        [
+          0,
+          16,
+          1,
+          "main"
+        ],
+        [
+          0,
+          16,
+          2,
+          "main"
+        ],
+        [
+          0,
+          16,
+          3,
+          "main"
+        ],
+        [
+          0,
+          17,
+          1,
+          "main"
+        ],
+        [
+          0,
+          17,
+          2,
+          "main"
+        ],
+        [
+          0,
+          17,
+          3,
+          "main"
+        ],
+        [
+          0,
+          18,
+          1,
+          "main"
+        ],
+        [
+          0,
+          18,
+          2,
+          "main"
+        ],
+        [
+          0,
+          18,
+          3,
+          "main"
+        ],
+        [
+          0,
+          19,
+          1,
+          "main"
+        ],
+        [
+          0,
+          19,
+          2,
+          "main"
+        ],
+        [
+          0,
+          19,
+          3,
+          "main"
+        ],
+        [
+          0,
+          20,
+          1,
+          "main"
+        ],
+        [
+          0,
+          20,
+          2,
+          "main"
+        ],
+        [
+          0,
+          20,
+          3,
+          "main"
+        ],
+        [
+          0,
+          21,
+          1,
+          "main"
+        ],
+        [
+          0,
+          21,
+          2,
+          "main"
+        ],
+        [
+          0,
+          21,
+          3,
+          "main"
+        ],
+        [
+          0,
+          22,
+          1,
+          "main"
+        ],
+        [
+          0,
+          22,
+          2,
+          "main"
+        ],
+        [
+          0,
+          22,
+          3,
+          "main"
+        ],
+        [
+          0,
+          23,
+          1,
+          "main"
+        ],
+        [
+          0,
+          23,
+          2,
+          "main"
+        ],
+        [
+          0,
+          23,
+          3,
+          "main"
+        ],
+        [
+          0,
+          24,
+          1,
+          "main"
+        ],
+        [
+          0,
+          24,
+          2,
+          "main"
+        ],
+        [
+          0,
+          24,
+          3,
+          "main"
+        ],
+        [
+          0,
+          25,
+          1,
+          "main"
+        ],
+        [
+          0,
+          25,
+          2,
+          "main"
+        ],
+        [
+          0,
+          25,
+          3,
+          "main"
+        ]
+      ]
+    },
+    {
+      "case_id": "xerox-c3-cmy7-c05",
+      "cell_bbox": [
+        1040,
+        528,
+        1536,
+        1776
+      ],
+      "tiles": [
+        [
+          12,
+          20
+        ],
+        [
+          12,
+          21
+        ],
+        [
+          12,
+          22
+        ],
+        [
+          12,
+          23
+        ],
+        [
+          13,
+          20
+        ],
+        [
+          13,
+          21
+        ],
+        [
+          13,
+          23
+        ],
+        [
+          14,
+          21
+        ],
+        [
+          14,
+          22
+        ],
+        [
+          14,
+          23
+        ],
+        [
+          15,
+          20
+        ],
+        [
+          15,
+          21
+        ],
+        [
+          15,
+          22
+        ],
+        [
+          16,
+          20
+        ],
+        [
+          16,
+          21
+        ],
+        [
+          16,
+          22
+        ],
+        [
+          17,
+          20
+        ],
+        [
+          17,
+          21
+        ],
+        [
+          17,
+          22
+        ],
+        [
+          17,
+          23
+        ],
+        [
+          18,
+          21
+        ],
+        [
+          18,
+          22
+        ],
+        [
+          18,
+          23
+        ],
+        [
+          19,
+          20
+        ],
+        [
+          19,
+          21
+        ],
+        [
+          19,
+          23
+        ],
+        [
+          20,
+          20
+        ],
+        [
+          20,
+          22
+        ],
+        [
+          20,
+          23
+        ],
+        [
+          21,
+          20
+        ],
+        [
+          21,
+          22
+        ],
+        [
+          22,
+          20
+        ],
+        [
+          22,
+          21
+        ],
+        [
+          23,
+          21
+        ],
+        [
+          23,
+          22
+        ]
+      ],
+      "crops": [
+        {
+          "ordinal": 0,
+          "capture_id": "20fc40cd483277a4cad81d3299e228b2f89a16058c64666d8953b00ab0b6babf",
+          "capture_path": "scratch/in/xerox-canon-c3-cmy7-2400dpi.tiff",
+          "crop_file": "xerox-c3-cmy7-c05-0.tiff",
+          "px_bbox": [
+            83,
+            5765,
+            6838,
+            21537
+          ],
+          "shape_yx": [
+            15772,
+            6755
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "address": [
+            0,
+            12,
+            20,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            12,
+            21,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            12,
+            22,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            12,
+            23,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            13,
+            20,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            13,
+            21,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            13,
+            23,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            14,
+            21,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            14,
+            22,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            14,
+            23,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            15,
+            20,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            15,
+            21,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            15,
+            22,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            16,
+            20,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            16,
+            21,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            16,
+            22,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            17,
+            20,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            17,
+            21,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            17,
+            22,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            17,
+            23,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            18,
+            21,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            18,
+            22,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            18,
+            23,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            19,
+            20,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            19,
+            21,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            19,
+            23,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            20,
+            20,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            20,
+            22,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            20,
+            23,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            21,
+            20,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            21,
+            22,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            22,
+            20,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            22,
+            21,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            23,
+            21,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            23,
+            22,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        }
+      ],
+      "controls": [
+        [
+          0,
+          9,
+          17,
+          "main"
+        ],
+        [
+          0,
+          9,
+          18,
+          "main"
+        ],
+        [
+          0,
+          9,
+          19,
+          "main"
+        ],
+        [
+          0,
+          9,
+          20,
+          "main"
+        ],
+        [
+          0,
+          10,
+          17,
+          "main"
+        ],
+        [
+          0,
+          10,
+          18,
+          "main"
+        ],
+        [
+          0,
+          10,
+          19,
+          "main"
+        ],
+        [
+          0,
+          10,
+          20,
+          "main"
+        ],
+        [
+          0,
+          11,
+          17,
+          "main"
+        ],
+        [
+          0,
+          11,
+          18,
+          "main"
+        ],
+        [
+          0,
+          11,
+          19,
+          "main"
+        ],
+        [
+          0,
+          12,
+          17,
+          "main"
+        ],
+        [
+          0,
+          12,
+          18,
+          "main"
+        ],
+        [
+          0,
+          12,
+          19,
+          "main"
+        ],
+        [
+          0,
+          13,
+          17,
+          "main"
+        ],
+        [
+          0,
+          13,
+          18,
+          "main"
+        ],
+        [
+          0,
+          13,
+          19,
+          "main"
+        ],
+        [
+          0,
+          14,
+          17,
+          "main"
+        ],
+        [
+          0,
+          14,
+          18,
+          "main"
+        ],
+        [
+          0,
+          14,
+          19,
+          "main"
+        ],
+        [
+          0,
+          14,
+          20,
+          "main"
+        ],
+        [
+          0,
+          15,
+          17,
+          "main"
+        ],
+        [
+          0,
+          15,
+          18,
+          "main"
+        ],
+        [
+          0,
+          15,
+          19,
+          "main"
+        ],
+        [
+          0,
+          16,
+          17,
+          "main"
+        ],
+        [
+          0,
+          16,
+          18,
+          "main"
+        ],
+        [
+          0,
+          16,
+          19,
+          "main"
+        ],
+        [
+          0,
+          17,
+          17,
+          "main"
+        ],
+        [
+          0,
+          17,
+          18,
+          "main"
+        ],
+        [
+          0,
+          17,
+          19,
+          "main"
+        ],
+        [
+          0,
+          18,
+          17,
+          "main"
+        ],
+        [
+          0,
+          18,
+          18,
+          "main"
+        ],
+        [
+          0,
+          18,
+          19,
+          "main"
+        ],
+        [
+          0,
+          19,
+          17,
+          "main"
+        ],
+        [
+          0,
+          19,
+          18,
+          "main"
+        ],
+        [
+          0,
+          19,
+          19,
+          "main"
+        ],
+        [
+          0,
+          20,
+          17,
+          "main"
+        ],
+        [
+          0,
+          20,
+          18,
+          "main"
+        ],
+        [
+          0,
+          20,
+          19,
+          "main"
+        ],
+        [
+          0,
+          20,
+          21,
+          "main"
+        ],
+        [
+          0,
+          21,
+          17,
+          "main"
+        ],
+        [
+          0,
+          21,
+          18,
+          "main"
+        ],
+        [
+          0,
+          21,
+          19,
+          "main"
+        ],
+        [
+          0,
+          21,
+          21,
+          "main"
+        ],
+        [
+          0,
+          22,
+          17,
+          "main"
+        ],
+        [
+          0,
+          22,
+          18,
+          "main"
+        ],
+        [
+          0,
+          22,
+          19,
+          "main"
+        ],
+        [
+          0,
+          23,
+          17,
+          "main"
+        ],
+        [
+          0,
+          23,
+          18,
+          "main"
+        ],
+        [
+          0,
+          23,
+          19,
+          "main"
+        ],
+        [
+          0,
+          23,
+          20,
+          "main"
+        ],
+        [
+          0,
+          24,
+          17,
+          "main"
+        ],
+        [
+          0,
+          24,
+          18,
+          "main"
+        ],
+        [
+          0,
+          24,
+          19,
+          "main"
+        ],
+        [
+          0,
+          25,
+          17,
+          "main"
+        ],
+        [
+          0,
+          25,
+          18,
+          "main"
+        ],
+        [
+          0,
+          25,
+          19,
+          "main"
+        ],
+        [
+          0,
+          26,
+          17,
+          "main"
+        ],
+        [
+          0,
+          26,
+          18,
+          "main"
+        ],
+        [
+          0,
+          26,
+          19,
+          "main"
+        ],
+        [
+          0,
+          26,
+          20,
+          "main"
+        ],
+        [
+          0,
+          26,
+          21,
+          "main"
+        ]
+      ]
+    },
+    {
+      "case_id": "xerox-c3-cmy7-c06",
+      "cell_bbox": [
+        1040,
+        1296,
+        1536,
+        2240
+      ],
+      "tiles": [
+        [
+          24,
+          20
+        ],
+        [
+          24,
+          21
+        ],
+        [
+          25,
+          20
+        ],
+        [
+          25,
+          21
+        ],
+        [
+          25,
+          22
+        ],
+        [
+          26,
+          22
+        ],
+        [
+          27,
+          21
+        ],
+        [
+          28,
+          21
+        ],
+        [
+          28,
+          22
+        ],
+        [
+          29,
+          20
+        ],
+        [
+          29,
+          21
+        ],
+        [
+          30,
+          21
+        ],
+        [
+          30,
+          22
+        ],
+        [
+          31,
+          21
+        ],
+        [
+          31,
+          22
+        ],
+        [
+          32,
+          21
+        ],
+        [
+          32,
+          22
+        ],
+        [
+          33,
+          22
+        ],
+        [
+          34,
+          22
+        ],
+        [
+          34,
+          23
+        ]
+      ],
+      "crops": [
+        {
+          "ordinal": 0,
+          "capture_id": "20fc40cd483277a4cad81d3299e228b2f89a16058c64666d8953b00ab0b6babf",
+          "capture_path": "scratch/in/xerox-canon-c3-cmy7-2400dpi.tiff",
+          "crop_file": "xerox-c3-cmy7-c06-0.tiff",
+          "px_bbox": [
+            70,
+            190,
+            6818,
+            12310
+          ],
+          "shape_yx": [
+            12120,
+            6748
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "address": [
+            0,
+            24,
+            20,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            24,
+            21,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            25,
+            20,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            25,
+            21,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            25,
+            22,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            26,
+            22,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            27,
+            21,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            28,
+            21,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            28,
+            22,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            29,
+            20,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            29,
+            21,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            30,
+            21,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            30,
+            22,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            31,
+            21,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            31,
+            22,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            32,
+            21,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            32,
+            22,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            33,
+            22,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            34,
+            22,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            34,
+            23,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        }
+      ],
+      "controls": [
+        [
+          0,
+          21,
+          17,
+          "main"
+        ],
+        [
+          0,
+          21,
+          18,
+          "main"
+        ],
+        [
+          0,
+          21,
+          19,
+          "main"
+        ],
+        [
+          0,
+          21,
+          21,
+          "main"
+        ],
+        [
+          0,
+          22,
+          17,
+          "main"
+        ],
+        [
+          0,
+          22,
+          18,
+          "main"
+        ],
+        [
+          0,
+          22,
+          19,
+          "main"
+        ],
+        [
+          0,
+          23,
+          17,
+          "main"
+        ],
+        [
+          0,
+          23,
+          18,
+          "main"
+        ],
+        [
+          0,
+          23,
+          19,
+          "main"
+        ],
+        [
+          0,
+          23,
+          20,
+          "main"
+        ],
+        [
+          0,
+          24,
+          17,
+          "main"
+        ],
+        [
+          0,
+          24,
+          18,
+          "main"
+        ],
+        [
+          0,
+          24,
+          19,
+          "main"
+        ],
+        [
+          0,
+          25,
+          17,
+          "main"
+        ],
+        [
+          0,
+          25,
+          18,
+          "main"
+        ],
+        [
+          0,
+          25,
+          19,
+          "main"
+        ],
+        [
+          0,
+          26,
+          17,
+          "main"
+        ],
+        [
+          0,
+          26,
+          18,
+          "main"
+        ],
+        [
+          0,
+          26,
+          19,
+          "main"
+        ],
+        [
+          0,
+          26,
+          20,
+          "main"
+        ],
+        [
+          0,
+          26,
+          21,
+          "main"
+        ],
+        [
+          0,
+          27,
+          17,
+          "main"
+        ],
+        [
+          0,
+          27,
+          18,
+          "main"
+        ],
+        [
+          0,
+          27,
+          19,
+          "main"
+        ],
+        [
+          0,
+          27,
+          20,
+          "main"
+        ],
+        [
+          0,
+          28,
+          17,
+          "main"
+        ],
+        [
+          0,
+          28,
+          18,
+          "main"
+        ],
+        [
+          0,
+          28,
+          19,
+          "main"
+        ],
+        [
+          0,
+          28,
+          20,
+          "main"
+        ],
+        [
+          0,
+          29,
+          17,
+          "main"
+        ],
+        [
+          0,
+          29,
+          18,
+          "main"
+        ],
+        [
+          0,
+          29,
+          19,
+          "main"
+        ],
+        [
+          0,
+          29,
+          22,
+          "main"
+        ],
+        [
+          0,
+          30,
+          17,
+          "main"
+        ],
+        [
+          0,
+          30,
+          18,
+          "main"
+        ],
+        [
+          0,
+          30,
+          19,
+          "main"
+        ],
+        [
+          0,
+          31,
+          17,
+          "main"
+        ],
+        [
+          0,
+          31,
+          18,
+          "main"
+        ],
+        [
+          0,
+          31,
+          19,
+          "main"
+        ],
+        [
+          0,
+          32,
+          17,
+          "main"
+        ],
+        [
+          0,
+          32,
+          18,
+          "main"
+        ],
+        [
+          0,
+          32,
+          19,
+          "main"
+        ],
+        [
+          0,
+          33,
+          17,
+          "main"
+        ],
+        [
+          0,
+          33,
+          18,
+          "main"
+        ],
+        [
+          0,
+          33,
+          19,
+          "main"
+        ],
+        [
+          0,
+          33,
+          20,
+          "main"
+        ],
+        [
+          0,
+          33,
+          21,
+          "main"
+        ]
+      ]
+    },
+    {
+      "case_id": "xerox-c3-cmy7-c07",
+      "cell_bbox": [
+        336,
+        1808,
+        1008,
+        2240
+      ],
+      "tiles": [
+        [
+          32,
+          9
+        ],
+        [
+          33,
+          11
+        ],
+        [
+          34,
+          11
+        ]
+      ],
+      "crops": [
+        {
+          "ordinal": 0,
+          "capture_id": "20fc40cd483277a4cad81d3299e228b2f89a16058c64666d8953b00ab0b6babf",
+          "capture_path": "scratch/in/xerox-canon-c3-cmy7-2400dpi.tiff",
+          "crop_file": "xerox-c3-cmy7-c07-0.tiff",
+          "px_bbox": [
+            6407,
+            178,
+            15253,
+            6149
+          ],
+          "shape_yx": [
+            5971,
+            8846
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "address": [
+            0,
+            32,
+            9,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            33,
+            11,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        },
+        {
+          "address": [
+            0,
+            34,
+            11,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        }
+      ],
+      "controls": [
+        [
+          0,
+          29,
+          6,
+          "main"
+        ],
+        [
+          0,
+          29,
+          7,
+          "main"
+        ],
+        [
+          0,
+          29,
+          8,
+          "main"
+        ],
+        [
+          0,
+          29,
+          9,
+          "main"
+        ],
+        [
+          0,
+          29,
+          10,
+          "main"
+        ],
+        [
+          0,
+          29,
+          11,
+          "main"
+        ],
+        [
+          0,
+          29,
+          12,
+          "main"
+        ],
+        [
+          0,
+          29,
+          13,
+          "main"
+        ],
+        [
+          0,
+          29,
+          14,
+          "main"
+        ],
+        [
+          0,
+          30,
+          6,
+          "main"
+        ],
+        [
+          0,
+          30,
+          7,
+          "main"
+        ],
+        [
+          0,
+          30,
+          8,
+          "main"
+        ],
+        [
+          0,
+          30,
+          9,
+          "main"
+        ],
+        [
+          0,
+          30,
+          10,
+          "main"
+        ],
+        [
+          0,
+          30,
+          11,
+          "main"
+        ],
+        [
+          0,
+          30,
+          12,
+          "main"
+        ],
+        [
+          0,
+          30,
+          13,
+          "main"
+        ],
+        [
+          0,
+          30,
+          14,
+          "main"
+        ],
+        [
+          0,
+          31,
+          6,
+          "main"
+        ],
+        [
+          0,
+          31,
+          7,
+          "main"
+        ],
+        [
+          0,
+          31,
+          8,
+          "main"
+        ],
+        [
+          0,
+          31,
+          9,
+          "main"
+        ],
+        [
+          0,
+          31,
+          10,
+          "main"
+        ],
+        [
+          0,
+          31,
+          11,
+          "main"
+        ],
+        [
+          0,
+          31,
+          12,
+          "main"
+        ],
+        [
+          0,
+          31,
+          13,
+          "main"
+        ],
+        [
+          0,
+          31,
+          14,
+          "main"
+        ],
+        [
+          0,
+          32,
+          6,
+          "main"
+        ],
+        [
+          0,
+          32,
+          7,
+          "main"
+        ],
+        [
+          0,
+          32,
+          8,
+          "main"
+        ],
+        [
+          0,
+          32,
+          10,
+          "main"
+        ],
+        [
+          0,
+          32,
+          11,
+          "main"
+        ],
+        [
+          0,
+          32,
+          12,
+          "main"
+        ],
+        [
+          0,
+          32,
+          13,
+          "main"
+        ],
+        [
+          0,
+          32,
+          14,
+          "main"
+        ],
+        [
+          0,
+          33,
+          6,
+          "main"
+        ],
+        [
+          0,
+          33,
+          7,
+          "main"
+        ],
+        [
+          0,
+          33,
+          8,
+          "main"
+        ],
+        [
+          0,
+          33,
+          9,
+          "main"
+        ],
+        [
+          0,
+          33,
+          10,
+          "main"
+        ],
+        [
+          0,
+          33,
+          12,
+          "main"
+        ],
+        [
+          0,
+          33,
+          13,
+          "main"
+        ],
+        [
+          0,
+          33,
+          14,
+          "main"
+        ]
+      ]
+    },
+    {
+      "case_id": "xerox-c3-cmy7-c08",
+      "cell_bbox": [
+        0,
+        1936,
+        432,
+        2240
+      ],
+      "tiles": [
+        [
+          34,
+          2
+        ]
+      ],
+      "crops": [
+        {
+          "ordinal": 0,
+          "capture_id": "20fc40cd483277a4cad81d3299e228b2f89a16058c64666d8953b00ab0b6babf",
+          "capture_path": "scratch/in/xerox-canon-c3-cmy7-2400dpi.tiff",
+          "crop_file": "xerox-c3-cmy7-c08-0.tiff",
+          "px_bbox": [
+            13320,
+            172,
+            19282,
+            4601
+          ],
+          "shape_yx": [
+            4429,
+            5962
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "address": [
+            0,
+            34,
+            2,
+            "main"
+          ],
+          "classes": [
+            "gain"
+          ],
+          "full_sheet": {
+            "holo1": "uncertified",
+            "holo3": "certified"
+          }
+        }
+      ],
+      "controls": [
+        [
+          0,
+          31,
+          1,
+          "main"
+        ],
+        [
+          0,
+          31,
+          2,
+          "main"
+        ],
+        [
+          0,
+          31,
+          3,
+          "main"
+        ],
+        [
+          0,
+          31,
+          4,
+          "main"
+        ],
+        [
+          0,
+          31,
+          5,
+          "main"
+        ],
+        [
+          0,
+          32,
+          1,
+          "main"
+        ],
+        [
+          0,
+          32,
+          2,
+          "main"
+        ],
+        [
+          0,
+          32,
+          3,
+          "main"
+        ],
+        [
+          0,
+          32,
+          4,
+          "main"
+        ],
+        [
+          0,
+          32,
+          5,
+          "main"
+        ],
+        [
+          0,
+          33,
+          1,
+          "main"
+        ],
+        [
+          0,
+          33,
+          2,
+          "main"
+        ],
+        [
+          0,
+          33,
+          3,
+          "main"
+        ],
+        [
+          0,
+          33,
+          4,
+          "main"
+        ],
+        [
+          0,
+          33,
+          5,
+          "main"
+        ]
+      ]
+    }
+  ]
+}

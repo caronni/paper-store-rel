@@ -1,0 +1,381 @@
+{
+ "_meta": {
+  "frozen": "2026-07-10",
+  "volume_seed_ascii": "paper-store/exp016-arch3",
+  "chain": "BLAKE2b(seed+label, digest_size=16) -> int.from_bytes(le) -> numpy Philox-4x64-10 (key=int, counter=0, increment-before-block) -> Generator.integers (Lemire rejection; endpoint=False)",
+  "consumption_rules": [
+   "Philox key words = (key & 2^64-1, key >> 64); counter incremented with carry BEFORE each 4-word block; block words consumed in order.",
+   "next32: low half of each 64-bit word first, then high half; the pending half persists across integers() calls.",
+   "dtype=uint8: per-CALL byte buffer over next32 words, low byte first (4 lanes/word); value = (byte*(rng+1))>>8, reject while (m & 0xFF) < (0xFF-rng) % (rng+1); rng==255 -> raw bytes; rng==0 -> constant, consumes nothing.",
+   "default dtype (int64): rng <= 2^32-1 routes through next32, value = (u32*(rng+1))>>32, reject while (m & 0xFFFFFFFF) < (2^32-1-rng) % (rng+1); larger rng uses next64 analogously; arrays fill C-order; scalar == size=1."
+  ],
+  "numpy_verified": [
+   "2.4.6",
+   "2.5.0"
+  ],
+  "reference": "src/paperholo/keystream_ref.py",
+  "test": "tests/test_keystream_ref.py",
+  "doctrine": "GOLDEN VECTORS \u2014 never regenerate or edit. A mismatch means the keystream chain changed, which is a printed-format fork: bump layout_version and add new vectors."
+ },
+ "streams": {
+  "payload-keystream/C/page0": {
+   "seed_ascii": "paper-store/exp016-arch3",
+   "label_hex": "0000000000",
+   "label_ascii": "\u0000\u0000\u0000\u0000\u0000",
+   "draw_form": "integers(0, 2, size=shape, dtype=np.uint8) [C-order flat]",
+   "philox_key_hex": "f510dce086e2abeba6972d4f3b941e4c",
+   "raw_philox_words_hex": [
+    "8990b950421ff7d5",
+    "9c6e8d683528fd81",
+    "e190e1207307d0f6",
+    "e728eba6868059b8"
+   ],
+   "first_256_bits": "1100011111000101110001111011110100100110101101100100011101000100000001000101011000010011100100010111011011000001001101111000101110011110101100000011100000001001010000000001001100111101100011110101110110101000100110001100101000100011110100111010110001100100",
+   "note": "modulation.keystream plane index 0 ('CMYK'.index('C')), page 0; e016 prints plane K only"
+  },
+  "payload-keystream/M/page0": {
+   "seed_ascii": "paper-store/exp016-arch3",
+   "label_hex": "0100000000",
+   "label_ascii": "\u0001\u0000\u0000\u0000\u0000",
+   "draw_form": "integers(0, 2, size=shape, dtype=np.uint8) [C-order flat]",
+   "philox_key_hex": "b0158a50806551c9998f64b98ba34bfa",
+   "raw_philox_words_hex": [
+    "8303b83ab98f4e49",
+    "28300c188165d648",
+    "f2b07cfa8c4a73e9",
+    "abef5cf4ed10aab4"
+   ],
+   "first_256_bits": "0011010101010000100110111101101111111101011110110101011010011011110110101100000010011110001000010000010101000110110011100101111110011110110100010001111001110010101101100111000011110111011100110001110010110110011100111011110001010111101110100011001011111000",
+   "note": "modulation.keystream plane index 1 ('CMYK'.index('M')), page 0; e016 prints plane K only"
+  },
+  "payload-keystream/Y/page0": {
+   "seed_ascii": "paper-store/exp016-arch3",
+   "label_hex": "0200000000",
+   "label_ascii": "\u0002\u0000\u0000\u0000\u0000",
+   "draw_form": "integers(0, 2, size=shape, dtype=np.uint8) [C-order flat]",
+   "philox_key_hex": "4adea6ee38cf484cd5e7f39502076bc0",
+   "raw_philox_words_hex": [
+    "84e039ed879b7324",
+    "dc3637d96647589b",
+    "c75538e70703dca4",
+    "270d65e36b2c92f2"
+   ],
+   "first_256_bits": "0011101110001001110010011100100010101010110011011111001001010000011000000100111011001100001011100111011011101011000101001110011110011100100011000111101111010101011001001101101000101001111110001100011000110101100010011111000100011011000110111111000100101001",
+   "note": "modulation.keystream plane index 2 ('CMYK'.index('Y')), page 0; e016 prints plane K only"
+  },
+  "payload-keystream/K/page0": {
+   "seed_ascii": "paper-store/exp016-arch3",
+   "label_hex": "0300000000",
+   "label_ascii": "\u0003\u0000\u0000\u0000\u0000",
+   "draw_form": "integers(0, 2, size=shape, dtype=np.uint8) [C-order flat]",
+   "philox_key_hex": "710aabe4e94ed069a99c3abf5a0e6cd6",
+   "raw_philox_words_hex": [
+    "69d9ea6c0fdb9550",
+    "a24c9691f75aacc0",
+    "e31c41c86c774973",
+    "a5e0a3e9261f1c62"
+   ],
+   "first_256_bits": "0110011011011101000010010000111110000010101111110001100011011100000111000101111101011101100001001110100110011101111000110010000001110001110010001000100100001000000010000111001010010101101111110010001100111110110001011101111101100101110010111101110011011110",
+   "note": "modulation.keystream plane index 3 ('CMYK'.index('K')), page 0; e016 prints plane K only"
+  },
+  "pilot-sites-v1": {
+   "seed_ascii": "paper-store/exp016-arch3",
+   "label_hex": "70696c6f742d7369746573",
+   "label_ascii": "pilot-sites",
+   "draw_form": "integers(0, 6, size=(10, 10, 2)) [default dtype, C-order flat]",
+   "philox_key_hex": "36d2a79ee711ccdf49992a2e03d38199",
+   "raw_philox_words_hex": [
+    "9c946bd76617d19d",
+    "358fec0845bf28ad",
+    "d438bdbe49144de6",
+    "bd256d973181c540"
+   ],
+   "offsets_200": "23111414204534004114104522254231132420141512514222325355303425155433535304414510544355000330421150505023500031233533253532233014152034151233450423010101251323301331352255410332352412413141153401322352",
+   "note": "layout_version 1 (PERIOD=64, frozen incl. its PERIOD%BLOCK bug)"
+  },
+  "pilot-sites-v2": {
+   "seed_ascii": "paper-store/exp016-arch3",
+   "label_hex": "70696c6f742d73697465732d7632",
+   "label_ascii": "pilot-sites-v2",
+   "draw_form": "integers(0, 6, size=(10, 10, 2)) [default dtype, C-order flat]",
+   "philox_key_hex": "8854731046ba85ebee892417119aa7c7",
+   "raw_philox_words_hex": [
+    "49cd6d7a5f7a24d9",
+    "2b679fe2cdf7e08d",
+    "85d80ff1608bd426",
+    "c5c9f23baf8ad781"
+   ],
+   "offsets_200": "21412344532220211030014441522324142305503035551412204525044203132211012404342404002241255115234044500014050244252533555230342141355253424543154005035312232255323510242250130035213440031534133110354255",
+   "note": "p60b6 sites, layout_versions 2 AND 3 (label deliberately shared; no pilot-sites-v3 exists)"
+  },
+  "pilot-values-v2/K": {
+   "seed_ascii": "paper-store/exp016-arch3",
+   "label_hex": "70696c6f742d76616c7565732d76322f4b",
+   "label_ascii": "pilot-values-v2/K",
+   "draw_form": "integers(0, 2, 100) [default dtype \u2014 dtype kwarg would fork the stream]",
+   "philox_key_hex": "3a1e5b6173b64a15a94484529134a242",
+   "raw_philox_words_hex": [
+    "4e803905b19bb07c",
+    "f385c5939be4315f",
+    "563b35b77ab0a786",
+    "83f28176473c589e"
+   ],
+   "first_100_bits": "1011000110001111101110101011001010011101000111011111111100000100101100011110000110000010000111100110"
+  },
+  "pilot-values-v2/C": {
+   "seed_ascii": "paper-store/exp016-arch3",
+   "label_hex": "70696c6f742d76616c7565732d76322f43",
+   "label_ascii": "pilot-values-v2/C",
+   "draw_form": "integers(0, 2, 100) [default dtype \u2014 dtype kwarg would fork the stream]",
+   "philox_key_hex": "9200ed379ecbf155cc3a6f7c0256880b",
+   "raw_philox_words_hex": [
+    "f9e133ede2dab06b",
+    "7dc4b6ae71ba4e9d",
+    "43d1ebe9342883b1",
+    "d9a6c7ed17d90552"
+   ],
+   "first_100_bits": "1100000101000100101110011110101010010101111101011011000011110011011010001101000111011110001010111001"
+  },
+  "pilot-values-v2/M": {
+   "seed_ascii": "paper-store/exp016-arch3",
+   "label_hex": "70696c6f742d76616c7565732d76322f4d",
+   "label_ascii": "pilot-values-v2/M",
+   "draw_form": "integers(0, 2, 100) [default dtype \u2014 dtype kwarg would fork the stream]",
+   "philox_key_hex": "06f8d964904136057b5c15706d26f5ba",
+   "raw_philox_words_hex": [
+    "40079a5ffbe24b40",
+    "bcee6d74c946e25d",
+    "5ac66726cabe9b7a",
+    "2d4999cdcc14bf77"
+   ],
+   "first_100_bits": "1011101000000011110100111010010111011110110101100111101111011101000000000111001010010011011111100110"
+  },
+  "pilot-values-v2/Y": {
+   "seed_ascii": "paper-store/exp016-arch3",
+   "label_hex": "70696c6f742d76616c7565732d76322f59",
+   "label_ascii": "pilot-values-v2/Y",
+   "draw_form": "integers(0, 2, 100) [default dtype \u2014 dtype kwarg would fork the stream]",
+   "philox_key_hex": "716c35ae9b72c857bbb9db712dfef799",
+   "raw_philox_words_hex": [
+    "043b4ac9524f1e13",
+    "5988d42be6c57170",
+    "0ff55860c76d7ace",
+    "66b58019a376c0f4"
+   ],
+   "first_100_bits": "0010101001011110100000011110100101110101010100101101110100100110100110010101011110101100011100001010"
+  },
+  "pilot-values-v3/K": {
+   "seed_ascii": "paper-store/exp016-arch3",
+   "label_hex": "70696c6f742d76616c7565732d76332f4b",
+   "label_ascii": "pilot-values-v3/K",
+   "draw_form": "integers(0, 2, 100) [default dtype \u2014 dtype kwarg would fork the stream]",
+   "philox_key_hex": "78bee5d4cc37f27040a5dbe300a2c237",
+   "raw_philox_words_hex": [
+    "3da4de47fb99f479",
+    "a06025891714cbb9",
+    "9e9b5dff939f3d80",
+    "2b26ab0075b89036"
+   ],
+   "first_100_bits": "1001110010100111110100111101101010110001100000000011110010101001000010001010001011000110001011111011"
+  },
+  "pilot-values-v3/C": {
+   "seed_ascii": "paper-store/exp016-arch3",
+   "label_hex": "70696c6f742d76616c7565732d76332f43",
+   "label_ascii": "pilot-values-v3/C",
+   "draw_form": "integers(0, 2, 100) [default dtype \u2014 dtype kwarg would fork the stream]",
+   "philox_key_hex": "3ce08f788509617e4f5837bf0d3ad19f",
+   "raw_philox_words_hex": [
+    "fc2cfbb13b739455",
+    "6e6491c8a7f210ae",
+    "d62e35ed31446ece",
+    "496865da287f7b8d"
+   ],
+   "first_100_bits": "0110010011001111000110010001100011010011101101111001100100011011010011101111110010100000011000111110"
+  },
+  "pilot-values-v3/M": {
+   "seed_ascii": "paper-store/exp016-arch3",
+   "label_hex": "70696c6f742d76616c7565732d76332f4d",
+   "label_ascii": "pilot-values-v3/M",
+   "draw_form": "integers(0, 2, 100) [default dtype \u2014 dtype kwarg would fork the stream]",
+   "philox_key_hex": "963a9b095b75ac72d2bdba1dd2857d2f",
+   "raw_philox_words_hex": [
+    "2b7031e86c664e2f",
+    "74b49e58ab36e643",
+    "e4eeb33b87797e76",
+    "2bfb1947e5553808"
+   ],
+   "first_100_bits": "0010111000010100001010010000001100110000110100011010101000101011011110000100010000010000010011110101"
+  },
+  "pilot-values-v3/Y": {
+   "seed_ascii": "paper-store/exp016-arch3",
+   "label_hex": "70696c6f742d76616c7565732d76332f59",
+   "label_ascii": "pilot-values-v3/Y",
+   "draw_form": "integers(0, 2, 100) [default dtype \u2014 dtype kwarg would fork the stream]",
+   "philox_key_hex": "0268b7426da300cf1b9c43923ac14326",
+   "raw_philox_words_hex": [
+    "7b30a120cdae7cba",
+    "e667f3a18ecc9ad1",
+    "b268c7d1c3f6b73b",
+    "e2da3dccb74c22c8"
+   ],
+   "first_100_bits": "1011111111111111001110111001111101001101011110100011110010000001011110000011011000101111100011111010"
+  },
+  "ldpc/r0550/eira-H-restart0": {
+   "seed_ascii": "ldpc-v1/r0550",
+   "label_hex": "656972612d482f7265737461727430",
+   "label_ascii": "eira-H/restart0",
+   "draw_form": "Fisher-Yates scalars integers(0, i+1) for i = m_bits-1..1, then per column attempt integers(0, mb, size=d) + integers(0, z, size=d)",
+   "philox_key_hex": "ae59274c449ac86899b43f58d0c0d0fb",
+   "raw_philox_words_hex": [
+    "0c2b80ba9cccc1a7",
+    "28b0f6db69a55a63",
+    "9d111e139a7b1931",
+    "178557d677a968e9"
+   ],
+   "m_bits": 1856,
+   "mb": 29,
+   "z": 64,
+   "heavy_deg": 10,
+   "fisher_yates_first_64_j": [
+    1136,
+    88,
+    765,
+    294,
+    1117,
+    1135,
+    864,
+    169,
+    1121,
+    848,
+    514,
+    345,
+    699,
+    1170,
+    1441,
+    46,
+    176,
+    1434,
+    435,
+    1304,
+    551,
+    325,
+    1332,
+    816,
+    767,
+    687,
+    78,
+    1507,
+    1042,
+    893,
+    330,
+    120,
+    449,
+    868,
+    197,
+    460,
+    449,
+    1532,
+    674,
+    1196,
+    1465,
+    1504,
+    1071,
+    1164,
+    1064,
+    1017,
+    378,
+    505,
+    221,
+    379,
+    692,
+    1681,
+    161,
+    1332,
+    1683,
+    719,
+    1127,
+    1427,
+    366,
+    854,
+    1776,
+    794,
+    1681,
+    116
+   ],
+   "fisher_yates_perm_sha256": "73dfb6e4d7edf020841ac2a10101bb87248c5a1615466653df21a7e7051ac29c",
+   "post_fy_rows_d10": [
+    19,
+    12,
+    22,
+    26,
+    3,
+    10,
+    1,
+    16,
+    11,
+    24
+   ],
+   "post_fy_shifts_d10": [
+    44,
+    13,
+    60,
+    13,
+    13,
+    9,
+    4,
+    56,
+    59,
+    62
+   ],
+   "note": "seed is the LADDER LABEL, not the volume seed \u2014 H matrices are volume-independent. restart 0 is always drawn first regardless of which restart wins. perm sha over ' '.join(str(pi))."
+  },
+  "fountain-v1/row/block0/i1387": {
+   "seed_ascii": "paper-store/exp016-arch3",
+   "label_hex": "666f756e7461696e2d76312f726f772f000000006b050000",
+   "label_ascii": "fountain-v1/row/\u0000\u0000\u0000\u0000k\u0005\u0000\u0000",
+   "draw_form": "integers(0, 2, K_b) [default dtype; K_b = 1387 for e016; prefix independent of K_b]",
+   "philox_key_hex": "7f6c537f55656fd43464e0bae1d697a9",
+   "raw_philox_words_hex": [
+    "442776577447e934",
+    "bf46578d586454e6",
+    "7d808b176146f773",
+    "24169c4ff5682a85"
+   ],
+   "first_256_bits": "0001001011000000110101100010000101110011111110011101111101001000011101100111100111110110000010011111111010110101000000100001111100111011101001111011011000000110010110111100000001010000101100100111000001000011010011110110011011111000000000000000111000011001",
+   "k_block": 1387,
+   "note": "e016's first repair row (n_blocks = 1, k_per_block = (1387,))"
+  },
+  "e016/data": {
+   "seed_ascii": "paper-store/exp016-arch3",
+   "label_hex": "653031362f64617461",
+   "label_ascii": "e016/data",
+   "draw_form": "integers(0, 256, n_bytes, dtype=np.uint8) [full-range byte path: raw buffered bytes, no rejection]",
+   "philox_key_hex": "1b01a187c2f1e2c184b993094d95eca5",
+   "raw_philox_words_hex": [
+    "ad982afee40d879c",
+    "dda6d2d04e2c6bd4",
+    "eb81a55f86604f72",
+    "d87694bbfdfb7c94"
+   ],
+   "n_bytes": 361833,
+   "first_32_bytes_hex": "9c870de4fe2a98add46b2c4ed0d2a6dd724f60865fa581eb947cfbfdbb9476d8",
+   "full_sha256": "412b9256829ece06243f16ab0456e4a817b1459d64625f28dd09eae26059bb90",
+   "note": "gen_e016.make_data \u2014 the volume's certified payload itself is keystream-derived; this sha is the 016.2 hardware-certified data sha"
+  },
+  "symks/a3-7st-c3/page0": {
+   "seed_ascii": "paper-store/exp016-arch3",
+   "label_hex": "73796d6b732f61332d3773742d63332f706700000000",
+   "label_ascii": "symks/a3-7st-c3/pg\u0000\u0000\u0000\u0000",
+   "draw_form": "integers(0, 7, size=shape, dtype=np.uint8) [uint8 Lemire rejection path]",
+   "philox_key_hex": "1285abc48cdcd0b3f965351469e60593",
+   "raw_philox_words_hex": [
+    "5b537f4a57c0e42f",
+    "f5c202b0385347ff",
+    "461d249fe7b40bbd",
+    "4c0df62545f47299"
+   ],
+   "first_256_symbols": "1652232261214056504640014361602514204625601336321622632133644514610603413644216062561453223001636440042141431335502124335010153131626562020342256254210053525313001561451631614405140454336121135306046345652562560221631630511242616243055654556025632131101260",
+   "note": "encodings.key_symbols for n_states=7 (a3-7st-c3), page 0"
+  }
+ }
+}

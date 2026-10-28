@@ -1,0 +1,28 @@
+__pycache__/
+*.pyc
+*.egg-info/
+env/
+.venv/
+dist/
+scans/
+*.tiff
+*.tif
+*.png
+!docs/**/*.png
+# generated print artifacts + verification renders: regenerated deterministically,
+# sha256 recorded in the experiment log instead of committing binaries
+experiments/*/build/
+# session junk drawer (never committed; durable artifacts get promoted into
+# experiments/ or src/ — see experiments/001-*/ for the pattern)
+scratch/
+
+# macOS junk
+.DS_Store
+
+# repo-root build/ — confetti.py generate default output (volumes are
+# content-addressed artifacts, regenerable; never committed)
+/build/
+*.swp
+.fixture-cache/
+env314t/
+_distill/

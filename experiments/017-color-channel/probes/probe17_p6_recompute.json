@@ -1,0 +1,416 @@
+{
+ "provenance": {
+  "home_m281": {
+   "report": "calpage_report.json",
+   "scan": "scans/test-scan-calpage-color.png",
+   "scan_sha256": "2bbb87042851dae071bcf197adc1152a979f8cf170019499898ab1795930a9f6"
+  },
+  "xerox_altalink": {
+   "report": "calpage_report_xerox.json",
+   "scan": "scans/xerox-cal-hp-scan.png",
+   "scan_sha256": "7c64d565b1906d1ea32afe94a92144b1cebff293a166687a89fa53bdab7e4968"
+  },
+  "overlap2": {
+   "scan": {
+    "path": "scans/test-scan-overlap2.png",
+    "sha256": "19e58f247c31faf7e55a2a1aa303f2e8cafb22c64a150bfe2b66b146e588be62",
+    "sha256_expected": "19e58f247c31faf7e55a2a1aa303f2e8cafb22c64a150bfe2b66b146e588be62",
+    "sha256_ok": true,
+    "kind": "color",
+    "shape_px": [
+     14028,
+     9920
+    ]
+   },
+   "sha_note": "see report"
+  }
+ },
+ "home_m281_state8_c3": {
+  "label": "home_m281 CAL-1 state8_c3 (printed 8-state, cell=3)",
+  "n_cells": 24649,
+  "accuracy": 0.7589,
+  "mi_uniform8": 1.7566,
+  "ba_capacity": 1.8933,
+  "ba_input_dist": {
+   "W": 0.1546,
+   "C": 0.1407,
+   "M": 0.1256,
+   "CM": 0.1571,
+   "Y": 0.1364,
+   "CY": 0.1285,
+   "MY": 0.157,
+   "CMY": 0.0
+  },
+  "best7_subset": {
+   "states": [
+    "W",
+    "C",
+    "M",
+    "CM",
+    "Y",
+    "CY",
+    "MY"
+   ],
+   "mi": 1.8901
+  },
+  "best6_subset": {
+   "states": [
+    "W",
+    "C",
+    "M",
+    "CM",
+    "Y",
+    "MY"
+   ],
+   "mi": 1.807
+  },
+  "per_level_bit_ber_all_cells": {
+   "C": 0.0785021704734472,
+   "M": 0.08304596535356404,
+   "Y": 0.12888961012617145,
+   "mean": 0.09681258198439423
+  },
+  "per_level_bit_ber_true_nontriple": {
+   "C": 0.05217512290140061,
+   "M": 0.04967071700213338,
+   "Y": 0.10249513032186254,
+   "mean": 0.06811365674179885
+  },
+  "per_level_bit_ber_true_triple": {
+   "C": 0.26239067055393583,
+   "M": 0.3161645610625202,
+   "Y": 0.3132491091674765,
+   "mean": 0.29726811359464417
+  },
+  "triple_confusion": {
+   "true_CMY_decoded_as": {
+    "CMY": 0.3803,
+    "MY": 0.1364,
+    "CY": 0.1247,
+    "CM": 0.1221,
+    "C": 0.1105,
+    "Y": 0.0454,
+    "M": 0.045,
+    "W": 0.0356
+   },
+   "CMY_row_accuracy": 0.3803,
+   "decoded_CMY_true_was": {
+    "CMY": 0.6458,
+    "MY": 0.1018,
+    "CM": 0.0985,
+    "CY": 0.0831,
+    "C": 0.0468,
+    "M": 0.0149,
+    "Y": 0.0072,
+    "W": 0.0022
+   },
+   "false_CMY_rate_nontriple": 0.0299
+  },
+  "per_state_accuracy": {
+   "W": 0.8718,
+   "C": 0.8177,
+   "M": 0.8095,
+   "CM": 0.8227,
+   "Y": 0.8074,
+   "CY": 0.7398,
+   "MY": 0.8215,
+   "CMY": 0.3803
+  },
+  "stored_mi_check": 1.7566,
+  "stored_bit_ber_check": {
+   "C": 0.0785021704734472,
+   "M": 0.08304596535356404,
+   "Y": 0.12888961012617145
+  }
+ },
+ "home_m281_state16_c3": {
+  "mi_uniform16": 1.1558,
+  "stored_mi_check": 1.1558,
+  "ba_capacity": 1.8097,
+  "best8_subset": {
+   "states": [
+    "W",
+    "C",
+    "M",
+    "CM",
+    "Y",
+    "CY",
+    "MY",
+    "K"
+   ],
+   "mi": 1.8005
+  },
+  "best7_subset": {
+   "states": [
+    "W",
+    "C",
+    "M",
+    "Y",
+    "CY",
+    "MY",
+    "K"
+   ],
+   "mi": 1.7522
+  }
+ },
+ "xerox_altalink_state8_c3": {
+  "label": "xerox_altalink CAL-1 state8_c3 (printed 8-state, cell=3)",
+  "n_cells": 24649,
+  "accuracy": 0.8658,
+  "mi_uniform8": 2.2076,
+  "ba_capacity": 2.2151,
+  "ba_input_dist": {
+   "W": 0.1424,
+   "C": 0.1184,
+   "M": 0.1081,
+   "CM": 0.1252,
+   "Y": 0.1463,
+   "CY": 0.1352,
+   "MY": 0.107,
+   "CMY": 0.1173
+  },
+  "best7_subset": {
+   "states": [
+    "W",
+    "C",
+    "M",
+    "CM",
+    "Y",
+    "CY",
+    "CMY"
+   ],
+   "mi": 2.1383
+  },
+  "best6_subset": {
+   "states": [
+    "W",
+    "M",
+    "CM",
+    "Y",
+    "CY",
+    "CMY"
+   ],
+   "mi": 2.0417
+  },
+  "per_level_bit_ber_all_cells": {
+   "C": 0.032212260132256886,
+   "M": 0.030995172217939876,
+   "Y": 0.08511501480790296,
+   "mean": 0.04944081571936657
+  },
+  "per_level_bit_ber_true_nontriple": {
+   "C": 0.028197755310268063,
+   "M": 0.03445877005843614,
+   "Y": 0.08014098877655133,
+   "mean": 0.04759917138175185
+  },
+  "per_level_bit_ber_true_triple": {
+   "C": 0.06025267249757046,
+   "M": 0.006802721088435374,
+   "Y": 0.1198574667962423,
+   "mean": 0.06230428679408271
+  },
+  "triple_confusion": {
+   "true_CMY_decoded_as": {
+    "CMY": 0.8416,
+    "CM": 0.0923,
+    "MY": 0.0347,
+    "M": 0.0246,
+    "CY": 0.0036,
+    "C": 0.0023,
+    "W": 0.0006,
+    "Y": 0.0003
+   },
+   "CMY_row_accuracy": 0.8416,
+   "decoded_CMY_true_was": {
+    "CMY": 0.8588,
+    "CM": 0.0638,
+    "MY": 0.0413,
+    "CY": 0.0205,
+    "M": 0.0129,
+    "C": 0.0026
+   },
+   "false_CMY_rate_nontriple": 0.0198
+  },
+  "per_state_accuracy": {
+   "W": 0.8946,
+   "C": 0.8662,
+   "M": 0.8345,
+   "CM": 0.883,
+   "Y": 0.9085,
+   "CY": 0.8774,
+   "MY": 0.8209,
+   "CMY": 0.8416
+  },
+  "stored_mi_check": 2.2076,
+  "stored_bit_ber_check": {
+   "C": 0.032212260132256886,
+   "M": 0.030995172217939876,
+   "Y": 0.08511501480790296
+  }
+ },
+ "xerox_altalink_state16_c3": {
+  "mi_uniform16": 1.8261,
+  "stored_mi_check": 1.8261,
+  "ba_capacity": 2.2364,
+  "best8_subset": {
+   "states": [
+    "W",
+    "C",
+    "M",
+    "Y",
+    "CY",
+    "MY",
+    "CMY",
+    "CYK"
+   ],
+   "mi": 2.1546
+  },
+  "best7_subset": {
+   "states": [
+    "W",
+    "M",
+    "CM",
+    "Y",
+    "CY",
+    "MY",
+    "CYK"
+   ],
+   "mi": 2.0867
+  }
+ },
+ "home_overlap2_state7_c3": {
+  "label": "home_m281 002.2 printed A1/state7_c3",
+  "n_cells": 24649,
+  "accuracy": 0.724,
+  "mi_uniform": 1.4788,
+  "ba_capacity": 1.484,
+  "per_level_bit_ber": {
+   "C": 0.06284230597590167,
+   "M": 0.1015051320540387,
+   "Y": 0.15241997646963365,
+   "mean": 0.10558913816652467
+  },
+  "per_state_accuracy": {
+   "W": 0.8212,
+   "C": 0.7437,
+   "M": 0.7454,
+   "Y": 0.7114,
+   "CM": 0.6443,
+   "CY": 0.6829,
+   "MY": 0.7152
+  },
+  "stored_mi_check": 1.4788
+ },
+ "home_overlap2_state7_c4": {
+  "label": "home_m281 002.2 printed A1/state7_c4",
+  "n_cells": 19881,
+  "accuracy": 0.8447,
+  "mi_uniform": 1.9802,
+  "ba_capacity": 1.9868,
+  "per_level_bit_ber": {
+   "C": 0.024043056184296564,
+   "M": 0.0587495598812937,
+   "Y": 0.08470398873296112,
+   "mean": 0.05583220159951713
+  },
+  "per_state_accuracy": {
+   "W": 0.9059,
+   "C": 0.8439,
+   "M": 0.8541,
+   "Y": 0.854,
+   "CM": 0.768,
+   "CY": 0.8279,
+   "MY": 0.8588
+  },
+  "stored_mi_check": 1.9802
+ },
+ "home_overlap2_state7_c6": {
+  "label": "home_m281 002.2 printed A1/state7_c6",
+  "n_cells": 13924,
+  "accuracy": 0.9948,
+  "mi_uniform": 2.7586,
+  "ba_capacity": 2.7593,
+  "per_level_bit_ber": {
+   "C": 0.001580005745475438,
+   "M": 0.001292731973570813,
+   "Y": 0.002370008618213157,
+   "mean": 0.0017475821124198028
+  },
+  "per_state_accuracy": {
+   "W": 0.997,
+   "C": 0.9924,
+   "M": 0.9879,
+   "Y": 1.0,
+   "CM": 0.9916,
+   "CY": 0.9965,
+   "MY": 0.9985
+  },
+  "stored_mi_check": 2.7586
+ },
+ "home_overlap2_state8k_c4": {
+  "mi_uniform8": 2.0743,
+  "stored_mi_check": 2.0743,
+  "best7_subset": {
+   "states": [
+    "W",
+    "C",
+    "M",
+    "Y",
+    "CM",
+    "CY",
+    "MY"
+   ],
+   "mi": 2.2082
+  },
+  "note": "8th state here is K (no CMY triple printed on this field)"
+ },
+ "home_m281_e004_A3_crosstile": {
+  "label": "home_m281 e004 A3 7st-c3 cross-tile (16 tiles page-balanced)",
+  "n_cells": 623040,
+  "accuracy": 0.8339,
+  "mi_uniform": 1.896,
+  "ba_capacity": 1.9029,
+  "per_level_bit_ber": {
+   "C": 0.05230322290703646,
+   "M": 0.04303576014381099,
+   "Y": 0.08864117873651772,
+   "mean": 0.06132672059578839
+  },
+  "per_state_accuracy": {
+   "W": 0.8916,
+   "C": 0.8061,
+   "M": 0.8068,
+   "Y": 0.8385,
+   "CM": 0.8396,
+   "CY": 0.7877,
+   "MY": 0.8674
+  },
+  "stored_mi_check": 1.896,
+  "scan": "finalists.png"
+ },
+ "xerox_altalink_e004_A3_crosstile": {
+  "label": "xerox_altalink e004 A3 7st-c3 cross-tile (16 tiles page-balanced)",
+  "n_cells": 623040,
+  "accuracy": 0.8915,
+  "mi_uniform": 2.1502,
+  "ba_capacity": 2.1589,
+  "per_level_bit_ber": {
+   "C": 0.02939458140729327,
+   "M": 0.02761459938366718,
+   "Y": 0.06381612737544941,
+   "mean": 0.04027510272213662
+  },
+  "per_state_accuracy": {
+   "W": 0.9144,
+   "C": 0.8614,
+   "M": 0.8473,
+   "Y": 0.914,
+   "CM": 0.9425,
+   "CY": 0.9031,
+   "MY": 0.8576
+  },
+  "stored_mi_check": 2.1502,
+  "scan": "xerox-e004-finalists-hp-scan.png"
+ }
+}

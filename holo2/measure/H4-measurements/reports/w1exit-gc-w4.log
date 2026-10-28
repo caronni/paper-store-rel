@@ -1,0 +1,31 @@
+START w1exit-gc-w4: 2026-08-16 01:29:57 CEST
+format   c2-r0700@3392x2368 · codec k-v1 · 1 page domain · streams main · PROVISIONAL
+capture  1 ingested · cf29e165ebe4… · done coverage 68.9% (5534157/8034771 cells)
+queue    ready 8[payload:7,place:1] · running 0 · sleeping 386 · retired 1793 · declined 315 (re-offerable 0) · pool 4/free
+work     commits 3658 (scheduled 3657) · fires 3656 · wakes/commit 96.50 · useful 0.49 · peak 4 · stale 655
+tiles    UNKNOWN 0 · ADDRESSED 375 · ATTEMPTED 8 · CERTIFIED 1357 · crc exposure 1373 spends/1389 attempts
+close    verified · certified 1357 · K 1357/1356 · metadata rank 24/24 · blocks 1/1
+[w1exit-gc-w4] RESULT VERIFIED certified=1357 commits=3657 fires=3656 wall=2281s workers=4
+[w1exit-gc-w4] payload 465580 B sha e5021f8d099587c3
+[w1exit-gc-w4] vs w1a-gc-serial.bin: BYTE-IDENTICAL
+[w1exit-gc-w4] FIRES 4314 busy 8788.4s wall*W 9124.9s utilisation 96.3% (residual = idle + main-thread phases)
+[w1exit-gc-w4]   fire wall: median 13.1ms p90 8693.7ms max 18311.3ms
+[w1exit-gc-w4] ROUNDS none (continuous admission)
+     2282.01 real      2362.15 user        54.28 sys
+          2718711808  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              360771  page reclaims
+               94369  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   4  messages sent
+                   4  messages received
+                   0  signals received
+               13793  voluntary context switches
+             9928146  involuntary context switches
+      35328822030741  instructions retired
+       7555968945929  cycles elapsed
+          1043596848  peak memory footprint

@@ -1,0 +1,107 @@
+=== START chien-off-w4 (run_decode_gil.py, sweep=off, W=4) Mon Aug 17 02:25:14 CEST 2026 ===
+format   c2-r0700@3392x2368 · codec k-v1 · 1 page domain · streams main · PROVISIONAL
+capture  1 ingested · cf29e165ebe4… · done coverage 68.9% (5534994/8034771 cells)
+queue    ready 171[payload:70,place:101] · running 0 · sleeping 341 · retired 1357 · declined 0 (re-offerable 0) · pool 4/free
+work     commits 1923 (scheduled 1922) · fires 2346 · wakes/commit 0.71 · useful 0.67 · peak 4 · stale 18
+tiles    UNKNOWN 0 · ADDRESSED 397 · ATTEMPTED 7 · CERTIFIED 1357 · crc exposure 1364 spends/1364 attempts
+close    verified · certified 1357 · K 1357/1356 · metadata rank 24/24 · blocks 1/1
+[chien-off-w4] RESULT VERIFIED certified=1357 commits=1922 fires=2346 wall=539s workers=4 switch_ms=5.0
+[chien-off-w4] payload 465580 B sha e5021f8d099587c3
+[chien-off-w4] vs w1a-gc-serial.bin: BYTE-IDENTICAL
+[chien-off-w4] FIRES 2366 wall 1886.6s cpu 476.7s offcore 1409.9s (74.7% of fire wall) | fire-cpu/wall 0.885 cores
+[chien-off-w4] FIRE wall p50 59.90ms p90 468.75ms | cpu p50 1.67ms p90 101.42ms
+[chien-off-w4] --- per family/route ---
+[chien-off-w4]   place/pull/source    n=  661 cpu=   473.3s ( 99.3%) wall=  1749.0s cpu-p50=   90.86ms cpu-p90=  3232.54ms wall-p90= 12291.33ms
+[chien-off-w4]   payload/scan           n= 1705 cpu=     3.4s (  0.7%) wall=   137.6s cpu-p50=    1.47ms cpu-p90=     2.75ms wall-p90=   108.12ms
+[chien-off-w4] MAIN thread cpu 99.6s of wall 538.5s (18.5%)
+[chien-off-w4]   main.fill       n=  1821 wall=    11.9s cpu=     8.2s p50=   0.65ms p90=   33.13ms
+[chien-off-w4]   main.admit      n=  1821 wall=   521.6s cpu=    86.7s p50=  62.57ms p90=  221.96ms
+[chien-off-w4]   main.apply      n=  2346 wall=    90.0s cpu=    83.2s p50=  48.23ms p90=   66.71ms
+[chien-off-w4]   main.ctx.apply  n=  1922 wall=     4.9s cpu=     1.7s p50=   1.05ms p90=    5.56ms
+[chien-off-w4]   main.is_current n=  2364 wall=     3.5s cpu=     3.4s p50=   0.07ms p90=    0.10ms
+[chien-off-w4] GIL-LATENCY probe n=34181 period=5.0ms mean=10.54ms p50=8.66ms p90=23.62ms p99=47.53ms max=264.8ms
+[chien-off-w4] IN-FIRE THREADS per sample: 0:2%, 3:0%, 4:98%
+[chien-off-w4] --- stack sampler: 133823 pool-thread samples ---
+[chien-off-w4]   16.26%  thread:_worker:116
+[chien-off-w4]   14.59%  bch:_chien_roots:300
+[chien-off-w4]    7.09%  _interpolation:map_coordinates:474
+[chien-off-w4]    5.72%  bch:_berlekamp_massey:255
+[chien-off-w4]    5.23%  pose_fit:_fit_phase:492
+[chien-off-w4]    2.74%  _arraysetops_impl:_isin:891
+[chien-off-w4]    2.52%  bch:_berlekamp_massey:267
+[chien-off-w4]    2.31%  words:_gather_slot:286
+[chien-off-w4]    2.11%  words:_gather_slot:287
+[chien-off-w4]    1.95%  bch:_berlekamp_massey:265
+[chien-off-w4]    1.89%  bch:_syndromes_many_words:225
+[chien-off-w4]    1.61%  _arraysetops_impl:_isin:874
+[chien-off-w4]    1.53%  _arraysetops_impl:_isin:875
+[chien-off-w4]    1.37%  bch:_syndromes_many_words:224
+[chien-off-w4]    1.15%  bch:_berlekamp_massey:252
+[chien-off-w4]    1.15%  pose_fit:_fit_phase:502
+[chien-off-w4]    1.08%  _arraysetops_impl:_isin:892
+[chien-off-w4]    0.92%  words:_decode_candidates:355
+[chien-off-w4]    0.84%  _pocketfft:_raw_fft:101
+[chien-off-w4]    0.82%  decode:_bp_loop:72
+[chien-off-w4] --- top stacks ---
+[chien-off-w4]   16.26%  thread:_worker
+[chien-off-w4]   14.88%  bch:_chien_roots < bch:_decode_syndromes < bch:decode_many < words:_decode_candidates < words:stage_a < words:stage_a_patch
+[chien-off-w4]   12.61%  bch:_berlekamp_massey < bch:_decode_syndromes < bch:decode_many < words:_decode_candidates < words:stage_a < words:stage_a_patch
+[chien-off-w4]    6.96%  _arraysetops_impl:_isin < _arraysetops_impl:isin < bch:_as_words < bch:decode_many < words:_decode_candidates < words:stage_a
+[chien-off-w4]    6.75%  pose_fit:_fit_phase < pose_fit:fit_window_pose < place_shared:sample_window < place_job:run < orchestrator:_propose < thread:run
+[chien-off-w4]    5.39%  decode:_bp_loop < decode:_run < decode:decode < tile:decode_tile < tiles:attempt_k_tile < payload_h3bis:run
+[chien-off-w4]    5.36%  _interpolation:map_coordinates < pose_fit:_fit_phase < pose_fit:fit_window_pose < place_shared:sample_window < place_job:run < orchestrator:_propose
+[chien-off-w4]    5.15%  words:_gather_slot < words:_decode_candidates < words:stage_a < words:stage_a_patch < placement:decode_word_address < place_job:run
+[chien-off-w4]    3.26%  bch:_syndromes_many_words < bch:decode_many < words:_decode_candidates < words:stage_a < words:stage_a_patch < placement:decode_word_address
+[chien-off-w4]    2.04%  pose_fit:lattice_reciprocal < pose_fit:fit_window_pose < place_shared:sample_window < place_job:run < orchestrator:_propose < thread:run
+[chien-off-w4]    1.26%  pose_audit:_batched_refine_scan < pose_audit:refine_patch_pose < place_shared:place_addressed < place_job:run < orchestrator:_propose < thread:run
+[chien-off-w4]    1.24%  pose_audit:parity_score < pose_audit:candidate < pose_audit:local_search < place_job:_search < place_job:run < orchestrator:_propose
+[chien-off-w4] --- stack sampler: 34181 MAIN-thread samples ---
+[chien-off-w4]   71.52%  threading:wait:369
+[chien-off-w4]    4.59%  keys:<genexpr>:253
+[chien-off-w4]    3.46%  <string>:__lt__:14
+[chien-off-w4]    2.09%  keys:parse_key:257
+[chien-off-w4]    1.34%  journal:append:343
+[chien-off-w4]    1.31%  keys:<genexpr>:198
+[chien-off-w4]    1.22%  keys:key_parts:134
+[chien-off-w4]    1.17%  journal:append:345
+[chien-off-w4]    1.13%  <string>:__init__:2
+[chien-off-w4]    1.09%  blobs:put:221
+[chien-off-w4]    0.71%  _filters:correlate1d:610
+[chien-off-w4]    0.63%  <string>:__hash__:38
+[chien-off-w4]    0.61%  <string>:__init__:4
+[chien-off-w4]    0.61%  <string>:__hash__:39
+[chien-off-w4]    0.51%  <string>:__init__:3
+[chien-off-w4]    0.51%  keys:key_parts:116
+[chien-off-w4]    0.39%  keys:build_key:223
+[chien-off-w4]    0.38%  keys:tile_key:80
+[chien-off-w4]    0.37%  payload_h3bis:evidence_footing:164
+[chien-off-w4]    0.32%  keys:parse_evidence_key:131
+[chien-off-w4]   S 71.53%  orchestrator:_admit_completed < orchestrator:_run_pool < orchestrator:_run < orchestrator:run < cli:decode
+[chien-off-w4]   S  2.64%  <string>:__lt__ < store:keys < tilemap:build < plane:index < plane:tiles < plane:tiles
+[chien-off-w4]   S  2.20%  journal:append < store:mark_start < orchestrator:_dispatch < orchestrator:_fill < orchestrator:_run_pool < orchestrator:_run
+[chien-off-w4]   S  1.92%  keys:<genexpr> < keys:parse_key < keys:parse_evidence_key < tilemap:build < plane:index < plane:tiles
+[chien-off-w4]   S  1.61%  keys:key_parts < keys:build_key < keys:tile_key < tilemap:build < plane:index < plane:tiles
+[chien-off-w4]   S  1.58%  blobs:put < store:put_staged < commit:apply < session:apply < orchestrator:_commit < orchestrator:_apply
+[chien-off-w4]   S  1.15%  keys:parse_key < keys:parse_evidence_key < tilemap:build < plane:index < plane:tiles < plane:tiles
+[chien-off-w4]   S  1.13%  keys:<genexpr> < keys:parse_key < keys:parse_evidence_key < payload_h3bis:evidence_footing < payload_h3bis:resident_footings < payload_h3bis:expand
+[chien-off-w4] wrote chien-off-w4.gil.json
+      539.02 real       572.49 user        12.01 sys
+          2785705984  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              194555  page reclaims
+               94307  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   4  messages sent
+                   4  messages received
+                   0  signals received
+               13194  voluntary context switches
+             1817202  involuntary context switches
+       8444065667759  instructions retired
+       1852324384161  cycles elapsed
+          1090521392  peak memory footprint
+EXIT_CODE=0
+=== END chien-off-w4 Mon Aug 17 02:34:13 CEST 2026 ===

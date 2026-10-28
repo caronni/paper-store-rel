@@ -1,0 +1,8565 @@
+{
+ "volume": "xerox-c2-cmy7",
+ "label": "xerox c2-cmy7 (PK-FINAL)",
+ "colour": true,
+ "manifest": "<checkout>/scratch/crop-parity/xerox-c2-cmy7/cases.json",
+ "format_ref": "L:c2-cmy7-p120-v0@3328x2304",
+ "classes": [
+  "miss",
+  "gain"
+ ],
+ "gap_counts": {
+  "holo1": 1559,
+  "holo3": 1564,
+  "both": 1533,
+  "miss": 26,
+  "gain": 31,
+  "neither": 282,
+  "holo3_run": "post-6",
+  "events": {
+   "tile_outcome_rows": 51052,
+   "results": {
+    "below_attempt_floor": 1730,
+    "certified": 1564,
+    "attempted_failed": 47758
+   }
+  }
+ },
+ "generated_at": "2026-08-30 21:31:22",
+ "harness": {
+  "argv": "--volume xerox-c2-cmy7 --workers 8",
+  "worktree_head": "65d2d08ce398d23d3af0bcf3fd2a308a9d8d9283",
+  "holo3_tree": "f5d7c0e2efc8ece54936bf2c64626f3a580c6771",
+  "holo1_tree": "3537128d0084772885a8c7857996c1dfb480aaf0"
+ },
+ "gt": {
+  "payload_sha256": "5963b9d16abca48d66a05f80eb137ce76624b8fdedb48ce13c3ee0cf8f24c993",
+  "validated_certificates": 1559,
+  "rule": "every certificate in the archived holo1 state matches the re-encoded golden payload exactly"
+ },
+ "cases": [
+  {
+   "case_id": "xerox-c2-cmy7-c01",
+   "cell_bbox": [
+    1040,
+    0,
+    1584,
+    304
+   ],
+   "runs": {
+    "holo1": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "env/bin/python confetti.py decode <checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c01-0.tiff --scan-dpi 4800.0 --format L:c2-cmy7-p120-v0@3328x2304 --state <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c01/holo1.state -o <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c01/holo1.out --no-close --complete --mopup --refine --workers 8",
+      "cwd": "<repo>",
+      "crop_sha256": "64d45db604d5170040f9ae9a36bc9c4be60a82b5ca2e2b55dc50add1aaf451e9",
+      "receiver_tree": "3537128d0084772885a8c7857996c1dfb480aaf0",
+      "receiver_dirty_sha": "",
+      "repo_head": "259e622148f844d02742ff6eb033fd66b0b83cc8",
+      "wall_seconds": 484.88766412500263,
+      "exit": 2,
+      "summary": [
+       "capture 31724318f0b5db67155d108069d0fcb84a9fa4cd90639641cd04f1112c78360e: complete; committed",
+       "state: <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c01/holo1.state  sha256 6f90c18119f76e2afa5ea683bc7a2444048e1cc3934e7d9798fe09d8570fff42",
+       "close skipped (--no-close): 37 certificates accumulated; no closing record was read, attempted, or written. Close with a plain or --complete run.",
+       "src/holo/cli.py:636: ProvisionalReceiverWarning: HOLO TRACK-3 RECEIVER IS PROVISIONAL: historical E021-E023c stand-in constants are active; production qualification is still required. Outstanding: the v1 physical/null false-accept gate, channel-BER envelope, and support safety margin still require frozen qualification; the 0.176 complete-domain rival refusal was diagnosed as a parity-concentrated cross-page alias and the v0.30 whole-word rival gate restores the d=27 floor (synthetically verified); real-capture full-domain yield and resource profile remain unqualified",
+       "  res = run_receive("
+      ],
+      "ran_at": "2026-08-30 15:51:12"
+     }
+    },
+    "holo3": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "<checkout>/env314t/bin/python -m measure.crop_parity._h3run --certs-out <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c01/holo3-certs.json -- decode <checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c01-0.tiff --dpi 4800.0 --format L:c2-cmy7-p120-v0@3328x2304 --no-close --workers 8 --run-dir <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c01/holo3-run --out <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c01/holo3.out",
+      "cwd": "<checkout>",
+      "crop_sha256": "64d45db604d5170040f9ae9a36bc9c4be60a82b5ca2e2b55dc50add1aaf451e9",
+      "receiver_tree": "f5d7c0e2efc8ece54936bf2c64626f3a580c6771",
+      "receiver_dirty_sha": "",
+      "repo_head": "65d2d08ce398d23d3af0bcf3fd2a308a9d8d9283",
+      "wall_seconds": 138.33349816699774,
+      "exit": 0,
+      "summary": [
+       "_h3run: open, 36 certificates in 136.7 s"
+      ],
+      "ran_at": "2026-08-30 15:59:17"
+     }
+    }
+   },
+   "n_certificates": {
+    "holo1": 37,
+    "holo3": 36
+   },
+   "bits_available": {
+    "holo1": true,
+    "holo3": true
+   },
+   "targets": [
+    {
+     "address": [
+      0,
+      0,
+      20,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "miss"
+     ],
+     "full_sheet": {
+      "holo1": "certified",
+      "holo3": "uncertified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": false
+      },
+      "holo3": {
+       "available": true,
+       "certified": false
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    }
+   ],
+   "controls": {
+    "holo1": {
+     "n": 21,
+     "reproduced": 21,
+     "flipped": 0,
+     "flipped_addresses": [],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 0,
+       "n": 11
+      },
+      "64-127": {
+       "flipped": 0,
+       "n": 10
+      }
+     }
+    },
+    "holo3": {
+     "n": 21,
+     "reproduced": 21,
+     "flipped": 0,
+     "flipped_addresses": [],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 0,
+       "n": 11
+      },
+      "64-127": {
+       "flipped": 0,
+       "n": 10
+      }
+     }
+    }
+   },
+   "wrong_certificates": [],
+   "out_of_bbox": [],
+   "checked_certificates": {
+    "holo1": 37,
+    "holo3": 36
+   },
+   "crops": [
+    "<checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c01-0.tiff"
+   ],
+   "crop_sha256": "64d45db604d5170040f9ae9a36bc9c4be60a82b5ca2e2b55dc50add1aaf451e9"
+  },
+  {
+   "case_id": "xerox-c2-cmy7-c02",
+   "cell_bbox": [
+    0,
+    0,
+    496,
+    752
+   ],
+   "runs": {
+    "holo1": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "env/bin/python confetti.py decode <checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c02-0.tiff --scan-dpi 4800.0 --format L:c2-cmy7-p120-v0@3328x2304 --state <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c02/holo1.state -o <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c02/holo1.out --no-close --complete --mopup --refine --workers 8",
+      "cwd": "<repo>",
+      "crop_sha256": "45327130bc5f5b9cb5970fa17240af9734e0548f539fe4f3f8372330414603fb",
+      "receiver_tree": "3537128d0084772885a8c7857996c1dfb480aaf0",
+      "receiver_dirty_sha": "",
+      "repo_head": "259e622148f844d02742ff6eb033fd66b0b83cc8",
+      "wall_seconds": 1071.7636488339995,
+      "exit": 2,
+      "summary": [
+       "capture a0593b6b7dc3a00f8ad9b956e197f9d40b1abc4f822904b657fecb47a5520c8e: complete; committed",
+       "state: <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c02/holo1.state  sha256 4ef59d4bb631504097e2450df04acc4b9e8d2678c473b9ca04864ad54bd61535",
+       "NOTE: mop-up supersession dropped 12509 re-observation(s) at committed cells; winner flips 5327 (42.6%) (two-view consistency canary \u2014 a high flip rate suggests a misplaced mop-up window or physical damage; committed evidence unchanged)",
+       "close skipped (--no-close): 80 certificates accumulated; no closing record was read, attempted, or written. Close with a plain or --complete run.",
+       "src/holo/cli.py:636: ProvisionalReceiverWarning: HOLO TRACK-3 RECEIVER IS PROVISIONAL: historical E021-E023c stand-in constants are active; production qualification is still required. Outstanding: the v1 physical/null false-accept gate, channel-BER envelope, and support safety margin still require frozen qualification; the 0.176 complete-domain rival refusal was diagnosed as a parity-concentrated cross-page alias and the v0.30 whole-word rival gate restores the d=27 floor (synthetically verified); real-capture full-domain yield and resource profile remain unqualified",
+       "  res = run_receive("
+      ],
+      "ran_at": "2026-08-30 16:01:36"
+     }
+    },
+    "holo3": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "<checkout>/env314t/bin/python -m measure.crop_parity._h3run --certs-out <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c02/holo3-certs.json -- decode <checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c02-0.tiff --dpi 4800.0 --format L:c2-cmy7-p120-v0@3328x2304 --no-close --workers 8 --run-dir <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c02/holo3-run --out <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c02/holo3.out",
+      "cwd": "<checkout>",
+      "crop_sha256": "45327130bc5f5b9cb5970fa17240af9734e0548f539fe4f3f8372330414603fb",
+      "receiver_tree": "f5d7c0e2efc8ece54936bf2c64626f3a580c6771",
+      "receiver_dirty_sha": "",
+      "repo_head": "65d2d08ce398d23d3af0bcf3fd2a308a9d8d9283",
+      "wall_seconds": 342.689791124998,
+      "exit": 0,
+      "summary": [
+       "_h3run: open, 78 certificates in 341.1 s"
+      ],
+      "ran_at": "2026-08-30 16:19:27"
+     }
+    }
+   },
+   "n_certificates": {
+    "holo1": 80,
+    "holo3": 78
+   },
+   "bits_available": {
+    "holo1": true,
+    "holo3": true
+   },
+   "targets": [
+    {
+     "address": [
+      0,
+      1,
+      3,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "miss"
+     ],
+     "full_sheet": {
+      "holo1": "certified",
+      "holo3": "uncertified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": true,
+      "holo3": false
+     }
+    },
+    {
+     "address": [
+      0,
+      2,
+      3,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "miss"
+     ],
+     "full_sheet": {
+      "holo1": "certified",
+      "holo3": "uncertified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": true,
+      "holo3": false
+     }
+    },
+    {
+     "address": [
+      0,
+      3,
+      1,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "miss"
+     ],
+     "full_sheet": {
+      "holo1": "certified",
+      "holo3": "uncertified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": true,
+      "holo3": false
+     }
+    },
+    {
+     "address": [
+      0,
+      4,
+      3,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "miss"
+     ],
+     "full_sheet": {
+      "holo1": "certified",
+      "holo3": "uncertified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": true,
+      "holo3": false
+     }
+    },
+    {
+     "address": [
+      0,
+      5,
+      3,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "miss"
+     ],
+     "full_sheet": {
+      "holo1": "certified",
+      "holo3": "uncertified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": true,
+      "holo3": false
+     }
+    },
+    {
+     "address": [
+      0,
+      7,
+      1,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "miss"
+     ],
+     "full_sheet": {
+      "holo1": "certified",
+      "holo3": "uncertified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": true,
+      "holo3": false
+     }
+    }
+   ],
+   "controls": {
+    "holo1": {
+     "n": 45,
+     "reproduced": 45,
+     "flipped": 0,
+     "flipped_addresses": [],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 0,
+       "n": 12
+      },
+      "64-127": {
+       "flipped": 0,
+       "n": 16
+      },
+      "128-191": {
+       "flipped": 0,
+       "n": 15
+      },
+      "192-255": {
+       "flipped": 0,
+       "n": 2
+      }
+     }
+    },
+    "holo3": {
+     "n": 45,
+     "reproduced": 45,
+     "flipped": 0,
+     "flipped_addresses": [],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 0,
+       "n": 12
+      },
+      "64-127": {
+       "flipped": 0,
+       "n": 16
+      },
+      "128-191": {
+       "flipped": 0,
+       "n": 15
+      },
+      "192-255": {
+       "flipped": 0,
+       "n": 2
+      }
+     }
+    }
+   },
+   "wrong_certificates": [],
+   "out_of_bbox": [],
+   "checked_certificates": {
+    "holo1": 80,
+    "holo3": 78
+   },
+   "crops": [
+    "<checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c02-0.tiff"
+   ],
+   "crop_sha256": "45327130bc5f5b9cb5970fa17240af9734e0548f539fe4f3f8372330414603fb"
+  },
+  {
+   "case_id": "xerox-c2-cmy7-c03",
+   "cell_bbox": [
+    1488,
+    0,
+    2224,
+    1008
+   ],
+   "runs": {
+    "holo1": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "env/bin/python confetti.py decode <checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c03-0.tiff --scan-dpi 4800.0 --format L:c2-cmy7-p120-v0@3328x2304 --state <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c03/holo1.state -o <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c03/holo1.out --no-close --complete --mopup --refine --workers 8",
+      "cwd": "<repo>",
+      "crop_sha256": "a51d4c3db60bf213294ab96ad4ca8476c25a747950cc3468bb5c5cb50c5efc99",
+      "receiver_tree": "3537128d0084772885a8c7857996c1dfb480aaf0",
+      "receiver_dirty_sha": "",
+      "repo_head": "259e622148f844d02742ff6eb033fd66b0b83cc8",
+      "wall_seconds": 1228.8227001669948,
+      "exit": 2,
+      "summary": [
+       "capture 529ee3318c0979ab4826f52285036da2b724663a79d634a48643ace9e9d2bdbd: complete; committed",
+       "state: <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c03/holo1.state  sha256 fe16cedff63650f9877c723646d53c4bf4c9a50a36e4453508a268629181b472",
+       "NOTE: mop-up supersession dropped 1535 re-observation(s) at committed cells; winner flips 1000 (65.1%) (two-view consistency canary \u2014 a high flip rate suggests a misplaced mop-up window or physical damage; committed evidence unchanged)",
+       "close skipped (--no-close): 179 certificates accumulated; no closing record was read, attempted, or written. Close with a plain or --complete run.",
+       "src/holo/cli.py:636: ProvisionalReceiverWarning: HOLO TRACK-3 RECEIVER IS PROVISIONAL: historical E021-E023c stand-in constants are active; production qualification is still required. Outstanding: the v1 physical/null false-accept gate, channel-BER envelope, and support safety margin still require frozen qualification; the 0.176 complete-domain rival refusal was diagnosed as a parity-concentrated cross-page alias and the v0.30 whole-word rival gate restores the d=27 floor (synthetically verified); real-capture full-domain yield and resource profile remain unqualified",
+       "  res = run_receive("
+      ],
+      "ran_at": "2026-08-30 16:25:11"
+     }
+    },
+    "holo3": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "<checkout>/env314t/bin/python -m measure.crop_parity._h3run --certs-out <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c03/holo3-certs.json -- decode <checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c03-0.tiff --dpi 4800.0 --format L:c2-cmy7-p120-v0@3328x2304 --no-close --workers 8 --run-dir <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c03/holo3-run --out <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c03/holo3.out",
+      "cwd": "<checkout>",
+      "crop_sha256": "a51d4c3db60bf213294ab96ad4ca8476c25a747950cc3468bb5c5cb50c5efc99",
+      "receiver_tree": "f5d7c0e2efc8ece54936bf2c64626f3a580c6771",
+      "receiver_dirty_sha": "",
+      "repo_head": "65d2d08ce398d23d3af0bcf3fd2a308a9d8d9283",
+      "wall_seconds": 230.7319617079993,
+      "exit": 0,
+      "summary": [
+       "_h3run: open, 179 certificates in 229.0 s"
+      ],
+      "ran_at": "2026-08-30 16:45:40"
+     }
+    }
+   },
+   "n_certificates": {
+    "holo1": 179,
+    "holo3": 179
+   },
+   "bits_available": {
+    "holo1": true,
+    "holo3": true
+   },
+   "targets": [
+    {
+     "address": [
+      0,
+      2,
+      30,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      3,
+      30,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      4,
+      27,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "miss"
+     ],
+     "full_sheet": {
+      "holo1": "certified",
+      "holo3": "uncertified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": true,
+      "holo3": false
+     }
+    },
+    {
+     "address": [
+      0,
+      7,
+      30,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      8,
+      30,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      11,
+      27,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    }
+   ],
+   "controls": {
+    "holo1": {
+     "n": 125,
+     "reproduced": 125,
+     "flipped": 0,
+     "flipped_addresses": [],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 0,
+       "n": 36
+      },
+      "64-127": {
+       "flipped": 0,
+       "n": 36
+      },
+      "128-191": {
+       "flipped": 0,
+       "n": 28
+      },
+      "192-255": {
+       "flipped": 0,
+       "n": 11
+      },
+      "256-319": {
+       "flipped": 0,
+       "n": 14
+      }
+     }
+    },
+    "holo3": {
+     "n": 125,
+     "reproduced": 125,
+     "flipped": 0,
+     "flipped_addresses": [],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 0,
+       "n": 36
+      },
+      "64-127": {
+       "flipped": 0,
+       "n": 36
+      },
+      "128-191": {
+       "flipped": 0,
+       "n": 28
+      },
+      "192-255": {
+       "flipped": 0,
+       "n": 11
+      },
+      "256-319": {
+       "flipped": 0,
+       "n": 14
+      }
+     }
+    }
+   },
+   "wrong_certificates": [],
+   "out_of_bbox": [],
+   "checked_certificates": {
+    "holo1": 179,
+    "holo3": 179
+   },
+   "crops": [
+    "<checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c03-0.tiff"
+   ],
+   "crop_sha256": "a51d4c3db60bf213294ab96ad4ca8476c25a747950cc3468bb5c5cb50c5efc99"
+  },
+  {
+   "case_id": "xerox-c2-cmy7-c04",
+   "cell_bbox": [
+    1936,
+    0,
+    2304,
+    752
+   ],
+   "runs": {
+    "holo1": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "env/bin/python confetti.py decode <checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c04-0.tiff --scan-dpi 4800.0 --format L:c2-cmy7-p120-v0@3328x2304 --state <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c04/holo1.state -o <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c04/holo1.out --no-close --complete --mopup --refine --workers 8",
+      "cwd": "<repo>",
+      "crop_sha256": "ab789e3a64ce09be10b8217230db92a4029163a98873df661f072dac34d22f06",
+      "receiver_tree": "3537128d0084772885a8c7857996c1dfb480aaf0",
+      "receiver_dirty_sha": "",
+      "repo_head": "259e622148f844d02742ff6eb033fd66b0b83cc8",
+      "wall_seconds": 965.3815566249978,
+      "exit": 2,
+      "summary": [
+       "capture 5407ba9446fce8b8ccc12f43b3fe0d4c5b2bd7b4a6319452ca3869df7a384eb9: complete; committed",
+       "state: <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c04/holo1.state  sha256 4354b1a8cef858c392f96af404714705f4aec8ee8d804db68a06dcb99897640b",
+       "close skipped (--no-close): 51 certificates accumulated; no closing record was read, attempted, or written. Close with a plain or --complete run.",
+       "src/holo/cli.py:636: ProvisionalReceiverWarning: HOLO TRACK-3 RECEIVER IS PROVISIONAL: historical E021-E023c stand-in constants are active; production qualification is still required. Outstanding: the v1 physical/null false-accept gate, channel-BER envelope, and support safety margin still require frozen qualification; the 0.176 complete-domain rival refusal was diagnosed as a parity-concentrated cross-page alias and the v0.30 whole-word rival gate restores the d=27 floor (synthetically verified); real-capture full-domain yield and resource profile remain unqualified",
+       "  res = run_receive("
+      ],
+      "ran_at": "2026-08-30 16:49:31"
+     }
+    },
+    "holo3": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "<checkout>/env314t/bin/python -m measure.crop_parity._h3run --certs-out <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c04/holo3-certs.json -- decode <checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c04-0.tiff --dpi 4800.0 --format L:c2-cmy7-p120-v0@3328x2304 --no-close --workers 8 --run-dir <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c04/holo3-run --out <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c04/holo3.out",
+      "cwd": "<checkout>",
+      "crop_sha256": "ab789e3a64ce09be10b8217230db92a4029163a98873df661f072dac34d22f06",
+      "receiver_tree": "f5d7c0e2efc8ece54936bf2c64626f3a580c6771",
+      "receiver_dirty_sha": "",
+      "repo_head": "65d2d08ce398d23d3af0bcf3fd2a308a9d8d9283",
+      "wall_seconds": 349.7156661670015,
+      "exit": 0,
+      "summary": [
+       "_h3run: open, 45 certificates in 348.0 s"
+      ],
+      "ran_at": "2026-08-30 17:05:36"
+     }
+    }
+   },
+   "n_certificates": {
+    "holo1": 51,
+    "holo3": 45
+   },
+   "bits_available": {
+    "holo1": true,
+    "holo3": true
+   },
+   "targets": [
+    {
+     "address": [
+      0,
+      3,
+      35,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "miss"
+     ],
+     "full_sheet": {
+      "holo1": "certified",
+      "holo3": "uncertified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": false
+      },
+      "holo3": {
+       "available": true,
+       "certified": false
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      4,
+      34,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "miss"
+     ],
+     "full_sheet": {
+      "holo1": "certified",
+      "holo3": "uncertified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": true,
+      "holo3": false
+     }
+    },
+    {
+     "address": [
+      0,
+      7,
+      35,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "miss"
+     ],
+     "full_sheet": {
+      "holo1": "certified",
+      "holo3": "uncertified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": false
+      },
+      "holo3": {
+       "available": true,
+       "certified": false
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    }
+   ],
+   "controls": {
+    "holo1": {
+     "n": 39,
+     "reproduced": 39,
+     "flipped": 0,
+     "flipped_addresses": [],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 0,
+       "n": 13
+      },
+      "64-127": {
+       "flipped": 0,
+       "n": 19
+      },
+      "128-191": {
+       "flipped": 0,
+       "n": 7
+      }
+     }
+    },
+    "holo3": {
+     "n": 39,
+     "reproduced": 39,
+     "flipped": 0,
+     "flipped_addresses": [],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 0,
+       "n": 13
+      },
+      "64-127": {
+       "flipped": 0,
+       "n": 19
+      },
+      "128-191": {
+       "flipped": 0,
+       "n": 7
+      }
+     }
+    }
+   },
+   "wrong_certificates": [],
+   "out_of_bbox": [],
+   "checked_certificates": {
+    "holo1": 51,
+    "holo3": 45
+   },
+   "crops": [
+    "<checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c04-0.tiff"
+   ],
+   "crop_sha256": "ab789e3a64ce09be10b8217230db92a4029163a98873df661f072dac34d22f06"
+  },
+  {
+   "case_id": "xerox-c2-cmy7-c05",
+   "cell_bbox": [
+    0,
+    464,
+    496,
+    1200
+   ],
+   "runs": {
+    "holo1": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "env/bin/python confetti.py decode <checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c05-0.tiff --scan-dpi 4800.0 --format L:c2-cmy7-p120-v0@3328x2304 --state <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c05/holo1.state -o <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c05/holo1.out --no-close --complete --mopup --refine --workers 8",
+      "cwd": "<repo>",
+      "crop_sha256": "22e04dfbfa5cb53d930686f2a554921fb6d966ec4d4fa161b1d603295fbcdb34",
+      "receiver_tree": "3537128d0084772885a8c7857996c1dfb480aaf0",
+      "receiver_dirty_sha": "",
+      "repo_head": "259e622148f844d02742ff6eb033fd66b0b83cc8",
+      "wall_seconds": 1188.237854375002,
+      "exit": 2,
+      "summary": [
+       "capture 251b92fce23bc23e352bbf6c276cb2c9687c555c904914ac6db01cf18b89fd52: complete; committed",
+       "state: <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c05/holo1.state  sha256 644a2f1a22ad0a702791819ea5c4de446ffee7e7d32c30a4ed7ec3201261fd35",
+       "NOTE: mop-up supersession dropped 20965 re-observation(s) at committed cells; winner flips 10148 (48.4%) (two-view consistency canary \u2014 a high flip rate suggests a misplaced mop-up window or physical damage; committed evidence unchanged)",
+       "close skipped (--no-close): 83 certificates accumulated; no closing record was read, attempted, or written. Close with a plain or --complete run.",
+       "src/holo/cli.py:636: ProvisionalReceiverWarning: HOLO TRACK-3 RECEIVER IS PROVISIONAL: historical E021-E023c stand-in constants are active; production qualification is still required. Outstanding: the v1 physical/null false-accept gate, channel-BER envelope, and support safety margin still require frozen qualification; the 0.176 complete-domain rival refusal was diagnosed as a parity-concentrated cross-page alias and the v0.30 whole-word rival gate restores the d=27 floor (synthetically verified); real-capture full-domain yield and resource profile remain unqualified",
+       "  res = run_receive("
+      ],
+      "ran_at": "2026-08-30 17:11:27"
+     }
+    },
+    "holo3": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "<checkout>/env314t/bin/python -m measure.crop_parity._h3run --certs-out <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c05/holo3-certs.json -- decode <checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c05-0.tiff --dpi 4800.0 --format L:c2-cmy7-p120-v0@3328x2304 --no-close --workers 8 --run-dir <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c05/holo3-run --out <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c05/holo3.out",
+      "cwd": "<checkout>",
+      "crop_sha256": "22e04dfbfa5cb53d930686f2a554921fb6d966ec4d4fa161b1d603295fbcdb34",
+      "receiver_tree": "f5d7c0e2efc8ece54936bf2c64626f3a580c6771",
+      "receiver_dirty_sha": "",
+      "repo_head": "65d2d08ce398d23d3af0bcf3fd2a308a9d8d9283",
+      "wall_seconds": 198.88797895899916,
+      "exit": 0,
+      "summary": [
+       "_h3run: open, 73 certificates in 197.5 s"
+      ],
+      "ran_at": "2026-08-30 17:31:15"
+     }
+    }
+   },
+   "n_certificates": {
+    "holo1": 83,
+    "holo3": 73
+   },
+   "bits_available": {
+    "holo1": true,
+    "holo3": true
+   },
+   "targets": [
+    {
+     "address": [
+      0,
+      11,
+      3,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "miss"
+     ],
+     "full_sheet": {
+      "holo1": "certified",
+      "holo3": "uncertified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": true,
+      "holo3": false
+     }
+    },
+    {
+     "address": [
+      0,
+      14,
+      2,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    }
+   ],
+   "controls": {
+    "holo1": {
+     "n": 41,
+     "reproduced": 41,
+     "flipped": 0,
+     "flipped_addresses": [],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 0,
+       "n": 17
+      },
+      "64-127": {
+       "flipped": 0,
+       "n": 13
+      },
+      "128-191": {
+       "flipped": 0,
+       "n": 10
+      },
+      "192-255": {
+       "flipped": 0,
+       "n": 1
+      }
+     }
+    },
+    "holo3": {
+     "n": 41,
+     "reproduced": 40,
+     "flipped": 1,
+     "flipped_addresses": [
+      [
+       0,
+       12,
+       2,
+       "main"
+      ]
+     ],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 0,
+       "n": 17
+      },
+      "64-127": {
+       "flipped": 0,
+       "n": 13
+      },
+      "128-191": {
+       "flipped": 1,
+       "n": 10
+      },
+      "192-255": {
+       "flipped": 0,
+       "n": 1
+      }
+     }
+    }
+   },
+   "wrong_certificates": [],
+   "out_of_bbox": [],
+   "checked_certificates": {
+    "holo1": 83,
+    "holo3": 73
+   },
+   "crops": [
+    "<checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c05-0.tiff"
+   ],
+   "crop_sha256": "22e04dfbfa5cb53d930686f2a554921fb6d966ec4d4fa161b1d603295fbcdb34"
+  },
+  {
+   "case_id": "xerox-c2-cmy7-c06",
+   "cell_bbox": [
+    784,
+    784,
+    1584,
+    1584
+   ],
+   "runs": {
+    "holo1": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "env/bin/python confetti.py decode <checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c06-0.tiff --scan-dpi 4800.0 --format L:c2-cmy7-p120-v0@3328x2304 --state <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c06/holo1.state -o <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c06/holo1.out --no-close --complete --mopup --refine --workers 8",
+      "cwd": "<repo>",
+      "crop_sha256": "800fa27c46929654e5efc251be391faa11e6a7f2b461461cca2ffd7e1142ab4c",
+      "receiver_tree": "3537128d0084772885a8c7857996c1dfb480aaf0",
+      "receiver_dirty_sha": "",
+      "repo_head": "259e622148f844d02742ff6eb033fd66b0b83cc8",
+      "wall_seconds": 686.2256869589983,
+      "exit": 2,
+      "summary": [
+       "capture 089caa3682573015e31fd6efae24719acb7492d2415623e0349c6376a9a85c20: complete; committed",
+       "state: <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c06/holo1.state  sha256 669becf3c786a40d6d66d4308706baece197b677bb6f90781abdebfee1726155",
+       "close skipped (--no-close): 0 certificates accumulated; no closing record was read, attempted, or written. Close with a plain or --complete run.",
+       "src/holo/cli.py:636: ProvisionalReceiverWarning: HOLO TRACK-3 RECEIVER IS PROVISIONAL: historical E021-E023c stand-in constants are active; production qualification is still required. Outstanding: the v1 physical/null false-accept gate, channel-BER envelope, and support safety margin still require frozen qualification; the 0.176 complete-domain rival refusal was diagnosed as a parity-concentrated cross-page alias and the v0.30 whole-word rival gate restores the d=27 floor (synthetically verified); real-capture full-domain yield and resource profile remain unqualified",
+       "  res = run_receive("
+      ],
+      "ran_at": "2026-08-30 17:34:34"
+     }
+    },
+    "holo3": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "<checkout>/env314t/bin/python -m measure.crop_parity._h3run --certs-out <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c06/holo3-certs.json -- decode <checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c06-0.tiff --dpi 4800.0 --format L:c2-cmy7-p120-v0@3328x2304 --no-close --workers 8 --run-dir <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c06/holo3-run --out <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c06/holo3.out",
+      "cwd": "<checkout>",
+      "crop_sha256": "800fa27c46929654e5efc251be391faa11e6a7f2b461461cca2ffd7e1142ab4c",
+      "receiver_tree": "f5d7c0e2efc8ece54936bf2c64626f3a580c6771",
+      "receiver_dirty_sha": "",
+      "repo_head": "65d2d08ce398d23d3af0bcf3fd2a308a9d8d9283",
+      "wall_seconds": 188.08063466699969,
+      "exit": 0,
+      "summary": [
+       "_h3run: open, 0 certificates in 186.9 s"
+      ],
+      "ran_at": "2026-08-30 17:46:01"
+     }
+    }
+   },
+   "n_certificates": {
+    "holo1": 0,
+    "holo3": 0
+   },
+   "bits_available": {
+    "holo1": true,
+    "holo3": true
+   },
+   "targets": [
+    {
+     "address": [
+      0,
+      16,
+      20,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": false
+      },
+      "holo3": {
+       "available": true,
+       "certified": false
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": true,
+      "holo3": false
+     }
+    },
+    {
+     "address": [
+      0,
+      19,
+      17,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "miss"
+     ],
+     "full_sheet": {
+      "holo1": "certified",
+      "holo3": "uncertified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": false
+      },
+      "holo3": {
+       "available": true,
+       "certified": false
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      19,
+      20,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": false
+      },
+      "holo3": {
+       "available": true,
+       "certified": false
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": true,
+      "holo3": false
+     }
+    },
+    {
+     "address": [
+      0,
+      20,
+      16,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "miss"
+     ],
+     "full_sheet": {
+      "holo1": "certified",
+      "holo3": "uncertified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": false
+      },
+      "holo3": {
+       "available": true,
+       "certified": false
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    }
+   ],
+   "controls": {
+    "holo1": {
+     "n": 114,
+     "reproduced": 0,
+     "flipped": 114,
+     "flipped_addresses": [
+      [
+       0,
+       13,
+       13,
+       "main"
+      ],
+      [
+       0,
+       13,
+       14,
+       "main"
+      ],
+      [
+       0,
+       13,
+       15,
+       "main"
+      ],
+      [
+       0,
+       13,
+       16,
+       "main"
+      ],
+      [
+       0,
+       13,
+       17,
+       "main"
+      ],
+      [
+       0,
+       13,
+       18,
+       "main"
+      ],
+      [
+       0,
+       13,
+       19,
+       "main"
+      ],
+      [
+       0,
+       13,
+       20,
+       "main"
+      ],
+      [
+       0,
+       13,
+       21,
+       "main"
+      ],
+      [
+       0,
+       13,
+       22,
+       "main"
+      ],
+      [
+       0,
+       13,
+       23,
+       "main"
+      ],
+      [
+       0,
+       14,
+       13,
+       "main"
+      ],
+      [
+       0,
+       14,
+       14,
+       "main"
+      ],
+      [
+       0,
+       14,
+       15,
+       "main"
+      ],
+      [
+       0,
+       14,
+       16,
+       "main"
+      ],
+      [
+       0,
+       14,
+       17,
+       "main"
+      ],
+      [
+       0,
+       14,
+       18,
+       "main"
+      ],
+      [
+       0,
+       14,
+       19,
+       "main"
+      ],
+      [
+       0,
+       14,
+       20,
+       "main"
+      ],
+      [
+       0,
+       14,
+       21,
+       "main"
+      ],
+      [
+       0,
+       14,
+       22,
+       "main"
+      ],
+      [
+       0,
+       14,
+       23,
+       "main"
+      ],
+      [
+       0,
+       15,
+       13,
+       "main"
+      ],
+      [
+       0,
+       15,
+       14,
+       "main"
+      ],
+      [
+       0,
+       15,
+       15,
+       "main"
+      ],
+      [
+       0,
+       15,
+       16,
+       "main"
+      ],
+      [
+       0,
+       15,
+       17,
+       "main"
+      ],
+      [
+       0,
+       15,
+       18,
+       "main"
+      ],
+      [
+       0,
+       15,
+       19,
+       "main"
+      ],
+      [
+       0,
+       15,
+       20,
+       "main"
+      ],
+      [
+       0,
+       15,
+       21,
+       "main"
+      ],
+      [
+       0,
+       15,
+       22,
+       "main"
+      ],
+      [
+       0,
+       15,
+       23,
+       "main"
+      ],
+      [
+       0,
+       16,
+       13,
+       "main"
+      ],
+      [
+       0,
+       16,
+       14,
+       "main"
+      ],
+      [
+       0,
+       16,
+       15,
+       "main"
+      ],
+      [
+       0,
+       16,
+       16,
+       "main"
+      ],
+      [
+       0,
+       16,
+       17,
+       "main"
+      ],
+      [
+       0,
+       16,
+       18,
+       "main"
+      ],
+      [
+       0,
+       16,
+       19,
+       "main"
+      ],
+      [
+       0,
+       16,
+       21,
+       "main"
+      ],
+      [
+       0,
+       16,
+       22,
+       "main"
+      ],
+      [
+       0,
+       16,
+       23,
+       "main"
+      ],
+      [
+       0,
+       17,
+       13,
+       "main"
+      ],
+      [
+       0,
+       17,
+       14,
+       "main"
+      ],
+      [
+       0,
+       17,
+       15,
+       "main"
+      ],
+      [
+       0,
+       17,
+       16,
+       "main"
+      ],
+      [
+       0,
+       17,
+       17,
+       "main"
+      ],
+      [
+       0,
+       17,
+       18,
+       "main"
+      ],
+      [
+       0,
+       17,
+       19,
+       "main"
+      ],
+      [
+       0,
+       17,
+       20,
+       "main"
+      ],
+      [
+       0,
+       17,
+       21,
+       "main"
+      ],
+      [
+       0,
+       17,
+       22,
+       "main"
+      ],
+      [
+       0,
+       17,
+       23,
+       "main"
+      ],
+      [
+       0,
+       18,
+       13,
+       "main"
+      ],
+      [
+       0,
+       18,
+       14,
+       "main"
+      ],
+      [
+       0,
+       18,
+       15,
+       "main"
+      ],
+      [
+       0,
+       18,
+       16,
+       "main"
+      ],
+      [
+       0,
+       18,
+       17,
+       "main"
+      ],
+      [
+       0,
+       18,
+       18,
+       "main"
+      ],
+      [
+       0,
+       18,
+       19,
+       "main"
+      ],
+      [
+       0,
+       18,
+       20,
+       "main"
+      ],
+      [
+       0,
+       18,
+       21,
+       "main"
+      ],
+      [
+       0,
+       18,
+       22,
+       "main"
+      ],
+      [
+       0,
+       18,
+       23,
+       "main"
+      ],
+      [
+       0,
+       19,
+       13,
+       "main"
+      ],
+      [
+       0,
+       19,
+       14,
+       "main"
+      ],
+      [
+       0,
+       19,
+       15,
+       "main"
+      ],
+      [
+       0,
+       19,
+       16,
+       "main"
+      ],
+      [
+       0,
+       19,
+       18,
+       "main"
+      ],
+      [
+       0,
+       19,
+       19,
+       "main"
+      ],
+      [
+       0,
+       19,
+       21,
+       "main"
+      ],
+      [
+       0,
+       19,
+       22,
+       "main"
+      ],
+      [
+       0,
+       19,
+       23,
+       "main"
+      ],
+      [
+       0,
+       20,
+       13,
+       "main"
+      ],
+      [
+       0,
+       20,
+       14,
+       "main"
+      ],
+      [
+       0,
+       20,
+       15,
+       "main"
+      ],
+      [
+       0,
+       20,
+       18,
+       "main"
+      ],
+      [
+       0,
+       20,
+       19,
+       "main"
+      ],
+      [
+       0,
+       20,
+       20,
+       "main"
+      ],
+      [
+       0,
+       20,
+       21,
+       "main"
+      ],
+      [
+       0,
+       20,
+       22,
+       "main"
+      ],
+      [
+       0,
+       20,
+       23,
+       "main"
+      ],
+      [
+       0,
+       21,
+       13,
+       "main"
+      ],
+      [
+       0,
+       21,
+       14,
+       "main"
+      ],
+      [
+       0,
+       21,
+       15,
+       "main"
+      ],
+      [
+       0,
+       21,
+       16,
+       "main"
+      ],
+      [
+       0,
+       21,
+       17,
+       "main"
+      ],
+      [
+       0,
+       21,
+       18,
+       "main"
+      ],
+      [
+       0,
+       21,
+       19,
+       "main"
+      ],
+      [
+       0,
+       21,
+       20,
+       "main"
+      ],
+      [
+       0,
+       21,
+       21,
+       "main"
+      ],
+      [
+       0,
+       21,
+       22,
+       "main"
+      ],
+      [
+       0,
+       21,
+       23,
+       "main"
+      ],
+      [
+       0,
+       22,
+       13,
+       "main"
+      ],
+      [
+       0,
+       22,
+       14,
+       "main"
+      ],
+      [
+       0,
+       22,
+       15,
+       "main"
+      ],
+      [
+       0,
+       22,
+       16,
+       "main"
+      ],
+      [
+       0,
+       22,
+       18,
+       "main"
+      ],
+      [
+       0,
+       22,
+       19,
+       "main"
+      ],
+      [
+       0,
+       22,
+       20,
+       "main"
+      ],
+      [
+       0,
+       22,
+       21,
+       "main"
+      ],
+      [
+       0,
+       22,
+       22,
+       "main"
+      ],
+      [
+       0,
+       22,
+       23,
+       "main"
+      ],
+      [
+       0,
+       23,
+       13,
+       "main"
+      ],
+      [
+       0,
+       23,
+       14,
+       "main"
+      ],
+      [
+       0,
+       23,
+       15,
+       "main"
+      ],
+      [
+       0,
+       23,
+       16,
+       "main"
+      ],
+      [
+       0,
+       23,
+       18,
+       "main"
+      ],
+      [
+       0,
+       23,
+       19,
+       "main"
+      ],
+      [
+       0,
+       23,
+       20,
+       "main"
+      ],
+      [
+       0,
+       23,
+       21,
+       "main"
+      ],
+      [
+       0,
+       23,
+       22,
+       "main"
+      ],
+      [
+       0,
+       23,
+       23,
+       "main"
+      ]
+     ],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 39,
+       "n": 39
+      },
+      "64-127": {
+       "flipped": 31,
+       "n": 31
+      },
+      "128-191": {
+       "flipped": 24,
+       "n": 24
+      },
+      "192-255": {
+       "flipped": 12,
+       "n": 12
+      },
+      "256-319": {
+       "flipped": 7,
+       "n": 7
+      },
+      "320-383": {
+       "flipped": 1,
+       "n": 1
+      }
+     }
+    },
+    "holo3": {
+     "n": 114,
+     "reproduced": 0,
+     "flipped": 114,
+     "flipped_addresses": [
+      [
+       0,
+       13,
+       13,
+       "main"
+      ],
+      [
+       0,
+       13,
+       14,
+       "main"
+      ],
+      [
+       0,
+       13,
+       15,
+       "main"
+      ],
+      [
+       0,
+       13,
+       16,
+       "main"
+      ],
+      [
+       0,
+       13,
+       17,
+       "main"
+      ],
+      [
+       0,
+       13,
+       18,
+       "main"
+      ],
+      [
+       0,
+       13,
+       19,
+       "main"
+      ],
+      [
+       0,
+       13,
+       20,
+       "main"
+      ],
+      [
+       0,
+       13,
+       21,
+       "main"
+      ],
+      [
+       0,
+       13,
+       22,
+       "main"
+      ],
+      [
+       0,
+       13,
+       23,
+       "main"
+      ],
+      [
+       0,
+       14,
+       13,
+       "main"
+      ],
+      [
+       0,
+       14,
+       14,
+       "main"
+      ],
+      [
+       0,
+       14,
+       15,
+       "main"
+      ],
+      [
+       0,
+       14,
+       16,
+       "main"
+      ],
+      [
+       0,
+       14,
+       17,
+       "main"
+      ],
+      [
+       0,
+       14,
+       18,
+       "main"
+      ],
+      [
+       0,
+       14,
+       19,
+       "main"
+      ],
+      [
+       0,
+       14,
+       20,
+       "main"
+      ],
+      [
+       0,
+       14,
+       21,
+       "main"
+      ],
+      [
+       0,
+       14,
+       22,
+       "main"
+      ],
+      [
+       0,
+       14,
+       23,
+       "main"
+      ],
+      [
+       0,
+       15,
+       13,
+       "main"
+      ],
+      [
+       0,
+       15,
+       14,
+       "main"
+      ],
+      [
+       0,
+       15,
+       15,
+       "main"
+      ],
+      [
+       0,
+       15,
+       16,
+       "main"
+      ],
+      [
+       0,
+       15,
+       17,
+       "main"
+      ],
+      [
+       0,
+       15,
+       18,
+       "main"
+      ],
+      [
+       0,
+       15,
+       19,
+       "main"
+      ],
+      [
+       0,
+       15,
+       20,
+       "main"
+      ],
+      [
+       0,
+       15,
+       21,
+       "main"
+      ],
+      [
+       0,
+       15,
+       22,
+       "main"
+      ],
+      [
+       0,
+       15,
+       23,
+       "main"
+      ],
+      [
+       0,
+       16,
+       13,
+       "main"
+      ],
+      [
+       0,
+       16,
+       14,
+       "main"
+      ],
+      [
+       0,
+       16,
+       15,
+       "main"
+      ],
+      [
+       0,
+       16,
+       16,
+       "main"
+      ],
+      [
+       0,
+       16,
+       17,
+       "main"
+      ],
+      [
+       0,
+       16,
+       18,
+       "main"
+      ],
+      [
+       0,
+       16,
+       19,
+       "main"
+      ],
+      [
+       0,
+       16,
+       21,
+       "main"
+      ],
+      [
+       0,
+       16,
+       22,
+       "main"
+      ],
+      [
+       0,
+       16,
+       23,
+       "main"
+      ],
+      [
+       0,
+       17,
+       13,
+       "main"
+      ],
+      [
+       0,
+       17,
+       14,
+       "main"
+      ],
+      [
+       0,
+       17,
+       15,
+       "main"
+      ],
+      [
+       0,
+       17,
+       16,
+       "main"
+      ],
+      [
+       0,
+       17,
+       17,
+       "main"
+      ],
+      [
+       0,
+       17,
+       18,
+       "main"
+      ],
+      [
+       0,
+       17,
+       19,
+       "main"
+      ],
+      [
+       0,
+       17,
+       20,
+       "main"
+      ],
+      [
+       0,
+       17,
+       21,
+       "main"
+      ],
+      [
+       0,
+       17,
+       22,
+       "main"
+      ],
+      [
+       0,
+       17,
+       23,
+       "main"
+      ],
+      [
+       0,
+       18,
+       13,
+       "main"
+      ],
+      [
+       0,
+       18,
+       14,
+       "main"
+      ],
+      [
+       0,
+       18,
+       15,
+       "main"
+      ],
+      [
+       0,
+       18,
+       16,
+       "main"
+      ],
+      [
+       0,
+       18,
+       17,
+       "main"
+      ],
+      [
+       0,
+       18,
+       18,
+       "main"
+      ],
+      [
+       0,
+       18,
+       19,
+       "main"
+      ],
+      [
+       0,
+       18,
+       20,
+       "main"
+      ],
+      [
+       0,
+       18,
+       21,
+       "main"
+      ],
+      [
+       0,
+       18,
+       22,
+       "main"
+      ],
+      [
+       0,
+       18,
+       23,
+       "main"
+      ],
+      [
+       0,
+       19,
+       13,
+       "main"
+      ],
+      [
+       0,
+       19,
+       14,
+       "main"
+      ],
+      [
+       0,
+       19,
+       15,
+       "main"
+      ],
+      [
+       0,
+       19,
+       16,
+       "main"
+      ],
+      [
+       0,
+       19,
+       18,
+       "main"
+      ],
+      [
+       0,
+       19,
+       19,
+       "main"
+      ],
+      [
+       0,
+       19,
+       21,
+       "main"
+      ],
+      [
+       0,
+       19,
+       22,
+       "main"
+      ],
+      [
+       0,
+       19,
+       23,
+       "main"
+      ],
+      [
+       0,
+       20,
+       13,
+       "main"
+      ],
+      [
+       0,
+       20,
+       14,
+       "main"
+      ],
+      [
+       0,
+       20,
+       15,
+       "main"
+      ],
+      [
+       0,
+       20,
+       18,
+       "main"
+      ],
+      [
+       0,
+       20,
+       19,
+       "main"
+      ],
+      [
+       0,
+       20,
+       20,
+       "main"
+      ],
+      [
+       0,
+       20,
+       21,
+       "main"
+      ],
+      [
+       0,
+       20,
+       22,
+       "main"
+      ],
+      [
+       0,
+       20,
+       23,
+       "main"
+      ],
+      [
+       0,
+       21,
+       13,
+       "main"
+      ],
+      [
+       0,
+       21,
+       14,
+       "main"
+      ],
+      [
+       0,
+       21,
+       15,
+       "main"
+      ],
+      [
+       0,
+       21,
+       16,
+       "main"
+      ],
+      [
+       0,
+       21,
+       17,
+       "main"
+      ],
+      [
+       0,
+       21,
+       18,
+       "main"
+      ],
+      [
+       0,
+       21,
+       19,
+       "main"
+      ],
+      [
+       0,
+       21,
+       20,
+       "main"
+      ],
+      [
+       0,
+       21,
+       21,
+       "main"
+      ],
+      [
+       0,
+       21,
+       22,
+       "main"
+      ],
+      [
+       0,
+       21,
+       23,
+       "main"
+      ],
+      [
+       0,
+       22,
+       13,
+       "main"
+      ],
+      [
+       0,
+       22,
+       14,
+       "main"
+      ],
+      [
+       0,
+       22,
+       15,
+       "main"
+      ],
+      [
+       0,
+       22,
+       16,
+       "main"
+      ],
+      [
+       0,
+       22,
+       18,
+       "main"
+      ],
+      [
+       0,
+       22,
+       19,
+       "main"
+      ],
+      [
+       0,
+       22,
+       20,
+       "main"
+      ],
+      [
+       0,
+       22,
+       21,
+       "main"
+      ],
+      [
+       0,
+       22,
+       22,
+       "main"
+      ],
+      [
+       0,
+       22,
+       23,
+       "main"
+      ],
+      [
+       0,
+       23,
+       13,
+       "main"
+      ],
+      [
+       0,
+       23,
+       14,
+       "main"
+      ],
+      [
+       0,
+       23,
+       15,
+       "main"
+      ],
+      [
+       0,
+       23,
+       16,
+       "main"
+      ],
+      [
+       0,
+       23,
+       18,
+       "main"
+      ],
+      [
+       0,
+       23,
+       19,
+       "main"
+      ],
+      [
+       0,
+       23,
+       20,
+       "main"
+      ],
+      [
+       0,
+       23,
+       21,
+       "main"
+      ],
+      [
+       0,
+       23,
+       22,
+       "main"
+      ],
+      [
+       0,
+       23,
+       23,
+       "main"
+      ]
+     ],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 39,
+       "n": 39
+      },
+      "64-127": {
+       "flipped": 31,
+       "n": 31
+      },
+      "128-191": {
+       "flipped": 24,
+       "n": 24
+      },
+      "192-255": {
+       "flipped": 12,
+       "n": 12
+      },
+      "256-319": {
+       "flipped": 7,
+       "n": 7
+      },
+      "320-383": {
+       "flipped": 1,
+       "n": 1
+      }
+     }
+    }
+   },
+   "wrong_certificates": [],
+   "out_of_bbox": [],
+   "checked_certificates": {
+    "holo1": 0,
+    "holo3": 0
+   },
+   "crops": [
+    "<checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c06-0.tiff"
+   ],
+   "crop_sha256": "800fa27c46929654e5efc251be391faa11e6a7f2b461461cca2ffd7e1142ab4c"
+  },
+  {
+   "case_id": "xerox-c2-cmy7-c07",
+   "cell_bbox": [
+    1488,
+    976,
+    2224,
+    1584
+   ],
+   "runs": {
+    "holo1": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "env/bin/python confetti.py decode <checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c07-0.tiff --scan-dpi 4800.0 --format L:c2-cmy7-p120-v0@3328x2304 --state <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c07/holo1.state -o <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c07/holo1.out --no-close --complete --mopup --refine --workers 8",
+      "cwd": "<repo>",
+      "crop_sha256": "752dbc8f19202886579e26c19018fe64e93ba19edf95a9a57a2ec857220f779b",
+      "receiver_tree": "3537128d0084772885a8c7857996c1dfb480aaf0",
+      "receiver_dirty_sha": "",
+      "repo_head": "259e622148f844d02742ff6eb033fd66b0b83cc8",
+      "wall_seconds": 536.4716448749969,
+      "exit": 2,
+      "summary": [
+       "capture 12173a0e63d34c73b0011a96be9f58e668a424daa0fb472d5f8a42c5c5d5de7d: complete; committed",
+       "state: <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c07/holo1.state  sha256 1fdc59204750f3c54b8500d1dbfb80de9e938fc78e6de40d3957b28805f73d7a",
+       "close skipped (--no-close): 0 certificates accumulated; no closing record was read, attempted, or written. Close with a plain or --complete run.",
+       "src/holo/cli.py:636: ProvisionalReceiverWarning: HOLO TRACK-3 RECEIVER IS PROVISIONAL: historical E021-E023c stand-in constants are active; production qualification is still required. Outstanding: the v1 physical/null false-accept gate, channel-BER envelope, and support safety margin still require frozen qualification; the 0.176 complete-domain rival refusal was diagnosed as a parity-concentrated cross-page alias and the v0.30 whole-word rival gate restores the d=27 floor (synthetically verified); real-capture full-domain yield and resource profile remain unqualified",
+       "  res = run_receive("
+      ],
+      "ran_at": "2026-08-30 17:49:09"
+     }
+    },
+    "holo3": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "<checkout>/env314t/bin/python -m measure.crop_parity._h3run --certs-out <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c07/holo3-certs.json -- decode <checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c07-0.tiff --dpi 4800.0 --format L:c2-cmy7-p120-v0@3328x2304 --no-close --workers 8 --run-dir <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c07/holo3-run --out <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c07/holo3.out",
+      "cwd": "<checkout>",
+      "crop_sha256": "752dbc8f19202886579e26c19018fe64e93ba19edf95a9a57a2ec857220f779b",
+      "receiver_tree": "f5d7c0e2efc8ece54936bf2c64626f3a580c6771",
+      "receiver_dirty_sha": "",
+      "repo_head": "65d2d08ce398d23d3af0bcf3fd2a308a9d8d9283",
+      "wall_seconds": 128.9520754999976,
+      "exit": 0,
+      "summary": [
+       "_h3run: open, 0 certificates in 128.0 s"
+      ],
+      "ran_at": "2026-08-30 17:58:06"
+     }
+    }
+   },
+   "n_certificates": {
+    "holo1": 0,
+    "holo3": 0
+   },
+   "bits_available": {
+    "holo1": true,
+    "holo3": true
+   },
+   "targets": [
+    {
+     "address": [
+      0,
+      19,
+      27,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "miss"
+     ],
+     "full_sheet": {
+      "holo1": "certified",
+      "holo3": "uncertified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": false
+      },
+      "holo3": {
+       "available": true,
+       "certified": false
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      20,
+      30,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "miss"
+     ],
+     "full_sheet": {
+      "holo1": "certified",
+      "holo3": "uncertified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": false
+      },
+      "holo3": {
+       "available": true,
+       "certified": false
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    }
+   ],
+   "controls": {
+    "holo1": {
+     "n": 71,
+     "reproduced": 0,
+     "flipped": 71,
+     "flipped_addresses": [
+      [
+       0,
+       16,
+       24,
+       "main"
+      ],
+      [
+       0,
+       16,
+       25,
+       "main"
+      ],
+      [
+       0,
+       16,
+       26,
+       "main"
+      ],
+      [
+       0,
+       16,
+       27,
+       "main"
+      ],
+      [
+       0,
+       16,
+       28,
+       "main"
+      ],
+      [
+       0,
+       16,
+       29,
+       "main"
+      ],
+      [
+       0,
+       16,
+       31,
+       "main"
+      ],
+      [
+       0,
+       16,
+       32,
+       "main"
+      ],
+      [
+       0,
+       16,
+       33,
+       "main"
+      ],
+      [
+       0,
+       17,
+       24,
+       "main"
+      ],
+      [
+       0,
+       17,
+       25,
+       "main"
+      ],
+      [
+       0,
+       17,
+       26,
+       "main"
+      ],
+      [
+       0,
+       17,
+       27,
+       "main"
+      ],
+      [
+       0,
+       17,
+       28,
+       "main"
+      ],
+      [
+       0,
+       17,
+       29,
+       "main"
+      ],
+      [
+       0,
+       17,
+       31,
+       "main"
+      ],
+      [
+       0,
+       17,
+       32,
+       "main"
+      ],
+      [
+       0,
+       17,
+       33,
+       "main"
+      ],
+      [
+       0,
+       18,
+       24,
+       "main"
+      ],
+      [
+       0,
+       18,
+       25,
+       "main"
+      ],
+      [
+       0,
+       18,
+       26,
+       "main"
+      ],
+      [
+       0,
+       18,
+       27,
+       "main"
+      ],
+      [
+       0,
+       18,
+       28,
+       "main"
+      ],
+      [
+       0,
+       18,
+       29,
+       "main"
+      ],
+      [
+       0,
+       18,
+       31,
+       "main"
+      ],
+      [
+       0,
+       18,
+       32,
+       "main"
+      ],
+      [
+       0,
+       18,
+       33,
+       "main"
+      ],
+      [
+       0,
+       19,
+       24,
+       "main"
+      ],
+      [
+       0,
+       19,
+       25,
+       "main"
+      ],
+      [
+       0,
+       19,
+       26,
+       "main"
+      ],
+      [
+       0,
+       19,
+       28,
+       "main"
+      ],
+      [
+       0,
+       19,
+       29,
+       "main"
+      ],
+      [
+       0,
+       19,
+       31,
+       "main"
+      ],
+      [
+       0,
+       19,
+       32,
+       "main"
+      ],
+      [
+       0,
+       19,
+       33,
+       "main"
+      ],
+      [
+       0,
+       20,
+       24,
+       "main"
+      ],
+      [
+       0,
+       20,
+       25,
+       "main"
+      ],
+      [
+       0,
+       20,
+       26,
+       "main"
+      ],
+      [
+       0,
+       20,
+       27,
+       "main"
+      ],
+      [
+       0,
+       20,
+       28,
+       "main"
+      ],
+      [
+       0,
+       20,
+       29,
+       "main"
+      ],
+      [
+       0,
+       20,
+       31,
+       "main"
+      ],
+      [
+       0,
+       20,
+       32,
+       "main"
+      ],
+      [
+       0,
+       20,
+       33,
+       "main"
+      ],
+      [
+       0,
+       21,
+       24,
+       "main"
+      ],
+      [
+       0,
+       21,
+       25,
+       "main"
+      ],
+      [
+       0,
+       21,
+       26,
+       "main"
+      ],
+      [
+       0,
+       21,
+       27,
+       "main"
+      ],
+      [
+       0,
+       21,
+       28,
+       "main"
+      ],
+      [
+       0,
+       21,
+       29,
+       "main"
+      ],
+      [
+       0,
+       21,
+       30,
+       "main"
+      ],
+      [
+       0,
+       21,
+       31,
+       "main"
+      ],
+      [
+       0,
+       21,
+       32,
+       "main"
+      ],
+      [
+       0,
+       21,
+       33,
+       "main"
+      ],
+      [
+       0,
+       22,
+       24,
+       "main"
+      ],
+      [
+       0,
+       22,
+       25,
+       "main"
+      ],
+      [
+       0,
+       22,
+       26,
+       "main"
+      ],
+      [
+       0,
+       22,
+       27,
+       "main"
+      ],
+      [
+       0,
+       22,
+       28,
+       "main"
+      ],
+      [
+       0,
+       22,
+       29,
+       "main"
+      ],
+      [
+       0,
+       22,
+       31,
+       "main"
+      ],
+      [
+       0,
+       22,
+       32,
+       "main"
+      ],
+      [
+       0,
+       22,
+       33,
+       "main"
+      ],
+      [
+       0,
+       23,
+       24,
+       "main"
+      ],
+      [
+       0,
+       23,
+       25,
+       "main"
+      ],
+      [
+       0,
+       23,
+       26,
+       "main"
+      ],
+      [
+       0,
+       23,
+       27,
+       "main"
+      ],
+      [
+       0,
+       23,
+       28,
+       "main"
+      ],
+      [
+       0,
+       23,
+       29,
+       "main"
+      ],
+      [
+       0,
+       23,
+       31,
+       "main"
+      ],
+      [
+       0,
+       23,
+       32,
+       "main"
+      ]
+     ],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 29,
+       "n": 29
+      },
+      "64-127": {
+       "flipped": 22,
+       "n": 22
+      },
+      "128-191": {
+       "flipped": 15,
+       "n": 15
+      },
+      "192-255": {
+       "flipped": 5,
+       "n": 5
+      }
+     }
+    },
+    "holo3": {
+     "n": 71,
+     "reproduced": 0,
+     "flipped": 71,
+     "flipped_addresses": [
+      [
+       0,
+       16,
+       24,
+       "main"
+      ],
+      [
+       0,
+       16,
+       25,
+       "main"
+      ],
+      [
+       0,
+       16,
+       26,
+       "main"
+      ],
+      [
+       0,
+       16,
+       27,
+       "main"
+      ],
+      [
+       0,
+       16,
+       28,
+       "main"
+      ],
+      [
+       0,
+       16,
+       29,
+       "main"
+      ],
+      [
+       0,
+       16,
+       31,
+       "main"
+      ],
+      [
+       0,
+       16,
+       32,
+       "main"
+      ],
+      [
+       0,
+       16,
+       33,
+       "main"
+      ],
+      [
+       0,
+       17,
+       24,
+       "main"
+      ],
+      [
+       0,
+       17,
+       25,
+       "main"
+      ],
+      [
+       0,
+       17,
+       26,
+       "main"
+      ],
+      [
+       0,
+       17,
+       27,
+       "main"
+      ],
+      [
+       0,
+       17,
+       28,
+       "main"
+      ],
+      [
+       0,
+       17,
+       29,
+       "main"
+      ],
+      [
+       0,
+       17,
+       31,
+       "main"
+      ],
+      [
+       0,
+       17,
+       32,
+       "main"
+      ],
+      [
+       0,
+       17,
+       33,
+       "main"
+      ],
+      [
+       0,
+       18,
+       24,
+       "main"
+      ],
+      [
+       0,
+       18,
+       25,
+       "main"
+      ],
+      [
+       0,
+       18,
+       26,
+       "main"
+      ],
+      [
+       0,
+       18,
+       27,
+       "main"
+      ],
+      [
+       0,
+       18,
+       28,
+       "main"
+      ],
+      [
+       0,
+       18,
+       29,
+       "main"
+      ],
+      [
+       0,
+       18,
+       31,
+       "main"
+      ],
+      [
+       0,
+       18,
+       32,
+       "main"
+      ],
+      [
+       0,
+       18,
+       33,
+       "main"
+      ],
+      [
+       0,
+       19,
+       24,
+       "main"
+      ],
+      [
+       0,
+       19,
+       25,
+       "main"
+      ],
+      [
+       0,
+       19,
+       26,
+       "main"
+      ],
+      [
+       0,
+       19,
+       28,
+       "main"
+      ],
+      [
+       0,
+       19,
+       29,
+       "main"
+      ],
+      [
+       0,
+       19,
+       31,
+       "main"
+      ],
+      [
+       0,
+       19,
+       32,
+       "main"
+      ],
+      [
+       0,
+       19,
+       33,
+       "main"
+      ],
+      [
+       0,
+       20,
+       24,
+       "main"
+      ],
+      [
+       0,
+       20,
+       25,
+       "main"
+      ],
+      [
+       0,
+       20,
+       26,
+       "main"
+      ],
+      [
+       0,
+       20,
+       27,
+       "main"
+      ],
+      [
+       0,
+       20,
+       28,
+       "main"
+      ],
+      [
+       0,
+       20,
+       29,
+       "main"
+      ],
+      [
+       0,
+       20,
+       31,
+       "main"
+      ],
+      [
+       0,
+       20,
+       32,
+       "main"
+      ],
+      [
+       0,
+       20,
+       33,
+       "main"
+      ],
+      [
+       0,
+       21,
+       24,
+       "main"
+      ],
+      [
+       0,
+       21,
+       25,
+       "main"
+      ],
+      [
+       0,
+       21,
+       26,
+       "main"
+      ],
+      [
+       0,
+       21,
+       27,
+       "main"
+      ],
+      [
+       0,
+       21,
+       28,
+       "main"
+      ],
+      [
+       0,
+       21,
+       29,
+       "main"
+      ],
+      [
+       0,
+       21,
+       30,
+       "main"
+      ],
+      [
+       0,
+       21,
+       31,
+       "main"
+      ],
+      [
+       0,
+       21,
+       32,
+       "main"
+      ],
+      [
+       0,
+       21,
+       33,
+       "main"
+      ],
+      [
+       0,
+       22,
+       24,
+       "main"
+      ],
+      [
+       0,
+       22,
+       25,
+       "main"
+      ],
+      [
+       0,
+       22,
+       26,
+       "main"
+      ],
+      [
+       0,
+       22,
+       27,
+       "main"
+      ],
+      [
+       0,
+       22,
+       28,
+       "main"
+      ],
+      [
+       0,
+       22,
+       29,
+       "main"
+      ],
+      [
+       0,
+       22,
+       31,
+       "main"
+      ],
+      [
+       0,
+       22,
+       32,
+       "main"
+      ],
+      [
+       0,
+       22,
+       33,
+       "main"
+      ],
+      [
+       0,
+       23,
+       24,
+       "main"
+      ],
+      [
+       0,
+       23,
+       25,
+       "main"
+      ],
+      [
+       0,
+       23,
+       26,
+       "main"
+      ],
+      [
+       0,
+       23,
+       27,
+       "main"
+      ],
+      [
+       0,
+       23,
+       28,
+       "main"
+      ],
+      [
+       0,
+       23,
+       29,
+       "main"
+      ],
+      [
+       0,
+       23,
+       31,
+       "main"
+      ],
+      [
+       0,
+       23,
+       32,
+       "main"
+      ]
+     ],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 29,
+       "n": 29
+      },
+      "64-127": {
+       "flipped": 22,
+       "n": 22
+      },
+      "128-191": {
+       "flipped": 15,
+       "n": 15
+      },
+      "192-255": {
+       "flipped": 5,
+       "n": 5
+      }
+     }
+    }
+   },
+   "wrong_certificates": [],
+   "out_of_bbox": [],
+   "checked_certificates": {
+    "holo1": 0,
+    "holo3": 0
+   },
+   "crops": [
+    "<checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c07-0.tiff"
+   ],
+   "crop_sha256": "752dbc8f19202886579e26c19018fe64e93ba19edf95a9a57a2ec857220f779b"
+  },
+  {
+   "case_id": "xerox-c2-cmy7-c08",
+   "cell_bbox": [
+    1872,
+    1104,
+    2304,
+    1840
+   ],
+   "runs": {
+    "holo1": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "env/bin/python confetti.py decode <checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c08-0.tiff --scan-dpi 4800.0 --format L:c2-cmy7-p120-v0@3328x2304 --state <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c08/holo1.state -o <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c08/holo1.out --no-close --complete --mopup --refine --workers 8",
+      "cwd": "<repo>",
+      "crop_sha256": "d4017fc1390e168553c9ebf51cb4764b0aa031bbd34ac335fbc6b64b83c5fbc4",
+      "receiver_tree": "3537128d0084772885a8c7857996c1dfb480aaf0",
+      "receiver_dirty_sha": "",
+      "repo_head": "259e622148f844d02742ff6eb033fd66b0b83cc8",
+      "wall_seconds": 1059.9656248339961,
+      "exit": 2,
+      "summary": [
+       "capture 34576bfb83649cd0335b92c84d6100412012db0348b0e2032ab5e76b7c3b9c98: complete; committed",
+       "state: <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c08/holo1.state  sha256 71324cc8a539355b3fc79ef3a75e9868924bef7c57299606ad6df2a5fa6c5b8e",
+       "close skipped (--no-close): 59 certificates accumulated; no closing record was read, attempted, or written. Close with a plain or --complete run.",
+       "src/holo/cli.py:636: ProvisionalReceiverWarning: HOLO TRACK-3 RECEIVER IS PROVISIONAL: historical E021-E023c stand-in constants are active; production qualification is still required. Outstanding: the v1 physical/null false-accept gate, channel-BER envelope, and support safety margin still require frozen qualification; the 0.176 complete-domain rival refusal was diagnosed as a parity-concentrated cross-page alias and the v0.30 whole-word rival gate restores the d=27 floor (synthetically verified); real-capture full-domain yield and resource profile remain unqualified",
+       "  res = run_receive("
+      ],
+      "ran_at": "2026-08-30 18:00:15"
+     }
+    },
+    "holo3": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "<checkout>/env314t/bin/python -m measure.crop_parity._h3run --certs-out <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c08/holo3-certs.json -- decode <checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c08-0.tiff --dpi 4800.0 --format L:c2-cmy7-p120-v0@3328x2304 --no-close --workers 8 --run-dir <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c08/holo3-run --out <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c08/holo3.out",
+      "cwd": "<checkout>",
+      "crop_sha256": "d4017fc1390e168553c9ebf51cb4764b0aa031bbd34ac335fbc6b64b83c5fbc4",
+      "receiver_tree": "f5d7c0e2efc8ece54936bf2c64626f3a580c6771",
+      "receiver_dirty_sha": "",
+      "repo_head": "65d2d08ce398d23d3af0bcf3fd2a308a9d8d9283",
+      "wall_seconds": 166.9203439999983,
+      "exit": 0,
+      "summary": [
+       "_h3run: open, 59 certificates in 165.8 s"
+      ],
+      "ran_at": "2026-08-30 18:17:55"
+     }
+    }
+   },
+   "n_certificates": {
+    "holo1": 59,
+    "holo3": 59
+   },
+   "bits_available": {
+    "holo1": true,
+    "holo3": true
+   },
+   "targets": [
+    {
+     "address": [
+      0,
+      21,
+      34,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": false
+      },
+      "holo3": {
+       "available": true,
+       "certified": false
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": true,
+      "holo3": false
+     }
+    },
+    {
+     "address": [
+      0,
+      24,
+      33,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    }
+   ],
+   "controls": {
+    "holo1": {
+     "n": 33,
+     "reproduced": 32,
+     "flipped": 1,
+     "flipped_addresses": [
+      [
+       0,
+       24,
+       34,
+       "main"
+      ]
+     ],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 0,
+       "n": 12
+      },
+      "64-127": {
+       "flipped": 1,
+       "n": 12
+      },
+      "128-191": {
+       "flipped": 0,
+       "n": 9
+      }
+     }
+    },
+    "holo3": {
+     "n": 33,
+     "reproduced": 32,
+     "flipped": 1,
+     "flipped_addresses": [
+      [
+       0,
+       24,
+       34,
+       "main"
+      ]
+     ],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 0,
+       "n": 12
+      },
+      "64-127": {
+       "flipped": 1,
+       "n": 12
+      },
+      "128-191": {
+       "flipped": 0,
+       "n": 9
+      }
+     }
+    }
+   },
+   "wrong_certificates": [],
+   "out_of_bbox": [],
+   "checked_certificates": {
+    "holo1": 59,
+    "holo3": 59
+   },
+   "crops": [
+    "<checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c08-0.tiff"
+   ],
+   "crop_sha256": "d4017fc1390e168553c9ebf51cb4764b0aa031bbd34ac335fbc6b64b83c5fbc4"
+  },
+  {
+   "case_id": "xerox-c2-cmy7-c09",
+   "cell_bbox": [
+    0,
+    1168,
+    496,
+    1712
+   ],
+   "runs": {
+    "holo1": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "env/bin/python confetti.py decode <checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c09-0.tiff --scan-dpi 4800.0 --format L:c2-cmy7-p120-v0@3328x2304 --state <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c09/holo1.state -o <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c09/holo1.out --no-close --complete --mopup --refine --workers 8",
+      "cwd": "<repo>",
+      "crop_sha256": "7d370324a38290bfbd8705f71e338c4d0b9e547484e192215b48a62ca9be1f35",
+      "receiver_tree": "3537128d0084772885a8c7857996c1dfb480aaf0",
+      "receiver_dirty_sha": "",
+      "repo_head": "259e622148f844d02742ff6eb033fd66b0b83cc8",
+      "wall_seconds": 732.5827908749998,
+      "exit": 2,
+      "summary": [
+       "capture 5692fb234fa99314bef1a6da7e2bb411c9bd584f6620dc118ea1c7a4ad129c2f: complete; committed",
+       "state: <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c09/holo1.state  sha256 546eefc3ecc3cd1cc54ccb4c15bcbb8fbf1d37e2557a05f26d0c7861840888cc",
+       "NOTE: mop-up supersession dropped 4515 re-observation(s) at committed cells; winner flips 738 (16.3%) (two-view consistency canary \u2014 a high flip rate suggests a misplaced mop-up window or physical damage; committed evidence unchanged)",
+       "close skipped (--no-close): 62 certificates accumulated; no closing record was read, attempted, or written. Close with a plain or --complete run.",
+       "src/holo/cli.py:636: ProvisionalReceiverWarning: HOLO TRACK-3 RECEIVER IS PROVISIONAL: historical E021-E023c stand-in constants are active; production qualification is still required. Outstanding: the v1 physical/null false-accept gate, channel-BER envelope, and support safety margin still require frozen qualification; the 0.176 complete-domain rival refusal was diagnosed as a parity-concentrated cross-page alias and the v0.30 whole-word rival gate restores the d=27 floor (synthetically verified); real-capture full-domain yield and resource profile remain unqualified",
+       "  res = run_receive("
+      ],
+      "ran_at": "2026-08-30 18:20:42"
+     }
+    },
+    "holo3": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "<checkout>/env314t/bin/python -m measure.crop_parity._h3run --certs-out <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c09/holo3-certs.json -- decode <checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c09-0.tiff --dpi 4800.0 --format L:c2-cmy7-p120-v0@3328x2304 --no-close --workers 8 --run-dir <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c09/holo3-run --out <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c09/holo3.out",
+      "cwd": "<checkout>",
+      "crop_sha256": "7d370324a38290bfbd8705f71e338c4d0b9e547484e192215b48a62ca9be1f35",
+      "receiver_tree": "f5d7c0e2efc8ece54936bf2c64626f3a580c6771",
+      "receiver_dirty_sha": "",
+      "repo_head": "65d2d08ce398d23d3af0bcf3fd2a308a9d8d9283",
+      "wall_seconds": 156.70210395900358,
+      "exit": 0,
+      "summary": [
+       "_h3run: open, 53 certificates in 155.6 s"
+      ],
+      "ran_at": "2026-08-30 18:32:55"
+     }
+    }
+   },
+   "n_certificates": {
+    "holo1": 62,
+    "holo3": 53
+   },
+   "bits_available": {
+    "holo1": true,
+    "holo3": true
+   },
+   "targets": [
+    {
+     "address": [
+      0,
+      22,
+      3,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    }
+   ],
+   "controls": {
+    "holo1": {
+     "n": 25,
+     "reproduced": 25,
+     "flipped": 0,
+     "flipped_addresses": [],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 0,
+       "n": 12
+      },
+      "64-127": {
+       "flipped": 0,
+       "n": 9
+      },
+      "128-191": {
+       "flipped": 0,
+       "n": 4
+      }
+     }
+    },
+    "holo3": {
+     "n": 25,
+     "reproduced": 25,
+     "flipped": 0,
+     "flipped_addresses": [],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 0,
+       "n": 12
+      },
+      "64-127": {
+       "flipped": 0,
+       "n": 9
+      },
+      "128-191": {
+       "flipped": 0,
+       "n": 4
+      }
+     }
+    }
+   },
+   "wrong_certificates": [],
+   "out_of_bbox": [],
+   "checked_certificates": {
+    "holo1": 62,
+    "holo3": 53
+   },
+   "crops": [
+    "<checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c09-0.tiff"
+   ],
+   "crop_sha256": "7d370324a38290bfbd8705f71e338c4d0b9e547484e192215b48a62ca9be1f35"
+  },
+  {
+   "case_id": "xerox-c2-cmy7-c10",
+   "cell_bbox": [
+    784,
+    1360,
+    1392,
+    2032
+   ],
+   "runs": {
+    "holo1": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "env/bin/python confetti.py decode <checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c10-0.tiff --scan-dpi 4800.0 --format L:c2-cmy7-p120-v0@3328x2304 --state <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c10/holo1.state -o <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c10/holo1.out --no-close --complete --mopup --refine --workers 8",
+      "cwd": "<repo>",
+      "crop_sha256": "165692aba0d4b8704a57fe140e7f7f3a469a3a8b53ac8c621089ecc9ca9cdc2a",
+      "receiver_tree": "3537128d0084772885a8c7857996c1dfb480aaf0",
+      "receiver_dirty_sha": "",
+      "repo_head": "259e622148f844d02742ff6eb033fd66b0b83cc8",
+      "wall_seconds": 272.4616664580026,
+      "exit": 2,
+      "summary": [
+       "capture 1c47bb9a276ca6dac80f5d6a50b8cef7164f50089a863f5201ca9bcaff51645c: complete; committed",
+       "state: <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c10/holo1.state  sha256 fb0f88e884a0ccfddbedaaf6ec137e266bad12fa584b675b252250b92d0cfbc6",
+       "close skipped (--no-close): 0 certificates accumulated; no closing record was read, attempted, or written. Close with a plain or --complete run.",
+       "src/holo/cli.py:636: ProvisionalReceiverWarning: HOLO TRACK-3 RECEIVER IS PROVISIONAL: historical E021-E023c stand-in constants are active; production qualification is still required. Outstanding: the v1 physical/null false-accept gate, channel-BER envelope, and support safety margin still require frozen qualification; the 0.176 complete-domain rival refusal was diagnosed as a parity-concentrated cross-page alias and the v0.30 whole-word rival gate restores the d=27 floor (synthetically verified); real-capture full-domain yield and resource profile remain unqualified",
+       "  res = run_receive("
+      ],
+      "ran_at": "2026-08-30 18:35:32"
+     }
+    },
+    "holo3": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "<checkout>/env314t/bin/python -m measure.crop_parity._h3run --certs-out <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c10/holo3-certs.json -- decode <checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c10-0.tiff --dpi 4800.0 --format L:c2-cmy7-p120-v0@3328x2304 --no-close --workers 8 --run-dir <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c10/holo3-run --out <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c10/holo3.out",
+      "cwd": "<checkout>",
+      "crop_sha256": "165692aba0d4b8704a57fe140e7f7f3a469a3a8b53ac8c621089ecc9ca9cdc2a",
+      "receiver_tree": "f5d7c0e2efc8ece54936bf2c64626f3a580c6771",
+      "receiver_dirty_sha": "",
+      "repo_head": "65d2d08ce398d23d3af0bcf3fd2a308a9d8d9283",
+      "wall_seconds": 58.603920542002015,
+      "exit": 0,
+      "summary": [
+       "_h3run: open, 0 certificates in 57.6 s"
+      ],
+      "ran_at": "2026-08-30 18:40:05"
+     }
+    }
+   },
+   "n_certificates": {
+    "holo1": 0,
+    "holo3": 0
+   },
+   "bits_available": {
+    "holo1": true,
+    "holo3": true
+   },
+   "targets": [
+    {
+     "address": [
+      0,
+      25,
+      16,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": false
+      },
+      "holo3": {
+       "available": true,
+       "certified": false
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": true,
+      "holo3": false
+     }
+    },
+    {
+     "address": [
+      0,
+      27,
+      17,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": false
+      },
+      "holo3": {
+       "available": true,
+       "certified": false
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": true,
+      "holo3": false
+     }
+    }
+   ],
+   "controls": {
+    "holo1": {
+     "n": 59,
+     "reproduced": 0,
+     "flipped": 59,
+     "flipped_addresses": [
+      [
+       0,
+       22,
+       13,
+       "main"
+      ],
+      [
+       0,
+       22,
+       14,
+       "main"
+      ],
+      [
+       0,
+       22,
+       15,
+       "main"
+      ],
+      [
+       0,
+       22,
+       16,
+       "main"
+      ],
+      [
+       0,
+       22,
+       18,
+       "main"
+      ],
+      [
+       0,
+       22,
+       19,
+       "main"
+      ],
+      [
+       0,
+       22,
+       20,
+       "main"
+      ],
+      [
+       0,
+       23,
+       13,
+       "main"
+      ],
+      [
+       0,
+       23,
+       14,
+       "main"
+      ],
+      [
+       0,
+       23,
+       15,
+       "main"
+      ],
+      [
+       0,
+       23,
+       16,
+       "main"
+      ],
+      [
+       0,
+       23,
+       18,
+       "main"
+      ],
+      [
+       0,
+       23,
+       19,
+       "main"
+      ],
+      [
+       0,
+       23,
+       20,
+       "main"
+      ],
+      [
+       0,
+       24,
+       13,
+       "main"
+      ],
+      [
+       0,
+       24,
+       14,
+       "main"
+      ],
+      [
+       0,
+       24,
+       15,
+       "main"
+      ],
+      [
+       0,
+       24,
+       18,
+       "main"
+      ],
+      [
+       0,
+       24,
+       19,
+       "main"
+      ],
+      [
+       0,
+       24,
+       20,
+       "main"
+      ],
+      [
+       0,
+       25,
+       13,
+       "main"
+      ],
+      [
+       0,
+       25,
+       14,
+       "main"
+      ],
+      [
+       0,
+       25,
+       15,
+       "main"
+      ],
+      [
+       0,
+       25,
+       18,
+       "main"
+      ],
+      [
+       0,
+       25,
+       19,
+       "main"
+      ],
+      [
+       0,
+       25,
+       20,
+       "main"
+      ],
+      [
+       0,
+       26,
+       13,
+       "main"
+      ],
+      [
+       0,
+       26,
+       14,
+       "main"
+      ],
+      [
+       0,
+       26,
+       15,
+       "main"
+      ],
+      [
+       0,
+       26,
+       16,
+       "main"
+      ],
+      [
+       0,
+       26,
+       19,
+       "main"
+      ],
+      [
+       0,
+       27,
+       13,
+       "main"
+      ],
+      [
+       0,
+       27,
+       14,
+       "main"
+      ],
+      [
+       0,
+       27,
+       15,
+       "main"
+      ],
+      [
+       0,
+       27,
+       16,
+       "main"
+      ],
+      [
+       0,
+       27,
+       18,
+       "main"
+      ],
+      [
+       0,
+       27,
+       19,
+       "main"
+      ],
+      [
+       0,
+       27,
+       20,
+       "main"
+      ],
+      [
+       0,
+       28,
+       13,
+       "main"
+      ],
+      [
+       0,
+       28,
+       14,
+       "main"
+      ],
+      [
+       0,
+       28,
+       15,
+       "main"
+      ],
+      [
+       0,
+       28,
+       16,
+       "main"
+      ],
+      [
+       0,
+       28,
+       17,
+       "main"
+      ],
+      [
+       0,
+       28,
+       18,
+       "main"
+      ],
+      [
+       0,
+       28,
+       19,
+       "main"
+      ],
+      [
+       0,
+       28,
+       20,
+       "main"
+      ],
+      [
+       0,
+       29,
+       13,
+       "main"
+      ],
+      [
+       0,
+       29,
+       14,
+       "main"
+      ],
+      [
+       0,
+       29,
+       15,
+       "main"
+      ],
+      [
+       0,
+       29,
+       18,
+       "main"
+      ],
+      [
+       0,
+       29,
+       19,
+       "main"
+      ],
+      [
+       0,
+       29,
+       20,
+       "main"
+      ],
+      [
+       0,
+       30,
+       13,
+       "main"
+      ],
+      [
+       0,
+       30,
+       14,
+       "main"
+      ],
+      [
+       0,
+       30,
+       15,
+       "main"
+      ],
+      [
+       0,
+       30,
+       16,
+       "main"
+      ],
+      [
+       0,
+       30,
+       18,
+       "main"
+      ],
+      [
+       0,
+       30,
+       19,
+       "main"
+      ],
+      [
+       0,
+       30,
+       20,
+       "main"
+      ]
+     ],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 27,
+       "n": 27
+      },
+      "64-127": {
+       "flipped": 19,
+       "n": 19
+      },
+      "128-191": {
+       "flipped": 11,
+       "n": 11
+      },
+      "192-255": {
+       "flipped": 2,
+       "n": 2
+      }
+     }
+    },
+    "holo3": {
+     "n": 59,
+     "reproduced": 0,
+     "flipped": 59,
+     "flipped_addresses": [
+      [
+       0,
+       22,
+       13,
+       "main"
+      ],
+      [
+       0,
+       22,
+       14,
+       "main"
+      ],
+      [
+       0,
+       22,
+       15,
+       "main"
+      ],
+      [
+       0,
+       22,
+       16,
+       "main"
+      ],
+      [
+       0,
+       22,
+       18,
+       "main"
+      ],
+      [
+       0,
+       22,
+       19,
+       "main"
+      ],
+      [
+       0,
+       22,
+       20,
+       "main"
+      ],
+      [
+       0,
+       23,
+       13,
+       "main"
+      ],
+      [
+       0,
+       23,
+       14,
+       "main"
+      ],
+      [
+       0,
+       23,
+       15,
+       "main"
+      ],
+      [
+       0,
+       23,
+       16,
+       "main"
+      ],
+      [
+       0,
+       23,
+       18,
+       "main"
+      ],
+      [
+       0,
+       23,
+       19,
+       "main"
+      ],
+      [
+       0,
+       23,
+       20,
+       "main"
+      ],
+      [
+       0,
+       24,
+       13,
+       "main"
+      ],
+      [
+       0,
+       24,
+       14,
+       "main"
+      ],
+      [
+       0,
+       24,
+       15,
+       "main"
+      ],
+      [
+       0,
+       24,
+       18,
+       "main"
+      ],
+      [
+       0,
+       24,
+       19,
+       "main"
+      ],
+      [
+       0,
+       24,
+       20,
+       "main"
+      ],
+      [
+       0,
+       25,
+       13,
+       "main"
+      ],
+      [
+       0,
+       25,
+       14,
+       "main"
+      ],
+      [
+       0,
+       25,
+       15,
+       "main"
+      ],
+      [
+       0,
+       25,
+       18,
+       "main"
+      ],
+      [
+       0,
+       25,
+       19,
+       "main"
+      ],
+      [
+       0,
+       25,
+       20,
+       "main"
+      ],
+      [
+       0,
+       26,
+       13,
+       "main"
+      ],
+      [
+       0,
+       26,
+       14,
+       "main"
+      ],
+      [
+       0,
+       26,
+       15,
+       "main"
+      ],
+      [
+       0,
+       26,
+       16,
+       "main"
+      ],
+      [
+       0,
+       26,
+       19,
+       "main"
+      ],
+      [
+       0,
+       27,
+       13,
+       "main"
+      ],
+      [
+       0,
+       27,
+       14,
+       "main"
+      ],
+      [
+       0,
+       27,
+       15,
+       "main"
+      ],
+      [
+       0,
+       27,
+       16,
+       "main"
+      ],
+      [
+       0,
+       27,
+       18,
+       "main"
+      ],
+      [
+       0,
+       27,
+       19,
+       "main"
+      ],
+      [
+       0,
+       27,
+       20,
+       "main"
+      ],
+      [
+       0,
+       28,
+       13,
+       "main"
+      ],
+      [
+       0,
+       28,
+       14,
+       "main"
+      ],
+      [
+       0,
+       28,
+       15,
+       "main"
+      ],
+      [
+       0,
+       28,
+       16,
+       "main"
+      ],
+      [
+       0,
+       28,
+       17,
+       "main"
+      ],
+      [
+       0,
+       28,
+       18,
+       "main"
+      ],
+      [
+       0,
+       28,
+       19,
+       "main"
+      ],
+      [
+       0,
+       28,
+       20,
+       "main"
+      ],
+      [
+       0,
+       29,
+       13,
+       "main"
+      ],
+      [
+       0,
+       29,
+       14,
+       "main"
+      ],
+      [
+       0,
+       29,
+       15,
+       "main"
+      ],
+      [
+       0,
+       29,
+       18,
+       "main"
+      ],
+      [
+       0,
+       29,
+       19,
+       "main"
+      ],
+      [
+       0,
+       29,
+       20,
+       "main"
+      ],
+      [
+       0,
+       30,
+       13,
+       "main"
+      ],
+      [
+       0,
+       30,
+       14,
+       "main"
+      ],
+      [
+       0,
+       30,
+       15,
+       "main"
+      ],
+      [
+       0,
+       30,
+       16,
+       "main"
+      ],
+      [
+       0,
+       30,
+       18,
+       "main"
+      ],
+      [
+       0,
+       30,
+       19,
+       "main"
+      ],
+      [
+       0,
+       30,
+       20,
+       "main"
+      ]
+     ],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 27,
+       "n": 27
+      },
+      "64-127": {
+       "flipped": 19,
+       "n": 19
+      },
+      "128-191": {
+       "flipped": 11,
+       "n": 11
+      },
+      "192-255": {
+       "flipped": 2,
+       "n": 2
+      }
+     }
+    }
+   },
+   "wrong_certificates": [],
+   "out_of_bbox": [],
+   "checked_certificates": {
+    "holo1": 0,
+    "holo3": 0
+   },
+   "crops": [
+    "<checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c10-0.tiff"
+   ],
+   "crop_sha256": "165692aba0d4b8704a57fe140e7f7f3a469a3a8b53ac8c621089ecc9ca9cdc2a"
+  },
+  {
+   "case_id": "xerox-c2-cmy7-c11",
+   "cell_bbox": [
+    0,
+    1552,
+    496,
+    2672
+   ],
+   "runs": {
+    "holo1": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "env/bin/python confetti.py decode <checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c11-0.tiff --scan-dpi 4800.0 --format L:c2-cmy7-p120-v0@3328x2304 --state <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c11/holo1.state -o <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c11/holo1.out --no-close --complete --mopup --refine --workers 8",
+      "cwd": "<repo>",
+      "crop_sha256": "158c8c5aa9016346eb242d08aa5d4c9128a993a7bc75f10b259eccf97fb9278e",
+      "receiver_tree": "3537128d0084772885a8c7857996c1dfb480aaf0",
+      "receiver_dirty_sha": "",
+      "repo_head": "259e622148f844d02742ff6eb033fd66b0b83cc8",
+      "wall_seconds": 1307.3890150000007,
+      "exit": 2,
+      "summary": [
+       "capture 66df4606b36f9c1011c0776e6a623270c8a910998025c1f4976f9b614a932746: complete; committed",
+       "state: <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c11/holo1.state  sha256 08aaac12e3d9b5b9149fa19a663cac110d2c8b3e201712692c34833aa06a8e65",
+       "NOTE: mop-up supersession dropped 20292 re-observation(s) at committed cells; winner flips 6501 (32.0%) (two-view consistency canary \u2014 a high flip rate suggests a misplaced mop-up window or physical damage; committed evidence unchanged)",
+       "close skipped (--no-close): 126 certificates accumulated; no closing record was read, attempted, or written. Close with a plain or --complete run.",
+       "src/holo/cli.py:636: ProvisionalReceiverWarning: HOLO TRACK-3 RECEIVER IS PROVISIONAL: historical E021-E023c stand-in constants are active; production qualification is still required. Outstanding: the v1 physical/null false-accept gate, channel-BER envelope, and support safety margin still require frozen qualification; the 0.176 complete-domain rival refusal was diagnosed as a parity-concentrated cross-page alias and the v0.30 whole-word rival gate restores the d=27 floor (synthetically verified); real-capture full-domain yield and resource profile remain unqualified",
+       "  res = run_receive("
+      ],
+      "ran_at": "2026-08-30 18:41:04"
+     }
+    },
+    "holo3": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "<checkout>/env314t/bin/python -m measure.crop_parity._h3run --certs-out <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c11/holo3-certs.json -- decode <checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c11-0.tiff --dpi 4800.0 --format L:c2-cmy7-p120-v0@3328x2304 --no-close --workers 8 --run-dir <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c11/holo3-run --out <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c11/holo3.out",
+      "cwd": "<checkout>",
+      "crop_sha256": "158c8c5aa9016346eb242d08aa5d4c9128a993a7bc75f10b259eccf97fb9278e",
+      "receiver_tree": "f5d7c0e2efc8ece54936bf2c64626f3a580c6771",
+      "receiver_dirty_sha": "",
+      "repo_head": "65d2d08ce398d23d3af0bcf3fd2a308a9d8d9283",
+      "wall_seconds": 523.9278210419943,
+      "exit": 0,
+      "summary": [
+       "_h3run: open, 111 certificates in 522.8 s"
+      ],
+      "ran_at": "2026-08-30 19:02:51"
+     }
+    }
+   },
+   "n_certificates": {
+    "holo1": 126,
+    "holo3": 111
+   },
+   "bits_available": {
+    "holo1": true,
+    "holo3": true
+   },
+   "targets": [
+    {
+     "address": [
+      0,
+      28,
+      2,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "miss"
+     ],
+     "full_sheet": {
+      "holo1": "certified",
+      "holo3": "uncertified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": true,
+      "holo3": false
+     }
+    },
+    {
+     "address": [
+      0,
+      31,
+      2,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      32,
+      2,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      34,
+      3,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "miss"
+     ],
+     "full_sheet": {
+      "holo1": "certified",
+      "holo3": "uncertified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": true,
+      "holo3": false
+     }
+    },
+    {
+     "address": [
+      0,
+      35,
+      2,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      36,
+      3,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "miss"
+     ],
+     "full_sheet": {
+      "holo1": "certified",
+      "holo3": "uncertified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": true,
+      "holo3": false
+     }
+    },
+    {
+     "address": [
+      0,
+      37,
+      3,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "miss"
+     ],
+     "full_sheet": {
+      "holo1": "certified",
+      "holo3": "uncertified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": true,
+      "holo3": false
+     }
+    }
+   ],
+   "controls": {
+    "holo1": {
+     "n": 59,
+     "reproduced": 59,
+     "flipped": 0,
+     "flipped_addresses": [],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 0,
+       "n": 23
+      },
+      "64-127": {
+       "flipped": 0,
+       "n": 18
+      },
+      "128-191": {
+       "flipped": 0,
+       "n": 17
+      },
+      "192-255": {
+       "flipped": 0,
+       "n": 1
+      }
+     }
+    },
+    "holo3": {
+     "n": 59,
+     "reproduced": 59,
+     "flipped": 0,
+     "flipped_addresses": [],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 0,
+       "n": 23
+      },
+      "64-127": {
+       "flipped": 0,
+       "n": 18
+      },
+      "128-191": {
+       "flipped": 0,
+       "n": 17
+      },
+      "192-255": {
+       "flipped": 0,
+       "n": 1
+      }
+     }
+    }
+   },
+   "wrong_certificates": [],
+   "out_of_bbox": [],
+   "checked_certificates": {
+    "holo1": 126,
+    "holo3": 111
+   },
+   "crops": [
+    "<checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c11-0.tiff"
+   ],
+   "crop_sha256": "158c8c5aa9016346eb242d08aa5d4c9128a993a7bc75f10b259eccf97fb9278e"
+  },
+  {
+   "case_id": "xerox-c2-cmy7-c12",
+   "cell_bbox": [
+    1936,
+    1552,
+    2304,
+    2288
+   ],
+   "runs": {
+    "holo1": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "env/bin/python confetti.py decode <checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c12-0.tiff --scan-dpi 4800.0 --format L:c2-cmy7-p120-v0@3328x2304 --state <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c12/holo1.state -o <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c12/holo1.out --no-close --complete --mopup --refine --workers 8",
+      "cwd": "<repo>",
+      "crop_sha256": "e45dc91635d8572f83dab24f702b4780fc47240728a4d37448ba900a375d081d",
+      "receiver_tree": "3537128d0084772885a8c7857996c1dfb480aaf0",
+      "receiver_dirty_sha": "",
+      "repo_head": "259e622148f844d02742ff6eb033fd66b0b83cc8",
+      "wall_seconds": 908.6082414580014,
+      "exit": 2,
+      "summary": [
+       "capture c7254be291d584506c7fb0a58ddaa6c05b447ea580ebf64f77a2ad937cbc406a: complete; committed",
+       "state: <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c12/holo1.state  sha256 c87ee71816530dc312897ab76dd573bc2ae9e212e499bea5d1afea1eed7cabf2",
+       "NOTE: mop-up supersession dropped 9341 re-observation(s) at committed cells; winner flips 4701 (50.3%) (two-view consistency canary \u2014 a high flip rate suggests a misplaced mop-up window or physical damage; committed evidence unchanged)",
+       "close skipped (--no-close): 42 certificates accumulated; no closing record was read, attempted, or written. Close with a plain or --complete run.",
+       "src/holo/cli.py:636: ProvisionalReceiverWarning: HOLO TRACK-3 RECEIVER IS PROVISIONAL: historical E021-E023c stand-in constants are active; production qualification is still required. Outstanding: the v1 physical/null false-accept gate, channel-BER envelope, and support safety margin still require frozen qualification; the 0.176 complete-domain rival refusal was diagnosed as a parity-concentrated cross-page alias and the v0.30 whole-word rival gate restores the d=27 floor (synthetically verified); real-capture full-domain yield and resource profile remain unqualified",
+       "  res = run_receive("
+      ],
+      "ran_at": "2026-08-30 19:11:35"
+     }
+    },
+    "holo3": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "<checkout>/env314t/bin/python -m measure.crop_parity._h3run --certs-out <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c12/holo3-certs.json -- decode <checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c12-0.tiff --dpi 4800.0 --format L:c2-cmy7-p120-v0@3328x2304 --no-close --workers 8 --run-dir <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c12/holo3-run --out <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c12/holo3.out",
+      "cwd": "<checkout>",
+      "crop_sha256": "e45dc91635d8572f83dab24f702b4780fc47240728a4d37448ba900a375d081d",
+      "receiver_tree": "f5d7c0e2efc8ece54936bf2c64626f3a580c6771",
+      "receiver_dirty_sha": "",
+      "repo_head": "65d2d08ce398d23d3af0bcf3fd2a308a9d8d9283",
+      "wall_seconds": 149.95506820900482,
+      "exit": 0,
+      "summary": [
+       "_h3run: open, 44 certificates in 148.9 s"
+      ],
+      "ran_at": "2026-08-30 19:26:44"
+     }
+    }
+   },
+   "n_certificates": {
+    "holo1": 42,
+    "holo3": 44
+   },
+   "bits_available": {
+    "holo1": true,
+    "holo3": true
+   },
+   "targets": [
+    {
+     "address": [
+      0,
+      28,
+      34,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "miss"
+     ],
+     "full_sheet": {
+      "holo1": "certified",
+      "holo3": "uncertified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": false
+      },
+      "holo3": {
+       "available": true,
+       "certified": false
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      31,
+      34,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": false
+      },
+      "holo3": {
+       "available": true,
+       "certified": false
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": true,
+      "holo3": false
+     }
+    }
+   ],
+   "controls": {
+    "holo1": {
+     "n": 29,
+     "reproduced": 25,
+     "flipped": 4,
+     "flipped_addresses": [
+      [
+       0,
+       28,
+       33,
+       "main"
+      ],
+      [
+       0,
+       29,
+       33,
+       "main"
+      ],
+      [
+       0,
+       30,
+       33,
+       "main"
+      ],
+      [
+       0,
+       30,
+       34,
+       "main"
+      ]
+     ],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 0,
+       "n": 13
+      },
+      "64-127": {
+       "flipped": 1,
+       "n": 10
+      },
+      "128-191": {
+       "flipped": 3,
+       "n": 6
+      }
+     }
+    },
+    "holo3": {
+     "n": 29,
+     "reproduced": 25,
+     "flipped": 4,
+     "flipped_addresses": [
+      [
+       0,
+       28,
+       33,
+       "main"
+      ],
+      [
+       0,
+       29,
+       33,
+       "main"
+      ],
+      [
+       0,
+       30,
+       33,
+       "main"
+      ],
+      [
+       0,
+       30,
+       34,
+       "main"
+      ]
+     ],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 0,
+       "n": 13
+      },
+      "64-127": {
+       "flipped": 1,
+       "n": 10
+      },
+      "128-191": {
+       "flipped": 3,
+       "n": 6
+      }
+     }
+    }
+   },
+   "wrong_certificates": [],
+   "out_of_bbox": [],
+   "checked_certificates": {
+    "holo1": 42,
+    "holo3": 44
+   },
+   "crops": [
+    "<checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c12-0.tiff"
+   ],
+   "crop_sha256": "e45dc91635d8572f83dab24f702b4780fc47240728a4d37448ba900a375d081d"
+  },
+  {
+   "case_id": "xerox-c2-cmy7-c13",
+   "cell_bbox": [
+    1680,
+    1744,
+    2224,
+    2288
+   ],
+   "runs": {
+    "holo1": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "env/bin/python confetti.py decode <checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c13-0.tiff --scan-dpi 4800.0 --format L:c2-cmy7-p120-v0@3328x2304 --state <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c13/holo1.state -o <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c13/holo1.out --no-close --complete --mopup --refine --workers 8",
+      "cwd": "<repo>",
+      "crop_sha256": "17abcc6ee51d76a6018c909e4ff255bde68454305ff839cc457edbb226be5a66",
+      "receiver_tree": "3537128d0084772885a8c7857996c1dfb480aaf0",
+      "receiver_dirty_sha": "",
+      "repo_head": "259e622148f844d02742ff6eb033fd66b0b83cc8",
+      "wall_seconds": 425.6456446669981,
+      "exit": 2,
+      "summary": [
+       "capture 0caccaa82e5371dd37fd8795805cbb52520e3cc162af84c5c97d0e70baf079d2: complete; committed",
+       "state: <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c13/holo1.state  sha256 303c5b93e39afcaff4a243ef277a7d7ffbf088c8cdef646dbeda4da63e1fc5dd",
+       "close skipped (--no-close): 0 certificates accumulated; no closing record was read, attempted, or written. Close with a plain or --complete run.",
+       "src/holo/cli.py:636: ProvisionalReceiverWarning: HOLO TRACK-3 RECEIVER IS PROVISIONAL: historical E021-E023c stand-in constants are active; production qualification is still required. Outstanding: the v1 physical/null false-accept gate, channel-BER envelope, and support safety margin still require frozen qualification; the 0.176 complete-domain rival refusal was diagnosed as a parity-concentrated cross-page alias and the v0.30 whole-word rival gate restores the d=27 floor (synthetically verified); real-capture full-domain yield and resource profile remain unqualified",
+       "  res = run_receive("
+      ],
+      "ran_at": "2026-08-30 19:29:14"
+     }
+    },
+    "holo3": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "<checkout>/env314t/bin/python -m measure.crop_parity._h3run --certs-out <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c13/holo3-certs.json -- decode <checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c13-0.tiff --dpi 4800.0 --format L:c2-cmy7-p120-v0@3328x2304 --no-close --workers 8 --run-dir <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c13/holo3-run --out <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c13/holo3.out",
+      "cwd": "<checkout>",
+      "crop_sha256": "17abcc6ee51d76a6018c909e4ff255bde68454305ff839cc457edbb226be5a66",
+      "receiver_tree": "f5d7c0e2efc8ece54936bf2c64626f3a580c6771",
+      "receiver_dirty_sha": "",
+      "repo_head": "65d2d08ce398d23d3af0bcf3fd2a308a9d8d9283",
+      "wall_seconds": 95.67313108300004,
+      "exit": 0,
+      "summary": [
+       "_h3run: open, 0 certificates in 94.4 s"
+      ],
+      "ran_at": "2026-08-30 19:36:20"
+     }
+    }
+   },
+   "n_certificates": {
+    "holo1": 0,
+    "holo3": 0
+   },
+   "bits_available": {
+    "holo1": true,
+    "holo3": true
+   },
+   "targets": [
+    {
+     "address": [
+      0,
+      31,
+      30,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": false
+      },
+      "holo3": {
+       "available": true,
+       "certified": false
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": true,
+      "holo3": false
+     }
+    }
+   ],
+   "controls": {
+    "holo1": {
+     "n": 47,
+     "reproduced": 0,
+     "flipped": 47,
+     "flipped_addresses": [
+      [
+       0,
+       28,
+       27,
+       "main"
+      ],
+      [
+       0,
+       28,
+       28,
+       "main"
+      ],
+      [
+       0,
+       28,
+       29,
+       "main"
+      ],
+      [
+       0,
+       28,
+       30,
+       "main"
+      ],
+      [
+       0,
+       28,
+       31,
+       "main"
+      ],
+      [
+       0,
+       28,
+       32,
+       "main"
+      ],
+      [
+       0,
+       28,
+       33,
+       "main"
+      ],
+      [
+       0,
+       29,
+       27,
+       "main"
+      ],
+      [
+       0,
+       29,
+       28,
+       "main"
+      ],
+      [
+       0,
+       29,
+       29,
+       "main"
+      ],
+      [
+       0,
+       29,
+       31,
+       "main"
+      ],
+      [
+       0,
+       29,
+       32,
+       "main"
+      ],
+      [
+       0,
+       29,
+       33,
+       "main"
+      ],
+      [
+       0,
+       30,
+       27,
+       "main"
+      ],
+      [
+       0,
+       30,
+       28,
+       "main"
+      ],
+      [
+       0,
+       30,
+       29,
+       "main"
+      ],
+      [
+       0,
+       30,
+       30,
+       "main"
+      ],
+      [
+       0,
+       30,
+       31,
+       "main"
+      ],
+      [
+       0,
+       30,
+       32,
+       "main"
+      ],
+      [
+       0,
+       30,
+       33,
+       "main"
+      ],
+      [
+       0,
+       31,
+       27,
+       "main"
+      ],
+      [
+       0,
+       31,
+       28,
+       "main"
+      ],
+      [
+       0,
+       31,
+       29,
+       "main"
+      ],
+      [
+       0,
+       31,
+       31,
+       "main"
+      ],
+      [
+       0,
+       31,
+       32,
+       "main"
+      ],
+      [
+       0,
+       31,
+       33,
+       "main"
+      ],
+      [
+       0,
+       32,
+       27,
+       "main"
+      ],
+      [
+       0,
+       32,
+       28,
+       "main"
+      ],
+      [
+       0,
+       32,
+       29,
+       "main"
+      ],
+      [
+       0,
+       32,
+       30,
+       "main"
+      ],
+      [
+       0,
+       32,
+       31,
+       "main"
+      ],
+      [
+       0,
+       32,
+       32,
+       "main"
+      ],
+      [
+       0,
+       32,
+       33,
+       "main"
+      ],
+      [
+       0,
+       33,
+       27,
+       "main"
+      ],
+      [
+       0,
+       33,
+       28,
+       "main"
+      ],
+      [
+       0,
+       33,
+       29,
+       "main"
+      ],
+      [
+       0,
+       33,
+       30,
+       "main"
+      ],
+      [
+       0,
+       33,
+       31,
+       "main"
+      ],
+      [
+       0,
+       33,
+       32,
+       "main"
+      ],
+      [
+       0,
+       33,
+       33,
+       "main"
+      ],
+      [
+       0,
+       34,
+       27,
+       "main"
+      ],
+      [
+       0,
+       34,
+       28,
+       "main"
+      ],
+      [
+       0,
+       34,
+       29,
+       "main"
+      ],
+      [
+       0,
+       34,
+       30,
+       "main"
+      ],
+      [
+       0,
+       34,
+       31,
+       "main"
+      ],
+      [
+       0,
+       34,
+       32,
+       "main"
+      ],
+      [
+       0,
+       34,
+       33,
+       "main"
+      ]
+     ],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 24,
+       "n": 24
+      },
+      "64-127": {
+       "flipped": 15,
+       "n": 15
+      },
+      "128-191": {
+       "flipped": 8,
+       "n": 8
+      }
+     }
+    },
+    "holo3": {
+     "n": 47,
+     "reproduced": 0,
+     "flipped": 47,
+     "flipped_addresses": [
+      [
+       0,
+       28,
+       27,
+       "main"
+      ],
+      [
+       0,
+       28,
+       28,
+       "main"
+      ],
+      [
+       0,
+       28,
+       29,
+       "main"
+      ],
+      [
+       0,
+       28,
+       30,
+       "main"
+      ],
+      [
+       0,
+       28,
+       31,
+       "main"
+      ],
+      [
+       0,
+       28,
+       32,
+       "main"
+      ],
+      [
+       0,
+       28,
+       33,
+       "main"
+      ],
+      [
+       0,
+       29,
+       27,
+       "main"
+      ],
+      [
+       0,
+       29,
+       28,
+       "main"
+      ],
+      [
+       0,
+       29,
+       29,
+       "main"
+      ],
+      [
+       0,
+       29,
+       31,
+       "main"
+      ],
+      [
+       0,
+       29,
+       32,
+       "main"
+      ],
+      [
+       0,
+       29,
+       33,
+       "main"
+      ],
+      [
+       0,
+       30,
+       27,
+       "main"
+      ],
+      [
+       0,
+       30,
+       28,
+       "main"
+      ],
+      [
+       0,
+       30,
+       29,
+       "main"
+      ],
+      [
+       0,
+       30,
+       30,
+       "main"
+      ],
+      [
+       0,
+       30,
+       31,
+       "main"
+      ],
+      [
+       0,
+       30,
+       32,
+       "main"
+      ],
+      [
+       0,
+       30,
+       33,
+       "main"
+      ],
+      [
+       0,
+       31,
+       27,
+       "main"
+      ],
+      [
+       0,
+       31,
+       28,
+       "main"
+      ],
+      [
+       0,
+       31,
+       29,
+       "main"
+      ],
+      [
+       0,
+       31,
+       31,
+       "main"
+      ],
+      [
+       0,
+       31,
+       32,
+       "main"
+      ],
+      [
+       0,
+       31,
+       33,
+       "main"
+      ],
+      [
+       0,
+       32,
+       27,
+       "main"
+      ],
+      [
+       0,
+       32,
+       28,
+       "main"
+      ],
+      [
+       0,
+       32,
+       29,
+       "main"
+      ],
+      [
+       0,
+       32,
+       30,
+       "main"
+      ],
+      [
+       0,
+       32,
+       31,
+       "main"
+      ],
+      [
+       0,
+       32,
+       32,
+       "main"
+      ],
+      [
+       0,
+       32,
+       33,
+       "main"
+      ],
+      [
+       0,
+       33,
+       27,
+       "main"
+      ],
+      [
+       0,
+       33,
+       28,
+       "main"
+      ],
+      [
+       0,
+       33,
+       29,
+       "main"
+      ],
+      [
+       0,
+       33,
+       30,
+       "main"
+      ],
+      [
+       0,
+       33,
+       31,
+       "main"
+      ],
+      [
+       0,
+       33,
+       32,
+       "main"
+      ],
+      [
+       0,
+       33,
+       33,
+       "main"
+      ],
+      [
+       0,
+       34,
+       27,
+       "main"
+      ],
+      [
+       0,
+       34,
+       28,
+       "main"
+      ],
+      [
+       0,
+       34,
+       29,
+       "main"
+      ],
+      [
+       0,
+       34,
+       30,
+       "main"
+      ],
+      [
+       0,
+       34,
+       31,
+       "main"
+      ],
+      [
+       0,
+       34,
+       32,
+       "main"
+      ],
+      [
+       0,
+       34,
+       33,
+       "main"
+      ]
+     ],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 24,
+       "n": 24
+      },
+      "64-127": {
+       "flipped": 15,
+       "n": 15
+      },
+      "128-191": {
+       "flipped": 8,
+       "n": 8
+      }
+     }
+    }
+   },
+   "wrong_certificates": [],
+   "out_of_bbox": [],
+   "checked_certificates": {
+    "holo1": 0,
+    "holo3": 0
+   },
+   "crops": [
+    "<checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c13-0.tiff"
+   ],
+   "crop_sha256": "17abcc6ee51d76a6018c909e4ff255bde68454305ff839cc457edbb226be5a66"
+  },
+  {
+   "case_id": "xerox-c2-cmy7-c14",
+   "cell_bbox": [
+    848,
+    2128,
+    1392,
+    2864
+   ],
+   "runs": {
+    "holo1": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "env/bin/python confetti.py decode <checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c14-0.tiff --scan-dpi 4800.0 --format L:c2-cmy7-p120-v0@3328x2304 --state <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c14/holo1.state -o <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c14/holo1.out --no-close --complete --mopup --refine --workers 8",
+      "cwd": "<repo>",
+      "crop_sha256": "4acd85b97fd3827789ddb3045a03e108f98df2cd6738c65c30e125ce553ad600",
+      "receiver_tree": "3537128d0084772885a8c7857996c1dfb480aaf0",
+      "receiver_dirty_sha": "",
+      "repo_head": "259e622148f844d02742ff6eb033fd66b0b83cc8",
+      "wall_seconds": 575.4694592499945,
+      "exit": 2,
+      "summary": [
+       "capture 8e4ee6e4f233530f3b2bcb2f3f17086ff15c0cfda99d051bfa80361093785cda: complete; committed",
+       "state: <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c14/holo1.state  sha256 a76fa5945695bfda2fd67d4c8dcca3bea9270f30a2d32be85bf4b36a9190c13c",
+       "close skipped (--no-close): 0 certificates accumulated; no closing record was read, attempted, or written. Close with a plain or --complete run.",
+       "src/holo/cli.py:636: ProvisionalReceiverWarning: HOLO TRACK-3 RECEIVER IS PROVISIONAL: historical E021-E023c stand-in constants are active; production qualification is still required. Outstanding: the v1 physical/null false-accept gate, channel-BER envelope, and support safety margin still require frozen qualification; the 0.176 complete-domain rival refusal was diagnosed as a parity-concentrated cross-page alias and the v0.30 whole-word rival gate restores the d=27 floor (synthetically verified); real-capture full-domain yield and resource profile remain unqualified",
+       "  res = run_receive("
+      ],
+      "ran_at": "2026-08-30 19:37:56"
+     }
+    },
+    "holo3": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "<checkout>/env314t/bin/python -m measure.crop_parity._h3run --certs-out <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c14/holo3-certs.json -- decode <checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c14-0.tiff --dpi 4800.0 --format L:c2-cmy7-p120-v0@3328x2304 --no-close --workers 8 --run-dir <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c14/holo3-run --out <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c14/holo3.out",
+      "cwd": "<checkout>",
+      "crop_sha256": "4acd85b97fd3827789ddb3045a03e108f98df2cd6738c65c30e125ce553ad600",
+      "receiver_tree": "f5d7c0e2efc8ece54936bf2c64626f3a580c6771",
+      "receiver_dirty_sha": "",
+      "repo_head": "65d2d08ce398d23d3af0bcf3fd2a308a9d8d9283",
+      "wall_seconds": 123.67181416699896,
+      "exit": 0,
+      "summary": [
+       "_h3run: open, 0 certificates in 122.7 s"
+      ],
+      "ran_at": "2026-08-30 19:47:32"
+     }
+    }
+   },
+   "n_certificates": {
+    "holo1": 0,
+    "holo3": 0
+   },
+   "bits_available": {
+    "holo1": true,
+    "holo3": true
+   },
+   "targets": [
+    {
+     "address": [
+      0,
+      37,
+      17,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": false
+      },
+      "holo3": {
+       "available": true,
+       "certified": false
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": true,
+      "holo3": false
+     }
+    },
+    {
+     "address": [
+      0,
+      40,
+      17,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": false
+      },
+      "holo3": {
+       "available": true,
+       "certified": false
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": true,
+      "holo3": false
+     }
+    }
+   ],
+   "controls": {
+    "holo1": {
+     "n": 63,
+     "reproduced": 0,
+     "flipped": 63,
+     "flipped_addresses": [
+      [
+       0,
+       34,
+       14,
+       "main"
+      ],
+      [
+       0,
+       34,
+       15,
+       "main"
+      ],
+      [
+       0,
+       34,
+       16,
+       "main"
+      ],
+      [
+       0,
+       34,
+       18,
+       "main"
+      ],
+      [
+       0,
+       34,
+       19,
+       "main"
+      ],
+      [
+       0,
+       34,
+       20,
+       "main"
+      ],
+      [
+       0,
+       35,
+       14,
+       "main"
+      ],
+      [
+       0,
+       35,
+       15,
+       "main"
+      ],
+      [
+       0,
+       35,
+       16,
+       "main"
+      ],
+      [
+       0,
+       35,
+       17,
+       "main"
+      ],
+      [
+       0,
+       35,
+       18,
+       "main"
+      ],
+      [
+       0,
+       35,
+       19,
+       "main"
+      ],
+      [
+       0,
+       35,
+       20,
+       "main"
+      ],
+      [
+       0,
+       36,
+       14,
+       "main"
+      ],
+      [
+       0,
+       36,
+       15,
+       "main"
+      ],
+      [
+       0,
+       36,
+       16,
+       "main"
+      ],
+      [
+       0,
+       36,
+       18,
+       "main"
+      ],
+      [
+       0,
+       36,
+       19,
+       "main"
+      ],
+      [
+       0,
+       36,
+       20,
+       "main"
+      ],
+      [
+       0,
+       37,
+       14,
+       "main"
+      ],
+      [
+       0,
+       37,
+       15,
+       "main"
+      ],
+      [
+       0,
+       37,
+       16,
+       "main"
+      ],
+      [
+       0,
+       37,
+       18,
+       "main"
+      ],
+      [
+       0,
+       37,
+       19,
+       "main"
+      ],
+      [
+       0,
+       37,
+       20,
+       "main"
+      ],
+      [
+       0,
+       38,
+       14,
+       "main"
+      ],
+      [
+       0,
+       38,
+       15,
+       "main"
+      ],
+      [
+       0,
+       38,
+       16,
+       "main"
+      ],
+      [
+       0,
+       38,
+       18,
+       "main"
+      ],
+      [
+       0,
+       38,
+       19,
+       "main"
+      ],
+      [
+       0,
+       38,
+       20,
+       "main"
+      ],
+      [
+       0,
+       39,
+       14,
+       "main"
+      ],
+      [
+       0,
+       39,
+       15,
+       "main"
+      ],
+      [
+       0,
+       39,
+       16,
+       "main"
+      ],
+      [
+       0,
+       39,
+       18,
+       "main"
+      ],
+      [
+       0,
+       39,
+       19,
+       "main"
+      ],
+      [
+       0,
+       39,
+       20,
+       "main"
+      ],
+      [
+       0,
+       40,
+       14,
+       "main"
+      ],
+      [
+       0,
+       40,
+       15,
+       "main"
+      ],
+      [
+       0,
+       40,
+       16,
+       "main"
+      ],
+      [
+       0,
+       40,
+       18,
+       "main"
+      ],
+      [
+       0,
+       40,
+       19,
+       "main"
+      ],
+      [
+       0,
+       40,
+       20,
+       "main"
+      ],
+      [
+       0,
+       41,
+       14,
+       "main"
+      ],
+      [
+       0,
+       41,
+       15,
+       "main"
+      ],
+      [
+       0,
+       41,
+       16,
+       "main"
+      ],
+      [
+       0,
+       41,
+       18,
+       "main"
+      ],
+      [
+       0,
+       41,
+       19,
+       "main"
+      ],
+      [
+       0,
+       41,
+       20,
+       "main"
+      ],
+      [
+       0,
+       42,
+       14,
+       "main"
+      ],
+      [
+       0,
+       42,
+       15,
+       "main"
+      ],
+      [
+       0,
+       42,
+       16,
+       "main"
+      ],
+      [
+       0,
+       42,
+       17,
+       "main"
+      ],
+      [
+       0,
+       42,
+       18,
+       "main"
+      ],
+      [
+       0,
+       42,
+       19,
+       "main"
+      ],
+      [
+       0,
+       42,
+       20,
+       "main"
+      ],
+      [
+       0,
+       43,
+       14,
+       "main"
+      ],
+      [
+       0,
+       43,
+       15,
+       "main"
+      ],
+      [
+       0,
+       43,
+       16,
+       "main"
+      ],
+      [
+       0,
+       43,
+       17,
+       "main"
+      ],
+      [
+       0,
+       43,
+       18,
+       "main"
+      ],
+      [
+       0,
+       43,
+       19,
+       "main"
+      ],
+      [
+       0,
+       43,
+       20,
+       "main"
+      ]
+     ],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 29,
+       "n": 29
+      },
+      "64-127": {
+       "flipped": 22,
+       "n": 22
+      },
+      "128-191": {
+       "flipped": 12,
+       "n": 12
+      }
+     }
+    },
+    "holo3": {
+     "n": 63,
+     "reproduced": 0,
+     "flipped": 63,
+     "flipped_addresses": [
+      [
+       0,
+       34,
+       14,
+       "main"
+      ],
+      [
+       0,
+       34,
+       15,
+       "main"
+      ],
+      [
+       0,
+       34,
+       16,
+       "main"
+      ],
+      [
+       0,
+       34,
+       18,
+       "main"
+      ],
+      [
+       0,
+       34,
+       19,
+       "main"
+      ],
+      [
+       0,
+       34,
+       20,
+       "main"
+      ],
+      [
+       0,
+       35,
+       14,
+       "main"
+      ],
+      [
+       0,
+       35,
+       15,
+       "main"
+      ],
+      [
+       0,
+       35,
+       16,
+       "main"
+      ],
+      [
+       0,
+       35,
+       17,
+       "main"
+      ],
+      [
+       0,
+       35,
+       18,
+       "main"
+      ],
+      [
+       0,
+       35,
+       19,
+       "main"
+      ],
+      [
+       0,
+       35,
+       20,
+       "main"
+      ],
+      [
+       0,
+       36,
+       14,
+       "main"
+      ],
+      [
+       0,
+       36,
+       15,
+       "main"
+      ],
+      [
+       0,
+       36,
+       16,
+       "main"
+      ],
+      [
+       0,
+       36,
+       18,
+       "main"
+      ],
+      [
+       0,
+       36,
+       19,
+       "main"
+      ],
+      [
+       0,
+       36,
+       20,
+       "main"
+      ],
+      [
+       0,
+       37,
+       14,
+       "main"
+      ],
+      [
+       0,
+       37,
+       15,
+       "main"
+      ],
+      [
+       0,
+       37,
+       16,
+       "main"
+      ],
+      [
+       0,
+       37,
+       18,
+       "main"
+      ],
+      [
+       0,
+       37,
+       19,
+       "main"
+      ],
+      [
+       0,
+       37,
+       20,
+       "main"
+      ],
+      [
+       0,
+       38,
+       14,
+       "main"
+      ],
+      [
+       0,
+       38,
+       15,
+       "main"
+      ],
+      [
+       0,
+       38,
+       16,
+       "main"
+      ],
+      [
+       0,
+       38,
+       18,
+       "main"
+      ],
+      [
+       0,
+       38,
+       19,
+       "main"
+      ],
+      [
+       0,
+       38,
+       20,
+       "main"
+      ],
+      [
+       0,
+       39,
+       14,
+       "main"
+      ],
+      [
+       0,
+       39,
+       15,
+       "main"
+      ],
+      [
+       0,
+       39,
+       16,
+       "main"
+      ],
+      [
+       0,
+       39,
+       18,
+       "main"
+      ],
+      [
+       0,
+       39,
+       19,
+       "main"
+      ],
+      [
+       0,
+       39,
+       20,
+       "main"
+      ],
+      [
+       0,
+       40,
+       14,
+       "main"
+      ],
+      [
+       0,
+       40,
+       15,
+       "main"
+      ],
+      [
+       0,
+       40,
+       16,
+       "main"
+      ],
+      [
+       0,
+       40,
+       18,
+       "main"
+      ],
+      [
+       0,
+       40,
+       19,
+       "main"
+      ],
+      [
+       0,
+       40,
+       20,
+       "main"
+      ],
+      [
+       0,
+       41,
+       14,
+       "main"
+      ],
+      [
+       0,
+       41,
+       15,
+       "main"
+      ],
+      [
+       0,
+       41,
+       16,
+       "main"
+      ],
+      [
+       0,
+       41,
+       18,
+       "main"
+      ],
+      [
+       0,
+       41,
+       19,
+       "main"
+      ],
+      [
+       0,
+       41,
+       20,
+       "main"
+      ],
+      [
+       0,
+       42,
+       14,
+       "main"
+      ],
+      [
+       0,
+       42,
+       15,
+       "main"
+      ],
+      [
+       0,
+       42,
+       16,
+       "main"
+      ],
+      [
+       0,
+       42,
+       17,
+       "main"
+      ],
+      [
+       0,
+       42,
+       18,
+       "main"
+      ],
+      [
+       0,
+       42,
+       19,
+       "main"
+      ],
+      [
+       0,
+       42,
+       20,
+       "main"
+      ],
+      [
+       0,
+       43,
+       14,
+       "main"
+      ],
+      [
+       0,
+       43,
+       15,
+       "main"
+      ],
+      [
+       0,
+       43,
+       16,
+       "main"
+      ],
+      [
+       0,
+       43,
+       17,
+       "main"
+      ],
+      [
+       0,
+       43,
+       18,
+       "main"
+      ],
+      [
+       0,
+       43,
+       19,
+       "main"
+      ],
+      [
+       0,
+       43,
+       20,
+       "main"
+      ]
+     ],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 29,
+       "n": 29
+      },
+      "64-127": {
+       "flipped": 22,
+       "n": 22
+      },
+      "128-191": {
+       "flipped": 12,
+       "n": 12
+      }
+     }
+    }
+   },
+   "wrong_certificates": [],
+   "out_of_bbox": [],
+   "checked_certificates": {
+    "holo1": 0,
+    "holo3": 0
+   },
+   "crops": [
+    "<checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c14-0.tiff"
+   ],
+   "crop_sha256": "4acd85b97fd3827789ddb3045a03e108f98df2cd6738c65c30e125ce553ad600"
+  },
+  {
+   "case_id": "xerox-c2-cmy7-c15",
+   "cell_bbox": [
+    0,
+    2576,
+    432,
+    3120
+   ],
+   "runs": {
+    "holo1": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "env/bin/python confetti.py decode <checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c15-0.tiff --scan-dpi 4800.0 --format L:c2-cmy7-p120-v0@3328x2304 --state <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c15/holo1.state -o <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c15/holo1.out --no-close --complete --mopup --refine --workers 8",
+      "cwd": "<repo>",
+      "crop_sha256": "3db3064164ff474709a6253c9fa3cb2468855ef5aeb5bc44267aee174e1ffa6e",
+      "receiver_tree": "3537128d0084772885a8c7857996c1dfb480aaf0",
+      "receiver_dirty_sha": "",
+      "repo_head": "259e622148f844d02742ff6eb033fd66b0b83cc8",
+      "wall_seconds": 768.0415132500057,
+      "exit": 2,
+      "summary": [
+       "capture 1ab2f6261da9032d58066966c37f48f379477178c314f553c9a76a499220b84e: complete; committed",
+       "state: <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c15/holo1.state  sha256 3670cce7d39c78c18e5f4bc52f59d1da784757a49eea9965d304a80e9625fcce",
+       "NOTE: mop-up supersession dropped 17569 re-observation(s) at committed cells; winner flips 8214 (46.8%) (two-view consistency canary \u2014 a high flip rate suggests a misplaced mop-up window or physical damage; committed evidence unchanged)",
+       "close skipped (--no-close): 45 certificates accumulated; no closing record was read, attempted, or written. Close with a plain or --complete run.",
+       "src/holo/cli.py:636: ProvisionalReceiverWarning: HOLO TRACK-3 RECEIVER IS PROVISIONAL: historical E021-E023c stand-in constants are active; production qualification is still required. Outstanding: the v1 physical/null false-accept gate, channel-BER envelope, and support safety margin still require frozen qualification; the 0.176 complete-domain rival refusal was diagnosed as a parity-concentrated cross-page alias and the v0.30 whole-word rival gate restores the d=27 floor (synthetically verified); real-capture full-domain yield and resource profile remain unqualified",
+       "  res = run_receive("
+      ],
+      "ran_at": "2026-08-30 19:49:36"
+     }
+    },
+    "holo3": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "<checkout>/env314t/bin/python -m measure.crop_parity._h3run --certs-out <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c15/holo3-certs.json -- decode <checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c15-0.tiff --dpi 4800.0 --format L:c2-cmy7-p120-v0@3328x2304 --no-close --workers 8 --run-dir <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c15/holo3-run --out <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c15/holo3.out",
+      "cwd": "<checkout>",
+      "crop_sha256": "3db3064164ff474709a6253c9fa3cb2468855ef5aeb5bc44267aee174e1ffa6e",
+      "receiver_tree": "f5d7c0e2efc8ece54936bf2c64626f3a580c6771",
+      "receiver_dirty_sha": "",
+      "repo_head": "65d2d08ce398d23d3af0bcf3fd2a308a9d8d9283",
+      "wall_seconds": 149.38668312500522,
+      "exit": 0,
+      "summary": [
+       "_h3run: open, 46 certificates in 148.3 s"
+      ],
+      "ran_at": "2026-08-30 20:02:24"
+     }
+    }
+   },
+   "n_certificates": {
+    "holo1": 45,
+    "holo3": 46
+   },
+   "bits_available": {
+    "holo1": true,
+    "holo3": true
+   },
+   "targets": [
+    {
+     "address": [
+      0,
+      44,
+      2,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    }
+   ],
+   "controls": {
+    "holo1": {
+     "n": 27,
+     "reproduced": 27,
+     "flipped": 0,
+     "flipped_addresses": [],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 0,
+       "n": 13
+      },
+      "64-127": {
+       "flipped": 0,
+       "n": 9
+      },
+      "128-191": {
+       "flipped": 0,
+       "n": 5
+      }
+     }
+    },
+    "holo3": {
+     "n": 27,
+     "reproduced": 27,
+     "flipped": 0,
+     "flipped_addresses": [],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 0,
+       "n": 13
+      },
+      "64-127": {
+       "flipped": 0,
+       "n": 9
+      },
+      "128-191": {
+       "flipped": 0,
+       "n": 5
+      }
+     }
+    }
+   },
+   "wrong_certificates": [],
+   "out_of_bbox": [],
+   "checked_certificates": {
+    "holo1": 45,
+    "holo3": 46
+   },
+   "crops": [
+    "<checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c15-0.tiff"
+   ],
+   "crop_sha256": "3db3064164ff474709a6253c9fa3cb2468855ef5aeb5bc44267aee174e1ffa6e"
+  },
+  {
+   "case_id": "xerox-c2-cmy7-c16",
+   "cell_bbox": [
+    1488,
+    2640,
+    2224,
+    3328
+   ],
+   "runs": {
+    "holo1": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "env/bin/python confetti.py decode <checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c16-0.tiff --scan-dpi 4800.0 --format L:c2-cmy7-p120-v0@3328x2304 --state <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c16/holo1.state -o <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c16/holo1.out --no-close --complete --mopup --refine --workers 8",
+      "cwd": "<repo>",
+      "crop_sha256": "2699b145b196303248be80945ec13a6e1be21cb60a098bd61fceb4d83e821767",
+      "receiver_tree": "3537128d0084772885a8c7857996c1dfb480aaf0",
+      "receiver_dirty_sha": "",
+      "repo_head": "259e622148f844d02742ff6eb033fd66b0b83cc8",
+      "wall_seconds": 948.4348896660013,
+      "exit": 2,
+      "summary": [
+       "capture f69bf73b060e2432942241e8935ecf95398e972c89813737a188e92abe448bf1: complete; committed",
+       "state: <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c16/holo1.state  sha256 4d6380903fbede80d52684a538465d09290bb093f2c5695f6797145331286722",
+       "close skipped (--no-close): 116 certificates accumulated; no closing record was read, attempted, or written. Close with a plain or --complete run.",
+       "src/holo/cli.py:636: ProvisionalReceiverWarning: HOLO TRACK-3 RECEIVER IS PROVISIONAL: historical E021-E023c stand-in constants are active; production qualification is still required. Outstanding: the v1 physical/null false-accept gate, channel-BER envelope, and support safety margin still require frozen qualification; the 0.176 complete-domain rival refusal was diagnosed as a parity-concentrated cross-page alias and the v0.30 whole-word rival gate restores the d=27 floor (synthetically verified); real-capture full-domain yield and resource profile remain unqualified",
+       "  res = run_receive("
+      ],
+      "ran_at": "2026-08-30 20:04:54"
+     }
+    },
+    "holo3": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "<checkout>/env314t/bin/python -m measure.crop_parity._h3run --certs-out <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c16/holo3-certs.json -- decode <checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c16-0.tiff --dpi 4800.0 --format L:c2-cmy7-p120-v0@3328x2304 --no-close --workers 8 --run-dir <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c16/holo3-run --out <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c16/holo3.out",
+      "cwd": "<checkout>",
+      "crop_sha256": "2699b145b196303248be80945ec13a6e1be21cb60a098bd61fceb4d83e821767",
+      "receiver_tree": "f5d7c0e2efc8ece54936bf2c64626f3a580c6771",
+      "receiver_dirty_sha": "",
+      "repo_head": "65d2d08ce398d23d3af0bcf3fd2a308a9d8d9283",
+      "wall_seconds": 177.91098141700058,
+      "exit": 0,
+      "summary": [
+       "_h3run: open, 111 certificates in 176.7 s"
+      ],
+      "ran_at": "2026-08-30 20:20:42"
+     }
+    }
+   },
+   "n_certificates": {
+    "holo1": 116,
+    "holo3": 111
+   },
+   "bits_available": {
+    "holo1": true,
+    "holo3": true
+   },
+   "targets": [
+    {
+     "address": [
+      0,
+      45,
+      28,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "miss"
+     ],
+     "full_sheet": {
+      "holo1": "certified",
+      "holo3": "uncertified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": true,
+      "holo3": false
+     }
+    },
+    {
+     "address": [
+      0,
+      45,
+      30,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "miss"
+     ],
+     "full_sheet": {
+      "holo1": "certified",
+      "holo3": "uncertified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": true,
+      "holo3": false
+     }
+    },
+    {
+     "address": [
+      0,
+      46,
+      27,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "miss"
+     ],
+     "full_sheet": {
+      "holo1": "certified",
+      "holo3": "uncertified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": true,
+      "holo3": false
+     }
+    },
+    {
+     "address": [
+      0,
+      49,
+      30,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      50,
+      27,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      50,
+      30,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": false
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": false,
+     "reproduces_full_sheet": {
+      "holo1": true,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      51,
+      27,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": false
+      },
+      "holo3": {
+       "available": true,
+       "certified": false
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": true,
+      "holo3": false
+     }
+    },
+    {
+     "address": [
+      0,
+      51,
+      28,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": false
+      }
+     },
+     "agree": false,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": false
+     }
+    },
+    {
+     "address": [
+      0,
+      51,
+      30,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": false
+      },
+      "holo3": {
+       "available": true,
+       "certified": false
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": true,
+      "holo3": false
+     }
+    }
+   ],
+   "controls": {
+    "holo1": {
+     "n": 82,
+     "reproduced": 82,
+     "flipped": 0,
+     "flipped_addresses": [],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 0,
+       "n": 26
+      },
+      "64-127": {
+       "flipped": 0,
+       "n": 26
+      },
+      "128-191": {
+       "flipped": 0,
+       "n": 18
+      },
+      "192-255": {
+       "flipped": 0,
+       "n": 8
+      },
+      "256-319": {
+       "flipped": 0,
+       "n": 4
+      }
+     }
+    },
+    "holo3": {
+     "n": 82,
+     "reproduced": 82,
+     "flipped": 0,
+     "flipped_addresses": [],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 0,
+       "n": 26
+      },
+      "64-127": {
+       "flipped": 0,
+       "n": 26
+      },
+      "128-191": {
+       "flipped": 0,
+       "n": 18
+      },
+      "192-255": {
+       "flipped": 0,
+       "n": 8
+      },
+      "256-319": {
+       "flipped": 0,
+       "n": 4
+      }
+     }
+    }
+   },
+   "wrong_certificates": [],
+   "out_of_bbox": [],
+   "checked_certificates": {
+    "holo1": 116,
+    "holo3": 111
+   },
+   "crops": [
+    "<checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c16-0.tiff"
+   ],
+   "crop_sha256": "2699b145b196303248be80945ec13a6e1be21cb60a098bd61fceb4d83e821767"
+  },
+  {
+   "case_id": "xerox-c2-cmy7-c17",
+   "cell_bbox": [
+    1936,
+    2704,
+    2304,
+    3248
+   ],
+   "runs": {
+    "holo1": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "env/bin/python confetti.py decode <checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c17-0.tiff --scan-dpi 4800.0 --format L:c2-cmy7-p120-v0@3328x2304 --state <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c17/holo1.state -o <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c17/holo1.out --no-close --complete --mopup --refine --workers 8",
+      "cwd": "<repo>",
+      "crop_sha256": "d6466bf4adb8f2a05fa6bf2f7d0fd85c474f972f9b35e867222a7dfa0005ba8d",
+      "receiver_tree": "3537128d0084772885a8c7857996c1dfb480aaf0",
+      "receiver_dirty_sha": "",
+      "repo_head": "259e622148f844d02742ff6eb033fd66b0b83cc8",
+      "wall_seconds": 1233.168861750004,
+      "exit": 2,
+      "summary": [
+       "capture f02b3da5c6179a0ff35b2dd2b2f283407282d274b6ae4f874d3b1687b9338143: complete; committed",
+       "state: <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c17/holo1.state  sha256 f61d6f5effe454dead121bb79448267c495a1b77c20ca7a21d065182836cae51",
+       "NOTE: mop-up supersession dropped 50924 re-observation(s) at committed cells; winner flips 20990 (41.2%) (two-view consistency canary \u2014 a high flip rate suggests a misplaced mop-up window or physical damage; committed evidence unchanged)",
+       "close skipped (--no-close): 28 certificates accumulated; no closing record was read, attempted, or written. Close with a plain or --complete run.",
+       "src/holo/cli.py:636: ProvisionalReceiverWarning: HOLO TRACK-3 RECEIVER IS PROVISIONAL: historical E021-E023c stand-in constants are active; production qualification is still required. Outstanding: the v1 physical/null false-accept gate, channel-BER envelope, and support safety margin still require frozen qualification; the 0.176 complete-domain rival refusal was diagnosed as a parity-concentrated cross-page alias and the v0.30 whole-word rival gate restores the d=27 floor (synthetically verified); real-capture full-domain yield and resource profile remain unqualified",
+       "  res = run_receive("
+      ],
+      "ran_at": "2026-08-30 20:23:40"
+     }
+    },
+    "holo3": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "<checkout>/env314t/bin/python -m measure.crop_parity._h3run --certs-out <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c17/holo3-certs.json -- decode <checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c17-0.tiff --dpi 4800.0 --format L:c2-cmy7-p120-v0@3328x2304 --no-close --workers 8 --run-dir <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c17/holo3-run --out <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c17/holo3.out",
+      "cwd": "<checkout>",
+      "crop_sha256": "d6466bf4adb8f2a05fa6bf2f7d0fd85c474f972f9b35e867222a7dfa0005ba8d",
+      "receiver_tree": "f5d7c0e2efc8ece54936bf2c64626f3a580c6771",
+      "receiver_dirty_sha": "",
+      "repo_head": "65d2d08ce398d23d3af0bcf3fd2a308a9d8d9283",
+      "wall_seconds": 200.09094425000512,
+      "exit": 0,
+      "summary": [
+       "_h3run: open, 31 certificates in 198.9 s"
+      ],
+      "ran_at": "2026-08-30 20:44:14"
+     }
+    }
+   },
+   "n_certificates": {
+    "holo1": 28,
+    "holo3": 31
+   },
+   "bits_available": {
+    "holo1": true,
+    "holo3": true
+   },
+   "targets": [
+    {
+     "address": [
+      0,
+      46,
+      34,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": false
+      },
+      "holo3": {
+       "available": true,
+       "certified": false
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": true,
+      "holo3": false
+     }
+    }
+   ],
+   "controls": {
+    "holo1": {
+     "n": 22,
+     "reproduced": 21,
+     "flipped": 1,
+     "flipped_addresses": [
+      [
+       0,
+       49,
+       34,
+       "main"
+      ]
+     ],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 1,
+       "n": 12
+      },
+      "64-127": {
+       "flipped": 0,
+       "n": 7
+      },
+      "128-191": {
+       "flipped": 0,
+       "n": 3
+      }
+     }
+    },
+    "holo3": {
+     "n": 22,
+     "reproduced": 21,
+     "flipped": 1,
+     "flipped_addresses": [
+      [
+       0,
+       49,
+       34,
+       "main"
+      ]
+     ],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 1,
+       "n": 12
+      },
+      "64-127": {
+       "flipped": 0,
+       "n": 7
+      },
+      "128-191": {
+       "flipped": 0,
+       "n": 3
+      }
+     }
+    }
+   },
+   "wrong_certificates": [],
+   "out_of_bbox": [],
+   "checked_certificates": {
+    "holo1": 28,
+    "holo3": 31
+   },
+   "crops": [
+    "<checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c17-0.tiff"
+   ],
+   "crop_sha256": "d6466bf4adb8f2a05fa6bf2f7d0fd85c474f972f9b35e867222a7dfa0005ba8d"
+  },
+  {
+   "case_id": "xerox-c2-cmy7-c18",
+   "cell_bbox": [
+    848,
+    2768,
+    1392,
+    3312
+   ],
+   "runs": {
+    "holo1": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "env/bin/python confetti.py decode <checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c18-0.tiff --scan-dpi 4800.0 --format L:c2-cmy7-p120-v0@3328x2304 --state <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c18/holo1.state -o <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c18/holo1.out --no-close --complete --mopup --refine --workers 8",
+      "cwd": "<repo>",
+      "crop_sha256": "0675643671675f9b836f24474681caa2156246f3f50a195cf11f9c47465ca40b",
+      "receiver_tree": "3537128d0084772885a8c7857996c1dfb480aaf0",
+      "receiver_dirty_sha": "",
+      "repo_head": "259e622148f844d02742ff6eb033fd66b0b83cc8",
+      "wall_seconds": 966.8336226660031,
+      "exit": 2,
+      "summary": [
+       "capture 59dd965a3a6e53fe9c6b515256e8cf355dbb056a1853dd3a439710e8a50712bb: complete; committed",
+       "state: <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c18/holo1.state  sha256 71431aead366813826dad714d8b8850edac33e1933a473904bcd3dfab4c1cdf7",
+       "NOTE: mop-up supersession dropped 6647 re-observation(s) at committed cells; winner flips 3276 (49.3%) (two-view consistency canary \u2014 a high flip rate suggests a misplaced mop-up window or physical damage; committed evidence unchanged)",
+       "close skipped (--no-close): 73 certificates accumulated; no closing record was read, attempted, or written. Close with a plain or --complete run.",
+       "src/holo/cli.py:636: ProvisionalReceiverWarning: HOLO TRACK-3 RECEIVER IS PROVISIONAL: historical E021-E023c stand-in constants are active; production qualification is still required. Outstanding: the v1 physical/null false-accept gate, channel-BER envelope, and support safety margin still require frozen qualification; the 0.176 complete-domain rival refusal was diagnosed as a parity-concentrated cross-page alias and the v0.30 whole-word rival gate restores the d=27 floor (synthetically verified); real-capture full-domain yield and resource profile remain unqualified",
+       "  res = run_receive("
+      ],
+      "ran_at": "2026-08-30 20:47:34"
+     }
+    },
+    "holo3": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "<checkout>/env314t/bin/python -m measure.crop_parity._h3run --certs-out <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c18/holo3-certs.json -- decode <checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c18-0.tiff --dpi 4800.0 --format L:c2-cmy7-p120-v0@3328x2304 --no-close --workers 8 --run-dir <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c18/holo3-run --out <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c18/holo3.out",
+      "cwd": "<checkout>",
+      "crop_sha256": "0675643671675f9b836f24474681caa2156246f3f50a195cf11f9c47465ca40b",
+      "receiver_tree": "f5d7c0e2efc8ece54936bf2c64626f3a580c6771",
+      "receiver_dirty_sha": "",
+      "repo_head": "65d2d08ce398d23d3af0bcf3fd2a308a9d8d9283",
+      "wall_seconds": 160.6073770410003,
+      "exit": 0,
+      "summary": [
+       "_h3run: open, 72 certificates in 159.5 s"
+      ],
+      "ran_at": "2026-08-30 21:03:42"
+     }
+    }
+   },
+   "n_certificates": {
+    "holo1": 73,
+    "holo3": 72
+   },
+   "bits_available": {
+    "holo1": true,
+    "holo3": true
+   },
+   "targets": [
+    {
+     "address": [
+      0,
+      47,
+      17,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    }
+   ],
+   "controls": {
+    "holo1": {
+     "n": 39,
+     "reproduced": 39,
+     "flipped": 0,
+     "flipped_addresses": [],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 0,
+       "n": 22
+      },
+      "64-127": {
+       "flipped": 0,
+       "n": 14
+      },
+      "128-191": {
+       "flipped": 0,
+       "n": 3
+      }
+     }
+    },
+    "holo3": {
+     "n": 39,
+     "reproduced": 39,
+     "flipped": 0,
+     "flipped_addresses": [],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 0,
+       "n": 22
+      },
+      "64-127": {
+       "flipped": 0,
+       "n": 14
+      },
+      "128-191": {
+       "flipped": 0,
+       "n": 3
+      }
+     }
+    }
+   },
+   "wrong_certificates": [],
+   "out_of_bbox": [],
+   "checked_certificates": {
+    "holo1": 73,
+    "holo3": 72
+   },
+   "crops": [
+    "<checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c18-0.tiff"
+   ],
+   "crop_sha256": "0675643671675f9b836f24474681caa2156246f3f50a195cf11f9c47465ca40b"
+  },
+  {
+   "case_id": "xerox-c2-cmy7-c19",
+   "cell_bbox": [
+    0,
+    2896,
+    432,
+    3328
+   ],
+   "runs": {
+    "holo1": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "env/bin/python confetti.py decode <checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c19-0.tiff --scan-dpi 4800.0 --format L:c2-cmy7-p120-v0@3328x2304 --state <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c19/holo1.state -o <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c19/holo1.out --no-close --complete --mopup --refine --workers 8",
+      "cwd": "<repo>",
+      "crop_sha256": "ad7b188d5d3e73c511230f68a9e344e9794adfd76ad15f3efa5dc05b041ecdf4",
+      "receiver_tree": "3537128d0084772885a8c7857996c1dfb480aaf0",
+      "receiver_dirty_sha": "",
+      "repo_head": "259e622148f844d02742ff6eb033fd66b0b83cc8",
+      "wall_seconds": 808.9835619160003,
+      "exit": 2,
+      "summary": [
+       "capture 00d2750260933d92a6f9d8715adb503e7232267a9283582ddc41cd6cd86a24f9: complete; committed",
+       "state: <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c19/holo1.state  sha256 301c51aae22ef3059811b0db0ec113853444e32c78ced671134c6bceeb5f290b",
+       "close skipped (--no-close): 34 certificates accumulated; no closing record was read, attempted, or written. Close with a plain or --complete run.",
+       "src/holo/cli.py:636: ProvisionalReceiverWarning: HOLO TRACK-3 RECEIVER IS PROVISIONAL: historical E021-E023c stand-in constants are active; production qualification is still required. Outstanding: the v1 physical/null false-accept gate, channel-BER envelope, and support safety margin still require frozen qualification; the 0.176 complete-domain rival refusal was diagnosed as a parity-concentrated cross-page alias and the v0.30 whole-word rival gate restores the d=27 floor (synthetically verified); real-capture full-domain yield and resource profile remain unqualified",
+       "  res = run_receive("
+      ],
+      "ran_at": "2026-08-30 21:06:23"
+     }
+    },
+    "holo3": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "<checkout>/env314t/bin/python -m measure.crop_parity._h3run --certs-out <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c19/holo3-certs.json -- decode <checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c19-0.tiff --dpi 4800.0 --format L:c2-cmy7-p120-v0@3328x2304 --no-close --workers 8 --run-dir <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c19/holo3-run --out <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c19/holo3.out",
+      "cwd": "<checkout>",
+      "crop_sha256": "ad7b188d5d3e73c511230f68a9e344e9794adfd76ad15f3efa5dc05b041ecdf4",
+      "receiver_tree": "f5d7c0e2efc8ece54936bf2c64626f3a580c6771",
+      "receiver_dirty_sha": "",
+      "repo_head": "65d2d08ce398d23d3af0bcf3fd2a308a9d8d9283",
+      "wall_seconds": 145.26970608300326,
+      "exit": 0,
+      "summary": [
+       "_h3run: open, 31 certificates in 144.2 s"
+      ],
+      "ran_at": "2026-08-30 21:19:52"
+     }
+    }
+   },
+   "n_certificates": {
+    "holo1": 34,
+    "holo3": 31
+   },
+   "bits_available": {
+    "holo1": true,
+    "holo3": true
+   },
+   "targets": [
+    {
+     "address": [
+      0,
+      49,
+      2,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    },
+    {
+     "address": [
+      0,
+      50,
+      1,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "gain"
+     ],
+     "full_sheet": {
+      "holo1": "uncertified",
+      "holo3": "certified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": false
+      },
+      "holo3": {
+       "available": true,
+       "certified": false
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": true,
+      "holo3": false
+     }
+    }
+   ],
+   "controls": {
+    "holo1": {
+     "n": 19,
+     "reproduced": 19,
+     "flipped": 0,
+     "flipped_addresses": [],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 0,
+       "n": 8
+      },
+      "64-127": {
+       "flipped": 0,
+       "n": 8
+      },
+      "128-191": {
+       "flipped": 0,
+       "n": 3
+      }
+     }
+    },
+    "holo3": {
+     "n": 19,
+     "reproduced": 19,
+     "flipped": 0,
+     "flipped_addresses": [],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 0,
+       "n": 8
+      },
+      "64-127": {
+       "flipped": 0,
+       "n": 8
+      },
+      "128-191": {
+       "flipped": 0,
+       "n": 3
+      }
+     }
+    }
+   },
+   "wrong_certificates": [],
+   "out_of_bbox": [],
+   "checked_certificates": {
+    "holo1": 34,
+    "holo3": 31
+   },
+   "crops": [
+    "<checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c19-0.tiff"
+   ],
+   "crop_sha256": "ad7b188d5d3e73c511230f68a9e344e9794adfd76ad15f3efa5dc05b041ecdf4"
+  },
+  {
+   "case_id": "xerox-c2-cmy7-c20",
+   "cell_bbox": [
+    208,
+    2960,
+    752,
+    3328
+   ],
+   "runs": {
+    "holo1": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "env/bin/python confetti.py decode <checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c20-0.tiff --scan-dpi 4800.0 --format L:c2-cmy7-p120-v0@3328x2304 --state <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c20/holo1.state -o <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c20/holo1.out --no-close --complete --mopup --refine --workers 8",
+      "cwd": "<repo>",
+      "crop_sha256": "29f7323c942adf4a9307b4dc87ff8fd0d97188c267f32af870778534a2478ccc",
+      "receiver_tree": "3537128d0084772885a8c7857996c1dfb480aaf0",
+      "receiver_dirty_sha": "",
+      "repo_head": "259e622148f844d02742ff6eb033fd66b0b83cc8",
+      "wall_seconds": 456.2622118339932,
+      "exit": 2,
+      "summary": [
+       "capture 12d713090c36bfd4543ba76ba1abc77cafeee9b985711058f6d763b9ba41653e: complete; committed",
+       "state: <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c20/holo1.state  sha256 2c1e1797b413efab39233745b6e7c1521562af1d38523d4ee13d483297630105",
+       "NOTE: mop-up supersession dropped 8465 re-observation(s) at committed cells; winner flips 2355 (27.8%) (two-view consistency canary \u2014 a high flip rate suggests a misplaced mop-up window or physical damage; committed evidence unchanged)",
+       "close skipped (--no-close): 46 certificates accumulated; no closing record was read, attempted, or written. Close with a plain or --complete run.",
+       "src/holo/cli.py:636: ProvisionalReceiverWarning: HOLO TRACK-3 RECEIVER IS PROVISIONAL: historical E021-E023c stand-in constants are active; production qualification is still required. Outstanding: the v1 physical/null false-accept gate, channel-BER envelope, and support safety margin still require frozen qualification; the 0.176 complete-domain rival refusal was diagnosed as a parity-concentrated cross-page alias and the v0.30 whole-word rival gate restores the d=27 floor (synthetically verified); real-capture full-domain yield and resource profile remain unqualified",
+       "  res = run_receive("
+      ],
+      "ran_at": "2026-08-30 21:22:18"
+     }
+    },
+    "holo3": {
+     "status": "ran",
+     "reason": "no sidecar recorded",
+     "sidecar": {
+      "argv": "<checkout>/env314t/bin/python -m measure.crop_parity._h3run --certs-out <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c20/holo3-certs.json -- decode <checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c20-0.tiff --dpi 4800.0 --format L:c2-cmy7-p120-v0@3328x2304 --no-close --workers 8 --run-dir <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c20/holo3-run --out <checkout>/scratch/crop-parity/xerox-c2-cmy7/runs/xerox-c2-cmy7-c20/holo3.out",
+      "cwd": "<checkout>",
+      "crop_sha256": "29f7323c942adf4a9307b4dc87ff8fd0d97188c267f32af870778534a2478ccc",
+      "receiver_tree": "f5d7c0e2efc8ece54936bf2c64626f3a580c6771",
+      "receiver_dirty_sha": "",
+      "repo_head": "65d2d08ce398d23d3af0bcf3fd2a308a9d8d9283",
+      "wall_seconds": 87.50124045800476,
+      "exit": 0,
+      "summary": [
+       "_h3run: open, 45 certificates in 86.4 s"
+      ],
+      "ran_at": "2026-08-30 21:29:54"
+     }
+    }
+   },
+   "n_certificates": {
+    "holo1": 46,
+    "holo3": 45
+   },
+   "bits_available": {
+    "holo1": true,
+    "holo3": true
+   },
+   "targets": [
+    {
+     "address": [
+      0,
+      50,
+      7,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "miss"
+     ],
+     "full_sheet": {
+      "holo1": "certified",
+      "holo3": "uncertified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": true
+      },
+      "holo3": {
+       "available": true,
+       "certified": true
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": true,
+      "holo3": false
+     }
+    },
+    {
+     "address": [
+      0,
+      51,
+      7,
+      "main"
+     ],
+     "kind": "target",
+     "classes": [
+      "miss"
+     ],
+     "full_sheet": {
+      "holo1": "certified",
+      "holo3": "uncertified"
+     },
+     "crop": {
+      "holo1": {
+       "available": true,
+       "certified": false
+      },
+      "holo3": {
+       "available": true,
+       "certified": false
+      }
+     },
+     "agree": true,
+     "reproduces_full_sheet": {
+      "holo1": false,
+      "holo3": true
+     }
+    }
+   ],
+   "controls": {
+    "holo1": {
+     "n": 27,
+     "reproduced": 25,
+     "flipped": 2,
+     "flipped_addresses": [
+      [
+       0,
+       49,
+       10,
+       "main"
+      ],
+      [
+       0,
+       50,
+       10,
+       "main"
+      ]
+     ],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 2,
+       "n": 13
+      },
+      "64-127": {
+       "flipped": 0,
+       "n": 11
+      },
+      "128-191": {
+       "flipped": 0,
+       "n": 3
+      }
+     }
+    },
+    "holo3": {
+     "n": 27,
+     "reproduced": 27,
+     "flipped": 0,
+     "flipped_addresses": [],
+     "by_rim_depth": {
+      "0-63": {
+       "flipped": 0,
+       "n": 13
+      },
+      "64-127": {
+       "flipped": 0,
+       "n": 11
+      },
+      "128-191": {
+       "flipped": 0,
+       "n": 3
+      }
+     }
+    }
+   },
+   "wrong_certificates": [],
+   "out_of_bbox": [],
+   "checked_certificates": {
+    "holo1": 46,
+    "holo3": 45
+   },
+   "crops": [
+    "<checkout>/scratch/crop-parity/xerox-c2-cmy7/xerox-c2-cmy7-c20-0.tiff"
+   ],
+   "crop_sha256": "29f7323c942adf4a9307b4dc87ff8fd0d97188c267f32af870778534a2478ccc"
+  }
+ ],
+ "aggregates": {
+  "per_class": {
+   "miss": {
+    "n": 26,
+    "holo1_crop_certified": 17,
+    "holo3_crop_certified": 17,
+    "holo1_compared": 26,
+    "holo3_compared": 26,
+    "reproduces_full_sheet": {
+     "holo1": 17,
+     "holo3": 9
+    }
+   },
+   "gain": {
+    "n": 31,
+    "holo1_crop_certified": 17,
+    "holo3_crop_certified": 17,
+    "holo1_compared": 31,
+    "holo3_compared": 31,
+    "reproduces_full_sheet": {
+     "holo1": 14,
+     "holo3": 17
+    }
+   }
+  },
+  "wrong_certificates": [],
+  "out_of_bbox": [],
+  "walls": {
+   "executed_wall_seconds": {
+    "holo1": 16625.637859583992,
+    "holo3": 3773.612741669014
+   },
+   "runs_executed": 40,
+   "runs_adopted": 0,
+   "adopted_wall_seconds": 0.0
+  },
+  "agreement": {
+   "agree": 55,
+   "disagree": 2,
+   "undetermined": 0
+  }
+ }
+}

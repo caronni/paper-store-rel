@@ -1,0 +1,1221 @@
+{
+  "blind": {
+    "branches": {
+      "certificate_union": {
+        "aggregate_cost": {
+          "below_floor_records": 957,
+          "bp_iterations": 119790,
+          "crc_calls": 2226,
+          "ledger_records": 3253
+        },
+        "certificates": {
+          "bits_sha256": "2c462b6e9fda47c77e25b903bb1fc760a750a456c561932fa33bb285aa76e444",
+          "count": 769,
+          "set_sha256": "a910cce60403edd5f01a31a30aa4cf4226a78e29ecde246c59086524b65125b5"
+        },
+        "conservative_crc_false_accept_budget": 5.182810127735138e-07,
+        "overlap": {
+          "common": 740,
+          "conflicts": [],
+          "decimated_only": 17,
+          "decimated_only_tiles": [
+            [
+              0,
+              1,
+              14
+            ],
+            [
+              0,
+              1,
+              18
+            ],
+            [
+              0,
+              7,
+              17
+            ],
+            [
+              0,
+              7,
+              19
+            ],
+            [
+              0,
+              7,
+              20
+            ],
+            [
+              0,
+              8,
+              3
+            ],
+            [
+              0,
+              8,
+              5
+            ],
+            [
+              0,
+              10,
+              8
+            ],
+            [
+              0,
+              12,
+              0
+            ],
+            [
+              0,
+              21,
+              15
+            ],
+            [
+              0,
+              25,
+              11
+            ],
+            [
+              0,
+              27,
+              13
+            ],
+            [
+              0,
+              27,
+              14
+            ],
+            [
+              0,
+              27,
+              15
+            ],
+            [
+              0,
+              27,
+              20
+            ],
+            [
+              0,
+              27,
+              22
+            ],
+            [
+              0,
+              28,
+              11
+            ]
+          ],
+          "native_only": 12,
+          "native_only_tiles": [
+            [
+              0,
+              9,
+              19
+            ],
+            [
+              0,
+              13,
+              14
+            ],
+            [
+              0,
+              13,
+              15
+            ],
+            [
+              0,
+              13,
+              16
+            ],
+            [
+              0,
+              13,
+              17
+            ],
+            [
+              0,
+              13,
+              18
+            ],
+            [
+              0,
+              18,
+              12
+            ],
+            [
+              0,
+              18,
+              16
+            ],
+            [
+              0,
+              18,
+              17
+            ],
+            [
+              0,
+              18,
+              18
+            ],
+            [
+              0,
+              21,
+              18
+            ],
+            [
+              0,
+              21,
+              21
+            ]
+          ]
+        },
+        "semantics": "parallel correlated decoding hypotheses; union only certified bits, never native+decimated LLR evidence"
+      },
+      "decimated": {
+        "after_bp": {
+          "bits_sha256": "d04d51fef4cf2dca8424b294cbc0d464ec640d495400ac702a2068b5561e12cd",
+          "count": 757,
+          "set_sha256": "6f4a786aa48c6a6342a5c9550a7f3f4d5a9c9b5bdbbbbb3633f22d5bc5bab103"
+        },
+        "attempts": {
+          "below_floor_records": 478,
+          "bp_iterations": 57544,
+          "by_stage": {
+            "retry150": {
+              "bp_iterations": 12400,
+              "certified_new": 8,
+              "crc_calls": 44,
+              "ledger_records": 44
+            },
+            "scan": {
+              "bp_iterations": 28412,
+              "certified_new": 666,
+              "crc_calls": 858,
+              "ledger_records": 1239
+            },
+            "union": {
+              "bp_iterations": 16732,
+              "certified_new": 83,
+              "crc_calls": 199,
+              "ledger_records": 331
+            }
+          },
+          "crc_calls": 1101,
+          "crc_false_accept_budget": 2.5634653866291046e-07,
+          "fatal": [],
+          "ledger_records": 1614,
+          "tile_states": {
+            "attempted_failed": 36,
+            "below_attempt_floor": 12,
+            "certified": 757,
+            "degenerate": 35
+          }
+        },
+        "before_bp": {
+          "bits_sha256": "daa71427e90de224eea1af7063f3d29679f6bb19c370a15702018139a2b73d65",
+          "count": 749,
+          "set_sha256": "0db6bdb570c3286d1990855dafcd9c85f2f2467d10049338fc126c7869dabdc9"
+        },
+        "retry": {
+          "attempted": 44,
+          "certified": 8,
+          "eligible": 44
+        },
+        "schedule_envelope": {
+          "detector_profile": "ctx-pava-v1",
+          "dpi_semantics": "exact DPI frozen by this footing's pinned state",
+          "kind": "replayed-real-footing",
+          "pages": [
+            0
+          ],
+          "rate_id": "r0550",
+          "scheduler_dpi": 1600.0,
+          "source_footing": "decimated"
+        }
+      },
+      "native": {
+        "after_bp": {
+          "bits_sha256": "c2154b32c5ba07563d42c22780c6740dd3da9ce7be8b2a3dbd40cf985516fa5d",
+          "count": 752,
+          "set_sha256": "4a6435c91064865ca9bb9444d817ac801b77f83b7545272b5aa2d3402f875ef6"
+        },
+        "attempts": {
+          "below_floor_records": 479,
+          "bp_iterations": 62246,
+          "by_stage": {
+            "retry150": {
+              "bp_iterations": 14130,
+              "certified_new": 6,
+              "crc_calls": 49,
+              "ledger_records": 49
+            },
+            "scan": {
+              "bp_iterations": 29755,
+              "certified_new": 664,
+              "crc_calls": 865,
+              "ledger_records": 1250
+            },
+            "union": {
+              "bp_iterations": 18361,
+              "certified_new": 82,
+              "crc_calls": 211,
+              "ledger_records": 340
+            }
+          },
+          "crc_calls": 1125,
+          "crc_false_accept_budget": 2.6193447411060333e-07,
+          "fatal": [],
+          "ledger_records": 1639,
+          "tile_states": {
+            "attempted_failed": 43,
+            "below_attempt_floor": 10,
+            "certified": 752,
+            "degenerate": 35
+          }
+        },
+        "before_bp": {
+          "bits_sha256": "aa24d0fe2629b8aea21ac1626e6e936a4a19eb0aa3473224a170aefb1ae221f0",
+          "count": 746,
+          "set_sha256": "c05b95a072def32405cc5b5234cb5fb9c9c8745a077047622d3f8f3709ab8de8"
+        },
+        "retry": {
+          "attempted": 49,
+          "certified": 6,
+          "eligible": 49
+        },
+        "schedule_envelope": {
+          "detector_profile": "ctx-pava-v1",
+          "dpi_semantics": "exact DPI frozen by this footing's pinned state",
+          "kind": "replayed-real-footing",
+          "pages": [
+            0
+          ],
+          "rate_id": "r0550",
+          "scheduler_dpi": 4800.0,
+          "source_footing": "native"
+        }
+      }
+    },
+    "one_vote_fusion": {
+      "ctx-pava-v1": {
+        "lower_loss": {
+          "after_bp": {
+            "bits_sha256": "8df352fa2cae641c74db9557a81cbc173a1b7abbf4dd52bf819b3cae8d10136e",
+            "count": 761,
+            "set_sha256": "43aa109406794a39626aed505fbc040daa57d0e004c52037e9d1542003774ae4"
+          },
+          "attempts": {
+            "below_floor_records": 457,
+            "bp_iterations": 56983,
+            "by_stage": {
+              "retry150": {
+                "bp_iterations": 11627,
+                "certified_new": 4,
+                "crc_calls": 40,
+                "ledger_records": 40
+              },
+              "scan": {
+                "bp_iterations": 28440,
+                "certified_new": 672,
+                "crc_calls": 863,
+                "ledger_records": 1231
+              },
+              "union": {
+                "bp_iterations": 16916,
+                "certified_new": 85,
+                "crc_calls": 199,
+                "ledger_records": 323
+              }
+            },
+            "crc_calls": 1102,
+            "crc_false_accept_budget": 2.5657936930656433e-07,
+            "fatal": [],
+            "ledger_records": 1594,
+            "tile_states": {
+              "attempted_failed": 36,
+              "below_attempt_floor": 8,
+              "certified": 761,
+              "degenerate": 35
+            }
+          },
+          "before_bp": {
+            "bits_sha256": "74eabe5ab82ba309c5533216c297ea04e5819abf29970a61de94c2714e34a7ef",
+            "count": 757,
+            "set_sha256": "d3dd733227957c12a8b824a7f640eab9ceaded010cd5ffdc464516ba0a0dedad"
+          },
+          "different_bits_on_shared_certificate": {
+            "count": 0,
+            "tiles": []
+          },
+          "missing_from_branch_union": 8,
+          "new_beyond_branch_union": {
+            "count": 0,
+            "tiles": []
+          },
+          "retry": {
+            "attempted": 40,
+            "certified": 4,
+            "eligible": 40
+          },
+          "schedule_envelope": {
+            "detector_profile": "ctx-pava-v1",
+            "dpi_semantics": "qualification-only scheduler envelope; synthetic records already contain page-indexed LLRs, so this DPI is not attributed to either fused observation",
+            "fusion_method": "lower_loss",
+            "kind": "synthetic-correlated-view-qualification",
+            "pages": [
+              0
+            ],
+            "physical_view_dpis": {
+              "decimated": 1600.0,
+              "native": 4800.0
+            },
+            "rate_id": "r0550",
+            "scheduler_dpi": 1600.0,
+            "scheduler_dpi_source": "decimated pinned state"
+          }
+        },
+        "mean": {
+          "after_bp": {
+            "bits_sha256": "3a70a2cc0b8bcdab78a114610c2dc4bef5e16b2429cb6fec995a16c754c3c89f",
+            "count": 763,
+            "set_sha256": "abdd08e3930c845154fd48f4e85bfd1fc6090b901609d37cb4aaad2b0f1920b1"
+          },
+          "attempts": {
+            "below_floor_records": 459,
+            "bp_iterations": 55507,
+            "by_stage": {
+              "retry150": {
+                "bp_iterations": 11075,
+                "certified_new": 4,
+                "crc_calls": 38,
+                "ledger_records": 38
+              },
+              "scan": {
+                "bp_iterations": 27673,
+                "certified_new": 671,
+                "crc_calls": 861,
+                "ledger_records": 1231
+              },
+              "union": {
+                "bp_iterations": 16759,
+                "certified_new": 88,
+                "crc_calls": 201,
+                "ledger_records": 325
+              }
+            },
+            "crc_calls": 1100,
+            "crc_false_accept_budget": 2.561137080192566e-07,
+            "fatal": [],
+            "ledger_records": 1594,
+            "tile_states": {
+              "attempted_failed": 34,
+              "below_attempt_floor": 8,
+              "certified": 763,
+              "degenerate": 35
+            }
+          },
+          "before_bp": {
+            "bits_sha256": "af8d0b34b164a0ff191bac57af1f14b191836bf334fbd678ff5b760cbae6d1ac",
+            "count": 759,
+            "set_sha256": "724f1e7b89ca0b796963da44ab643859ac37838b1b801e61577aba60f4303ae4"
+          },
+          "different_bits_on_shared_certificate": {
+            "count": 0,
+            "tiles": []
+          },
+          "missing_from_branch_union": 6,
+          "new_beyond_branch_union": {
+            "count": 0,
+            "tiles": []
+          },
+          "retry": {
+            "attempted": 38,
+            "certified": 4,
+            "eligible": 38
+          },
+          "schedule_envelope": {
+            "detector_profile": "ctx-pava-v1",
+            "dpi_semantics": "qualification-only scheduler envelope; synthetic records already contain page-indexed LLRs, so this DPI is not attributed to either fused observation",
+            "fusion_method": "mean",
+            "kind": "synthetic-correlated-view-qualification",
+            "pages": [
+              0
+            ],
+            "physical_view_dpis": {
+              "decimated": 1600.0,
+              "native": 4800.0
+            },
+            "rate_id": "r0550",
+            "scheduler_dpi": 1600.0,
+            "scheduler_dpi_source": "decimated pinned state"
+          }
+        },
+        "prefer_decimated": {
+          "after_bp": {
+            "bits_sha256": "cc1b86e353de314143e5d5fb5bf064a38c8c1a4de1e46a253471fceca2e6184c",
+            "count": 761,
+            "set_sha256": "37809c389f824483b54a2f5fc8b102d24903130f596c6b0ffb218ab0ef358b85"
+          },
+          "attempts": {
+            "below_floor_records": 459,
+            "bp_iterations": 57267,
+            "by_stage": {
+              "retry150": {
+                "bp_iterations": 11992,
+                "certified_new": 6,
+                "crc_calls": 42,
+                "ledger_records": 42
+              },
+              "scan": {
+                "bp_iterations": 28084,
+                "certified_new": 670,
+                "crc_calls": 860,
+                "ledger_records": 1230
+              },
+              "union": {
+                "bp_iterations": 17191,
+                "certified_new": 85,
+                "crc_calls": 202,
+                "ledger_records": 326
+              }
+            },
+            "crc_calls": 1104,
+            "crc_false_accept_budget": 2.5704503059387207e-07,
+            "fatal": [],
+            "ledger_records": 1598,
+            "tile_states": {
+              "attempted_failed": 36,
+              "below_attempt_floor": 8,
+              "certified": 761,
+              "degenerate": 35
+            }
+          },
+          "before_bp": {
+            "bits_sha256": "1f2b80fb340d4509414678e6b0bdaf2f5f7148634ab602b9425efa0b88b40833",
+            "count": 755,
+            "set_sha256": "2eb44ac67b5f8a1cabe1d175a89729b2e969e3dd2c77b4c05325b95063e172bd"
+          },
+          "different_bits_on_shared_certificate": {
+            "count": 0,
+            "tiles": []
+          },
+          "missing_from_branch_union": 8,
+          "new_beyond_branch_union": {
+            "count": 0,
+            "tiles": []
+          },
+          "retry": {
+            "attempted": 42,
+            "certified": 6,
+            "eligible": 42
+          },
+          "schedule_envelope": {
+            "detector_profile": "ctx-pava-v1",
+            "dpi_semantics": "qualification-only scheduler envelope; synthetic records already contain page-indexed LLRs, so this DPI is not attributed to either fused observation",
+            "fusion_method": "prefer_decimated",
+            "kind": "synthetic-correlated-view-qualification",
+            "pages": [
+              0
+            ],
+            "physical_view_dpis": {
+              "decimated": 1600.0,
+              "native": 4800.0
+            },
+            "rate_id": "r0550",
+            "scheduler_dpi": 1600.0,
+            "scheduler_dpi_source": "decimated pinned state"
+          }
+        }
+      },
+      "pava-v1": {
+        "loss_weighted": {
+          "after_bp": {
+            "bits_sha256": "2f0f13e8ed276ea5f2698efe2dcb424c66fd777589516171fa9f58cb43bf584c",
+            "count": 757,
+            "set_sha256": "891e116ed7826ab7e722e1cf419a73d3dc32a52a37c4924a437abe2f9840b24d"
+          },
+          "attempts": {
+            "below_floor_records": 463,
+            "bp_iterations": 60092,
+            "by_stage": {
+              "retry150": {
+                "bp_iterations": 13000,
+                "certified_new": 4,
+                "crc_calls": 44,
+                "ledger_records": 44
+              },
+              "scan": {
+                "bp_iterations": 29109,
+                "certified_new": 666,
+                "crc_calls": 865,
+                "ledger_records": 1239
+              },
+              "union": {
+                "bp_iterations": 17983,
+                "certified_new": 87,
+                "crc_calls": 211,
+                "ledger_records": 335
+              }
+            },
+            "crc_calls": 1120,
+            "crc_false_accept_budget": 2.60770320892334e-07,
+            "fatal": [],
+            "ledger_records": 1618,
+            "tile_states": {
+              "attempted_failed": 40,
+              "below_attempt_floor": 8,
+              "certified": 757,
+              "degenerate": 35
+            }
+          },
+          "before_bp": {
+            "bits_sha256": "6c41dc6931d149eb2e547ec555fb2cba29820244b13b8c5dfab8d62e4cb492d8",
+            "count": 753,
+            "set_sha256": "adbb8307bd0cf956e97ae60124ce422d2d906451630bb7bd9b17e48b86078ac4"
+          },
+          "different_bits_on_shared_certificate": {
+            "count": 0,
+            "tiles": []
+          },
+          "missing_from_branch_union": 12,
+          "new_beyond_branch_union": {
+            "count": 0,
+            "tiles": []
+          },
+          "retry": {
+            "attempted": 44,
+            "certified": 4,
+            "eligible": 44
+          },
+          "schedule_envelope": {
+            "detector_profile": "pava-v1",
+            "dpi_semantics": "qualification-only scheduler envelope; synthetic records already contain page-indexed LLRs, so this DPI is not attributed to either fused observation",
+            "fusion_method": "loss_weighted",
+            "kind": "synthetic-correlated-view-qualification",
+            "pages": [
+              0
+            ],
+            "physical_view_dpis": {
+              "decimated": 1600.0,
+              "native": 4800.0
+            },
+            "rate_id": "r0550",
+            "scheduler_dpi": 1600.0,
+            "scheduler_dpi_source": "decimated pinned state"
+          }
+        },
+        "lower_loss": {
+          "after_bp": {
+            "bits_sha256": "32282b95263797ff1e6b5ed69c3ac42bd5cf1a0e9f155643bc5f6872f998a83d",
+            "count": 754,
+            "set_sha256": "a6eaf9ec135154266fa4b7bceeca2e4591bde8bb0a790e87268625f41747c843"
+          },
+          "attempts": {
+            "below_floor_records": 466,
+            "bp_iterations": 63461,
+            "by_stage": {
+              "retry150": {
+                "bp_iterations": 14211,
+                "certified_new": 5,
+                "crc_calls": 48,
+                "ledger_records": 48
+              },
+              "scan": {
+                "bp_iterations": 30377,
+                "certified_new": 665,
+                "crc_calls": 869,
+                "ledger_records": 1246
+              },
+              "union": {
+                "bp_iterations": 18873,
+                "certified_new": 84,
+                "crc_calls": 217,
+                "ledger_records": 341
+              }
+            },
+            "crc_calls": 1134,
+            "crc_false_accept_budget": 2.6402994990348816e-07,
+            "fatal": [],
+            "ledger_records": 1635,
+            "tile_states": {
+              "attempted_failed": 43,
+              "below_attempt_floor": 8,
+              "certified": 754,
+              "degenerate": 35
+            }
+          },
+          "before_bp": {
+            "bits_sha256": "d32ae7fc21da478f510ee605d076eab490c330f17428aa87ed181c65a679beff",
+            "count": 749,
+            "set_sha256": "d1ea17232b9ca0cf7cef378ff8033301b9726289c7b1848fe462c62b26a4ed65"
+          },
+          "different_bits_on_shared_certificate": {
+            "count": 0,
+            "tiles": []
+          },
+          "missing_from_branch_union": 15,
+          "new_beyond_branch_union": {
+            "count": 0,
+            "tiles": []
+          },
+          "retry": {
+            "attempted": 48,
+            "certified": 5,
+            "eligible": 48
+          },
+          "schedule_envelope": {
+            "detector_profile": "pava-v1",
+            "dpi_semantics": "qualification-only scheduler envelope; synthetic records already contain page-indexed LLRs, so this DPI is not attributed to either fused observation",
+            "fusion_method": "lower_loss",
+            "kind": "synthetic-correlated-view-qualification",
+            "pages": [
+              0
+            ],
+            "physical_view_dpis": {
+              "decimated": 1600.0,
+              "native": 4800.0
+            },
+            "rate_id": "r0550",
+            "scheduler_dpi": 1600.0,
+            "scheduler_dpi_source": "decimated pinned state"
+          }
+        },
+        "max_abs": {
+          "after_bp": {
+            "bits_sha256": "f63d432a80e5e7a8abc56e51b8ee523d127c27c789a9b0085eaf4b257e8f71a6",
+            "count": 754,
+            "set_sha256": "dc3bc15d2242691188d5985764958ab6538acff3610609d04107335761658c01"
+          },
+          "attempts": {
+            "below_floor_records": 463,
+            "bp_iterations": 61633,
+            "by_stage": {
+              "retry150": {
+                "bp_iterations": 13874,
+                "certified_new": 4,
+                "crc_calls": 47,
+                "ledger_records": 47
+              },
+              "scan": {
+                "bp_iterations": 29447,
+                "certified_new": 667,
+                "crc_calls": 866,
+                "ledger_records": 1240
+              },
+              "union": {
+                "bp_iterations": 18312,
+                "certified_new": 83,
+                "crc_calls": 211,
+                "ledger_records": 335
+              }
+            },
+            "crc_calls": 1124,
+            "crc_false_accept_budget": 2.6170164346694946e-07,
+            "fatal": [],
+            "ledger_records": 1622,
+            "tile_states": {
+              "attempted_failed": 43,
+              "below_attempt_floor": 8,
+              "certified": 754,
+              "degenerate": 35
+            }
+          },
+          "before_bp": {
+            "bits_sha256": "683041e45b3db3f45aff7efb6aa5d852e169e2e93a62823c8fe998a3ac0d6fdc",
+            "count": 750,
+            "set_sha256": "967e5a45601a3c7141f9c9ab1cc4d9dccd859de7bc7a3b3492711ec5f60715ec"
+          },
+          "different_bits_on_shared_certificate": {
+            "count": 0,
+            "tiles": []
+          },
+          "missing_from_branch_union": 15,
+          "new_beyond_branch_union": {
+            "count": 0,
+            "tiles": []
+          },
+          "retry": {
+            "attempted": 47,
+            "certified": 4,
+            "eligible": 47
+          },
+          "schedule_envelope": {
+            "detector_profile": "pava-v1",
+            "dpi_semantics": "qualification-only scheduler envelope; synthetic records already contain page-indexed LLRs, so this DPI is not attributed to either fused observation",
+            "fusion_method": "max_abs",
+            "kind": "synthetic-correlated-view-qualification",
+            "pages": [
+              0
+            ],
+            "physical_view_dpis": {
+              "decimated": 1600.0,
+              "native": 4800.0
+            },
+            "rate_id": "r0550",
+            "scheduler_dpi": 1600.0,
+            "scheduler_dpi_source": "decimated pinned state"
+          }
+        },
+        "mean": {
+          "after_bp": {
+            "bits_sha256": "2f0f13e8ed276ea5f2698efe2dcb424c66fd777589516171fa9f58cb43bf584c",
+            "count": 757,
+            "set_sha256": "891e116ed7826ab7e722e1cf419a73d3dc32a52a37c4924a437abe2f9840b24d"
+          },
+          "attempts": {
+            "below_floor_records": 463,
+            "bp_iterations": 60119,
+            "by_stage": {
+              "retry150": {
+                "bp_iterations": 13009,
+                "certified_new": 4,
+                "crc_calls": 44,
+                "ledger_records": 44
+              },
+              "scan": {
+                "bp_iterations": 29119,
+                "certified_new": 666,
+                "crc_calls": 865,
+                "ledger_records": 1239
+              },
+              "union": {
+                "bp_iterations": 17991,
+                "certified_new": 87,
+                "crc_calls": 211,
+                "ledger_records": 335
+              }
+            },
+            "crc_calls": 1120,
+            "crc_false_accept_budget": 2.60770320892334e-07,
+            "fatal": [],
+            "ledger_records": 1618,
+            "tile_states": {
+              "attempted_failed": 40,
+              "below_attempt_floor": 8,
+              "certified": 757,
+              "degenerate": 35
+            }
+          },
+          "before_bp": {
+            "bits_sha256": "6c41dc6931d149eb2e547ec555fb2cba29820244b13b8c5dfab8d62e4cb492d8",
+            "count": 753,
+            "set_sha256": "adbb8307bd0cf956e97ae60124ce422d2d906451630bb7bd9b17e48b86078ac4"
+          },
+          "different_bits_on_shared_certificate": {
+            "count": 0,
+            "tiles": []
+          },
+          "missing_from_branch_union": 12,
+          "new_beyond_branch_union": {
+            "count": 0,
+            "tiles": []
+          },
+          "retry": {
+            "attempted": 44,
+            "certified": 4,
+            "eligible": 44
+          },
+          "schedule_envelope": {
+            "detector_profile": "pava-v1",
+            "dpi_semantics": "qualification-only scheduler envelope; synthetic records already contain page-indexed LLRs, so this DPI is not attributed to either fused observation",
+            "fusion_method": "mean",
+            "kind": "synthetic-correlated-view-qualification",
+            "pages": [
+              0
+            ],
+            "physical_view_dpis": {
+              "decimated": 1600.0,
+              "native": 4800.0
+            },
+            "rate_id": "r0550",
+            "scheduler_dpi": 1600.0,
+            "scheduler_dpi_source": "decimated pinned state"
+          }
+        },
+        "prefer_decimated": {
+          "after_bp": {
+            "bits_sha256": "e9f5a9d5a331081b52e0192839a49bcc7d99f5092935708c73beb09443a1e06d",
+            "count": 753,
+            "set_sha256": "68f3f5a7dc8e8c456270f6d78b934b01a70ff624bfc7815f7824859f531b124f"
+          },
+          "attempts": {
+            "below_floor_records": 465,
+            "bp_iterations": 62931,
+            "by_stage": {
+              "retry150": {
+                "bp_iterations": 14035,
+                "certified_new": 4,
+                "crc_calls": 48,
+                "ledger_records": 48
+              },
+              "scan": {
+                "bp_iterations": 30247,
+                "certified_new": 663,
+                "crc_calls": 868,
+                "ledger_records": 1244
+              },
+              "union": {
+                "bp_iterations": 18649,
+                "certified_new": 86,
+                "crc_calls": 216,
+                "ledger_records": 340
+              }
+            },
+            "crc_calls": 1132,
+            "crc_false_accept_budget": 2.635642886161804e-07,
+            "fatal": [],
+            "ledger_records": 1632,
+            "tile_states": {
+              "attempted_failed": 44,
+              "below_attempt_floor": 8,
+              "certified": 753,
+              "degenerate": 35
+            }
+          },
+          "before_bp": {
+            "bits_sha256": "57a448a6df5e99f7dd8f73f602dfbef1d2c59401aa9adb36fcb4a61ace530fb6",
+            "count": 749,
+            "set_sha256": "bffb289f59d8f14e0e3f2945f807adf22c75436ef4ac654a2591c312f7b7ea6e"
+          },
+          "different_bits_on_shared_certificate": {
+            "count": 0,
+            "tiles": []
+          },
+          "missing_from_branch_union": 16,
+          "new_beyond_branch_union": {
+            "count": 0,
+            "tiles": []
+          },
+          "retry": {
+            "attempted": 48,
+            "certified": 4,
+            "eligible": 48
+          },
+          "schedule_envelope": {
+            "detector_profile": "pava-v1",
+            "dpi_semantics": "qualification-only scheduler envelope; synthetic records already contain page-indexed LLRs, so this DPI is not attributed to either fused observation",
+            "fusion_method": "prefer_decimated",
+            "kind": "synthetic-correlated-view-qualification",
+            "pages": [
+              0
+            ],
+            "physical_view_dpis": {
+              "decimated": 1600.0,
+              "native": 4800.0
+            },
+            "rate_id": "r0550",
+            "scheduler_dpi": 1600.0,
+            "scheduler_dpi_source": "decimated pinned state"
+          }
+        },
+        "prefer_native": {
+          "after_bp": {
+            "bits_sha256": "0ff57ccf3ca2c645097b0df1b39e766b29bbbe0d4f2fcf02b43e5ac28426c9fc",
+            "count": 747,
+            "set_sha256": "02b3f2743ac2dab87585fca2a26b9ecc89324ead850307255f95083832557599"
+          },
+          "attempts": {
+            "below_floor_records": 471,
+            "bp_iterations": 68320,
+            "by_stage": {
+              "retry150": {
+                "bp_iterations": 16002,
+                "certified_new": 4,
+                "crc_calls": 54,
+                "ledger_records": 54
+              },
+              "scan": {
+                "bp_iterations": 32022,
+                "certified_new": 659,
+                "crc_calls": 874,
+                "ledger_records": 1256
+              },
+              "union": {
+                "bp_iterations": 20296,
+                "certified_new": 84,
+                "crc_calls": 229,
+                "ledger_records": 353
+              }
+            },
+            "crc_calls": 1157,
+            "crc_false_accept_budget": 2.6938505470752716e-07,
+            "fatal": [],
+            "ledger_records": 1663,
+            "tile_states": {
+              "attempted_failed": 50,
+              "below_attempt_floor": 8,
+              "certified": 747,
+              "degenerate": 35
+            }
+          },
+          "before_bp": {
+            "bits_sha256": "87ee9c217aa2fca1ced51b950bca8c5bc134c9dadf7c7b63a5f8d21b1a24107e",
+            "count": 743,
+            "set_sha256": "3ac2498c512d03583523ee21a1e7013b79bd111f883d8bd3bbccf7de7edb8a49"
+          },
+          "different_bits_on_shared_certificate": {
+            "count": 0,
+            "tiles": []
+          },
+          "missing_from_branch_union": 22,
+          "new_beyond_branch_union": {
+            "count": 0,
+            "tiles": []
+          },
+          "retry": {
+            "attempted": 54,
+            "certified": 4,
+            "eligible": 54
+          },
+          "schedule_envelope": {
+            "detector_profile": "pava-v1",
+            "dpi_semantics": "qualification-only scheduler envelope; synthetic records already contain page-indexed LLRs, so this DPI is not attributed to either fused observation",
+            "fusion_method": "prefer_native",
+            "kind": "synthetic-correlated-view-qualification",
+            "pages": [
+              0
+            ],
+            "physical_view_dpis": {
+              "decimated": 1600.0,
+              "native": 4800.0
+            },
+            "rate_id": "r0550",
+            "scheduler_dpi": 1600.0,
+            "scheduler_dpi_source": "decimated pinned state"
+          }
+        }
+      }
+    },
+    "paired_observations": {
+      "ctx-pava-v1": {
+        "cells": 6200308,
+        "decimated_only": 60757,
+        "hard_disagree": 102453,
+        "hard_disagree_fraction_of_paired": 0.016934668474521138,
+        "hard_semantics": "payload bit is one iff emitted LLR > 0",
+        "llr_moments_float64": {
+          "decimated_exact_zero": 0,
+          "n": 6049897,
+          "native_exact_zero": 0,
+          "sum_decimated": -613952.387234004,
+          "sum_decimated_squared": 120258678.19202457,
+          "sum_native": -589651.1933745446,
+          "sum_native_squared": 117927372.85839432,
+          "sum_product": 114973609.72985503
+        },
+        "llr_pearson": 0.9654392081022061,
+        "native_only": 89654,
+        "paired": 6049897,
+        "paired_fraction": 0.9757413663966371
+      },
+      "pava-v1": {
+        "cells": 6200308,
+        "decimated_only": 60757,
+        "hard_disagree": 138192,
+        "hard_disagree_fraction_of_paired": 0.022842041773603747,
+        "hard_semantics": "payload bit is one iff emitted LLR > 0",
+        "llr_moments_float64": {
+          "decimated_exact_zero": 0,
+          "n": 6049897,
+          "native_exact_zero": 0,
+          "sum_decimated": -618918.0344386244,
+          "sum_decimated_squared": 128373115.60814759,
+          "sum_native": -597943.8895481178,
+          "sum_native_squared": 125399203.73393703,
+          "sum_product": 123030754.22678365
+        },
+        "llr_pearson": 0.9696673232686445,
+        "native_only": 89654,
+        "paired": 6049897,
+        "paired_fraction": 0.9757413663966371
+      }
+    }
+  },
+  "boundary": "LDPC and below; no fountain/rank/stop condition",
+  "experiment": "e023b-correlated-multiview-qualification-v1",
+  "gates": {
+    "all_certificates_ground_truth_correct": true,
+    "all_fusion_shared_certificate_bits_equal": true,
+    "complete_state_sha256_pins": true,
+    "expected_blind_certificate_identities_and_costs_exact": true,
+    "expected_ground_truth_integer_counts_exact": true,
+    "expected_input_geometry_exact": true,
+    "ground_truth_loaded_after_blind_outputs": true,
+    "no_cross_view_independent_llr_sum": true,
+    "overlap_certificate_bits_equal": true,
+    "physical_capture_pairing": true
+  },
+  "gates_ok": true,
+  "ground_truth": {
+    "all_certificates_correct": true,
+    "audits": {
+      "branch_union": {
+        "certificates": 769,
+        "wrong_count": 0,
+        "wrong_tiles": []
+      },
+      "ctx-pava-v1/lower_loss": {
+        "certificates": 761,
+        "wrong_count": 0,
+        "wrong_tiles": []
+      },
+      "ctx-pava-v1/mean": {
+        "certificates": 763,
+        "wrong_count": 0,
+        "wrong_tiles": []
+      },
+      "ctx-pava-v1/prefer_decimated": {
+        "certificates": 761,
+        "wrong_count": 0,
+        "wrong_tiles": []
+      },
+      "pava-v1/loss_weighted": {
+        "certificates": 757,
+        "wrong_count": 0,
+        "wrong_tiles": []
+      },
+      "pava-v1/lower_loss": {
+        "certificates": 754,
+        "wrong_count": 0,
+        "wrong_tiles": []
+      },
+      "pava-v1/max_abs": {
+        "certificates": 754,
+        "wrong_count": 0,
+        "wrong_tiles": []
+      },
+      "pava-v1/mean": {
+        "certificates": 757,
+        "wrong_count": 0,
+        "wrong_tiles": []
+      },
+      "pava-v1/prefer_decimated": {
+        "certificates": 753,
+        "wrong_count": 0,
+        "wrong_tiles": []
+      },
+      "pava-v1/prefer_native": {
+        "certificates": 747,
+        "wrong_count": 0,
+        "wrong_tiles": []
+      }
+    },
+    "loaded_after_all_blind_outputs": true,
+    "paired_observation_errors": {
+      "ctx-pava-v1": {
+        "both_correct": {
+          "count": 5911241,
+          "fraction_of_paired": 0.9770812627057949,
+          "percent_of_paired": 97.70812627057948
+        },
+        "both_wrong": {
+          "count": 36203,
+          "fraction_of_paired": 0.005984068819684037,
+          "percent_of_paired": 0.5984068819684037
+        },
+        "decimated_only_wrong": {
+          "count": 38686,
+          "fraction_of_paired": 0.006394489030143819,
+          "percent_of_paired": 0.639448903014382
+        },
+        "decimated_wrong": {
+          "count": 74889,
+          "fraction_of_paired": 0.012378557849827856,
+          "percent_of_paired": 1.2378557849827856
+        },
+        "error_domain": "descrambled transmitted payload bits",
+        "native_only_wrong": {
+          "count": 63767,
+          "fraction_of_paired": 0.010540179444377318,
+          "percent_of_paired": 1.0540179444377318
+        },
+        "native_wrong": {
+          "count": 99970,
+          "fraction_of_paired": 0.016524248264061354,
+          "percent_of_paired": 1.6524248264061354
+        },
+        "paired": 6049897
+      },
+      "pava-v1": {
+        "both_correct": {
+          "count": 5853339,
+          "fraction_of_paired": 0.9675105212535023,
+          "percent_of_paired": 96.75105212535023
+        },
+        "both_wrong": {
+          "count": 58366,
+          "fraction_of_paired": 0.009647436972893919,
+          "percent_of_paired": 0.9647436972893919
+        },
+        "decimated_only_wrong": {
+          "count": 50544,
+          "fraction_of_paired": 0.008354522399306964,
+          "percent_of_paired": 0.8354522399306964
+        },
+        "decimated_wrong": {
+          "count": 108910,
+          "fraction_of_paired": 0.018001959372200883,
+          "percent_of_paired": 1.8001959372200882
+        },
+        "error_domain": "descrambled transmitted payload bits",
+        "native_only_wrong": {
+          "count": 87648,
+          "fraction_of_paired": 0.014487519374296785,
+          "percent_of_paired": 1.4487519374296784
+        },
+        "native_wrong": {
+          "count": 146014,
+          "fraction_of_paired": 0.024134956347190706,
+          "percent_of_paired": 2.4134956347190704
+        },
+        "paired": 6049897
+      }
+    },
+    "sha256": "6c6f54b7a8dec9d5b5d4e75ce5a29af4323bb91da5eca50391cc5d5eebc5cc82"
+  },
+  "implementation": {
+    "arms_qualifier_sha256": "49c06c30d939e4ae6dc7090eb80b0d806c14fbc6dcae9663a8ba310823c20d2b",
+    "payloaddec_sha256": "b6eb0f52ae1efc5be0f6be7576c728b1167728ea3136150726c9887bce4b3a65",
+    "receiver_sha256": "ce45760956228c8be9936de1f741b5acd60adf50d0d5ff3c01aa0a52100c0b86",
+    "script_sha256": "4d54cf782ab7f205fe25cc77553d2657ab4f79229422a3b8a08062d85fcc13f8"
+  },
+  "inputs": {
+    "decimated": {
+      "artifact": "e023b_decimated.pkl",
+      "context_replay": {
+        "adopted": 70,
+        "fits": 70,
+        "nonadopted_and_refused_rows_exact": true
+      },
+      "input_geometry": {
+        "accepted_placements": 462,
+        "dpi": 1600.0,
+        "scans": 6
+      },
+      "legacy_implementation_sha256": "e89d65ae5d24a7a0dd3d11a7c6b4738677d712d27e01f927b8659d3125f8a959",
+      "state_sha256": "a34baa9379e23788c013b1772ef44b6f7d964c0e7aa25ef46b4d983a5880ee30"
+    },
+    "native": {
+      "artifact": "e023b_native.pkl",
+      "context_replay": {
+        "adopted": 70,
+        "fits": 70,
+        "nonadopted_and_refused_rows_exact": true
+      },
+      "input_geometry": {
+        "accepted_placements": 481,
+        "dpi": 4800.0,
+        "scans": 6
+      },
+      "legacy_implementation_sha256": "e89d65ae5d24a7a0dd3d11a7c6b4738677d712d27e01f927b8659d3125f8a959",
+      "state_sha256": "328e9ce6b1c6d01e722d90b0fa92324c3f280e86273a4470ba361aa505e1282e"
+    }
+  },
+  "qualification_only": true,
+  "semantics": {
+    "one_vote_fusion": "at most one composite LLR per physical capture/page/payload cell before independent-capture union",
+    "parallel_branch_union": "multiple decoder hypotheses and CRC exposures; only certificates are unioned",
+    "production_state_created": false,
+    "views": "native 4800 and deterministic box3 decimated 1600 are correlated derivations of the same physical captures"
+  }
+}

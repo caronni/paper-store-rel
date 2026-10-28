@@ -1,0 +1,161 @@
+{
+ "steps": [
+  {
+   "id": "c2-cmy8",
+   "argv": [
+    "<checkout>/env314t/bin/python",
+    "-m",
+    "holo3",
+    "decode",
+    "scratch/in/xerox-canon-c2-cmy8.tiff",
+    "--dpi",
+    "4800",
+    "--format",
+    "L:c2-cmy8-p120-v0@3328x2304",
+    "--out",
+    "_distill/verify/overnight/c2-cmy8.bin",
+    "--workers",
+    "8",
+    "--complete",
+    "--run-dir",
+    "_distill/verify/overnight/c2-cmy8-run",
+    "--diag",
+    "8023"
+   ],
+   "payload_sha256": "f13c34db6c96796e65c812b7bb99e7618625e49a34640fcee58bc4627e38ecca",
+   "out": "_distill/verify/overnight/c2-cmy8.bin",
+   "free_gib": 40.0
+  },
+  {
+   "id": "sheetH-mixed",
+   "free_gib": 35.0,
+   "argv": [
+    "<checkout>/env314t/bin/python",
+    "-m",
+    "holo3",
+    "decode",
+    "scratch/xerox-canon-18.8-H-c2-cmy8-r850-q90-p120-4mm-1200dpi-a.tiff",
+    "scratch/xerox-canon-18.8-H-c2-cmy8-r850-q90-p120-4mm-1200dpi-b.tiff",
+    "scratch/xerox-canon-18.8-H-c2-cmy8-r850-q90-p120-4mm-2400dpi-a.tiff",
+    "scratch/xerox-canon-18.8-H-c2-cmy8-r850-q90-p120-4mm-2400dpi-b.tiff",
+    "--dpi",
+    "1200",
+    "--dpi",
+    "1200",
+    "--dpi",
+    "2400",
+    "--dpi",
+    "2400",
+    "--format",
+    "L:c2-cmy8-r0850-p120-x1@3392x2368",
+    "--out",
+    "_distill/verify/overnight/sheetH-mixed.bin",
+    "--workers",
+    "8",
+    "--complete",
+    "--run-dir",
+    "_distill/verify/overnight/sheetH-mixed-run"
+   ]
+  },
+  {
+   "id": "e029-postfix",
+   "argv": [
+    "<checkout>/env314t/bin/python",
+    "-m",
+    "holo3",
+    "decode",
+    "scratch/e028/hp-canon-c2-ink-counting.tiff",
+    "--dpi",
+    "4800",
+    "--format",
+    "L:c2-r0700@3392x2368",
+    "--out",
+    "_distill/verify/overnight/e029-postfix.bin",
+    "--workers",
+    "8",
+    "--complete",
+    "--run-dir",
+    "_distill/verify/overnight/e029-postfix-run"
+   ],
+   "payload_sha256": "e5021f8d099587c38c95185d51e82ab7cab29db0dfe68e502f1ab9dd165787af",
+   "out": "_distill/verify/overnight/e029-postfix.bin",
+   "free_gib": 20.0
+  },
+  {
+   "id": "xerox-k-postfix",
+   "argv": [
+    "<checkout>/env314t/bin/python",
+    "-m",
+    "holo3",
+    "decode",
+    "scratch/in/xerox-canon-c2-bw.tiff",
+    "--dpi",
+    "4800",
+    "--format",
+    "L:c2-r0700@3392x2368",
+    "--out",
+    "_distill/verify/overnight/xerox-k-postfix.bin",
+    "--workers",
+    "8",
+    "--complete",
+    "--run-dir",
+    "_distill/verify/overnight/xerox-k-postfix-run"
+   ],
+   "payload_sha256": "e5021f8d099587c38c95185d51e82ab7cab29db0dfe68e502f1ab9dd165787af",
+   "out": "_distill/verify/overnight/xerox-k-postfix.bin",
+   "free_gib": 20.0
+  },
+  {
+   "id": "crop-xerox-c3-cmy7",
+   "free_gib": 15.0,
+   "argv": [
+    "<checkout>/env314t/bin/python",
+    "-m",
+    "measure.crop_parity.harness",
+    "--volume",
+    "xerox-c3-cmy7",
+    "--workers",
+    "8"
+   ]
+  },
+  {
+   "id": "crop-xerox-c2-cmy7",
+   "free_gib": 15.0,
+   "argv": [
+    "<checkout>/env314t/bin/python",
+    "-m",
+    "measure.crop_parity.harness",
+    "--volume",
+    "xerox-c2-cmy7",
+    "--workers",
+    "8"
+   ]
+  },
+  {
+   "id": "crop-xerox-c2-cmy8",
+   "free_gib": 15.0,
+   "argv": [
+    "<checkout>/env314t/bin/python",
+    "-m",
+    "measure.crop_parity.harness",
+    "--volume",
+    "xerox-c2-cmy8",
+    "--workers",
+    "8"
+   ]
+  },
+  {
+   "id": "crop-sheet-I",
+   "free_gib": 15.0,
+   "argv": [
+    "<checkout>/env314t/bin/python",
+    "-m",
+    "measure.crop_parity.harness",
+    "--volume",
+    "sheet-I",
+    "--workers",
+    "8"
+   ]
+  }
+ ]
+}

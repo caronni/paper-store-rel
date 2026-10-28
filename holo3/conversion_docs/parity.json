@@ -1,0 +1,2046 @@
+{
+  "2": {
+    "step": "2",
+    "label": "e029 HP K (c2-r0700)",
+    "holo1": {
+      "n": 1940,
+      "by_stream": {
+        "main": 1940
+      },
+      "format_row_id": "c2-r0700@3392x2368",
+      "state": "scratch/e028/holo-c2-r0700-q07-ink-counting/receive.state"
+    },
+    "harvest": {
+      "step": "2",
+      "kind": "e029-hp-k",
+      "format": "L:c2-r0700@3392x2368",
+      "exit_code": 0,
+      "wall_s": 655.7,
+      "child_max_rss_bytes": 13692370944,
+      "child_max_rss_gib": 12.75,
+      "bytes": 465580,
+      "bytes_expected": 465580,
+      "sha256": "e5021f8d099587c38c95185d51e82ab7cab29db0dfe68e502f1ab9dd165787af",
+      "sha256_expected": "e5021f8d099587c38c95185d51e82ab7cab29db0dfe68e502f1ab9dd165787af",
+      "sha_ok": true,
+      "bytes_ok": true,
+      "run_dir": "<checkout>/_distill/verify/parity/run-2"
+    },
+    "holo3": {
+      "n": 1940,
+      "events": {
+        "tile_outcome_rows": 7375,
+        "results": {
+          "below_attempt_floor": 852,
+          "certified": 1940,
+          "attempted_failed": 4583
+        }
+      },
+      "by_stream": {
+        "main": 1940
+      }
+    },
+    "matched": 1940,
+    "holo1_only": 0,
+    "holo3_only": 0,
+    "miss_fraction": 0.0,
+    "holo1_only_sample": [],
+    "holo3_only_sample": [],
+    "holo1_only_by_stream": {},
+    "holo3_only_by_stream": {},
+    "cluster_note": "",
+    "tile_matrix": [
+      53,
+      37
+    ],
+    "over_one_percent": false,
+    "holo1_provenance": {
+      "state_epoch": "PK-FINAL full re-decode",
+      "best_on_record": 1940,
+      "note": "1940/1961 = 98.9%, the e029 headline"
+    }
+  },
+  "3": {
+    "step": "3",
+    "label": "xerox c3-cmy7",
+    "holo1": {
+      "n": 720,
+      "by_stream": {
+        "main": 720
+      },
+      "format_row_id": "c3-cmy7-p120-v0@2240x1536",
+      "state": "scratch/in/holo-xerox-c3-cmy7-counting-receive.state"
+    },
+    "harvest": {
+      "step": "3",
+      "kind": "xerox-c3-cmy7",
+      "format": "L:c3-cmy7-p120-v0@2240x1536",
+      "exit_code": 0,
+      "wall_s": 891.9,
+      "child_max_rss_bytes": 16985718784,
+      "child_max_rss_gib": 15.82,
+      "bytes": 301600,
+      "bytes_expected": 301600,
+      "sha256": "4f68dbf932324aa85c1af576b9724504eb5dff85039a66a062ff9c9adc4e50c2",
+      "sha256_expected": "4f68dbf932324aa85c1af576b9724504eb5dff85039a66a062ff9c9adc4e50c2",
+      "sha_ok": true,
+      "bytes_ok": true,
+      "run_dir": "<checkout>/_distill/verify/parity/run-3"
+    },
+    "holo3": {
+      "n": 786,
+      "events": {
+        "tile_outcome_rows": 3399,
+        "results": {
+          "below_attempt_floor": 318,
+          "certified": 786,
+          "attempted_failed": 2295
+        }
+      },
+      "by_stream": {
+        "main": 786
+      }
+    },
+    "matched": 716,
+    "holo1_only": 4,
+    "holo3_only": 70,
+    "miss_fraction": 0.005555555555555556,
+    "holo1_only_sample": [
+      [
+        0,
+        6,
+        22,
+        "main"
+      ],
+      [
+        0,
+        12,
+        19,
+        "main"
+      ],
+      [
+        0,
+        29,
+        22,
+        "main"
+      ],
+      [
+        0,
+        31,
+        23,
+        "main"
+      ]
+    ],
+    "holo3_only_sample": [
+      [
+        0,
+        0,
+        9,
+        "main"
+      ],
+      [
+        0,
+        0,
+        20,
+        "main"
+      ],
+      [
+        0,
+        0,
+        21,
+        "main"
+      ],
+      [
+        0,
+        1,
+        0,
+        "main"
+      ],
+      [
+        0,
+        1,
+        22,
+        "main"
+      ],
+      [
+        0,
+        3,
+        0,
+        "main"
+      ],
+      [
+        0,
+        3,
+        9,
+        "main"
+      ],
+      [
+        0,
+        3,
+        20,
+        "main"
+      ],
+      [
+        0,
+        3,
+        21,
+        "main"
+      ],
+      [
+        0,
+        4,
+        0,
+        "main"
+      ],
+      [
+        0,
+        4,
+        21,
+        "main"
+      ],
+      [
+        0,
+        5,
+        21,
+        "main"
+      ],
+      [
+        0,
+        5,
+        23,
+        "main"
+      ],
+      [
+        0,
+        6,
+        21,
+        "main"
+      ],
+      [
+        0,
+        7,
+        0,
+        "main"
+      ],
+      [
+        0,
+        7,
+        20,
+        "main"
+      ],
+      [
+        0,
+        7,
+        22,
+        "main"
+      ],
+      [
+        0,
+        8,
+        0,
+        "main"
+      ],
+      [
+        0,
+        8,
+        20,
+        "main"
+      ],
+      [
+        0,
+        8,
+        22,
+        "main"
+      ],
+      [
+        0,
+        9,
+        0,
+        "main"
+      ],
+      [
+        0,
+        9,
+        21,
+        "main"
+      ],
+      [
+        0,
+        10,
+        21,
+        "main"
+      ],
+      [
+        0,
+        10,
+        23,
+        "main"
+      ],
+      [
+        0,
+        11,
+        0,
+        "main"
+      ],
+      [
+        0,
+        11,
+        20,
+        "main"
+      ],
+      [
+        0,
+        11,
+        21,
+        "main"
+      ],
+      [
+        0,
+        12,
+        0,
+        "main"
+      ],
+      [
+        0,
+        12,
+        21,
+        "main"
+      ],
+      [
+        0,
+        12,
+        23,
+        "main"
+      ],
+      [
+        0,
+        13,
+        20,
+        "main"
+      ],
+      [
+        0,
+        13,
+        21,
+        "main"
+      ],
+      [
+        0,
+        13,
+        23,
+        "main"
+      ],
+      [
+        0,
+        14,
+        0,
+        "main"
+      ],
+      [
+        0,
+        14,
+        21,
+        "main"
+      ],
+      [
+        0,
+        14,
+        23,
+        "main"
+      ],
+      [
+        0,
+        15,
+        20,
+        "main"
+      ],
+      [
+        0,
+        15,
+        21,
+        "main"
+      ],
+      [
+        0,
+        15,
+        22,
+        "main"
+      ],
+      [
+        0,
+        16,
+        0,
+        "main"
+      ]
+    ],
+    "holo1_only_by_stream": {
+      "main": 4
+    },
+    "holo3_only_by_stream": {
+      "main": 70
+    },
+    "cluster_note": "cols tx=22:2; 1/4 on the outer ring of the 35x24 tile matrix; 4 distinct tile positions",
+    "tile_matrix": [
+      35,
+      24
+    ],
+    "over_one_percent": false,
+    "holo1_provenance": {
+      "state_epoch": "e032 print-day counting run",
+      "best_on_record": 810,
+      "note": "colour-uplift PK-FINAL reached 810 on this sheet; the readable state holds the e032 run at 720"
+    }
+  },
+  "4": {
+    "step": "4",
+    "label": "xerox c2-cmy8",
+    "holo1": {
+      "n": 5370,
+      "by_stream": {
+        "C": 1776,
+        "M": 1839,
+        "Y": 1755
+      },
+      "format_row_id": "c2-cmy8-p120-v0@3328x2304",
+      "state": "scratch/in/holo-xerox-c2-cmy8-q05-counting-receive.state"
+    },
+    "harvest": {
+      "step": "4",
+      "kind": "xerox-c2-cmy8",
+      "format": "L:c2-cmy8-p120-v0@3328x2304",
+      "exit_code": 0,
+      "wall_s": 3494.6,
+      "child_max_rss_bytes": 49338155008,
+      "child_max_rss_gib": 45.95,
+      "bytes": 718413,
+      "bytes_expected": 718413,
+      "sha256": "f13c34db6c96796e65c812b7bb99e7618625e49a34640fcee58bc4627e38ecca",
+      "sha256_expected": "f13c34db6c96796e65c812b7bb99e7618625e49a34640fcee58bc4627e38ecca",
+      "sha_ok": true,
+      "bytes_ok": true,
+      "run_dir": "<checkout>/_distill/verify/parity/run-4"
+    },
+    "holo3": {
+      "n": 5422,
+      "events": {
+        "tile_outcome_rows": 16522,
+        "results": {
+          "below_attempt_floor": 616,
+          "certified": 5422,
+          "attempted_failed": 10484
+        }
+      },
+      "by_stream": {
+        "C": 1792,
+        "M": 1866,
+        "Y": 1764
+      }
+    },
+    "matched": 5334,
+    "holo1_only": 36,
+    "holo3_only": 88,
+    "miss_fraction": 0.0067039106145251395,
+    "holo1_only_sample": [
+      [
+        0,
+        0,
+        20,
+        "C"
+      ],
+      [
+        0,
+        0,
+        22,
+        "C"
+      ],
+      [
+        0,
+        0,
+        24,
+        "Y"
+      ],
+      [
+        0,
+        0,
+        25,
+        "Y"
+      ],
+      [
+        0,
+        1,
+        3,
+        "Y"
+      ],
+      [
+        0,
+        1,
+        18,
+        "Y"
+      ],
+      [
+        0,
+        1,
+        23,
+        "Y"
+      ],
+      [
+        0,
+        2,
+        6,
+        "C"
+      ],
+      [
+        0,
+        4,
+        3,
+        "C"
+      ],
+      [
+        0,
+        4,
+        22,
+        "C"
+      ],
+      [
+        0,
+        4,
+        23,
+        "C"
+      ],
+      [
+        0,
+        5,
+        23,
+        "C"
+      ],
+      [
+        0,
+        6,
+        5,
+        "C"
+      ],
+      [
+        0,
+        7,
+        0,
+        "Y"
+      ],
+      [
+        0,
+        9,
+        7,
+        "Y"
+      ],
+      [
+        0,
+        9,
+        23,
+        "C"
+      ],
+      [
+        0,
+        10,
+        23,
+        "C"
+      ],
+      [
+        0,
+        11,
+        6,
+        "Y"
+      ],
+      [
+        0,
+        13,
+        23,
+        "Y"
+      ],
+      [
+        0,
+        14,
+        23,
+        "C"
+      ],
+      [
+        0,
+        16,
+        33,
+        "Y"
+      ],
+      [
+        0,
+        16,
+        35,
+        "C"
+      ],
+      [
+        0,
+        17,
+        23,
+        "C"
+      ],
+      [
+        0,
+        17,
+        23,
+        "Y"
+      ],
+      [
+        0,
+        18,
+        23,
+        "C"
+      ],
+      [
+        0,
+        28,
+        6,
+        "Y"
+      ],
+      [
+        0,
+        28,
+        22,
+        "C"
+      ],
+      [
+        0,
+        29,
+        6,
+        "Y"
+      ],
+      [
+        0,
+        30,
+        8,
+        "Y"
+      ],
+      [
+        0,
+        30,
+        22,
+        "C"
+      ],
+      [
+        0,
+        32,
+        23,
+        "Y"
+      ],
+      [
+        0,
+        32,
+        33,
+        "M"
+      ],
+      [
+        0,
+        32,
+        33,
+        "Y"
+      ],
+      [
+        0,
+        33,
+        33,
+        "M"
+      ],
+      [
+        0,
+        33,
+        33,
+        "Y"
+      ],
+      [
+        0,
+        51,
+        5,
+        "Y"
+      ]
+    ],
+    "holo3_only_sample": [
+      [
+        0,
+        0,
+        2,
+        "C"
+      ],
+      [
+        0,
+        0,
+        5,
+        "M"
+      ],
+      [
+        0,
+        0,
+        19,
+        "Y"
+      ],
+      [
+        0,
+        0,
+        21,
+        "C"
+      ],
+      [
+        0,
+        0,
+        23,
+        "M"
+      ],
+      [
+        0,
+        2,
+        5,
+        "C"
+      ],
+      [
+        0,
+        2,
+        22,
+        "C"
+      ],
+      [
+        0,
+        3,
+        5,
+        "C"
+      ],
+      [
+        0,
+        3,
+        5,
+        "Y"
+      ],
+      [
+        0,
+        4,
+        20,
+        "M"
+      ],
+      [
+        0,
+        4,
+        25,
+        "M"
+      ],
+      [
+        0,
+        5,
+        5,
+        "Y"
+      ],
+      [
+        0,
+        5,
+        6,
+        "C"
+      ],
+      [
+        0,
+        6,
+        5,
+        "Y"
+      ],
+      [
+        0,
+        6,
+        20,
+        "M"
+      ],
+      [
+        0,
+        7,
+        5,
+        "Y"
+      ],
+      [
+        0,
+        7,
+        25,
+        "M"
+      ],
+      [
+        0,
+        8,
+        0,
+        "Y"
+      ],
+      [
+        0,
+        9,
+        20,
+        "Y"
+      ],
+      [
+        0,
+        10,
+        4,
+        "C"
+      ],
+      [
+        0,
+        13,
+        0,
+        "Y"
+      ],
+      [
+        0,
+        13,
+        33,
+        "Y"
+      ],
+      [
+        0,
+        15,
+        20,
+        "M"
+      ],
+      [
+        0,
+        16,
+        23,
+        "M"
+      ],
+      [
+        0,
+        17,
+        7,
+        "Y"
+      ],
+      [
+        0,
+        18,
+        7,
+        "Y"
+      ],
+      [
+        0,
+        19,
+        3,
+        "C"
+      ],
+      [
+        0,
+        19,
+        4,
+        "C"
+      ],
+      [
+        0,
+        19,
+        4,
+        "Y"
+      ],
+      [
+        0,
+        19,
+        5,
+        "C"
+      ],
+      [
+        0,
+        19,
+        5,
+        "Y"
+      ],
+      [
+        0,
+        20,
+        20,
+        "M"
+      ],
+      [
+        0,
+        20,
+        22,
+        "M"
+      ],
+      [
+        0,
+        21,
+        20,
+        "M"
+      ],
+      [
+        0,
+        23,
+        0,
+        "M"
+      ],
+      [
+        0,
+        23,
+        0,
+        "Y"
+      ],
+      [
+        0,
+        23,
+        3,
+        "C"
+      ],
+      [
+        0,
+        23,
+        5,
+        "C"
+      ],
+      [
+        0,
+        23,
+        20,
+        "M"
+      ],
+      [
+        0,
+        23,
+        23,
+        "M"
+      ]
+    ],
+    "holo1_only_by_stream": {
+      "C": 16,
+      "M": 2,
+      "Y": 18
+    },
+    "holo3_only_by_stream": {
+      "C": 32,
+      "M": 29,
+      "Y": 27
+    },
+    "cluster_note": "rows ty=0:4 ty=1:3 ty=4:3 ty=32:3; cols tx=23:11 tx=33:5 tx=22:4 tx=6:4; 7/36 on the outer ring of the 52x36 tile matrix; 33 distinct tile positions",
+    "tile_matrix": [
+      52,
+      36
+    ],
+    "over_one_percent": false,
+    "holo1_provenance": {
+      "state_epoch": "e032 print-day counting run",
+      "best_on_record": 5466,
+      "note": "colour-uplift PK-FINAL reached 5466; the readable state holds the e032 run at 5370"
+    }
+  },
+  "5": {
+    "step": "5",
+    "label": "xerox c2-k (c2-r0700)",
+    "holo1": {
+      "n": 1930,
+      "by_stream": {
+        "main": 1930
+      },
+      "format_row_id": "c2-r0700@3392x2368",
+      "state": "scratch/in/holo-xerox-c2-counting-receive.state"
+    },
+    "harvest": {
+      "step": "5",
+      "kind": "xerox-c2-k",
+      "format": "L:c2-r0700@3392x2368",
+      "exit_code": 0,
+      "wall_s": 814.9,
+      "child_max_rss_bytes": 15087304704,
+      "child_max_rss_gib": 14.05,
+      "bytes": 465580,
+      "bytes_expected": 465580,
+      "sha256": "e5021f8d099587c38c95185d51e82ab7cab29db0dfe68e502f1ab9dd165787af",
+      "sha256_expected": "e5021f8d099587c38c95185d51e82ab7cab29db0dfe68e502f1ab9dd165787af",
+      "sha_ok": true,
+      "bytes_ok": true,
+      "run_dir": "<checkout>/_distill/verify/parity/run-5"
+    },
+    "holo3": {
+      "n": 1924,
+      "events": {
+        "tile_outcome_rows": 7218,
+        "results": {
+          "below_attempt_floor": 882,
+          "certified": 1924,
+          "attempted_failed": 4412
+        }
+      },
+      "by_stream": {
+        "main": 1924
+      }
+    },
+    "matched": 1922,
+    "holo1_only": 8,
+    "holo3_only": 2,
+    "miss_fraction": 0.004145077720207254,
+    "holo1_only_sample": [
+      [
+        0,
+        10,
+        0,
+        "main"
+      ],
+      [
+        0,
+        23,
+        34,
+        "main"
+      ],
+      [
+        0,
+        24,
+        36,
+        "main"
+      ],
+      [
+        0,
+        28,
+        0,
+        "main"
+      ],
+      [
+        0,
+        34,
+        0,
+        "main"
+      ],
+      [
+        0,
+        48,
+        0,
+        "main"
+      ],
+      [
+        0,
+        49,
+        0,
+        "main"
+      ],
+      [
+        0,
+        52,
+        0,
+        "main"
+      ]
+    ],
+    "holo3_only_sample": [
+      [
+        0,
+        4,
+        0,
+        "main"
+      ],
+      [
+        0,
+        7,
+        0,
+        "main"
+      ]
+    ],
+    "holo1_only_by_stream": {
+      "main": 8
+    },
+    "holo3_only_by_stream": {
+      "main": 2
+    },
+    "cluster_note": "cols tx=0:6; 7/8 on the outer ring of the 53x37 tile matrix; 8 distinct tile positions",
+    "tile_matrix": [
+      53,
+      37
+    ],
+    "over_one_percent": false,
+    "holo1_provenance": {
+      "state_epoch": "e032 print-day counting run",
+      "best_on_record": 1930,
+      "note": "1930/1961 = 98.4%"
+    }
+  },
+  "6": {
+    "step": "6",
+    "label": "xerox c2-cmy7 (PK-FINAL)",
+    "holo1": {
+      "n": 1559,
+      "by_stream": {
+        "main": 1559
+      },
+      "format_row_id": "c2-cmy7-p120-v0@3328x2304",
+      "state": "scratch/color-uplift/full/xerox-c2-cmy7-pkfinal/receive.state"
+    },
+    "harvest": {
+      "step": "6",
+      "kind": "xerox-c2-cmy7-uplift",
+      "format": "L:c2-cmy7-p120-v0@3328x2304",
+      "exit_code": 0,
+      "wall_s": 2740.5,
+      "child_max_rss_bytes": 60498493440,
+      "child_max_rss_gib": 56.34,
+      "bytes": 686859,
+      "bytes_expected": 686859,
+      "sha256": "5963b9d16abca48d66a05f80eb137ce76624b8fdedb48ce13c3ee0cf8f24c993",
+      "sha256_expected": "5963b9d16abca48d66a05f80eb137ce76624b8fdedb48ce13c3ee0cf8f24c993",
+      "sha_ok": true,
+      "bytes_ok": true,
+      "run_dir": "<checkout>/_distill/verify/parity/run-6"
+    },
+    "holo3": {
+      "n": 1586,
+      "events": {
+        "tile_outcome_rows": 17197,
+        "results": {
+          "below_attempt_floor": 1069,
+          "certified": 1586,
+          "attempted_failed": 14542
+        }
+      },
+      "by_stream": {
+        "main": 1586
+      }
+    },
+    "matched": 1537,
+    "holo1_only": 22,
+    "holo3_only": 49,
+    "miss_fraction": 0.014111610006414367,
+    "holo1_only_sample": [
+      [
+        0,
+        0,
+        20,
+        "main"
+      ],
+      [
+        0,
+        1,
+        3,
+        "main"
+      ],
+      [
+        0,
+        2,
+        3,
+        "main"
+      ],
+      [
+        0,
+        3,
+        1,
+        "main"
+      ],
+      [
+        0,
+        3,
+        35,
+        "main"
+      ],
+      [
+        0,
+        4,
+        3,
+        "main"
+      ],
+      [
+        0,
+        4,
+        27,
+        "main"
+      ],
+      [
+        0,
+        4,
+        28,
+        "main"
+      ],
+      [
+        0,
+        5,
+        1,
+        "main"
+      ],
+      [
+        0,
+        7,
+        35,
+        "main"
+      ],
+      [
+        0,
+        11,
+        3,
+        "main"
+      ],
+      [
+        0,
+        19,
+        27,
+        "main"
+      ],
+      [
+        0,
+        24,
+        30,
+        "main"
+      ],
+      [
+        0,
+        36,
+        30,
+        "main"
+      ],
+      [
+        0,
+        37,
+        30,
+        "main"
+      ],
+      [
+        0,
+        39,
+        30,
+        "main"
+      ],
+      [
+        0,
+        45,
+        30,
+        "main"
+      ],
+      [
+        0,
+        46,
+        27,
+        "main"
+      ],
+      [
+        0,
+        46,
+        30,
+        "main"
+      ],
+      [
+        0,
+        50,
+        7,
+        "main"
+      ],
+      [
+        0,
+        51,
+        7,
+        "main"
+      ],
+      [
+        0,
+        51,
+        8,
+        "main"
+      ]
+    ],
+    "holo3_only_sample": [
+      [
+        0,
+        0,
+        26,
+        "main"
+      ],
+      [
+        0,
+        0,
+        29,
+        "main"
+      ],
+      [
+        0,
+        0,
+        33,
+        "main"
+      ],
+      [
+        0,
+        2,
+        30,
+        "main"
+      ],
+      [
+        0,
+        3,
+        30,
+        "main"
+      ],
+      [
+        0,
+        7,
+        30,
+        "main"
+      ],
+      [
+        0,
+        9,
+        27,
+        "main"
+      ],
+      [
+        0,
+        10,
+        2,
+        "main"
+      ],
+      [
+        0,
+        10,
+        30,
+        "main"
+      ],
+      [
+        0,
+        11,
+        27,
+        "main"
+      ],
+      [
+        0,
+        12,
+        30,
+        "main"
+      ],
+      [
+        0,
+        13,
+        30,
+        "main"
+      ],
+      [
+        0,
+        14,
+        2,
+        "main"
+      ],
+      [
+        0,
+        16,
+        20,
+        "main"
+      ],
+      [
+        0,
+        17,
+        30,
+        "main"
+      ],
+      [
+        0,
+        18,
+        30,
+        "main"
+      ],
+      [
+        0,
+        19,
+        2,
+        "main"
+      ],
+      [
+        0,
+        19,
+        20,
+        "main"
+      ],
+      [
+        0,
+        20,
+        17,
+        "main"
+      ],
+      [
+        0,
+        20,
+        34,
+        "main"
+      ],
+      [
+        0,
+        21,
+        34,
+        "main"
+      ],
+      [
+        0,
+        22,
+        3,
+        "main"
+      ],
+      [
+        0,
+        22,
+        30,
+        "main"
+      ],
+      [
+        0,
+        23,
+        2,
+        "main"
+      ],
+      [
+        0,
+        24,
+        33,
+        "main"
+      ],
+      [
+        0,
+        25,
+        16,
+        "main"
+      ],
+      [
+        0,
+        27,
+        2,
+        "main"
+      ],
+      [
+        0,
+        27,
+        17,
+        "main"
+      ],
+      [
+        0,
+        29,
+        2,
+        "main"
+      ],
+      [
+        0,
+        29,
+        16,
+        "main"
+      ],
+      [
+        0,
+        29,
+        17,
+        "main"
+      ],
+      [
+        0,
+        31,
+        2,
+        "main"
+      ],
+      [
+        0,
+        31,
+        30,
+        "main"
+      ],
+      [
+        0,
+        31,
+        34,
+        "main"
+      ],
+      [
+        0,
+        32,
+        2,
+        "main"
+      ],
+      [
+        0,
+        32,
+        34,
+        "main"
+      ],
+      [
+        0,
+        33,
+        34,
+        "main"
+      ],
+      [
+        0,
+        34,
+        17,
+        "main"
+      ],
+      [
+        0,
+        35,
+        2,
+        "main"
+      ],
+      [
+        0,
+        36,
+        17,
+        "main"
+      ]
+    ],
+    "holo1_only_by_stream": {
+      "main": 22
+    },
+    "holo3_only_by_stream": {
+      "main": 49
+    },
+    "cluster_note": "rows ty=4:3 ty=3:2 ty=46:2 ty=51:2; cols tx=30:6 tx=3:4 tx=27:3 tx=1:2; 5/22 on the outer ring of the 52x36 tile matrix; 22 distinct tile positions",
+    "tile_matrix": [
+      52,
+      36
+    ],
+    "over_one_percent": true,
+    "holo1_provenance": {
+      "state_epoch": "colour-uplift PK-FINAL",
+      "best_on_record": 1559,
+      "note": "the pre-registered print-frozen negative control, closed at 686,859 B"
+    }
+  },
+  "7": {
+    "step": "7",
+    "label": "sheet I pooled cmy8",
+    "holo1": {
+      "n": 5297,
+      "by_stream": {
+        "C": 1895,
+        "M": 1958,
+        "Y": 1444
+      },
+      "format_row_id": "c2-cmy8-r0700-p120-x1@3392x2368",
+      "state": "scratch/xerox-v1-20260818/I-c2-cmy8r0700-q090-4mm/receive.state"
+    },
+    "harvest": {
+      "step": "7",
+      "workers": 8,
+      "footing": "comparable (workers 8, same as steps 2-6)",
+      "exit_code": 0,
+      "wall_s": 6701.4,
+      "peak_rss_gib": 47.86,
+      "child_max_rss_gib": 47.86,
+      "bytes": 1798761,
+      "bytes_expected": 1798761,
+      "sha256": "2445b95db5b49bf3e05eb2538e9e247d289a48a4fed2e46eb7ba78ab61e4350b",
+      "sha256_expected": "2445b95db5b49bf3e05eb2538e9e247d289a48a4fed2e46eb7ba78ab61e4350b",
+      "sha_ok": true,
+      "bytes_ok": true,
+      "run_dir": "<checkout>/_distill/verify/parity/run-7"
+    },
+    "holo3": {
+      "n": 5326,
+      "events": {
+        "tile_outcome_rows": 238701,
+        "results": {
+          "below_attempt_floor": 2477,
+          "certified": 6072,
+          "attempted_failed": 230152
+        }
+      },
+      "by_stream": {
+        "C": 1898,
+        "M": 1958,
+        "Y": 1470
+      }
+    },
+    "matched": 5193,
+    "holo1_only": 104,
+    "holo3_only": 133,
+    "miss_fraction": 0.019633754955635265,
+    "holo1_only_sample": [
+      [
+        0,
+        0,
+        2,
+        "C"
+      ],
+      [
+        0,
+        0,
+        24,
+        "Y"
+      ],
+      [
+        0,
+        0,
+        26,
+        "Y"
+      ],
+      [
+        0,
+        0,
+        29,
+        "C"
+      ],
+      [
+        0,
+        1,
+        26,
+        "Y"
+      ],
+      [
+        0,
+        2,
+        5,
+        "C"
+      ],
+      [
+        0,
+        2,
+        7,
+        "Y"
+      ],
+      [
+        0,
+        2,
+        26,
+        "Y"
+      ],
+      [
+        0,
+        2,
+        30,
+        "C"
+      ],
+      [
+        0,
+        2,
+        30,
+        "Y"
+      ],
+      [
+        0,
+        3,
+        29,
+        "Y"
+      ],
+      [
+        0,
+        4,
+        29,
+        "Y"
+      ],
+      [
+        0,
+        4,
+        30,
+        "Y"
+      ],
+      [
+        0,
+        5,
+        24,
+        "Y"
+      ],
+      [
+        0,
+        5,
+        26,
+        "Y"
+      ],
+      [
+        0,
+        5,
+        30,
+        "C"
+      ],
+      [
+        0,
+        5,
+        30,
+        "Y"
+      ],
+      [
+        0,
+        6,
+        27,
+        "Y"
+      ],
+      [
+        0,
+        7,
+        26,
+        "Y"
+      ],
+      [
+        0,
+        9,
+        7,
+        "Y"
+      ],
+      [
+        0,
+        9,
+        29,
+        "Y"
+      ],
+      [
+        0,
+        9,
+        30,
+        "C"
+      ],
+      [
+        0,
+        9,
+        30,
+        "Y"
+      ],
+      [
+        0,
+        12,
+        30,
+        "C"
+      ],
+      [
+        0,
+        13,
+        10,
+        "Y"
+      ],
+      [
+        0,
+        13,
+        11,
+        "Y"
+      ],
+      [
+        0,
+        13,
+        30,
+        "C"
+      ],
+      [
+        0,
+        13,
+        31,
+        "C"
+      ],
+      [
+        0,
+        14,
+        19,
+        "Y"
+      ],
+      [
+        0,
+        15,
+        27,
+        "Y"
+      ],
+      [
+        0,
+        15,
+        28,
+        "Y"
+      ],
+      [
+        0,
+        16,
+        10,
+        "Y"
+      ],
+      [
+        0,
+        17,
+        9,
+        "Y"
+      ],
+      [
+        0,
+        18,
+        2,
+        "Y"
+      ],
+      [
+        0,
+        18,
+        11,
+        "Y"
+      ],
+      [
+        0,
+        18,
+        31,
+        "C"
+      ],
+      [
+        0,
+        19,
+        18,
+        "Y"
+      ],
+      [
+        0,
+        20,
+        10,
+        "Y"
+      ],
+      [
+        0,
+        20,
+        11,
+        "Y"
+      ],
+      [
+        0,
+        20,
+        32,
+        "M"
+      ]
+    ],
+    "holo3_only_sample": [
+      [
+        0,
+        0,
+        19,
+        "Y"
+      ],
+      [
+        0,
+        1,
+        17,
+        "Y"
+      ],
+      [
+        0,
+        1,
+        19,
+        "Y"
+      ],
+      [
+        0,
+        2,
+        2,
+        "Y"
+      ],
+      [
+        0,
+        2,
+        17,
+        "Y"
+      ],
+      [
+        0,
+        2,
+        18,
+        "Y"
+      ],
+      [
+        0,
+        2,
+        19,
+        "Y"
+      ],
+      [
+        0,
+        3,
+        0,
+        "Y"
+      ],
+      [
+        0,
+        3,
+        5,
+        "C"
+      ],
+      [
+        0,
+        3,
+        18,
+        "Y"
+      ],
+      [
+        0,
+        4,
+        5,
+        "C"
+      ],
+      [
+        0,
+        4,
+        17,
+        "Y"
+      ],
+      [
+        0,
+        4,
+        30,
+        "C"
+      ],
+      [
+        0,
+        5,
+        15,
+        "Y"
+      ],
+      [
+        0,
+        6,
+        17,
+        "Y"
+      ],
+      [
+        0,
+        6,
+        29,
+        "Y"
+      ],
+      [
+        0,
+        7,
+        0,
+        "Y"
+      ],
+      [
+        0,
+        7,
+        2,
+        "Y"
+      ],
+      [
+        0,
+        7,
+        9,
+        "Y"
+      ],
+      [
+        0,
+        7,
+        15,
+        "Y"
+      ],
+      [
+        0,
+        7,
+        17,
+        "Y"
+      ],
+      [
+        0,
+        7,
+        30,
+        "Y"
+      ],
+      [
+        0,
+        8,
+        17,
+        "Y"
+      ],
+      [
+        0,
+        8,
+        19,
+        "Y"
+      ],
+      [
+        0,
+        8,
+        26,
+        "Y"
+      ],
+      [
+        0,
+        8,
+        30,
+        "Y"
+      ],
+      [
+        0,
+        9,
+        15,
+        "Y"
+      ],
+      [
+        0,
+        9,
+        16,
+        "Y"
+      ],
+      [
+        0,
+        10,
+        10,
+        "Y"
+      ],
+      [
+        0,
+        10,
+        19,
+        "Y"
+      ],
+      [
+        0,
+        11,
+        9,
+        "Y"
+      ],
+      [
+        0,
+        11,
+        10,
+        "Y"
+      ],
+      [
+        0,
+        11,
+        19,
+        "Y"
+      ],
+      [
+        0,
+        11,
+        29,
+        "Y"
+      ],
+      [
+        0,
+        12,
+        2,
+        "Y"
+      ],
+      [
+        0,
+        12,
+        9,
+        "Y"
+      ],
+      [
+        0,
+        12,
+        19,
+        "Y"
+      ],
+      [
+        0,
+        13,
+        5,
+        "C"
+      ],
+      [
+        0,
+        13,
+        16,
+        "Y"
+      ],
+      [
+        0,
+        13,
+        17,
+        "Y"
+      ]
+    ],
+    "holo1_only_by_stream": {
+      "C": 26,
+      "M": 2,
+      "Y": 76
+    },
+    "holo3_only_by_stream": {
+      "C": 29,
+      "M": 2,
+      "Y": 102
+    },
+    "cluster_note": "rows ty=2:5 ty=0:4 ty=5:4 ty=9:4; cols tx=30:16 tx=11:10 tx=19:10 tx=10:8; 5/104 on the outer ring of the 53x37 tile matrix; 101 distinct tile positions",
+    "tile_matrix": [
+      53,
+      37
+    ],
+    "over_one_percent": true,
+    "holo1_provenance": {
+      "state_epoch": "plane-fields W6 pooled run",
+      "best_on_record": 5297,
+      "note": "M 1958 / C 1895 / Y 1444; dead-Y bands expected on this sheet"
+    }
+  }
+}

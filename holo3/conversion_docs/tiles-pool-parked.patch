@@ -1,0 +1,1932 @@
+From edaf0bff420b79e0a13dc0343cdfb850e627aa8f Mon Sep 17 00:00:00 2001
+From: Germano Caronni <gec@acm.org>
+Date: Sun, 30 Aug 2026 20:46:26 +0200
+Subject: [PATCH 1/6] =?UTF-8?q?tiles:=20the=20seam=20a=20pooled-evidence?=
+ =?UTF-8?q?=20row=20needs=20=E2=80=94=20four=20helpers=20go=20public,=20on?=
+ =?UTF-8?q?e=20heavy-stage=20set?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Pure rename + one generalization, no behaviour change (the whole holo3
+suite is green at this commit, and test_h3_plugins_tiles /
+test_h3_tile_assembly / test_h3_schedule pass unchanged).
+
+- `_tile_candidates`, `_attempt_many`, `_uncertified_streams` and
+  `_union_reads` lose their underscore. A second tile row living in its
+  own module (the 1000-line cap is a seam signal, tiles.py is at 808)
+  must reach the same candidate gathering, the same attempt loop, the
+  same uncertified-stream test and — critically — the SAME `reads`
+  function object, because holo3/schedule.py derives the SCHEDULE.md
+  reads column by AST-walking the module that defines `descriptor.reads`.
+  A delegating copy in another module would render an empty column.
+- `STAGE_POOL` + `HEAVY_STAGES`: `max_iters_for` now asks whether the
+  stage is heavy rather than whether it is literally retry150. The
+  pinned golden (scan, union, retry150) -> (60, 60, 150) is unmoved;
+  no existing attempt key changes, because the new stage names nothing
+  that ran before.
+
+Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>
+---
+ holo3/plugins/tiles.py | 44 ++++++++++++++++++++++--------------------
+ 1 file changed, 23 insertions(+), 21 deletions(-)
+
+diff --git a/holo3/plugins/tiles.py b/holo3/plugins/tiles.py
+index 21550c6..e832eb4 100644
+--- a/holo3/plugins/tiles.py
++++ b/holo3/plugins/tiles.py
+@@ -45,7 +45,9 @@ BP_ALPHA: float = 0.8
+ STAGE_SCAN: str = "scan"
+ STAGE_UNION: str = "union"
+ STAGE_RETRY150: str = "retry150"
++STAGE_POOL: str = "pool"
+ ORDINARY_STAGES: tuple[str, str] = (STAGE_SCAN, STAGE_UNION)
++HEAVY_STAGES: tuple[str, str] = (STAGE_RETRY150, STAGE_POOL)
+ 
+ STAGE_PAYLOAD: str = "payload"
+ PAYLOAD_COST: int = 20
+@@ -96,7 +98,7 @@ def source_tag(stage: str) -> str:
+ 
+ 
+ def max_iters_for(stage: str) -> int:
+-    return RETRY_BP_MAX_ITERS if stage == STAGE_RETRY150 \
++    return RETRY_BP_MAX_ITERS if stage in HEAVY_STAGES \
+         else BASELINE_BP_MAX_ITERS
+ 
+ 
+@@ -170,11 +172,11 @@ def cover_keys(page: int, cells_yx: np.ndarray, capture_id: str,
+                  for pair in pairs)
+ 
+ 
+-def _tile_candidates(store: object, page: int, ty: int, tx: int,
+-                     capture_id: str, level_index: int,
+-                     ) -> tuple[list[tuple[int, int, np.ndarray, np.ndarray,
+-                                           np.ndarray]],
+-                                list[tuple[object, ...]]]:
++def tile_candidates(store: object, page: int, ty: int, tx: int,
++                    capture_id: str, level_index: int,
++                    ) -> tuple[list[tuple[int, int, np.ndarray, np.ndarray,
++                                          np.ndarray]],
++                               list[tuple[object, ...]]]:
+     from . import calibrate, color_region
+ 
+     k_wids, color_keys = store.tile_cover(
+@@ -221,7 +223,7 @@ def _tile_candidates(store: object, page: int, ty: int, tx: int,
+ 
+ def assemble_tile(store: object, page: int, ty: int, tx: int,
+                   capture_id: str, level_index: int) -> TileCut | None:
+-    candidates, order_keys = _tile_candidates(
++    candidates, order_keys = tile_candidates(
+         store, page, ty, tx, capture_id, level_index)
+     owned = freeze_page_owners(candidates, store.row.cells_yx, order_keys)
+     if not owned:
+@@ -565,9 +567,9 @@ def done_covers(done: np.ndarray, extent_cells: tuple[int, int, int, int],
+     return bool(np.all(done[cy0:cy1, cx0:cx1][window_support]))
+ 
+ 
+-def _attempt_many(row: FormatRow, geometry: SiteGeometry,
+-                  components: tuple[TileCut, ...],
+-                  stream_ids: tuple[str, ...], stage: str) -> JobResult:
++def attempt_many(row: FormatRow, geometry: SiteGeometry,
++                 components: tuple[TileCut, ...],
++                 stream_ids: tuple[str, ...], stage: str) -> JobResult:
+     started = time.thread_time()
+     facts: list[object] = []
+     events: list[object] = []
+@@ -581,8 +583,8 @@ def _attempt_many(row: FormatRow, geometry: SiteGeometry,
+                      time.thread_time() - started)
+ 
+ 
+-def _uncertified_streams(store: object, page: int, ty: int,
+-                         tx: int) -> tuple[str, ...]:
++def uncertified_streams(store: object, page: int, ty: int,
++                        tx: int) -> tuple[str, ...]:
+     return tuple(
+         stream.stream_id for stream in store.row.streams
+         if not store.has_certificate((page, ty, tx, stream.stream_id)))
+@@ -595,14 +597,14 @@ def prepare_scan(store: object, subject: Subject,
+     if cut is None:
+         return None
+     components = (cut,)
+-    pending = _uncertified_streams(store, page, ty, tx)
++    pending = uncertified_streams(store, page, ty, tx)
+     if not pending:
+         return None
+     row = store.row
+     site_geometry = store.geometry
+ 
+     def job() -> JobResult:
+-        return _attempt_many(row, site_geometry, components, pending,
++        return attempt_many(row, site_geometry, components, pending,
+                              STAGE_SCAN)
+ 
+     return job
+@@ -614,14 +616,14 @@ def prepare_union(store: object, subject: Subject,
+     components = assemble_union(store, page, ty, tx, ppc)
+     if not arms_union(components):
+         return None
+-    pending = _uncertified_streams(store, page, ty, tx)
++    pending = uncertified_streams(store, page, ty, tx)
+     if not pending:
+         return None
+     row = store.row
+     site_geometry = store.geometry
+ 
+     def job() -> JobResult:
+-        return _attempt_many(row, site_geometry, components, pending,
++        return attempt_many(row, site_geometry, components, pending,
+                              STAGE_UNION)
+ 
+     return job
+@@ -648,7 +650,7 @@ def prepare_retry(store: object, subject: Subject,
+     site_geometry = store.geometry
+ 
+     def job() -> JobResult:
+-        return _attempt_many(row, site_geometry, components, (stream_id,),
++        return attempt_many(row, site_geometry, components, (stream_id,),
+                              STAGE_RETRY150)
+ 
+     return job
+@@ -685,7 +687,7 @@ def _scan_reads(store: object, subject: Subject) -> tuple[FactKey, ...]:
+ 
+ 
+ def _scan_eligible(store: object, subject: Subject) -> bool:
+-    return bool(_uncertified_streams(store, subject[0], subject[1],
++    return bool(uncertified_streams(store, subject[0], subject[1],
+                                      subject[2]))
+ 
+ 
+@@ -709,7 +711,7 @@ def _union_subjects(store: object, fact: object) -> tuple[Subject, ...]:
+     return tuple(dict.fromkeys(subjects))
+ 
+ 
+-def _union_reads(store: object, subject: Subject) -> tuple[FactKey, ...]:
++def union_reads(store: object, subject: Subject) -> tuple[FactKey, ...]:
+     page, ty, tx, ppc = subject
+     keys: list[FactKey] = []
+     for capture_id, level_index in store.cover_lanes(page, ty, tx, ppc):
+@@ -743,7 +745,7 @@ def _retry_reads(store: object, subject: Subject) -> tuple[FactKey, ...]:
+     origin, page, ty, tx, _stream_id, lane, capture_id = subject
+     if origin == STAGE_SCAN:
+         return _scan_reads(store, (page, ty, tx, capture_id, lane))
+-    return _union_reads(store, (page, ty, tx, lane))
++    return union_reads(store, (page, ty, tx, lane))
+ 
+ 
+ def _retry_eligible(store: object, subject: Subject) -> bool:
+@@ -782,7 +784,7 @@ UNION_DESCRIPTOR = PluginDescriptor(
+     subject_kind="tile",
+     born_by=(WindowEvidence, ColorEvidenceRow),
+     subjects_of=_union_subjects,
+-    reads=_union_reads,
++    reads=union_reads,
+     eligible=_scan_eligible,
+     stage=_static_stage(STAGE_PAYLOAD),
+     cost=_union_cost,
+-- 
+2.55.0
+
+
+From e3f65274868eb3b1ea2fb9bda33058204904e271 Mon Sep 17 00:00:00 2001
+From: Germano Caronni <gec@acm.org>
+Date: Sun, 30 Aug 2026 20:49:29 +0200
+Subject: [PATCH 2/6] =?UTF-8?q?tiles.pool:=20the=20pooled-evidence=20resid?=
+ =?UTF-8?q?ue=20row=20=E2=80=94=20mean=20within=20a=20capture,=20sum=20acr?=
+ =?UTF-8?q?oss?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The measured multi-scan law (CLAUDE.md, F1∘F6 replicated 3x) says
+equal-weight combining beats best-single once the context detector has
+de-correlated context bias. holo3 already obeys the CROSS-CAPTURE half:
+`tiles._combine` sums each capture's post-context printed_llr cell by
+cell, so `tiles.union` IS equal-weight cross-capture pooling and
+`tiles.retry` already re-runs it at 150 iterations. Measured at the
+codec, not read off the code (scratch probe, c3-k-r0550@7x7, sd 2.0
+AWGN on the true field): at amp 2.0 capture A alone fails at bp150,
+capture B alone fails, their sum certifies.
+
+What holo3 does NOT pool is the WINDOW axis. Inside one capture
+`freeze_page_owners` hands each cell whole to the best-held-out-loss
+covering window and discards the rest, and windows overlap by
+construction — 200 cells on a 160 step, so on the K sim's 448-cell page
+the starts are (0, 160, 248) and over half the cells are covered twice.
+Each window carries its own pose and its own calibration/context fit:
+two windows over one cell are two de-correlated readouts of it.
+
+tiles.pool keeps both. Per cell: the equal-weight MEAN of every reading
+one capture holds (a mean, never a sum — those readings share photons,
+and "never double-count the same physical capture" is standing law),
+then the equal-weight SUM of the per-capture means, exactly as union
+sums. Same probe, same noise, amp 1.2 through 1.6: single fails, union
+fails, pool certifies; from 1.7 up both close.
+
+Shape:
+- subject = the union row's own vocabulary, (page, ty, tx, exact
+  rational ppc), minted only where >=2 DISTINCT captures cover the tile
+  at that rung. Own-capture pooling is structurally impossible: a
+  capture's ladder is strictly ascending, one lane per ppc
+  (MULTIRES-SPEC). No new alignment was invented.
+- born from any ordinary tile attempt that did not certify (scan, union
+  and the heavy retry — a retry150 failure is the strongest evidence
+  that the residue needs a different assembly, not more iterations);
+  never from its own facts, and `_retry_subjects` will not arm off a
+  pool fact either, so there is no loop.
+- re-arms through the declared reads and the version floor alone — it
+  shares the union row's `reads` FUNCTION OBJECT, so the subscription is
+  identical by construction and holo3/schedule.py derives its families
+  correctly. No digests.
+- fires at the heavy budget (150) and refuses when every cell was read
+  once by every capture: the pooled cut is then bit-identical to the
+  winner-take-all cut and that attempt has already been made.
+- prices itself at 110 x its own fire ordinal, +2/rung: after the
+  ordinary payload band and the cheap placement rungs, before the
+  speculative searches (wide 120, cold 140/150) and refine (200). The
+  engine is untouched except for the two registry lines.
+- certificates flow through `tiles.attempt_tile` verbatim — K, cmy7 and
+  cmy8 alike — so zero-wrong stays codec-enforced and the row is purely
+  additive over the residue.
+
+SCHEDULE.md's generated block is re-rendered from the descriptors
+(`python -m holo3 schedule`), not hand-edited.
+
+Suite green at this commit: 1396 passed, 376 skipped.
+
+Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>
+---
+ holo3/SCHEDULE.md                      |  39 ++++-
+ holo3/engine.py                        |   2 +
+ holo3/plugins/tiles_pool.py            | 219 +++++++++++++++++++++++++
+ holo3/tests/test_h3_engine_contract.py |   9 +-
+ holo3/tests/test_h3_schedule.py        |  11 +-
+ 5 files changed, 269 insertions(+), 11 deletions(-)
+ create mode 100644 holo3/plugins/tiles_pool.py
+
+diff --git a/holo3/SCHEDULE.md b/holo3/SCHEDULE.md
+index 367c9b3..1c2eeb6 100644
+--- a/holo3/SCHEDULE.md
++++ b/holo3/SCHEDULE.md
+@@ -31,7 +31,7 @@ the row's own cost function and marks the declared price it multiplies
+ by that ordinal.
+ 
+ ```
+-descriptor rows (11)
++descriptor rows (12)
+ name          subject  born by                          produces                                           reads
+ ------------  -------  -------------------------------  -------------------------------------------------  ------------------------------------------------------------------------------------
+ survey        capture  Capture                          CaptureSurvey                                      —
+@@ -42,6 +42,7 @@ color         lane     Placement                        ColorEvidenceRow
+ tiles.scan    tile     WindowEvidence|ColorEvidenceRow  AttemptFact|Certificate                            color_row, evidence_fit, evidence_read
+ tiles.union   tile     WindowEvidence|ColorEvidenceRow  AttemptFact|Certificate                            color_row, evidence_fit, evidence_read
+ tiles.retry   tile     AttemptFact                      AttemptFact|Certificate                            color_row, evidence_fit, evidence_read
++tiles.pool    tile     AttemptFact                      AttemptFact|Certificate                            color_row, evidence_fit, evidence_read
+ refine        window   Placement                        RefineOutcome                                      evidence_fit, evidence_read, pose_affine, pose_route, tile
+ refine.color  window   Placement                        RefineOutcome                                      pose_affine, pose_route, tile
+ revisit       window   Certificate                      WindowEvidence|Placement|LatticeSeed|PlaceOutcome  evidence_fit, evidence_read, lane_poses, pose_affine, region_ctx, region_pitch, tile
+@@ -57,6 +58,7 @@ price ladder (plugin literals, cheapest first; * = same-price peers; *n = the ro
+      40  place         ring
+      60  place         word_centre
+      80  place         word_rest
++  110*n  tiles.pool    pool
+     120  place         wide
+     140  place         cold_live
+     150  place         cold_rest
+@@ -67,13 +69,13 @@ price ladder (plugin literals, cheapest first; * = same-price peers; *n = the ro
+ 
+ key families (13)
+ family         written by (fact)                       read by (row)
+--------------  --------------------------------------  ----------------------------------------------------------
++-------------  --------------------------------------  ----------------------------------------------------------------------
+ pose_affine    Placement, RefineOutcome                place, calibrate, refine, refine.color, revisit
+ pose_route     Placement, RefineOutcome                refine, refine.color
+ place_stage    PlaceOutcome, Placement, RefineOutcome  —
+-evidence_fit   CtxOutcome, WindowEvidence              ctx, tiles.scan, tiles.union, tiles.retry, refine, revisit
+-evidence_read  CtxOutcome, WindowEvidence              tiles.scan, tiles.union, tiles.retry, refine, revisit
+-color_row      ColorEvidenceRow                        tiles.scan, tiles.union, tiles.retry
++evidence_fit   CtxOutcome, WindowEvidence              ctx, tiles.scan, tiles.union, tiles.retry, tiles.pool, refine, revisit
++evidence_read  CtxOutcome, WindowEvidence              tiles.scan, tiles.union, tiles.retry, tiles.pool, refine, revisit
++color_row      ColorEvidenceRow                        tiles.scan, tiles.union, tiles.retry, tiles.pool
+ region_pitch   Placement, RefineOutcome                calibrate, revisit
+ region_ctx     CtxOutcome                              revisit
+ lattice_seed   LatticeSeed                             place
+@@ -107,6 +109,29 @@ Debt rows carried in this build (rulings 2026-08-29):
+   calibrate body, a never-placed window re-fires a ring-stage place
+   pass, when certificates land in reach or the region ctx changes —
+   v1's M-pass as a subscription instead of a phase.
++- `tiles.pool` (the pooled-evidence residue row): born from any ordinary
++  tile attempt that did not certify, on the union row's own subject
++  vocabulary — (tile x exact-rational shared ppc), minted only where >=2
++  DISTINCT captures hold evidence for the tile at that rung. It re-reads
++  the same evidence the union row reads (literally the same `reads`
++  function object) and assembles it differently: inside one capture,
++  every covering window's post-context `printed_llr` for a cell is
++  averaged with equal weight instead of being handed whole to the
++  best-held-out-loss window, and those per-capture means are then summed
++  across captures exactly as `tiles.union` sums. Mean within a capture,
++  sum across captures: the readings of one capture share photons, and
++  double-counting one physical capture is standing law; the readings of
++  two captures do not, and equal-weight summing is the measured
++  multi-scan law. Windows overlap by construction (200 cells on a 160
++  step), so the winner-take-all discards real de-correlated readouts —
++  each window carries its own pose and its own context fit. Where no
++  cell is read twice the pooled cut IS the winner-take-all cut and the
++  row refuses rather than repeat an attempt already made. It fires at
++  the heavy budget (150 BP iterations) and prices itself at 110 x its
++  own fire ordinal: after the ordinary payload band and the cheap
++  placement rungs, before the speculative searches (wide, cold) and
++  refine. Additive over the residue — the codec gate is unchanged, so it
++  can only add certificates.
+ - `color` re-fit escalation: a lane's first assembly stays cheap at 15;
+   every re-fit after it pays 160 x its own fire ordinal (160, 320,
+   480 …) plus the rung premium. The colour context head now fits on
+@@ -137,7 +162,9 @@ per-cell owner by held-out loss (Wave 2: `tiles.freeze` deleted);
+ a second capture's evidence births
+ `tiles.union`; a failed attempt births `tiles.retry` at the same
+ price — retries are ordinary work, never gated by close readiness (the
+-v2 gate law). Certificates wake three things: the fountain-close
++v2 gate law) — and, where two captures share a rung over the tile, a
++`tiles.pool` worker (110) that re-reads the same evidence with the
++per-cell window means instead of the per-cell winner. Certificates wake three things: the fountain-close
+ consult (engine-held; race mode may end the run right here, cancelling
+ everything pending), the refinement worker of every window covering
+ the tile — `refine` for K windows, `refine.color` for colour windows
+diff --git a/holo3/engine.py b/holo3/engine.py
+index 1891fff..069b32a 100644
+--- a/holo3/engine.py
++++ b/holo3/engine.py
+@@ -28,6 +28,7 @@ from .plugins import (
+     revisit,
+     survey,
+     tiles,
++    tiles_pool,
+ )
+ from .store import _Store
+ 
+@@ -56,6 +57,7 @@ DESCRIPTORS: tuple[PluginDescriptor, ...] = (
+     tiles.SCAN_DESCRIPTOR,
+     tiles.UNION_DESCRIPTOR,
+     tiles.RETRY_DESCRIPTOR,
++    tiles_pool.POOL_DESCRIPTOR,
+     refine.REFINE_DESCRIPTOR,
+     color_refine.COLOR_REFINE_DESCRIPTOR,
+     revisit.REVISIT_DESCRIPTOR,
+diff --git a/holo3/plugins/tiles_pool.py b/holo3/plugins/tiles_pool.py
+new file mode 100644
+index 0000000..b486880
+--- /dev/null
++++ b/holo3/plugins/tiles_pool.py
+@@ -0,0 +1,219 @@
++"""tiles.pool — the cross-capture pooled-evidence residue row.
++
++WHAT THE MEASURED LAW SAYS (CLAUDE.md, "Multi-scan law", F1∘F6 replicated
++3x): equal-weight combining of several scans LOSES to best-single on a
++GLOBAL detector, because the errors are print-correlated; it WINS once
++the context detector has de-correlated the context bias. holo3 already
++obeys the cross-capture half of that law — `tiles.union` sums each
++capture's post-context `printed_llr` cell by cell (`tiles._combine`), and
++`tiles.retry` re-runs that sum at the heavy budget.
++
++WHAT IT DOES NOT DO is the same thing along the WINDOW axis. Inside one
++capture, `freeze_page_owners` hands every cell to exactly one covering
++window — the one with the best held-out logloss — and throws the other
++windows' readings of that cell away. Windows overlap by construction
++(`WINDOW_CELLS` 200 on `WINDOW_STEP_CELLS` 160), and each carries its own
++pose and its own calibration/context fit, so two windows over one cell
++are two de-correlated readouts of it. Winner-take-all keeps one.
++
++`tiles.pool` is the residue tool that keeps both. For each cell it takes
++the EQUAL-WEIGHT MEAN of every reading a capture holds (a mean, never a
++sum: the readings share photons, and "never double-count the same
++physical capture" is standing law), then sums those per-capture means
++across captures exactly as union does. Where no cell is read twice the
++pooled assembly is bit-identical to union's, and the row refuses rather
++than repeat an attempt that has already been made.
++
++Everything else is ordinary: the codec gate is `tiles.attempt_tile`
++verbatim, so zero-wrong stays codec-enforced (LDPC syndrome + CRC + the
++format-known-site identity in `printed_cells_for`), and the row is purely
++additive over the residue — it can only add certificates.
++"""
++from __future__ import annotations
++
++from fractions import Fraction
++
++import numpy as np
++
++from ..data import AttemptFact, Certificate, JobResult
++from ..descriptor import Job, PluginDescriptor, Subject
++from ..lib.geometry import TILE_CELLS
++from . import tiles
++
++PLUGIN_POOL: str = "tiles.pool"
++
++POOL_COST: int = 110
++PRICES: tuple[tuple[str, int], ...] = ((tiles.STAGE_POOL, POOL_COST),)
++
++# a pooled attempt is armed by any ordinary tile attempt that did not
++# certify — including the heavy retry, whose failure is the strongest
++# evidence that the residue needs a different assembly rather than more
++# iterations. The row never arms off its own facts.
++ARMING_STAGES: tuple[str, ...] = (tiles.STAGE_SCAN, tiles.STAGE_UNION,
++                                  tiles.STAGE_RETRY150)
++ARMING_OUTCOMES: tuple[str, ...] = (tiles.OUTCOME_FAILED,
++                                    tiles.OUTCOME_BELOW_FLOOR)
++
++# the pooled cut differs from the winner-take-all cut only where some
++# cell is read more than once by one capture
++POOLED_MULTIPLICITY: int = 2
++
++
++def arms_pool(fact: AttemptFact, certified: bool) -> bool:
++    return (fact.stage in ARMING_STAGES
++            and fact.outcome in ARMING_OUTCOMES
++            and not certified)
++
++
++def shared_cover_ppcs(store: object, page: int, ty: int,
++                      tx: int) -> tuple[Fraction, ...]:
++    """Every exact-rational rung at which >=2 DISTINCT captures hold
++    evidence for this tile — the union row's pairing law, asked of one
++    tile instead of one evidence fact. Own-capture pooling is structural-
++    ly impossible: a capture's ladder is strictly ascending, so it owns
++    at most one lane per ppc (MULTIRES-SPEC)."""
++    rungs: list[Fraction] = []
++    seen: set[Fraction] = set()
++    for capture_id in store.captures():
++        capture = store.capture(capture_id)
++        if capture is None:
++            continue
++        for level in capture.levels:
++            if level.ppc in seen:
++                continue
++            seen.add(level.ppc)
++            lanes = store.cover_lanes(page, ty, tx, level.ppc)
++            if len({lane_capture for lane_capture, _index in lanes}) >= 2:
++                rungs.append(level.ppc)
++    return tuple(sorted(rungs))
++
++
++def capture_pool_cut(store: object, page: int, ty: int, tx: int,
++                     capture_id: str, level_index: int,
++                     ) -> tuple[tiles.TileCut | None, int]:
++    """One capture's pooled reading of one tile: the equal-weight mean,
++    per cell, of every evidence row of that capture covering the cell.
++
++    Returns the cut and the largest per-cell reading count, which is 1
++    exactly when the mean is the winner-take-all cut."""
++    candidates, _order_keys = tiles.tile_candidates(
++        store, page, ty, tx, capture_id, level_index)
++    arity = tiles.evidence_arity(store.row)
++    total = np.zeros((tiles.N_CELLS, arity), dtype=np.float64)
++    counts = np.zeros(tiles.N_CELLS, dtype=np.int64)
++    for _index, _page, cells_yx, _row_indices, values in candidates:
++        cells = np.asarray(cells_yx, np.int64)
++        if not cells.shape[0]:
++            continue
++        flat = ((cells[:, 0] % TILE_CELLS) * TILE_CELLS
++                + (cells[:, 1] % TILE_CELLS))
++        np.add.at(total, flat, np.asarray(values, np.float64))
++        np.add.at(counts, flat, 1)
++    observed_flat = np.flatnonzero(counts)
++    if not observed_flat.size:
++        return None, 0
++    pooled = total[observed_flat] / counts[observed_flat, None]
++    return (tiles.TileCut(capture_id, level_index, page, ty, tx,
++                          pooled.astype(np.float32),
++                          observed_flat.astype(np.uint16)),
++            int(counts.max()))
++
++
++def assemble_pooled(store: object, page: int, ty: int, tx: int,
++                    ppc: Fraction) -> tuple[tuple[tiles.TileCut, ...], int]:
++    """The pooled components of one (tile x shared rung) subject, in
++    capture order, plus the largest per-cell reading count seen."""
++    cuts: list[tiles.TileCut] = []
++    multiplicity = 0
++    for capture_id in store.captures():
++        level_index = store.level_of_ppc(capture_id, ppc)
++        if level_index is None:
++            continue
++        cut, seen = capture_pool_cut(store, page, ty, tx, capture_id,
++                                     level_index)
++        if cut is None:
++            continue
++        cuts.append(cut)
++        multiplicity = max(multiplicity, seen)
++    return tuple(cuts), multiplicity
++
++
++def prepare_pool(store: object, subject: Subject,
++                 stage: str) -> Job | None:
++    page, ty, tx, ppc = subject
++    pending = tiles.uncertified_streams(store, page, ty, tx)
++    if not pending:
++        return None
++    components, multiplicity = assemble_pooled(store, page, ty, tx, ppc)
++    if not tiles.arms_union(components):
++        return None
++    if multiplicity < POOLED_MULTIPLICITY:
++        # every cell was read once by every capture, so the pooled cut IS
++        # the winner-take-all cut and this attempt has already been made
++        # (identical inputs never re-run)
++        return None
++    row = store.row
++    site_geometry = store.geometry
++
++    def job() -> JobResult:
++        return tiles.attempt_many(row, site_geometry, components, pending,
++                                  tiles.STAGE_POOL)
++
++    return job
++
++
++def _pool_subjects(store: object, fact: object) -> tuple[Subject, ...]:
++    certified = store.has_certificate(
++        (fact.page, fact.ty, fact.tx, fact.stream_id))
++    if not arms_pool(fact, certified):
++        return ()
++    return tuple((fact.page, fact.ty, fact.tx, ppc)
++                 for ppc in shared_cover_ppcs(store, fact.page, fact.ty,
++                                              fact.tx))
++
++
++def _pool_eligible(store: object, subject: Subject) -> bool:
++    return bool(tiles.uncertified_streams(store, subject[0], subject[1],
++                                          subject[2]))
++
++
++def _pool_retire(store: object, subject: Subject) -> bool:
++    return not _pool_eligible(store, subject)
++
++
++def _pool_stage(store: object, subject: Subject) -> str | None:
++    return tiles.STAGE_POOL
++
++
++def _pool_cost(store: object, subject: Subject, stage: str,
++               attempts: int, last_cost: int) -> int:
++    """Residue price: above the ordinary payload band (20) and the cheap
++    placement rungs, below the speculative searches (wide 120, cold
++    140/150) and refine (200). Re-fires escalate on the row's own fire
++    ordinal, so a tile whose evidence keeps churning drifts behind
++    cheaper work instead of thrashing at a flat price."""
++    escalated = POOL_COST * attempts
++    return (max(POOL_COST, escalated)
++            + tiles.RUNG_COST * store.union_rung_ordinal(subject[3]))
++
++
++POOL_DESCRIPTOR = PluginDescriptor(
++    name=PLUGIN_POOL,
++    subject_kind="tile",
++    born_by=(AttemptFact,),
++    subjects_of=_pool_subjects,
++    # the union row's subscription, function object and all: the same
++    # subject vocabulary reads the same evidence
++    reads=tiles.union_reads,
++    eligible=_pool_eligible,
++    stage=_pool_stage,
++    cost=_pool_cost,
++    retire=_pool_retire,
++    prepare=prepare_pool,
++    produces=(AttemptFact, Certificate),
++    prices=PRICES,
++)
++
++__all__ = ["POOL_DESCRIPTOR", "PLUGIN_POOL", "POOL_COST", "arms_pool",
++           "assemble_pooled", "capture_pool_cut", "prepare_pool",
++           "shared_cover_ppcs"]
+diff --git a/holo3/tests/test_h3_engine_contract.py b/holo3/tests/test_h3_engine_contract.py
+index 2d39521..f1dd19a 100644
+--- a/holo3/tests/test_h3_engine_contract.py
++++ b/holo3/tests/test_h3_engine_contract.py
+@@ -39,7 +39,8 @@ N_LEVELS = 2
+ 
+ DESCRIPTOR_NAMES = (
+     "survey", "place", "calibrate", "ctx", "color", "tiles.scan",
+-    "tiles.union", "tiles.retry", "refine", "refine.color", "revisit")
++    "tiles.union", "tiles.retry", "tiles.pool", "refine", "refine.color",
++    "revisit")
+ 
+ DESCRIPTOR_HOOKS = (
+     "subjects_of", "reads", "eligible", "stage", "cost", "retire",
+@@ -54,8 +55,10 @@ PRODUCED_FACT_TYPES = (
+     "RefineOutcome", "WindowEvidence")
+ 
+ SHARED_FACT_TYPES = {
+-    "AttemptFact": ("tiles.retry", "tiles.scan", "tiles.union"),
+-    "Certificate": ("tiles.retry", "tiles.scan", "tiles.union"),
++    "AttemptFact": ("tiles.pool", "tiles.retry", "tiles.scan",
++                    "tiles.union"),
++    "Certificate": ("tiles.pool", "tiles.retry", "tiles.scan",
++                    "tiles.union"),
+     "LatticeSeed": ("place", "revisit"),
+     "PlaceOutcome": ("place", "revisit"),
+     "Placement": ("place", "revisit"),
+diff --git a/holo3/tests/test_h3_schedule.py b/holo3/tests/test_h3_schedule.py
+index de631c8..02b1658 100644
+--- a/holo3/tests/test_h3_schedule.py
++++ b/holo3/tests/test_h3_schedule.py
+@@ -26,6 +26,7 @@ LADDER_GOLDEN = (
+     (40, "place", "ring", False, False),
+     (60, "place", "word_centre", False, False),
+     (80, "place", "word_rest", False, False),
++    (110, "tiles.pool", "pool", False, True),
+     (120, "place", "wide", False, False),
+     (140, "place", "cold_live", False, False),
+     (150, "place", "cold_rest", False, False),
+@@ -35,9 +36,10 @@ LADDER_GOLDEN = (
+     (200, "revisit", "refine", True, False),
+ )
+ 
+-ESCALATING_GOLDEN = {"color": (160,)}
++ESCALATING_GOLDEN = {"color": (160,), "tiles.pool": (110,)}
+ 
+ ESCALATION_LINE = "  160*n  color         color_refit"
++POOL_ESCALATION_LINE = "  110*n  tiles.pool    pool"
+ 
+ READ_FAMILIES_GOLDEN = {
+     "survey": (),
+@@ -48,6 +50,7 @@ READ_FAMILIES_GOLDEN = {
+     "tiles.scan": ("color_row", "evidence_fit", "evidence_read"),
+     "tiles.union": ("color_row", "evidence_fit", "evidence_read"),
+     "tiles.retry": ("color_row", "evidence_fit", "evidence_read"),
++    "tiles.pool": ("color_row", "evidence_fit", "evidence_read"),
+     "refine": ("evidence_fit", "evidence_read", "pose_affine",
+                "pose_route", "tile"),
+     "refine.color": ("pose_affine", "pose_route", "tile"),
+@@ -141,12 +144,14 @@ def test_a_declared_price_is_what_the_row_charges_on_its_first_fire():
+         "tiles.scan": (0, 0, 0, "cap", 0),
+         "tiles.union": (0, 0, 0, Fraction(2)),
+         "tiles.retry": ("scan", 0, 0, 0, "main", 0, "cap"),
++        "tiles.pool": (0, 0, 0, Fraction(2)),
+         "refine": ("cap", 0, 0, (0, 0, 8, 8)),
+         "refine.color": ("cap", 0, 0, (0, 0, 8, 8)),
+         "revisit": ("cap", 0, 0, (0, 0, 8, 8)),
+     }
+     base_rung = SimpleNamespace(union_rung_ordinal=lambda ppc: 0)
+-    stores = {"tiles.union": base_rung, "tiles.retry": base_rung}
++    stores = {"tiles.union": base_rung, "tiles.retry": base_rung,
++              "tiles.pool": base_rung}
+     for descriptor in engine.DESCRIPTORS:
+         if descriptor.name not in subjects:
+             continue
+@@ -186,8 +191,10 @@ def test_the_escalating_rows_are_derived_from_their_own_cost_functions():
+ 
+ def test_the_ladder_prints_the_escalation_instead_of_a_flat_lie():
+     assert ESCALATION_LINE in schedule.ladder_rows(engine.DESCRIPTORS)
++    assert POOL_ESCALATION_LINE in schedule.ladder_rows(engine.DESCRIPTORS)
+     rendered = schedule.render(engine.DESCRIPTORS)
+     assert ESCALATION_LINE in rendered
++    assert POOL_ESCALATION_LINE in rendered
+     assert any(line.startswith("price ladder")
+                and schedule.ESCALATION in line for line in rendered), (
+         "the ladder legend must say what the mark means")
+-- 
+2.55.0
+
+
+From 9fd663921fb349820dd554b3ee15f69e9ef6d7f8 Mon Sep 17 00:00:00 2001
+From: Germano Caronni <gec@acm.org>
+Date: Sun, 30 Aug 2026 20:59:31 +0200
+Subject: [PATCH 3/6] tiles.pool tests: the existence proof, the pairing pins,
+ and the null proof
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+EXISTENCE PROOF (test_h3_plugins_pool.py, the row's reason to exist).
+Two captures, two overlapping windows each, one independent noise draw
+per window (seeded) on the same printed field of a real c3-k-r0550 tile,
+amplitude 1.3 against sd 2.0. Measured through the real store and the
+real codec at bp150: capture X alone FAILS, capture Y alone FAILS, the
+winner-take-all union of both FAILS, the pooled assembly CERTIFIES — and
+the certificate's user bits equal the printed bits, so zero-wrong holds
+through an unchanged codec gate. The amplitude sits inside a measured
+window (scratch sweep: pool closes from 1.2, union only from 1.6, a
+single view only from 2.4), so the pin is not balanced on an edge.
+
+BELOW-FLOOR NO LONGER ARMS, and the row loses nothing by it — pinned
+with its proof: the pooled cut covers exactly the cells the union cut
+covers (both are the union of every contributing window's cells), and
+averaging can only send a cell to zero, never wake a silent one. A
+below-floor verdict is therefore coverage-determined and pooling cannot
+lift it; the tile still reaches the row through its union attempt's own
+failure. This is what keeps the row off a whole sheet's worth of early
+below-floor scans.
+
+PAIRING: single-capture tiles mint nothing; two distinct captures at one
+EXACT rational rung mint the union row's own subject and nothing else
+(asserted equal to `tiles._union_subjects`, not merely similar); a
+near-equal Fraction pairs nothing; two lanes of ONE capture never pool
+with each other; a rung only one capture reaches mints nothing.
+
+REFUSAL: with one window per capture the pooled cut is asserted
+BIT-IDENTICAL to `assemble_union`'s (same bytes, same order, same
+capture order) and prepare returns None — identical inputs never re-run.
+
+MATHS: mean(+3, -1) = +1 within a capture (never the winner's +3, never
+the sum +2), then +5 from the second capture sums to +6. Repeated
+assembly is byte-identical; assembly writes nothing to the store
+(store-snapshot diff empty).
+
+PRICING: (110, 110, 220, 330) by fire ordinal; the engine's source
+contains neither the number nor the stage name.
+
+NULL PROOF: `pool_subjects` joins the decode record, and three sims
+assert the row never births — the K sim, the colour sim, and the
+degraded K capture, which leaves a real residue (6 failed attempts, 23
+below the floor) and still mints nothing because one capture cannot
+reach the pairing gate.
+
+Gates at this commit, same machine: fast lane 1424 passed / 379 skipped;
+slow lane (HOLO3_RUN_SLOW_TESTS=1) 1799 passed / 4 skipped, with every
+pre-existing golden unmoved — the sims' byte-exact payloads, certificate
+sets, mixed-sim union census and all three job-count churn tripwires,
+which were frozen against the tree before this row existed and are
+therefore the byte-identity evidence.
+
+Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>
+---
+ holo3/plugins/tiles_pool.py         |   8 +-
+ holo3/tests/_h3_facts.py            |  21 +-
+ holo3/tests/conftest.py             |   5 +
+ holo3/tests/test_h3_degraded_sim.py |   9 +
+ holo3/tests/test_h3_e2e_sims.py     |  10 +
+ holo3/tests/test_h3_plugins_pool.py | 370 ++++++++++++++++++++++++++++
+ 6 files changed, 414 insertions(+), 9 deletions(-)
+ create mode 100644 holo3/tests/test_h3_plugins_pool.py
+
+diff --git a/holo3/plugins/tiles_pool.py b/holo3/plugins/tiles_pool.py
+index b486880..0529799 100644
+--- a/holo3/plugins/tiles_pool.py
++++ b/holo3/plugins/tiles_pool.py
+@@ -51,8 +51,12 @@ PRICES: tuple[tuple[str, int], ...] = ((tiles.STAGE_POOL, POOL_COST),)
+ # iterations. The row never arms off its own facts.
+ ARMING_STAGES: tuple[str, ...] = (tiles.STAGE_SCAN, tiles.STAGE_UNION,
+                                   tiles.STAGE_RETRY150)
+-ARMING_OUTCOMES: tuple[str, ...] = (tiles.OUTCOME_FAILED,
+-                                    tiles.OUTCOME_BELOW_FLOOR)
++# `below_attempt_floor` deliberately does NOT arm, and the row loses
++# nothing by it: the pooled cut covers exactly the cells the union cut
++# covers (both are the union of every contributing window's cells), and
++# averaging can only send a cell to zero, never wake a silent one. So a
++# below-floor verdict is coverage-determined and pooling cannot lift it.
++ARMING_OUTCOMES: tuple[str, ...] = (tiles.OUTCOME_FAILED,)
+ 
+ # the pooled cut differs from the winner-take-all cut only where some
+ # cell is read more than once by one capture
+diff --git a/holo3/tests/_h3_facts.py b/holo3/tests/_h3_facts.py
+index 95c4e2a..98d432f 100644
+--- a/holo3/tests/_h3_facts.py
++++ b/holo3/tests/_h3_facts.py
+@@ -39,13 +39,16 @@ def tile_cells(size: int = 64) -> np.ndarray:
+     return grid.reshape(-1, 2).astype(np.int64)
+ 
+ 
+-def capture() -> data.Capture:
+-    level = data.Level(index=0, ppc=Fraction(4), scale=Fraction(1),
+-                       shape_px=(4096, 4096), label="l0")
++def capture(capture_id: str = CAPTURE_ID,
++            ppcs: tuple[Fraction, ...] = (Fraction(4),)) -> data.Capture:
++    levels = tuple(
++        data.Level(index=index, ppc=ppc, scale=Fraction(1),
++                   shape_px=(4096, 4096), label=f"l{index}")
++        for index, ppc in enumerate(ppcs))
+     return data.Capture(
+-        capture_id=CAPTURE_ID, path=Path("scan.tiff"), dpi=1200.0,
++        capture_id=capture_id, path=Path("scan.tiff"), dpi=1200.0,
+         shape_px=(4096, 4096), channels=1, platen_backing=0.9,
+-        levels=(level,), plane_dir=Path("planes"))
++        levels=levels, plane_dir=Path("planes"))
+ 
+ 
+ def survey() -> data.CaptureSurvey:
+@@ -79,12 +82,16 @@ def placement(wid: tuple = WINDOW_ID, route: str = "word", page: int = 0,
+ 
+ 
+ def evidence(wid: tuple = WINDOW_ID, loss: float | None = 0.1,
+-             ctx_adopted: bool = False, printed: float = 1.0,
++             ctx_adopted: bool = False,
++             printed: float | np.ndarray = 1.0,
+              score: float = 0.0, accepted: bool = True,
+              cells: np.ndarray | None = None) -> data.WindowEvidence:
+     page_cells = tile_cells() if cells is None else np.asarray(cells,
+                                                                np.int64)
+     n = page_cells.shape[0]
++    printed_llr = (np.full(n, printed, np.float32)
++                   if np.ndim(printed) == 0
++                   else np.asarray(printed, np.float32).reshape(n))
+     return data.WindowEvidence(
+         window_id=wid, capture_id=wid[0], level_index=wid[1],
+         region_index=wid[2], patch_ordinal=0, page=0,
+@@ -93,7 +100,7 @@ def evidence(wid: tuple = WINDOW_ID, loss: float | None = 0.1,
+         reference_values=np.zeros(n, np.int8),
+         knots=np.zeros(2, np.float32), probs=np.zeros(2, np.float32),
+         n_search=0, marginal_llr=np.zeros(n, np.float32),
+-        printed_llr=np.full(n, printed, np.float32), accepted=accepted,
++        printed_llr=printed_llr, accepted=accepted,
+         refusal_reason="", heldout_logloss=loss, ctx_adopted=ctx_adopted)
+ 
+ 
+diff --git a/holo3/tests/conftest.py b/holo3/tests/conftest.py
+index 0a67e7b..59bbbab 100644
+--- a/holo3/tests/conftest.py
++++ b/holo3/tests/conftest.py
+@@ -266,6 +266,7 @@ class DecodeRecord:
+     stderr: str
+     wall_s: float
+     union_subjects: tuple = ()
++    pool_subjects: tuple = ()
+     attempt_outcomes: dict = dataclass_field(default_factory=dict)
+ 
+ 
+@@ -310,6 +311,9 @@ def _decode_group(label: str, captures: tuple[_h3_sims.SimCapture, ...],
+         captured["union_subjects"] = tuple(sorted(
+             key[1] for key in instance._bookmarks
+             if key[0] == "tiles.union"))
++        captured["pool_subjects"] = tuple(sorted(
++            key[1] for key in instance._bookmarks
++            if key[0] == "tiles.pool"))
+         captured["attempt_outcomes"] = dict(instance._attempt_outcomes)
+         return result
+ 
+@@ -347,6 +351,7 @@ def _decode_group(label: str, captures: tuple[_h3_sims.SimCapture, ...],
+         out_path=out_path, out_exists=out_path.is_file(),
+         stdout=out.getvalue(), stderr=err.getvalue(), wall_s=wall_s,
+         union_subjects=captured.get("union_subjects", ()),
++        pool_subjects=captured.get("pool_subjects", ()),
+         attempt_outcomes=captured.get("attempt_outcomes", {}))
+ 
+ 
+diff --git a/holo3/tests/test_h3_degraded_sim.py b/holo3/tests/test_h3_degraded_sim.py
+index 28716cb..1d90e26 100644
+--- a/holo3/tests/test_h3_degraded_sim.py
++++ b/holo3/tests/test_h3_degraded_sim.py
+@@ -65,6 +65,15 @@ def test_the_rescue_rows_actually_fire_on_this_capture(decode_k_degraded_w1,
+         f"exercise the row it exists for")
+ 
+ 
++def test_the_pool_row_stays_unborn_on_this_single_capture_residue(
++        decode_k_degraded_w1):
++    assert decode_k_degraded_w1.pool_subjects == (), (
++        "this capture leaves a real residue — 6 failed attempts and 23 "
++        "below the floor — and tiles.pool still never births, because a "
++        "single capture can never reach the two-capture pairing gate")
++    assert "tiles.pool" not in JOB_COUNTS
++
++
+ def test_the_serial_job_counts_are_exact(decode_k_degraded_w1):
+     _h3_support.assert_golden("degraded serial job counts",
+                               _jobs(decode_k_degraded_w1), JOB_COUNTS)
+diff --git a/holo3/tests/test_h3_e2e_sims.py b/holo3/tests/test_h3_e2e_sims.py
+index 9a8f5e2..5f10b9c 100644
+--- a/holo3/tests/test_h3_e2e_sims.py
++++ b/holo3/tests/test_h3_e2e_sims.py
+@@ -314,6 +314,16 @@ def test_k_serial_job_counts_are_the_churn_tripwire(decode_k_w1):
+                               K_SERIAL_JOB_COUNTS)
+ 
+ 
++@pytest.mark.parametrize("fixture", ("decode_k_w1", "decode_color_w8"))
++def test_the_pool_row_never_births_on_a_single_capture_sim(request,
++                                                           fixture):
++    record = request.getfixturevalue(fixture)
++    assert record.pool_subjects == (), (
++        "tiles.pool is minted only where >=2 DISTINCT captures share a "
++        "rung over a tile: one capture can never mint it")
++    assert "tiles.pool" not in _serial_jobs(record)
++
++
+ @pytest.mark.parametrize("shift, agrees", [(0, True), (1, False)])
+ def test_colour_page_bits_are_anchored_to_the_printed_furniture(
+         sim_color, shift, agrees):
+diff --git a/holo3/tests/test_h3_plugins_pool.py b/holo3/tests/test_h3_plugins_pool.py
+new file mode 100644
+index 0000000..ddf5d28
+--- /dev/null
++++ b/holo3/tests/test_h3_plugins_pool.py
+@@ -0,0 +1,370 @@
++"""tiles.pool — the cross-capture pooled-evidence residue row.
++
++The existence proof at the bottom is the row's whole reason to exist:
++two captures, two overlapping windows each, one independent noise draw
++per window on the same printed field. Every single view fails at the
++heavy budget, the winner-take-all union of the two captures fails, and
++the pooled assembly certifies — with the right bits.
++"""
++from __future__ import annotations
++
++from fractions import Fraction
++
++import numpy as np
++import pytest
++
++from holo3 import engine as engine_module
++from holo3.lib import decimate
++from holo3.plugins import tiles, tiles_pool
++from holo3.tests import _h3_facts, _h3_support
++
++PPC = Fraction(4)
++OTHER_PPC = Fraction(8)
++CAP_X = "1a" * 32
++CAP_Y = "2b" * 32
++EXTENT_1 = (0, 0, 64, 64)
++EXTENT_2 = (0, 0, 64, 128)
++ADDRESS = (0, 0, 0)
++STREAM = "main"
++LOSS_BEST = 0.10
++LOSS_WORST = 0.20
++
++# the existence proof's channel: one amplitude inside the measured
++# window where the pooled assembly closes and nothing else does
++# (scratch sweep 2026-08-30: pool certifies from 1.2, union only from
++# 1.6, a single view only from 2.4, at this noise)
++PROOF_AMP = 1.3
++PROOF_NOISE_SD = 2.0
++PROOF_BITS_SEED = 7
++PROOF_NOISE_SEEDS = (101, 102, 201, 202)
++
++
++def _engine_row() -> tuple[object, object]:
++    instance = _h3_facts.new_engine()
++    return instance.row, instance.geometry
++
++
++ROW, GEOMETRY = _engine_row()
++
++
++def _store(*rows: tuple[str, tuple[int, int, int, int], float, object],
++           captures: tuple[tuple[str, tuple[Fraction, ...]], ...] = (
++               (CAP_X, (PPC,)), (CAP_Y, (PPC,)))) -> object:
++    instance = _h3_facts.new_engine()
++    for capture_id, ppcs in captures:
++        instance._fold(_h3_facts.capture(capture_id, ppcs))
++    for capture_id, extent, loss, printed in rows:
++        instance._fold(_h3_facts.evidence(
++            wid=(capture_id, 0, 0, extent), loss=loss, printed=printed))
++    return instance
++
++
++def _attempt_fact(stage: str, outcome: str) -> object:
++    page, ty, tx = ADDRESS
++    from holo3.data import AttemptFact
++
++    return AttemptFact(
++        page=page, ty=ty, tx=tx, stream_id=STREAM, stage=stage,
++        outcome=outcome, n_informative=3000, n_iters=150,
++        syndrome_ok=False, crc_ok=False, components=((CAP_X, 0),))
++
++
++# ---------------------------------------------------------------- pairing
++
++
++def test_a_single_capture_tile_never_births_the_pool_row():
++    store = _store((CAP_X, EXTENT_1, LOSS_BEST, 3.0),
++                   captures=((CAP_X, (PPC,)),))
++    assert tiles_pool.shared_cover_ppcs(store, *ADDRESS) == ()
++    assert tiles_pool._pool_subjects(
++        store, _attempt_fact(tiles.STAGE_SCAN, tiles.OUTCOME_FAILED)) == ()
++
++
++def test_two_distinct_captures_at_one_exact_rung_mint_the_pool_subject():
++    store = _store((CAP_X, EXTENT_1, LOSS_BEST, 3.0),
++                   (CAP_Y, EXTENT_1, LOSS_BEST, 3.0))
++    page, ty, tx = ADDRESS
++    _h3_support.assert_golden(
++        "pool subject at the shared rung",
++        tiles_pool._pool_subjects(
++            store, _attempt_fact(tiles.STAGE_SCAN, tiles.OUTCOME_FAILED)),
++        ((page, ty, tx, PPC),))
++
++
++def test_the_pool_subject_is_the_union_subject_vocabulary():
++    store = _store((CAP_X, EXTENT_1, LOSS_BEST, 3.0),
++                   (CAP_Y, EXTENT_1, LOSS_BEST, 3.0))
++    page, ty, tx = ADDRESS
++    pooled = tiles_pool._pool_subjects(
++        store, _attempt_fact(tiles.STAGE_SCAN, tiles.OUTCOME_FAILED))
++    union = tiles._union_subjects(
++        store, store.evidence((CAP_Y, 0, 0, EXTENT_1)))
++    assert pooled == union == ((page, ty, tx, PPC),), (
++        "the pool row reuses the union row's pairing, it does not invent "
++        "a second alignment")
++
++
++def test_pairing_is_fraction_equality_never_closeness():
++    near = decimate.as_fraction(float(PPC) + 1e-12)
++    store = _store((CAP_X, EXTENT_1, LOSS_BEST, 3.0),
++                   (CAP_Y, EXTENT_1, LOSS_BEST, 3.0),
++                   captures=((CAP_X, (PPC,)), (CAP_Y, (near,))))
++    assert near != PPC
++    assert tiles_pool.shared_cover_ppcs(store, *ADDRESS) == ()
++
++
++def test_own_capture_lanes_never_pool_with_themselves():
++    instance = _h3_facts.new_engine()
++    instance._fold(_h3_facts.capture(CAP_X, (PPC, OTHER_PPC)))
++    for level_index in (0, 1):
++        instance._fold(_h3_facts.evidence(
++            wid=(CAP_X, level_index, 0, EXTENT_1), loss=LOSS_BEST,
++            printed=3.0))
++    assert tiles_pool.shared_cover_ppcs(instance, *ADDRESS) == (), (
++        "two lanes of ONE capture are the same physical capture at two "
++        "decimations: they never pool")
++
++
++def test_a_rung_only_one_capture_reaches_mints_nothing():
++    store = _store((CAP_X, EXTENT_1, LOSS_BEST, 3.0),
++                   (CAP_Y, EXTENT_1, LOSS_BEST, 3.0),
++                   captures=((CAP_X, (PPC, OTHER_PPC)), (CAP_Y, (PPC,))))
++    assert tiles_pool.shared_cover_ppcs(store, *ADDRESS) == (PPC,)
++
++
++# ------------------------------------------------------------ eligibility
++
++
++@pytest.mark.parametrize("stage,outcome,armed", (
++    (tiles.STAGE_SCAN, tiles.OUTCOME_FAILED, True),
++    (tiles.STAGE_UNION, tiles.OUTCOME_FAILED, True),
++    (tiles.STAGE_RETRY150, tiles.OUTCOME_FAILED, True),
++    (tiles.STAGE_SCAN, tiles.OUTCOME_BELOW_FLOOR, False),
++    (tiles.STAGE_UNION, tiles.OUTCOME_BELOW_FLOOR, False),
++    (tiles.STAGE_SCAN, tiles.OUTCOME_CERTIFIED, False),
++    (tiles.STAGE_POOL, tiles.OUTCOME_FAILED, False),
++))
++def test_only_a_non_certifying_ordinary_attempt_arms_the_row(
++        stage, outcome, armed):
++    assert tiles_pool.arms_pool(_attempt_fact(stage, outcome),
++                                False) is armed
++
++
++def test_a_below_floor_verdict_is_coverage_bound_so_it_never_arms():
++    store = _store((CAP_X, EXTENT_1, LOSS_BEST, 3.0),
++                   (CAP_X, EXTENT_2, LOSS_WORST, -1.0),
++                   (CAP_Y, EXTENT_1, LOSS_BEST, 5.0))
++    page, ty, tx = ADDRESS
++    pooled, _multiplicity = tiles_pool.assemble_pooled(store, page, ty, tx,
++                                                       PPC)
++    union = tiles.assemble_union(store, page, ty, tx, PPC)
++    _dense, pooled_seen = tiles._combine(pooled, 1)
++    _dense, union_seen = tiles._combine(union, 1)
++    assert np.array_equal(pooled_seen, union_seen), (
++        "the pooled cut covers exactly the cells the union cut covers, "
++        "so it can never lift a below-floor verdict — which is why "
++        "below_attempt_floor does not arm the row")
++    assert tiles.OUTCOME_BELOW_FLOOR not in tiles_pool.ARMING_OUTCOMES
++
++
++def test_the_row_never_arms_off_its_own_facts():
++    assert tiles.STAGE_POOL not in tiles_pool.ARMING_STAGES
++    assert tiles.STAGE_POOL not in tiles.ORDINARY_STAGES, (
++        "and tiles.retry must not arm off a pool fact either — the two "
++        "heavy rows would chase each other"
++    )
++
++
++def test_a_certified_tile_never_arms_never_fires_and_retires():
++    store = _store((CAP_X, EXTENT_1, LOSS_BEST, 3.0),
++                   (CAP_Y, EXTENT_1, LOSS_BEST, 3.0))
++    page, ty, tx = ADDRESS
++    subject = (page, ty, tx, PPC)
++    assert tiles_pool.arms_pool(
++        _attempt_fact(tiles.STAGE_SCAN, tiles.OUTCOME_FAILED), True) is False
++    store._fold(_h3_facts.certificate(page, ty, tx))
++    assert tiles_pool._pool_eligible(store, subject) is False
++    assert tiles_pool._pool_retire(store, subject) is True
++    assert tiles_pool.prepare_pool(store, subject, tiles.STAGE_POOL) is None
++    assert tiles_pool._pool_subjects(
++        store, _attempt_fact(tiles.STAGE_SCAN, tiles.OUTCOME_FAILED)) == ()
++
++
++def test_one_capture_alone_prepares_no_pooled_job():
++    store = _store((CAP_X, EXTENT_1, LOSS_BEST, 3.0),
++                   (CAP_X, EXTENT_2, LOSS_WORST, 1.0),
++                   captures=((CAP_X, (PPC,)),))
++    page, ty, tx = ADDRESS
++    assert tiles_pool.prepare_pool(store, (page, ty, tx, PPC),
++                                   tiles.STAGE_POOL) is None
++
++
++# -------------------------------------------------------------- the maths
++
++
++def test_the_pooled_cell_value_is_the_equal_weight_mean_of_its_readings():
++    store = _store((CAP_X, EXTENT_1, LOSS_BEST, 3.0),
++                   (CAP_X, EXTENT_2, LOSS_WORST, -1.0),
++                   (CAP_Y, EXTENT_1, LOSS_BEST, 5.0))
++    page, ty, tx = ADDRESS
++    components, multiplicity = tiles_pool.assemble_pooled(store, page, ty,
++                                                          tx, PPC)
++    assert multiplicity == 2
++    values = {cut.capture_id: np.unique(cut.values) for cut in components}
++    assert np.array_equal(values[CAP_X], np.array([1.0], np.float32)), (
++        "mean(+3, -1) = +1, never the winner's +3 and never the sum +2")
++    assert np.array_equal(values[CAP_Y], np.array([5.0], np.float32))
++
++
++def test_captures_are_summed_after_their_own_readings_are_averaged():
++    store = _store((CAP_X, EXTENT_1, LOSS_BEST, 3.0),
++                   (CAP_X, EXTENT_2, LOSS_WORST, -1.0),
++                   (CAP_Y, EXTENT_1, LOSS_BEST, 5.0))
++    page, ty, tx = ADDRESS
++    components, _multiplicity = tiles_pool.assemble_pooled(store, page, ty,
++                                                           tx, PPC)
++    dense, observed = tiles._combine(components,
++                                     tiles.evidence_arity(store.row))
++    assert np.array_equal(np.unique(dense[observed]), np.array([6.0])), (
++        "mean within a capture (photons are shared), sum across captures "
++        "(the measured multi-scan law)")
++
++
++def test_the_pooled_cut_is_bit_identical_to_the_union_cut_with_no_overlap():
++    store = _store((CAP_X, EXTENT_1, LOSS_BEST, 3.0),
++                   (CAP_Y, EXTENT_1, LOSS_WORST, 7.0))
++    page, ty, tx = ADDRESS
++    pooled, multiplicity = tiles_pool.assemble_pooled(store, page, ty, tx,
++                                                      PPC)
++    union = tiles.assemble_union(store, page, ty, tx, PPC)
++    assert multiplicity == 1
++    assert len(pooled) == len(union) == 2
++    for mine, theirs in zip(pooled, union):
++        assert mine.capture_id == theirs.capture_id
++        assert mine.values.tobytes() == theirs.values.tobytes()
++        assert mine.observed_flat.tobytes() == theirs.observed_flat.tobytes()
++
++
++def test_the_row_refuses_to_repeat_the_union_assembly():
++    store = _store((CAP_X, EXTENT_1, LOSS_BEST, 3.0),
++                   (CAP_Y, EXTENT_1, LOSS_BEST, 7.0))
++    page, ty, tx = ADDRESS
++    assert tiles_pool.prepare_pool(store, (page, ty, tx, PPC),
++                                   tiles.STAGE_POOL) is None, (
++        "every cell read once by every capture means the pooled cut IS "
++        "the winner-take-all cut: identical inputs never re-run")
++
++
++def test_two_pooled_assemblies_of_one_unchanged_store_are_byte_identical():
++    store = _store((CAP_X, EXTENT_1, LOSS_BEST, 3.0),
++                   (CAP_X, EXTENT_2, LOSS_WORST, -1.0),
++                   (CAP_Y, EXTENT_1, LOSS_BEST, 5.0))
++    page, ty, tx = ADDRESS
++    first, _m1 = tiles_pool.assemble_pooled(store, page, ty, tx, PPC)
++    second, _m2 = tiles_pool.assemble_pooled(store, page, ty, tx, PPC)
++    for one, two in zip(first, second):
++        assert one.values.tobytes() == two.values.tobytes()
++        assert one.observed_flat.tobytes() == two.observed_flat.tobytes()
++
++
++def test_pooling_reads_the_store_and_writes_nothing_back_to_it():
++    store = _store((CAP_X, EXTENT_1, LOSS_BEST, 3.0),
++                   (CAP_X, EXTENT_2, LOSS_WORST, -1.0),
++                   (CAP_Y, EXTENT_1, LOSS_BEST, 5.0))
++    page, ty, tx = ADDRESS
++    before, _hold_before = _h3_facts.store_snapshot(store)
++    tiles_pool.assemble_pooled(store, page, ty, tx, PPC)
++    tiles_pool.prepare_pool(store, (page, ty, tx, PPC), tiles.STAGE_POOL)
++    after, _hold_after = _h3_facts.store_snapshot(store)
++    _h3_support.assert_golden("store cells pooling wrote",
++                              _h3_facts.cells_written(before, after), ())
++
++
++# ------------------------------------------------------------- scheduling
++
++
++def test_the_row_fires_at_the_heavy_budget():
++    _h3_support.assert_golden("pool BP budget",
++                              tiles.max_iters_for(tiles.STAGE_POOL),
++                              tiles.RETRY_BP_MAX_ITERS)
++    _h3_support.assert_golden("pool source tag",
++                              tiles.source_tag(tiles.STAGE_POOL),
++                              "tiles/pool")
++
++
++def test_the_row_prices_itself_between_the_payload_band_and_refine():
++    descriptor = engine_module.DESCRIPTOR_BY_NAME[tiles_pool.PLUGIN_POOL]
++    page, ty, tx = ADDRESS
++    subject = (page, ty, tx, PPC)
++    store = _store((CAP_X, EXTENT_1, LOSS_BEST, 3.0),
++                   (CAP_Y, EXTENT_1, LOSS_BEST, 3.0))
++    prices = [descriptor.cost(store, subject, tiles.STAGE_POOL, attempts, 0)
++              for attempts in (0, 1, 2, 3)]
++    _h3_support.assert_golden("pool price by fire ordinal", tuple(prices),
++                              (110, 110, 220, 330))
++    assert tiles.PAYLOAD_COST < tiles_pool.POOL_COST < 200
++
++
++def test_the_engine_owns_none_of_the_pool_price():
++    source = (_h3_support.HOLO3_ROOT / "engine.py").read_text()
++    assert str(tiles_pool.POOL_COST) not in source
++    assert "pool" not in source.replace("tiles_pool", "")
++
++
++# --------------------------------------------------------- the whole row
++
++
++def _proof_store() -> tuple[object, np.ndarray]:
++    bits = np.random.default_rng(PROOF_BITS_SEED).integers(
++        0, 2, size=ROW.streams[0].user_bits, dtype=np.uint8)
++    field = tiles.printed_cells_for(ROW, GEOMETRY, *ADDRESS, bits)
++    truth = (2.0 * field.astype(np.float64) - 1.0).ravel()
++    rows = []
++    lanes = ((CAP_X, EXTENT_1, LOSS_BEST), (CAP_X, EXTENT_2, LOSS_WORST),
++             (CAP_Y, EXTENT_1, LOSS_BEST), (CAP_Y, EXTENT_2, LOSS_WORST))
++    for (capture_id, extent, loss), seed in zip(lanes, PROOF_NOISE_SEEDS):
++        noise = np.random.default_rng(seed).normal(
++            0.0, PROOF_NOISE_SD, truth.size)
++        rows.append((capture_id, extent, loss, PROOF_AMP * truth + noise))
++    return _store(*rows), bits
++
++
++def _outcome(components: tuple) -> object:
++    return tiles.attempt_tile(ROW, GEOMETRY, components, STREAM,
++                              tiles.STAGE_RETRY150)
++
++
++def test_the_pooled_assembly_certifies_what_no_single_view_or_union_can():
++    store, bits = _proof_store()
++    page, ty, tx = ADDRESS
++    for capture_id in (CAP_X, CAP_Y):
++        solo = tiles.assemble_tile(store, page, ty, tx, capture_id, 0)
++        assert _outcome((solo,)).fact.outcome == tiles.OUTCOME_FAILED, (
++            f"{capture_id[:4]} alone must be below threshold at bp150 — "
++            "otherwise the proof proves nothing")
++    union = tiles.assemble_union(store, page, ty, tx, PPC)
++    assert tiles.arms_union(union)
++    assert _outcome(union).fact.outcome == tiles.OUTCOME_FAILED, (
++        "the winner-take-all union of both captures fails too: this is "
++        "the residue tiles.pool exists for")
++    job = tiles_pool.prepare_pool(store, (page, ty, tx, PPC),
++                                  tiles.STAGE_POOL)
++    assert job is not None
++    result = job()
++    certificates = [fact for fact in result.facts
++                    if hasattr(fact, "user_bits")]
++    assert len(certificates) == 1
++    assert np.array_equal(certificates[0].user_bits, bits), (
++        "and the bits are the printed bits: zero-wrong stays codec-"
++        "enforced, the pooled assembly weakens no acceptance check")
++    assert certificates[0].source == "tiles/pool"
++
++
++def test_the_pooled_job_reports_its_own_cpu_and_one_outcome_per_stream():
++    store, _bits = _proof_store()
++    page, ty, tx = ADDRESS
++    result = tiles_pool.prepare_pool(store, (page, ty, tx, PPC),
++                                     tiles.STAGE_POOL)()
++    assert result.cpu_s >= 0.0
++    assert len(result.events) == len(ROW.streams)
++    assert all(event.source == "tiles/pool" for event in result.events)
+-- 
+2.55.0
+
+
+From 6beb84113056843cdc6ff793d496f3f9e44f994c Mon Sep 17 00:00:00 2001
+From: Germano Caronni <gec@acm.org>
+Date: Sun, 30 Aug 2026 21:13:52 +0200
+Subject: [PATCH 4/6] =?UTF-8?q?tiles.pool:=20a=20failure-only=20birth=20mi?=
+ =?UTF-8?q?sses=20the=20pairing=20that=20arrives=20after=20it=20=E2=80=94?=
+ =?UTF-8?q?=20two=20paths,=20measured?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+MEASURED DEFECT, found by running the row on the mixed two-capture sim
+rather than reasoning about it. The row minted ZERO subjects there. It
+was not an empty residue: eleven tiles carried failed attempts and SIX
+of them are covered by two captures at the shared rung — (0,0,5),
+(0,4,4), (0,4,5), (0,5,5), (0,6,3), (0,6,5). Every one was missed,
+because `subjects_of` evaluated the pairing at the instant the failure
+was folded, the second capture's evidence had not yet landed, and no
+union-stage failure ever followed to re-arm it (the union stage attempted
+exactly one tile all run — the other 34 union subjects certified through
+a scan before their worker popped). That is precisely the birth-time
+reasoning the standing ruling forbids: determine at runtime, not at
+birth time.
+
+THE FIX: the row's condition has two halves that arrive in either order,
+so it gets two birth paths over one subject vocabulary. A failed attempt
+mints the subject where the pairing already stands; a piece of evidence —
+the union row's own birth, `tiles._union_subjects` reused whole — mints
+it where a failure already stands. Neither path can be dropped, and
+together they are complete.
+
+The failure half is now a monotone derived index in the store,
+`tile_attempt_failed`, folded from the attempt facts already being
+folded: no digest, no epoch, no stamp, and a failure never un-happens,
+which is exactly what makes asking it at birth safe on both paths. It
+stays out of `eligible` on purpose — an ineligible pop burns the
+worker's version, and a failure landing afterwards wakes nobody (attempt
+folds emit no keys), so a fire-time residue gate would have opened a
+starvation path for a scan job that was in flight when the pool worker
+popped. `eligible`/`retire` therefore test certification alone, which is
+the only condition that is ever permanent.
+
+MEASURED AFTER: the mixed sim mints exactly those six subjects and fires
+ZERO times — all six certify through the ordinary rows before a
+110-priced worker pops. Every other row is unmoved job for job
+(calibrate 136, ctx 28, place 257, survey 2, tiles.retry 20,
+tiles.scan 139, tiles.union 3), 49/49 certified, payload byte-exact.
+Born for the residue, charged nothing when there is none. Both facts are
+now pinned in test_h3_multires.py, the census asserted equal to
+`failed & union_tiles` rather than to a bare list.
+
+`_failed_tiles` joins the store-cell inventory and the fold write map, so
+the "assembly writes nothing to the store" snapshot really covers it.
+SCHEDULE.md's generated block re-rendered (the born-by column grew).
+
+test_h3_multires.py 19 passed (slow lane); fast lane 1424 passed.
+
+Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>
+---
+ holo3/SCHEDULE.md                   | 45 +++++++++++++++++------------
+ holo3/plugins/tiles_pool.py         | 42 +++++++++++++++++++++------
+ holo3/store.py                      | 11 +++++++
+ holo3/tests/_h3_facts.py            |  3 +-
+ holo3/tests/test_h3_multires.py     | 35 ++++++++++++++++++++++
+ holo3/tests/test_h3_plugins_pool.py | 41 ++++++++++++++++++++++++++
+ holo3/tests/test_h3_store_wakes.py  |  2 +-
+ 7 files changed, 150 insertions(+), 29 deletions(-)
+
+diff --git a/holo3/SCHEDULE.md b/holo3/SCHEDULE.md
+index 1c2eeb6..015a5cf 100644
+--- a/holo3/SCHEDULE.md
++++ b/holo3/SCHEDULE.md
+@@ -32,20 +32,20 @@ by that ordinal.
+ 
+ ```
+ descriptor rows (12)
+-name          subject  born by                          produces                                           reads
+-------------  -------  -------------------------------  -------------------------------------------------  ------------------------------------------------------------------------------------
+-survey        capture  Capture                          CaptureSurvey                                      —
+-place         window   Window                           Placement|LatticeSeed|PlaceOutcome                 lattice_seed, live_pages, pose_affine
+-calibrate     window   Placement                        WindowEvidence                                     pose_affine, region_pitch
+-ctx           region   WindowEvidence                   CtxOutcome                                         evidence_fit
+-color         lane     Placement                        ColorEvidenceRow                                   lane_poses, page_certs
+-tiles.scan    tile     WindowEvidence|ColorEvidenceRow  AttemptFact|Certificate                            color_row, evidence_fit, evidence_read
+-tiles.union   tile     WindowEvidence|ColorEvidenceRow  AttemptFact|Certificate                            color_row, evidence_fit, evidence_read
+-tiles.retry   tile     AttemptFact                      AttemptFact|Certificate                            color_row, evidence_fit, evidence_read
+-tiles.pool    tile     AttemptFact                      AttemptFact|Certificate                            color_row, evidence_fit, evidence_read
+-refine        window   Placement                        RefineOutcome                                      evidence_fit, evidence_read, pose_affine, pose_route, tile
+-refine.color  window   Placement                        RefineOutcome                                      pose_affine, pose_route, tile
+-revisit       window   Certificate                      WindowEvidence|Placement|LatticeSeed|PlaceOutcome  evidence_fit, evidence_read, lane_poses, pose_affine, region_ctx, region_pitch, tile
++name          subject  born by                                      produces                                           reads
++------------  -------  -------------------------------------------  -------------------------------------------------  ------------------------------------------------------------------------------------
++survey        capture  Capture                                      CaptureSurvey                                      —
++place         window   Window                                       Placement|LatticeSeed|PlaceOutcome                 lattice_seed, live_pages, pose_affine
++calibrate     window   Placement                                    WindowEvidence                                     pose_affine, region_pitch
++ctx           region   WindowEvidence                               CtxOutcome                                         evidence_fit
++color         lane     Placement                                    ColorEvidenceRow                                   lane_poses, page_certs
++tiles.scan    tile     WindowEvidence|ColorEvidenceRow              AttemptFact|Certificate                            color_row, evidence_fit, evidence_read
++tiles.union   tile     WindowEvidence|ColorEvidenceRow              AttemptFact|Certificate                            color_row, evidence_fit, evidence_read
++tiles.retry   tile     AttemptFact                                  AttemptFact|Certificate                            color_row, evidence_fit, evidence_read
++tiles.pool    tile     AttemptFact|WindowEvidence|ColorEvidenceRow  AttemptFact|Certificate                            color_row, evidence_fit, evidence_read
++refine        window   Placement                                    RefineOutcome                                      evidence_fit, evidence_read, pose_affine, pose_route, tile
++refine.color  window   Placement                                    RefineOutcome                                      pose_affine, pose_route, tile
++revisit       window   Certificate                                  WindowEvidence|Placement|LatticeSeed|PlaceOutcome  evidence_fit, evidence_read, lane_poses, pose_affine, region_ctx, region_pitch, tile
+ 
+ price ladder (plugin literals, cheapest first; * = same-price peers; *n = the row re-prices by fire ordinal)
+      10  survey        survey
+@@ -109,10 +109,19 @@ Debt rows carried in this build (rulings 2026-08-29):
+   calibrate body, a never-placed window re-fires a ring-stage place
+   pass, when certificates land in reach or the region ctx changes —
+   v1's M-pass as a subscription instead of a phase.
+-- `tiles.pool` (the pooled-evidence residue row): born from any ordinary
+-  tile attempt that did not certify, on the union row's own subject
+-  vocabulary — (tile x exact-rational shared ppc), minted only where >=2
+-  DISTINCT captures hold evidence for the tile at that rung. It re-reads
++- `tiles.pool` (the pooled-evidence residue row): the union row's own
++  subject vocabulary — (tile x exact-rational shared ppc), minted only
++  where >=2 DISTINCT captures hold evidence for the tile at that rung
++  AND some attempt on the tile has failed. Its two halves arrive in
++  either order, so it has TWO BIRTH PATHS: a failed attempt mints it
++  where the pairing already stands, and a piece of evidence — the union
++  row's own birth — mints it where a failure already stands. A
++  failure-only trigger measurably misses: on the mixed sim six tiles
++  failed at the scan stage before a second capture covered them, and no
++  union-stage failure ever followed to re-arm the row. The failure test
++  is a monotone derived index over the attempt facts
++  (`tile_attempt_failed`), so asking it at either birth is safe. It
++  re-reads
+   the same evidence the union row reads (literally the same `reads`
+   function object) and assembles it differently: inside one capture,
+   every covering window's post-context `printed_llr` for a cell is
+diff --git a/holo3/plugins/tiles_pool.py b/holo3/plugins/tiles_pool.py
+index 0529799..bf9aeee 100644
+--- a/holo3/plugins/tiles_pool.py
++++ b/holo3/plugins/tiles_pool.py
+@@ -35,7 +35,13 @@ from fractions import Fraction
+ 
+ import numpy as np
+ 
+-from ..data import AttemptFact, Certificate, JobResult
++from ..data import (
++    AttemptFact,
++    Certificate,
++    ColorEvidenceRow,
++    JobResult,
++    WindowEvidence,
++)
+ from ..descriptor import Job, PluginDescriptor, Subject
+ from ..lib.geometry import TILE_CELLS
+ from . import tiles
+@@ -167,13 +173,31 @@ def prepare_pool(store: object, subject: Subject,
+ 
+ 
+ def _pool_subjects(store: object, fact: object) -> tuple[Subject, ...]:
+-    certified = store.has_certificate(
+-        (fact.page, fact.ty, fact.tx, fact.stream_id))
+-    if not arms_pool(fact, certified):
+-        return ()
+-    return tuple((fact.page, fact.ty, fact.tx, ppc)
+-                 for ppc in shared_cover_ppcs(store, fact.page, fact.ty,
+-                                              fact.tx))
++    """TWO BIRTH PATHS, one subject vocabulary, because the row needs
++    both halves of its condition and they can arrive in either order.
++
++    A failure mints the subject wherever the pairing already stands. A
++    piece of evidence — the union row's own birth — mints it wherever a
++    failure already stands and the pairing has only just come to. Neither
++    path alone is enough: measured on the mixed sim, six tiles failed at
++    the scan stage and were later covered by a second capture, and the
++    failure-only trigger minted nothing for any of them, because the
++    pairing did not yet exist when the failure landed and no union-stage
++    failure ever followed to re-arm it.
++
++    The failure test is a MONOTONE derived index (a failure never
++    un-happens), so consulting it at birth is safe on both paths: once
++    true it stays true, and each path re-asks it."""
++    if isinstance(fact, AttemptFact):
++        certified = store.has_certificate(
++            (fact.page, fact.ty, fact.tx, fact.stream_id))
++        if not arms_pool(fact, certified):
++            return ()
++        return tuple((fact.page, fact.ty, fact.tx, ppc)
++                     for ppc in shared_cover_ppcs(store, fact.page,
++                                                  fact.ty, fact.tx))
++    return tuple(subject for subject in tiles._union_subjects(store, fact)
++                 if store.tile_attempt_failed(*subject[:3]))
+ 
+ 
+ def _pool_eligible(store: object, subject: Subject) -> bool:
+@@ -204,7 +228,7 @@ def _pool_cost(store: object, subject: Subject, stage: str,
+ POOL_DESCRIPTOR = PluginDescriptor(
+     name=PLUGIN_POOL,
+     subject_kind="tile",
+-    born_by=(AttemptFact,),
++    born_by=(AttemptFact, WindowEvidence, ColorEvidenceRow),
+     subjects_of=_pool_subjects,
+     # the union row's subscription, function object and all: the same
+     # subject vocabulary reads the same evidence
+diff --git a/holo3/store.py b/holo3/store.py
+index cb6e985..acf9d8e 100644
+--- a/holo3/store.py
++++ b/holo3/store.py
+@@ -106,6 +106,7 @@ class _Store:
+         self._certificates: dict[CertKey, data.Certificate] = {}
+         self._equations: dict[int, int] = {}
+         self._attempt_outcomes: dict[tuple[object, ...], str] = {}
++        self._failed_tiles: set[tiles.TileAddress] = set()
+         self._account: dict[str, list[float]] = {}
+         self._done_grid_cache: dict[int, tuple[int, np.ndarray]] = {}
+         self._done_cells_cache: dict[
+@@ -306,6 +307,14 @@ class _Store:
+     def attempt_outcome(self, key: tuple[object, ...]) -> str | None:
+         return self._attempt_outcomes.get(key)
+ 
++    def tile_attempt_failed(self, page: int, ty: int, tx: int) -> bool:
++        """Has any attempt on this tile come back failed? A monotone
++        derived index over the attempt facts already folded — the residue
++        test a row asks at fire time, so that a row born before its
++        neighbourhood settled still gets the right answer when it runs
++        (determine at runtime, not at birth time)."""
++        return (page, ty, tx) in self._failed_tiles
++
+     def worker_version(self, plugin: str, subject: Subject) -> int:
+         worker = self._bookmarks.get((plugin, subject))
+         return 0 if worker is None else worker.version
+@@ -675,6 +684,8 @@ class _Store:
+         if self._attempt_outcomes.get(key) == fact.outcome:
+             return False, (), "other"
+         self._attempt_outcomes[key] = fact.outcome
++        if fact.outcome == tiles.OUTCOME_FAILED:
++            self._failed_tiles.add((fact.page, fact.ty, fact.tx))
+         return True, (), "other"
+ 
+     def _fold_color_row(
+diff --git a/holo3/tests/_h3_facts.py b/holo3/tests/_h3_facts.py
+index 98d432f..63574f1 100644
+--- a/holo3/tests/_h3_facts.py
++++ b/holo3/tests/_h3_facts.py
+@@ -22,7 +22,8 @@ STORE_CELLS = (
+     "_pose_gen", "_lattice_seeds", "_live_pages", "_lanes_on_page",
+     "_lane_poses", "_region_pitch", "_evidence", "_region_ctx",
+     "_color_rows", "_tile_cover_k", "_tile_cover_color", "_window_cover",
+-    "_color_row_cover", "_certificates", "_equations", "_attempt_outcomes")
++    "_color_row_cover", "_certificates", "_equations", "_attempt_outcomes",
++    "_failed_tiles")
+ 
+ 
+ def new_engine(workers: int = 1) -> engine._Engine:
+diff --git a/holo3/tests/test_h3_multires.py b/holo3/tests/test_h3_multires.py
+index d2f20ff..d0f41d2 100644
+--- a/holo3/tests/test_h3_multires.py
++++ b/holo3/tests/test_h3_multires.py
+@@ -249,6 +249,41 @@ def test_certificates_are_fed_by_both_captures(decode_k_mixed_w1):
+                        for page, ty, tx, _s in decode_k_mixed_w1.certificates}
+ 
+ 
++POOL_SUBJECT_TILES = ((0, 0, 5), (0, 4, 4), (0, 4, 5), (0, 5, 5),
++                      (0, 6, 3), (0, 6, 5))
++
++
++def test_the_pool_row_is_born_where_a_failure_meets_a_second_capture(
++        decode_k_mixed_w1):
++    _h3_support.assert_golden(
++        "mixed pool subject census", decode_k_mixed_w1.pool_subjects,
++        tuple((page, ty, tx, SHARED_EVIDENCE_PPC)
++              for page, ty, tx in POOL_SUBJECT_TILES))
++    failed = {(key[0], key[1], key[2])
++              for key, outcome in decode_k_mixed_w1.attempt_outcomes.items()
++              if outcome == tiles.OUTCOME_FAILED}
++    union_tiles = {subject[:3]
++                   for subject in decode_k_mixed_w1.union_subjects}
++    assert {subject[:3] for subject in decode_k_mixed_w1.pool_subjects} == (
++        failed & union_tiles), (
++        "exactly the tiles that failed AND are covered by two captures — "
++        "the failure-only birth path minted none of these six, because "
++        "the pairing arrived after the failure and no union-stage failure "
++        "followed to re-arm the row")
++
++
++def test_the_pool_row_costs_this_run_nothing_because_the_residue_resolves(
++        decode_k_mixed_w1):
++    fires = sum(1 for event in decode_k_mixed_w1.events
++                if isinstance(event, data.JobDone)
++                and event.plugin == "tiles.pool")
++    assert fires == 0, (
++        "all six tiles certify through the ordinary rows before a "
++        "110-priced worker pops: born for the residue, charged nothing "
++        "when there is none")
++    assert decode_k_mixed_w1.certified == _h3_sims.MIXED_TILES ** 2
++
++
+ def test_the_split_tile_certifies_only_at_the_mixed_union(
+         decode_k_mixed_w1):
+     sha_a = _h3_sims.MIXED_A_TIFF_SHA256
+diff --git a/holo3/tests/test_h3_plugins_pool.py b/holo3/tests/test_h3_plugins_pool.py
+index ddf5d28..ff3cc71 100644
+--- a/holo3/tests/test_h3_plugins_pool.py
++++ b/holo3/tests/test_h3_plugins_pool.py
+@@ -175,6 +175,47 @@ def test_the_row_never_arms_off_its_own_facts():
+     )
+ 
+ 
++def test_a_failure_alone_mints_nothing_until_the_pairing_stands():
++    store = _store((CAP_X, EXTENT_1, LOSS_BEST, 3.0),
++                   captures=((CAP_X, (PPC,)), (CAP_Y, (PPC,))))
++    fact = _attempt_fact(tiles.STAGE_SCAN, tiles.OUTCOME_FAILED)
++    assert tiles_pool._pool_subjects(store, fact) == ()
++    store._fold(fact)
++    late = _h3_facts.evidence(wid=(CAP_Y, 0, 0, EXTENT_1), loss=LOSS_BEST,
++                              printed=3.0)
++    store._fold(late)
++    page, ty, tx = ADDRESS
++    _h3_support.assert_golden(
++        "the late second capture mints the subject the failure could not",
++        tiles_pool._pool_subjects(store, late), ((page, ty, tx, PPC),))
++
++
++def test_evidence_mints_nothing_for_a_tile_that_has_not_failed():
++    store = _store((CAP_X, EXTENT_1, LOSS_BEST, 3.0))
++    late = _h3_facts.evidence(wid=(CAP_Y, 0, 0, EXTENT_1), loss=LOSS_BEST,
++                              printed=3.0)
++    store._fold(late)
++    assert tiles._union_subjects(store, late) != ()
++    assert tiles_pool._pool_subjects(store, late) == (), (
++        "the pairing alone is the union row's business; the pool row is "
++        "residue work and wants a failure on record too")
++
++
++def test_the_failure_index_is_monotone_and_written_by_the_attempt_fold():
++    store = _store((CAP_X, EXTENT_1, LOSS_BEST, 3.0),
++                   (CAP_Y, EXTENT_1, LOSS_BEST, 3.0))
++    page, ty, tx = ADDRESS
++    assert store.tile_attempt_failed(page, ty, tx) is False
++    store._fold(_attempt_fact(tiles.STAGE_SCAN, tiles.OUTCOME_BELOW_FLOOR))
++    assert store.tile_attempt_failed(page, ty, tx) is False
++    store._fold(_attempt_fact(tiles.STAGE_SCAN, tiles.OUTCOME_FAILED))
++    assert store.tile_attempt_failed(page, ty, tx) is True
++    store._fold(_h3_facts.certificate(page, ty, tx))
++    assert store.tile_attempt_failed(page, ty, tx) is True, (
++        "a failure never un-happens: that is what makes it safe to ask "
++        "at birth time on both paths")
++
++
+ def test_a_certified_tile_never_arms_never_fires_and_retires():
+     store = _store((CAP_X, EXTENT_1, LOSS_BEST, 3.0),
+                    (CAP_Y, EXTENT_1, LOSS_BEST, 3.0))
+diff --git a/holo3/tests/test_h3_store_wakes.py b/holo3/tests/test_h3_store_wakes.py
+index 7a7a02a..8fcc094 100644
+--- a/holo3/tests/test_h3_store_wakes.py
++++ b/holo3/tests/test_h3_store_wakes.py
+@@ -50,7 +50,7 @@ FOLD_WRITE_MAP = {
+     "ColorEvidenceRow": ("_color_rows", "_tile_cover_color",
+                          "_color_row_cover"),
+     "Certificate": ("_certificates", "_equations"),
+-    "AttemptFact": ("_attempt_outcomes",),
++    "AttemptFact": ("_attempt_outcomes", "_failed_tiles"),
+ }
+ 
+ # a delegating fact folds through its delegate: the write it shares is the
+-- 
+2.55.0
+
+
+From 343bd042bdeb3b991245b818379c66263b9f63a9 Mon Sep 17 00:00:00 2001
+From: Germano Caronni <gec@acm.org>
+Date: Sun, 30 Aug 2026 21:31:45 +0200
+Subject: [PATCH 5/6] tiles.pool: the two-capture residue sim, and the measured
+ reason no sim fires the row
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+A second degraded capture — the same page, the same degradation, a
+different noise draw — gives the tree its one sim whose residue SURVIVES
+the run with two captures on it (status not-verified, 4 of 49 certified),
+the closest analogue available to the real-sheet stack. On it the row
+births three subjects, all inside `failed & union-covered`, and fires
+zero times: that capture's surviving region is narrower than one window,
+so every cell has exactly one reading per capture, the pooled cut IS the
+winner-take-all cut, and the row declines to repeat an attempt already
+made. Both facts are pinned.
+
+AND THE NEGATIVE, recorded in the module docstring so the next reader
+does not repeat the search: no sim in this tree fires the row end to
+end, measured rather than assumed. Whole-page Gaussian degradation was
+swept at sd 44, 48, 52, 56 and a banded one — heavy noise on two
+interior tile rows, clean elsewhere, so placement stays healthy and the
+damage is tile-local, the shape e029 measured as HP weak horizontal
+lines — at sd 70, 85, 100. Every single one still certified 49/49 from
+the scan stage alone. The sim's failure mode is all-or-nothing; the
+residue this row exists for is the local, print-frozen kind. That is why
+the yield case is the seven-capture sheet-H stack and not a sim.
+
+Also pinned: the pooled job is a pure function of the store at fire time
+(same store, byte-identical facts twice over), which is the property
+that makes the worker count irrelevant to the commutative merge.
+
+`_degraded_raster` takes its seed as an argument; the default is the
+frozen one, so the existing single degraded capture is byte-identical.
+
+Gates at this commit: fast lane 1428 passed / 383 skipped; slow lane
+1807 passed / 4 skipped, every pre-existing golden unmoved; pyflakes
+clean over holo3.
+
+Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>
+---
+ holo3/plugins/tiles_pool.py         | 14 +++++++++
+ holo3/tests/conftest.py             | 44 +++++++++++++++++++++++------
+ holo3/tests/test_h3_degraded_sim.py | 37 ++++++++++++++++++++++++
+ holo3/tests/test_h3_plugins_pool.py | 20 +++++++++++++
+ 4 files changed, 106 insertions(+), 9 deletions(-)
+
+diff --git a/holo3/plugins/tiles_pool.py b/holo3/plugins/tiles_pool.py
+index bf9aeee..31c5266 100644
+--- a/holo3/plugins/tiles_pool.py
++++ b/holo3/plugins/tiles_pool.py
+@@ -28,6 +28,20 @@ Everything else is ordinary: the codec gate is `tiles.attempt_tile`
+ verbatim, so zero-wrong stays codec-enforced (LDPC syndrome + CRC + the
+ format-known-site identity in `printed_cells_for`), and the row is purely
+ additive over the residue — it can only add certificates.
++
++WHERE THE YIELD CASE IS MEASURED, and where it is not. The mechanism is
++pinned at unit level in test_h3_plugins_pool.py against the real codec.
++No sim in this tree exercises it end to end, and that is a measured
++statement, not an omission: the row births correctly on both the mixed
++pair (6 subjects) and the degraded pair (3) and fires zero times on
++each, because these sims' residues either resolve before a 110-priced
++worker pops or sit in a region narrower than one window, where the
++pooled cut IS the winner-take-all cut. Whole-page and banded Gaussian
++degradations were swept (sd 44-56 whole-page, 70-100 on two interior
++tile rows) and every one still certified 49/49 from the scan stage
++alone — the sim's failure mode is all-or-nothing, while the residue this
++row exists for is the local, print-frozen kind. The yield case belongs
++on the seven-capture sheet-H stack.
+ """
+ from __future__ import annotations
+ 
+diff --git a/holo3/tests/conftest.py b/holo3/tests/conftest.py
+index 59bbbab..9c24072 100644
+--- a/holo3/tests/conftest.py
++++ b/holo3/tests/conftest.py
+@@ -28,6 +28,7 @@ NULL_RASTER_PAPER = 245.0
+ NULL_RASTER_NOISE_SD = 3.0
+ 
+ DEGRADED_SEED = 20260829
++DEGRADED_SEED_B = 20260830
+ DEGRADED_NOISE_SD = 25.0
+ DEGRADED_KEEP_BOX = (0.35, 0.65, 0.35, 0.65)
+ 
+@@ -213,8 +214,9 @@ def sim_k_null(sim_k: _h3_sims.SimCapture,
+         payload_bytes=sim_k.payload_bytes, emit_dir=None)
+ 
+ 
+-def _degraded_raster(image: np.ndarray) -> np.ndarray:
+-    rng = np.random.default_rng(DEGRADED_SEED)
++def _degraded_raster(image: np.ndarray,
++                     seed: int = DEGRADED_SEED) -> np.ndarray:
++    rng = np.random.default_rng(seed)
+     noisy = image.astype(np.float32) + rng.normal(
+         0.0, DEGRADED_NOISE_SD, size=image.shape)
+     height, width = image.shape
+@@ -226,23 +228,40 @@ def _degraded_raster(image: np.ndarray) -> np.ndarray:
+     return np.round(np.clip(kept, 0, 255)).astype(np.uint8)
+ 
+ 
+-@pytest.fixture(scope="session")
+-def sim_k_degraded(sim_k: _h3_sims.SimCapture,
+-                   sim_root: Path) -> _h3_sims.SimCapture:
++def _degraded_capture(sim_k: _h3_sims.SimCapture, sim_root: Path,
++                      name: str, seed: int) -> _h3_sims.SimCapture:
+     import tifffile
+ 
+-    target = sim_root / "degraded" / "sim-k-degraded-1200dpi.tiff"
++    target = sim_root / "degraded" / f"sim-{name}-1200dpi.tiff"
+     if not target.is_file():
+         target.parent.mkdir(parents=True, exist_ok=True)
+-        tifffile.imwrite(target,
+-                         _degraded_raster(tifffile.imread(sim_k.tiff)))
++        tifffile.imwrite(target, _degraded_raster(
++            tifffile.imread(sim_k.tiff), seed))
+     return _h3_sims.SimCapture(
+-        name="k-degraded", format_ref=sim_k.format_ref, dpi=sim_k.dpi,
++        name=name, format_ref=sim_k.format_ref, dpi=sim_k.dpi,
+         rot_k=0, tiff=target, tiff_sha256=_h3_sims.sha256_file(target),
+         payload=sim_k.payload, payload_sha256=sim_k.payload_sha256,
+         payload_bytes=sim_k.payload_bytes, emit_dir=None)
+ 
+ 
++@pytest.fixture(scope="session")
++def sim_k_degraded(sim_k: _h3_sims.SimCapture,
++                   sim_root: Path) -> _h3_sims.SimCapture:
++    return _degraded_capture(sim_k, sim_root, "k-degraded", DEGRADED_SEED)
++
++
++@pytest.fixture(scope="session")
++def sim_k_degraded_pair(
++        sim_k: _h3_sims.SimCapture, sim_k_degraded: _h3_sims.SimCapture,
++        sim_root: Path) -> tuple[_h3_sims.SimCapture, _h3_sims.SimCapture]:
++    """The same page through the same degradation twice, differing only
++    in the noise draw: two captures at one dpi, so one shared rung
++    ladder, and a residue neither draw can read alone."""
++    return (sim_k_degraded,
++            _degraded_capture(sim_k, sim_root, "k-degraded-b",
++                              DEGRADED_SEED_B))
++
++
+ @dataclass(frozen=True)
+ class DecodeRecord:
+     label: str
+@@ -426,6 +445,13 @@ def decode_k_degraded_w1(sim_k_degraded: _h3_sims.SimCapture,
+                         workers=1, extra_argv=("--complete",))
+ 
+ 
++@pytest.fixture(scope="session")
++def decode_k_degraded_pair_w1(sim_k_degraded_pair,
++                              decode_root: Path) -> DecodeRecord:
++    return _decode_group("k-degraded-pair-w1", sim_k_degraded_pair,
++                         decode_root, workers=1, extra_argv=("--complete",))
++
++
+ @pytest.fixture(scope="session")
+ def sim_k_mixed(sim_k: _h3_sims.SimCapture, sim_root: Path,
+                 ) -> tuple[_h3_sims.SimCapture, _h3_sims.SimCapture]:
+diff --git a/holo3/tests/test_h3_degraded_sim.py b/holo3/tests/test_h3_degraded_sim.py
+index 1d90e26..054b1b7 100644
+--- a/holo3/tests/test_h3_degraded_sim.py
++++ b/holo3/tests/test_h3_degraded_sim.py
+@@ -18,6 +18,7 @@ REFINE_ADOPTIONS = 3
+ TILE_OUTCOMES = {"attempted_failed": 6, "below_attempt_floor": 23,
+                  "certified": 4}
+ RESCUE_ROWS = ("refine", "tiles.retry")
++PAIR_POOL_SUBJECTS = 3
+ 
+ 
+ def _jobs(record: object) -> dict[str, int]:
+@@ -74,6 +75,42 @@ def test_the_pool_row_stays_unborn_on_this_single_capture_residue(
+     assert "tiles.pool" not in JOB_COUNTS
+ 
+ 
++def test_a_second_degraded_capture_births_the_pool_row_on_the_residue(
++        decode_k_degraded_pair_w1):
++    """The same page, the same degradation, a different noise draw: the
++    one sim in the tree whose residue SURVIVES the run with two captures
++    on it, so it is the closest analogue to the real-sheet stack the
++    pooled row is built for."""
++    record = decode_k_degraded_pair_w1
++    assert record.status == "not-verified", (
++        "the residue must still be open, or this proves nothing about a "
++        "residue")
++    _h3_support.assert_golden("degraded-pair pool subjects",
++                              len(record.pool_subjects),
++                              PAIR_POOL_SUBJECTS)
++    failed = {(key[0], key[1], key[2])
++              for key, outcome in record.attempt_outcomes.items()
++              if outcome == "attempted_failed"}
++    union_tiles = {subject[:3] for subject in record.union_subjects}
++    assert {subject[:3] for subject in record.pool_subjects} <= (
++        failed & union_tiles)
++
++
++def test_the_pool_row_refuses_where_no_cell_is_read_twice(
++        decode_k_degraded_pair_w1):
++    """This capture's surviving region is narrower than one window, so
++    every cell has exactly one reading per capture and the pooled cut is
++    the winner-take-all cut. The row is born and declines to repeat an
++    attempt already made — no fires, no certificates, no wasted decode."""
++    fires = sum(1 for event in decode_k_degraded_pair_w1.events
++                if isinstance(event, data.JobDone)
++                and event.plugin == "tiles.pool")
++    assert fires == 0
++    assert not [cert for cert in
++                decode_k_degraded_pair_w1.certificates.values()
++                if cert.source == "tiles/pool"]
++
++
+ def test_the_serial_job_counts_are_exact(decode_k_degraded_w1):
+     _h3_support.assert_golden("degraded serial job counts",
+                               _jobs(decode_k_degraded_w1), JOB_COUNTS)
+diff --git a/holo3/tests/test_h3_plugins_pool.py b/holo3/tests/test_h3_plugins_pool.py
+index ff3cc71..7844d90 100644
+--- a/holo3/tests/test_h3_plugins_pool.py
++++ b/holo3/tests/test_h3_plugins_pool.py
+@@ -401,6 +401,26 @@ def test_the_pooled_assembly_certifies_what_no_single_view_or_union_can():
+     assert certificates[0].source == "tiles/pool"
+ 
+ 
++def test_the_pooled_job_is_a_pure_function_of_the_store_at_fire_time():
++    """The property that makes the worker count irrelevant: the same
++    store yields the same facts, bit for bit, so the commutative merge
++    sees identical work whatever order it lands in."""
++    store, _bits = _proof_store()
++    page, ty, tx = ADDRESS
++    runs = [tiles_pool.prepare_pool(store, (page, ty, tx, PPC),
++                                    tiles.STAGE_POOL)() for _ in range(2)]
++    first, second = runs
++    assert [type(fact).__name__ for fact in first.facts] == [
++        type(fact).__name__ for fact in second.facts]
++    for one, two in zip(first.facts, second.facts):
++        if hasattr(one, "user_bits"):
++            assert one.user_bits.tobytes() == two.user_bits.tobytes()
++        else:
++            assert one.outcome == two.outcome
++            assert one.n_iters == two.n_iters
++            assert one.components == two.components
++
++
+ def test_the_pooled_job_reports_its_own_cpu_and_one_outcome_per_stream():
+     store, _bits = _proof_store()
+     page, ty, tx = ADDRESS
+-- 
+2.55.0
+
+
+From 5123dc260a3f0851489f05514f45382f474c03ff Mon Sep 17 00:00:00 2001
+From: Germano Caronni <gec@acm.org>
+Date: Sun, 30 Aug 2026 21:33:40 +0200
+Subject: [PATCH 6/6] tiles.pool: the discarded readings counted, not assumed
+
+The module claimed windows overlap "by construction" and left the size
+of the discard to the reader. Measured on the mixed sim instead: with
+`window_starts(448)` = (0, 160, 248), of 138 tile-by-lane cover entries
+30 are covered by one window and 108 by between two and nine. So on the
+common tile the winner-take-all cut is throwing away most of the
+readings the capture holds, which is the quantitative reason this row
+exists rather than a plausible one.
+
+Fast lane 1428 passed / 383 skipped; pyflakes clean over holo3.
+
+Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>
+---
+ holo3/plugins/tiles_pool.py | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/holo3/plugins/tiles_pool.py b/holo3/plugins/tiles_pool.py
+index 31c5266..c216270 100644
+--- a/holo3/plugins/tiles_pool.py
++++ b/holo3/plugins/tiles_pool.py
+@@ -16,6 +16,10 @@ windows' readings of that cell away. Windows overlap by construction
+ pose and its own calibration/context fit, so two windows over one cell
+ are two de-correlated readouts of it. Winner-take-all keeps one.
+ 
++That discard is the common case, not a corner. Measured on the mixed sim
++(`window_starts(448)` = 0, 160, 248): of 138 tile-by-lane cover entries,
++30 are covered by one window and 108 by two to nine.
++
+ `tiles.pool` is the residue tool that keeps both. For each cell it takes
+ the EQUAL-WEIGHT MEAN of every reading a capture holds (a mean, never a
+ sum: the readings share photons, and "never double-count the same
+-- 
+2.55.0
+
