@@ -1,0 +1,1 @@
+bash -c 'env/bin/python' 'scratch/rung-ladder-20260930/search/fast/test_fastdecode.py' && 'env/bin/python' 'scratch/rung-ladder-20260930/search/fast/test_tasks_fast.py' && 'env/bin/python' 'scratch/rung-ladder-20260930/search/fast/test_variants_fast.py'

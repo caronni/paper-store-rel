@@ -2,6 +2,7 @@
 gate (gs render == GT dot-exact, page otherwise ink-free), determinism,
 and the CLI surface."""
 import hashlib
+import os
 import shutil
 import subprocess
 from pathlib import Path
@@ -11,7 +12,7 @@ import pytest
 
 
 from holo import cli
-from holo.devices.profiles import make_spec
+from holo.format.fossils import resolve_fossil_spec
 from holo.format.envelope import source_symbol_count
 from holo.gen import emit
 from holo.gen.plan import max_payload_bytes, plan_volume
@@ -20,14 +21,14 @@ PAYLOAD = hashlib.sha256(b"holo-gen").digest() * 40   # 1,280 bytes
 
 
 def test_descriptor_design_rows():
-    c2 = make_spec("c2-r0550")
+    c2 = resolve_fossil_spec("c2-r0550@3328x2304")
     assert c2.layout.cells_yx == (3328, 2304)
     assert c2.layout.tiles_yx == (52, 36)
     assert c2.tiles_per_page == 1872
     assert c2.tile_user_bits == 2108
     assert c2.symbol_bits == 2107
     assert c2.max_pages == 140
-    c3 = make_spec("c3-r0550")
+    c3 = resolve_fossil_spec("c3-r0550@2240x1536")
     assert c3.layout.tiles_yx == (35, 24)
     assert c3.tiles_per_page == 840
     assert c3.max_pages == 312
@@ -38,15 +39,16 @@ def test_descriptor_design_rows():
 
 
 def test_plan_arithmetic():
-    row = make_spec("c3-r0550")
+    row = resolve_fossil_spec("c3-r0550@2240x1536")
     p = plan_volume(row, 5120, 0.35)
     assert p.n_pages == 1 and p.k_total == 20
     assert p.n_repair == 820
     # page overflow refused
     with pytest.raises(ValueError):
-        plan_volume(make_spec("c2-r0550"), 80_000_000, 0.5)
+        plan_volume(resolve_fossil_spec("c2-r0550@3328x2304"),
+                    80_000_000, 0.5)
     # max payload monotone in pages and positive
-    row2 = make_spec("c2-r0550")
+    row2 = resolve_fossil_spec("c2-r0550@3328x2304")
     caps = [max_payload_bytes(row2, 0.5, n) for n in (1, 2, 4)]
     assert caps[0] > 0 and caps[0] < caps[1] < caps[2]
     # a 1-page a4-c2 promise at q=0.5: K <= floor(0.5*1872)-16 = 920
@@ -54,8 +56,8 @@ def test_plan_arithmetic():
 
 
 def test_color_plan_uses_aggregate_width_and_stream_union_reserve():
-    cmy7 = make_spec("c3-cmy7-p120-v0")
-    cmy8 = make_spec("c3-cmy8-p120-v0")
+    cmy7 = resolve_fossil_spec("c3-cmy7-p120-v0@2240x1536")
+    cmy8 = resolve_fossil_spec("c3-cmy8-p120-v0@2240x1536")
     assert cmy7.stream_symbol_bits == (5973,)
     assert cmy7.aggregate_symbol_bits == 5973
     assert cmy8.stream_symbol_bits == (2087, 2087, 2087)
@@ -89,7 +91,7 @@ def _payload_len_for_k(symbol_bits: int, k_total: int) -> int:
 
 
 def test_plan_enforces_every_block_whole_page_capacity():
-    c2 = make_spec("c2-r0550")
+    c2 = resolve_fossil_spec("c2-r0550@3328x2304")
     payload_len = _payload_len_for_k(c2.symbol_bits, 99_083)
     p = plan_volume(c2, payload_len, 0.5)
     assert p.k_total == 99_083 and p.n_pages == 107
@@ -109,7 +111,7 @@ def test_plan_exact_budget_arithmetic():
         capacity.q_fraction(0.1 + 0.2)   # dirty float dial refused
     # sweep payload sizes across page boundaries at the shipped dials —
     # every plan must construct and honor the promise, never raise
-    row = make_spec("c3-r0550")
+    row = resolve_fossil_spec("c3-r0550@2240x1536")
     for q in (0.35, 0.5, 0.7, 0.75):
         for size in range(1000, 3_000_000, 32_069):
             p = plan_volume(row, size, q)
@@ -117,7 +119,7 @@ def test_plan_exact_budget_arithmetic():
 
 
 def test_emit_deterministic(tmp_path: Path):
-    row = make_spec("c3-r0550")
+    row = resolve_fossil_spec("c3-r0550@2240x1536")
     v1 = emit.emit_volume(row, PAYLOAD, 0.35, tmp_path / "a")
     v2 = emit.emit_volume(row, PAYLOAD, 0.35, tmp_path / "b")
     assert [p.ps_sha256 for p in v1.pages] == [p.ps_sha256 for p in v2.pages]
@@ -147,6 +149,12 @@ def test_emit_deterministic(tmp_path: Path):
     assert page_row["gt_bitorder"] == "big"
 
 
+# Two printed-size colour emissions: a fork guard, not per-commit
+# feedback (2026-09-20).
+@pytest.mark.skipif(
+    os.environ.get("HOLO_RUN_SLOW_TESTS") != "1",
+    reason="set HOLO_RUN_SLOW_TESTS=1 for the printed-size emission goldens",
+)
 @pytest.mark.parametrize(
     ("coding_id", "ps_sha", "gt_sha", "plane_sha"),
     [
@@ -191,7 +199,7 @@ def test_color_emit_is_composite_and_has_plane_ground_truth(
 ):
     import json
 
-    row = make_spec(coding_id)
+    row = resolve_fossil_spec(f"{coding_id}@2240x1536")
     vol = emit.emit_volume(
         row, b"color smoke", 0.35, tmp_path / coding_id)
     assert vol.plan.n_pages == 1
@@ -232,7 +240,7 @@ def test_color_emit_is_composite_and_has_plane_ground_truth(
 @pytest.mark.skipif(shutil.which("gs") is None, reason="ghostscript missing")
 def test_emission_gate_gs_render_equals_gt(tmp_path: Path):
     from PIL import Image
-    row = make_spec("c3-r0550")
+    row = resolve_fossil_spec("c3-r0550@2240x1536")
     vol = emit.emit_volume(row, PAYLOAD, 0.35, tmp_path / "v")
     page = vol.pages[0]
     png = tmp_path / "v.png"
@@ -258,34 +266,40 @@ def test_cli_surface(tmp_path: Path, capsys):
     assert cli.main(["registry", "-v"]) == 0
     out = capsys.readouterr().out
     assert "BCH(127,50,t=13)" in out             # word internals
-    assert "derived geometry" in out             # per-printer geometry
-    assert "promise-grade" in out                # resolved profile numbers
-    assert cli.main(["capacity", "--profile", "resilient",
+    # 2026-10-12 (cmy generator W2b, CMY-DESIGN R21): `registry -v` lost
+    # the per-printer "derived geometry" and the profiles' "promise-grade"
+    # pricing with make_spec — a printer is an emission engine, never a
+    # geometry; the profiles stay listed as documentation.
+    assert "derived geometry" not in out and "promise-grade" not in out
+    # 2026-10-12 (W2b, R21): `capacity --profile resilient` and `generate
+    # --profile rocksolid` became the profile's row as its L: fossil at
+    # the profile's dial; `--profile` itself is no option any more.
+    assert cli.main(["capacity", "--format", "L:c3-r0550@2240x1536",
+                     "--source-fraction", "0.5",
                      "--payload-bytes", "100000"]) == 0
     out = capsys.readouterr().out
     assert "n_pages" in out
     payload_file = tmp_path / "p.bin"
     payload_file.write_bytes(PAYLOAD)
     out_dir = tmp_path / "out"
-    assert cli.main(["generate", "--profile", "rocksolid", str(payload_file),
+    rocksolid = ["--format", "L:c3-r0550@2240x1536",
+                 "--source-fraction", "0.35"]
+    assert cli.main(["generate", *rocksolid, str(payload_file),
                      "-o", str(out_dir)]) == 0
     out = capsys.readouterr().out
-    assert "K=" in out and "rocksolid" in out
+    assert "K=" in out and "c3-r0550@2240x1536" in out
     assert (out_dir / "page000.ps").exists()
     assert (out_dir / "manifest.json").exists()
     # existing directory is refused, never overwritten
     with pytest.raises(SystemExit):
-        cli.main(["generate", "--profile", "rocksolid", str(payload_file),
+        cli.main(["generate", *rocksolid, str(payload_file),
                   "-o", str(out_dir)])
-    # a named profile cannot be silently overridden
-    with pytest.raises(SystemExit):
-        cli.main(["capacity", "--profile", "rocksolid",
-                  "--source-fraction", "0.9"])
-    # manifest records profile evidence + provisional status
+    # manifest records the explicit selection + provisional status
     import json
     man = json.loads((out_dir / "manifest.json").read_text())
-    assert man["profile"]["name"] == "rocksolid"
-    assert man["profile"]["evidence"] == "measured"
+    assert man["profile"] == {"name": "custom",
+                              "evidence": "none — explicit parameters"}
+    assert man["printer_id"] is None
     assert "provisional" in man["v1_status"]
     assert man["volume"]["fountain_version"] == "fountain-v2"
 
@@ -293,10 +307,11 @@ def test_cli_surface(tmp_path: Path, capsys):
 def test_capacity_cli_labels_multistream_repairs_per_stream(capsys) -> None:
     import json
 
+    # 2026-10-12 (W2b, R21): `--coding ID` -> the row's L: fossil.
     assert cli.main([
         "capacity",
-        "--coding",
-        "c2-cmy8-p120-v0",
+        "--format",
+        "L:c2-cmy8-p120-v0@3328x2304",
         "--source-fraction",
         "0.5",
         "--payload-bytes",
@@ -309,8 +324,8 @@ def test_capacity_cli_labels_multistream_repairs_per_stream(capsys) -> None:
 
     assert cli.main([
         "capacity",
-        "--coding",
-        "c2-r0550",
+        "--format",
+        "L:c2-r0550@3328x2304",
         "--source-fraction",
         "0.5",
         "--payload-bytes",

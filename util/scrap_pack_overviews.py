@@ -554,7 +554,7 @@ field.addEventListener('input',()=>{{const q=field.value.toLowerCase();document.
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=Path.cwd())
-    parser.add_argument("--output", type=Path, default=Path("scratch/scrap-pack-all-overviews"))
+    parser.add_argument("--output", type=Path, default=Path("build/scrap-pack-overviews"))
     parser.add_argument("--limit", type=int, default=None, help="process only the first N frozen inputs")
     parser.add_argument("--overwrite", action="store_true", help="regenerate existing overview PNGs")
     parser.add_argument(

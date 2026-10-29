@@ -1,0 +1,44 @@
+screen-1 anchor from scratch/rung-ladder-20260930/search/trial-A: {1664: {'es10': -3.1955028707748854, 'p10': 0.11684241398541552, 'src': 'trial-A:k1664-h8-f0.5-l3-bal-g24-d1-s0'}, 1280: {'es10': -4.584906804806198, 'p10': 0.155, 'src': 'trial-A:k1280-h12-f0.5-l3-bal-g24-d1-s1'}, 1600: {'es10': -3.470196884904838, 'p10': 0.12260404969671047, 'src': 'trial-A:k1600-h12-f0.3-l3-bal-g24-d1-s1'}, 1216: {'es10': -4.824912185866601, 'p10': 0.15917021883573235, 'src': 'trial-A:k1216-h10-f0.5-l3-uni-g24-d1-s1'}}
+baseline k=1664 (r0406) edge-identical to harness data: True
+baseline k=1280 (r0313) edge-identical to harness data: True
+baseline k=1600 (r0391) edge-identical to harness data: True
+baseline k=1216 (r0297) edge-identical to harness data: True
+copied 87 plain/baseline lines from trial-A2
+mode trial: 292 configs over k=(1664, 1280, 1600, 1216), workers 12, out scratch/rung-ladder-20260930/search/trial-B2 (verify 0.0 s)
+[     30s] s0 38/272 s1 22/33 s2walk 0/0 s2fine 0/0 s2side 0/0 | stages {1664: 'screen0/1', 1280: 'screen0/1', 1600: 'screen0/1', 1216: 'screen0/1'} | decodes 9150 (302/s) queue 280 errors 0
+[     60s] s0 64/272 s1 45/55 s2walk 0/0 s2fine 0/0 s2side 0/0 | stages {1664: 'screen0/1', 1280: 'screen0/1', 1600: 'screen0/1', 1216: 'screen0/1'} | decodes 18300 (303/s) queue 247 errors 0
+[     92s] s0 91/272 s1 61/76 s2walk 0/5 s2fine 0/0 s2side 0/0 | stages {1664: 'walk', 1280: 'screen0/1', 1600: 'screen0/1', 1216: 'screen0/1'} | decodes 24450 (266/s) queue 305 errors 0
+[    122s] s0 91/272 s1 67/76 s2walk 1/5 s2fine 0/0 s2side 0/0 | stages {1664: 'walk', 1280: 'screen0/1', 1600: 'screen0/1', 1216: 'screen0/1'} | decodes 31900 (261/s) queue 224 errors 0
+[    152s] s0 112/272 s1 80/96 s2walk 5/5 s2fine 1/7 s2side 0/6 | stages {1664: 'final', 1280: 'screen0/1', 1600: 'screen0/1', 1216: 'screen0/1'} | decodes 41100 (270/s) queue 629 errors 0
+[    182s] s0 112/272 s1 80/96 s2walk 5/5 s2fine 7/7 s2side 2/6 | stages {1664: 'final', 1280: 'screen0/1', 1600: 'screen0/1', 1216: 'screen0/1'} | decodes 57950 (318/s) queue 292 errors 0
+[    190s] k=1664 DONE
+[    213s] s0 112/272 s1 87/96 s2walk 5/5 s2fine 7/7 s2side 6/6 | stages {1664: 'done', 1280: 'screen0/1', 1600: 'screen0/1', 1216: 'screen0/1'} | decodes 62950 (296/s) queue 192 errors 0
+[    243s] s0 138/272 s1 99/122 s2walk 5/5 s2fine 7/7 s2side 6/6 | stages {1664: 'done', 1280: 'screen0/1', 1600: 'screen0/1', 1216: 'screen0/1'} | decodes 67550 (278/s) queue 282 errors 0
+[    274s] s0 138/272 s1 113/122 s2walk 5/5 s2fine 7/7 s2side 6/6 | stages {1664: 'done', 1280: 'screen0/1', 1600: 'screen0/1', 1216: 'screen0/1'} | decodes 73350 (268/s) queue 166 errors 0
+[    304s] s0 157/272 s1 122/138 s2walk 5/10 s2fine 7/7 s2side 6/6 | stages {1664: 'done', 1280: 'walk', 1600: 'screen0/1', 1216: 'screen0/1'} | decodes 77650 (255/s) queue 245 errors 0
+[    334s] s0 157/272 s1 124/138 s2walk 6/10 s2fine 7/7 s2side 6/6 | stages {1664: 'done', 1280: 'walk', 1600: 'screen0/1', 1216: 'screen0/1'} | decodes 82150 (246/s) queue 201 errors 0
+[    364s] s0 184/272 s1 137/161 s2walk 10/10 s2fine 7/12 s2side 6/11 | stages {1664: 'done', 1280: 'final', 1600: 'screen0/1', 1216: 'screen0/1'} | decodes 89300 (245/s) queue 555 errors 0
+[    395s] s0 184/272 s1 141/161 s2walk 10/10 s2fine 8/12 s2side 6/11 | stages {1664: 'done', 1280: 'final', 1600: 'screen0/1', 1216: 'screen0/1'} | decodes 94300 (239/s) queue 455 errors 0
+[    425s] s0 184/272 s1 141/161 s2walk 10/10 s2fine 11/12 s2side 6/11 | stages {1664: 'done', 1280: 'final', 1600: 'screen0/1', 1216: 'screen0/1'} | decodes 103100 (243/s) queue 279 errors 0
+[    447s] k=1280 DONE
+[    455s] s0 184/272 s1 144/161 s2walk 10/10 s2fine 12/12 s2side 11/11 | stages {1664: 'done', 1280: 'done', 1600: 'screen0/1', 1216: 'screen0/1'} | decodes 107700 (237/s) queue 187 errors 0
+[    485s] s0 184/272 s1 155/161 s2walk 10/10 s2fine 12/12 s2side 11/11 | stages {1664: 'done', 1280: 'done', 1600: 'screen0/1', 1216: 'screen0/1'} | decodes 112450 (232/s) queue 92 errors 0
+[    515s] s0 212/272 s1 167/186 s2walk 10/10 s2fine 12/12 s2side 11/11 | stages {1664: 'done', 1280: 'done', 1600: 'screen0/1', 1216: 'screen0/1'} | decodes 117000 (227/s) queue 173 errors 0
+[    545s] s0 212/272 s1 179/186 s2walk 10/10 s2fine 12/12 s2side 11/11 | stages {1664: 'done', 1280: 'done', 1600: 'screen0/1', 1216: 'screen0/1'} | decodes 121950 (224/s) queue 74 errors 0
+[    575s] s0 215/272 s1 187/189 s2walk 10/14 s2fine 12/12 s2side 11/11 | stages {1664: 'done', 1280: 'done', 1600: 'walk', 1216: 'screen0/1'} | decodes 127100 (221/s) queue 54 errors 0
+[    605s] s0 230/272 s1 193/202 s2walk 11/14 s2fine 12/12 s2side 11/11 | stages {1664: 'done', 1280: 'done', 1600: 'walk', 1216: 'screen0/1'} | decodes 132000 (218/s) queue 79 errors 0
+[    636s] s0 239/272 s1 202/210 s2walk 14/14 s2fine 12/17 s2side 11/15 | stages {1664: 'done', 1280: 'done', 1600: 'final', 1216: 'screen0/1'} | decodes 136550 (215/s) queue 353 errors 0
+[    666s] s0 239/272 s1 202/210 s2walk 14/14 s2fine 15/17 s2side 11/15 | stages {1664: 'done', 1280: 'done', 1600: 'final', 1216: 'screen0/1'} | decodes 145250 (218/s) queue 179 errors 0
+[    697s] s0 239/272 s1 202/210 s2walk 14/14 s2fine 17/17 s2side 13/15 | stages {1664: 'done', 1280: 'done', 1600: 'final', 1216: 'screen0/1'} | decodes 150350 (216/s) queue 77 errors 0
+[    702s] k=1600 DONE
+[    728s] s0 264/272 s1 209/235 s2walk 14/14 s2fine 17/17 s2side 15/15 | stages {1664: 'done', 1280: 'done', 1600: 'done', 1216: 'screen0/1'} | decodes 154250 (212/s) queue 174 errors 0
+[    758s] s0 264/272 s1 219/235 s2walk 14/14 s2fine 17/17 s2side 15/15 | stages {1664: 'done', 1280: 'done', 1600: 'done', 1216: 'screen0/1'} | decodes 158150 (209/s) queue 96 errors 0
+[    789s] s0 264/272 s1 229/235 s2walk 14/14 s2fine 17/17 s2side 15/15 | stages {1664: 'done', 1280: 'done', 1600: 'done', 1216: 'screen0/1'} | decodes 162100 (206/s) queue 17 errors 0
+[    819s] s0 272/272 s1 238/243 s2walk 14/14 s2fine 17/17 s2side 15/15 | stages {1664: 'done', 1280: 'done', 1600: 'done', 1216: 'screen0/1'} | decodes 165850 (202/s) queue 0 errors 0
+[    850s] s0 272/272 s1 243/243 s2walk 14/18 s2fine 17/17 s2side 15/15 | stages {1664: 'done', 1280: 'done', 1600: 'done', 1216: 'walk'} | decodes 169450 (199/s) queue 0 errors 0
+[    881s] s0 272/272 s1 243/243 s2walk 18/18 s2fine 18/21 s2side 15/19 | stages {1664: 'done', 1280: 'done', 1600: 'done', 1216: 'final'} | decodes 176650 (200/s) queue 136 errors 0
+[    911s] s0 272/272 s1 243/243 s2walk 18/18 s2fine 21/21 s2side 17/19 | stages {1664: 'done', 1280: 'done', 1600: 'done', 1216: 'final'} | decodes 184250 (202/s) queue 0 errors 0
+[    917s] k=1216 DONE
+[    917s] s0 272/272 s1 243/243 s2walk 18/18 s2fine 21/21 s2side 19/19 | stages {1664: 'done', 1280: 'done', 1600: 'done', 1216: 'done'} | decodes 185200 (202/s) queue 0 errors 0
+wall 917 s; stopped=False
+finished; summary -> scratch/rung-ladder-20260930/search/trial-B2/TABLES-search.md

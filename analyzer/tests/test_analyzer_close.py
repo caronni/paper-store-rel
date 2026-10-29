@@ -17,14 +17,16 @@ import pytest
 
 from analyzer import close as close_mod
 
-from ._analyzer_fixtures import i_inputs, i_truth, needs_i_run
+from ._analyzer_fixtures import (emitted_inputs, fossil_i, fossil_i_inputs,
+                                 fossil_i_user_bits)
 
 
-@needs_i_run
 def test_union_keeps_production_and_adds_the_analyzer():
-    run = i_inputs()
     key = (0, 0, 0, "C")
-    assert key not in run.certificates          # sheet I's residue
+    run = emitted_inputs(fossil_i(), {
+        other: bits for other, bits in fossil_i_user_bits().items()
+        if other != key})
+    assert key not in run.certificates          # sheet I's residue corner
     certs, added = close_mod.union_certificates(
         run, {key: np.zeros(run.row.streams[0].user_bits, np.uint8)})
     assert len(certs) == len(run.certificates) + 1
@@ -37,10 +39,19 @@ def test_union_keeps_production_and_adds_the_analyzer():
     assert len(certs2) == len(run.certificates)
 
 
-@needs_i_run
 def test_production_alone_closes_and_writes_the_payload(tmp_path):
-    run = i_inputs()
-    truth = i_truth()
+    """RULED 2026-09-04: the payload envelope IS the verification.
+
+    `close_volume` reports `verified` exactly when the sha the EMITTER
+    wrote inside the volume matched what came out, so there is no
+    `solved_unverified` state left and no manifest in the room: the close
+    writes the bytes out and `analyzer score` can be pointed at them.
+    The second call below asks for no `--out` and gets no file.  The
+    certificates are sheet I's identity over a generated payload of its
+    length (2026-10-09), all 5,883 of them, built by holo1's arithmetic.
+    """
+    run = fossil_i_inputs()
+    truth = fossil_i().truth
     out = close_mod.close(run, {}, out_dir=tmp_path)
     print(f"\nclose (production only): status={out['status']} "
           f"k_total={out['k_total']} symbols={out['n_symbols_used']} "
@@ -50,7 +61,7 @@ def test_production_alone_closes_and_writes_the_payload(tmp_path):
     assert out["verified"] is True
     # The envelope IS the verification (2026-09-04); that the bytes are
     # also the EMITTED ones is a separate, offline fact, checked here
-    # against the generation manifest the test fixture holds.
+    # against the payload the test fixture generated.
     assert out["payload_sha256"] == truth.payload_sha256
     written = (tmp_path / close_mod.PAYLOAD_NAME).read_bytes()
     import hashlib
@@ -60,68 +71,55 @@ def test_production_alone_closes_and_writes_the_payload(tmp_path):
     assert out["metadata"]["rank"] == 24
     assert out["metadata"]["n_unique"] >= out["metadata"]["min_equations"]
     assert out["n_from_analyzer"] == 0
+    # the same close without an --out: a verdict, and no file
+    import inspect
+    bare = close_mod.close(run, {})
+    assert bare["status"] == "verified" and bare["verified"] is True
+    assert bare["unverified_reason"] is None
+    assert "manifest_sha256" not in bare
+    assert bare["payload_path"] is None
+    assert "truth" not in inspect.signature(close_mod.close).parameters
+    # and the metadata rank the close reports beside it
+    rank = close_mod.metadata_rank(list(run.certificates.values()), run.row)
+    assert rank["rank"] == 24 and rank["ok"] is True
+    assert rank["inconsistent"] is False
+    assert rank["n_unique"] == len(run.certificates)
 
 
-@needs_i_run
 def test_the_union_close_still_verifies_with_analyzer_certificates():
     """DESIGN §6a: adding analyzer certificates must not break a close.
 
-    On sheet I this is also the whole-sheet result: the three residue
-    tile-streams the analyzer certifies bring the run to 5,883 of 5,883
-    and the payload still comes back byte-exact.
+    Sheet I's identity over a generated payload (2026-10-09): every
+    eighth key is handed to the close as the ANALYZER's, which leaves
+    production below K on its own, so the close that verifies is the
+    union's.  The real-pixel fixed point that once fed this is a record
+    (e037; PAGE-FIELD-PLAN A1b).
     """
-    run = i_inputs()
-    truth = i_truth()
-    from analyzer import fixedpoint as fp
-    from analyzer import residue as residue_mod
-    from analyzer.types import VERDICT_CERTIFIED, AnalyzerConfig
-    from ._analyzer_fixtures import i_census
-    rows = i_census()
-    targets = residue_mod.residue_rows(rows)
-    ledger = fp.run(run, targets,
-                    AnalyzerConfig(workers=4, rules=("sum", "best"),
-                                   rungs=("L0", "L1", "L2", "L3", "L7")),
-                    census_rows=rows)
-    certs = {row.key: row.rungs["user_bits"] for row in ledger.rows
-             if row.verdict == VERDICT_CERTIFIED
-             and row.rungs.get("user_bits") is not None}
-    out = close_mod.close(run, certs)
+    bits = fossil_i_user_bits()
+    keys = sorted(bits)
+    handed = {key: bits[key] for key in keys[::8]}
+    run = emitted_inputs(fossil_i(), {key: bits[key] for key in keys
+                                      if key not in handed})
+    assert len(run.certificates) < I_K_TOTAL
+    alone = close_mod.close(run, {})
+    assert alone["verified"] is False
+    out = close_mod.close(run, handed)
     print(f"\nunion close: {out['n_from_production']} production + "
           f"{out['n_from_analyzer']} analyzer = {out['n_certificates']} "
           f"certificates, status={out['status']}, "
           f"sha={out['payload_sha256'][:12]}…, verified={out['verified']}")
     assert out["verified"] is True
-    assert out["payload_sha256"] == truth.payload_sha256
-    assert out["n_from_analyzer"] == len(certs)
+    assert out["payload_sha256"] == fossil_i().truth.payload_sha256
+    assert out["n_from_analyzer"] == len(handed)
+    assert out["n_from_production"] == len(run.certificates)
 
 
-@needs_i_run
-def test_the_close_verdict_is_the_envelope_and_needs_no_manifest():
-    """RULED 2026-09-04: the payload envelope is the verification.
-
-    `close_volume` reports `verified` exactly when the sha the EMITTER
-    wrote inside the volume matched what came out, so there is no
-    `solved_unverified` state left and no manifest in the room: the
-    close writes the bytes out and `analyzer score` can be pointed at
-    them.
-    """
-    run = i_inputs()
-    out = close_mod.close(run, {})
-    assert out["status"] == "verified" and out["verified"] is True
-    assert out["unverified_reason"] is None
-    assert "manifest_sha256" not in out
-    assert out["payload_path"] is None          # no --out, no file
-    import inspect
-    assert "truth" not in inspect.signature(close_mod.close).parameters
-
-
-@needs_i_run
-def test_the_cli_close_writes_payload_bin_and_exits_0(tmp_path):
+def test_the_cli_close_writes_payload_bin_and_exits_0(tmp_path, monkeypatch):
     """PLAN §5: exit 0 on a VERIFIED close, and the bytes on disk."""
     import hashlib
     from analyzer import cli
-    from ._analyzer_fixtures import I_RUN_DIR
-    assert cli.main(["close", "--run-dir", str(I_RUN_DIR),
+    monkeypatch.setattr(cli, "_load", lambda _args: fossil_i_inputs())
+    assert cli.main(["close", "--run-dir", "x",
                      "--out", str(tmp_path)]) == 0
     payload = tmp_path / close_mod.PAYLOAD_NAME
     assert payload.exists()
@@ -129,15 +127,6 @@ def test_the_cli_close_writes_payload_bin_and_exits_0(tmp_path):
     assert record["payload_sha256"] == hashlib.sha256(
         payload.read_bytes()).hexdigest()
     assert record["payload_bytes"] == payload.stat().st_size
-
-
-@needs_i_run
-def test_metadata_rank_is_reported_beside_the_close():
-    run = i_inputs()
-    out = close_mod.metadata_rank(list(run.certificates.values()), run.row)
-    assert out["rank"] == 24 and out["ok"] is True
-    assert out["inconsistent"] is False
-    assert out["n_unique"] == len(run.certificates)
 
 
 def test_as_certificate_names_its_source():
@@ -157,29 +146,30 @@ def test_as_certificate_refuses_nothing_silently():
 # W7 — THE FOUNTAIN CONSISTENCY CHECK AND ITS LOCALIZATION (2026-09-04)
 #
 # Truth-free by construction: none of the arithmetic under test opens a
-# payload.  The FIXTURES do — they rebuild sheet I's whole certificate
-# set from the emitted payload through holo1's generation arithmetic, so
+# payload.  The FIXTURES do — they build sheet I's whole certificate set,
+# under its identity, from a generated payload of its length (F2,
+# 2026-10-09) through holo1's generation arithmetic, so
 # the certificates the check re-encodes were produced by a DIFFERENT
 # implementation of the fountain than the one doing the re-encoding, and
 # the emitted sha is available to say the close landed on the right
 # bytes.  That is a test rather than a tautology.
 # ===================================================================
 
-from holo3.format import close as fmt_close                      # noqa: E402
-from holo3.format import fountain                                # noqa: E402
-
-from ._analyzer_fixtures import (i_emitted_sha256,               # noqa: E402
-                                 i_emitted_user_bits, i_format_row,
-                                 needs_i_generation)
+from holo.receiver.format import close as fmt_close                      # noqa: E402
+from holo.receiver.format import fountain                                # noqa: E402
 
 I_K_TOTAL = 5277
 I_N_SYMBOLS = 5883
 I_N_REDUNDANT = I_N_SYMBOLS - I_K_TOTAL          # 606
 
 
+def _emitted_sha256() -> str:
+    return fossil_i().truth.payload_sha256
+
+
 def _i_certificates() -> dict:
     return {key: np.asarray(bits, np.uint8).copy()
-            for key, bits in i_emitted_user_bits().items()}
+            for key, bits in fossil_i_user_bits().items()}
 
 
 def _certs_of(bits_by_key) -> tuple:
@@ -188,18 +178,23 @@ def _certs_of(bits_by_key) -> tuple:
                  for key in sorted(bits_by_key))
 
 
-def _row_index_of(row, key, bits) -> tuple[int, int, int]:
+def _row_index_of(code, row, key, bits) -> tuple[int, int, int]:
     """(block, row within the block, k of that block) for one address."""
-    code = fmt_close._pooled_volume_code(row, I_K_TOTAL)
     esi = close_mod.symbol_index(row, close_mod.as_certificate(key, bits))
     block, index = code.block_row_of(esi)
     return block, index, int(code.k_per_block[block])
 
 
 def _split_by_basis(row, bits_by_key) -> tuple[list, list]:
+    #: The volume code is built ONCE per split (2026-09-05).  It used to be
+    #: rebuilt inside the loop, discarding `VolumeCode`'s per-page shuffle
+    #: cache 5,883 times: 2.9 s per call, nine callers, same partition
+    #: (5,277 systematic / 606 repair, i.e. the format's own basis split).
+    code = fmt_close._pooled_volume_code(row, I_K_TOTAL)
     systematic, repair = [], []
     for key in sorted(bits_by_key):
-        _block, index, k_block = _row_index_of(row, key, bits_by_key[key])
+        _block, index, k_block = _row_index_of(code, row, key,
+                                               bits_by_key[key])
         (systematic if index < k_block else repair).append(key)
     return systematic, repair
 
@@ -231,10 +226,15 @@ def test_ge_solve_ignores_a_contradictory_right_hand_side():
 
 # ------------------------------------------------------- the clean check
 
-@needs_i_generation
 def test_the_emitted_volume_is_consistent_with_606_redundant_symbols():
-    row = i_format_row()
-    report = close_mod.consistency(_certs_of(_i_certificates()), row)
+    """Sheet I's identity over a generated payload of its length.
+
+    K, the symbol count and the redundancy are the identity's and the
+    length's: every pin below carries from the emitted payload
+    (re-measured 2026-10-09 on the generated one).
+    """
+    row = fossil_i().row
+    report = close_mod.consistency(_certs_of(fossil_i_user_bits()), row)
     print(f"\nconsistency (sheet I, emitted): ok={report['ok']} "
           f"symbols={report['n_symbols']} redundant={report['n_redundant']} "
           f"consistent={report['n_consistent']} "
@@ -249,14 +249,13 @@ def test_the_emitted_volume_is_consistent_with_606_redundant_symbols():
     assert report["inconsistent_keys"] == []
 
 
-@needs_i_generation
 def test_below_k_the_check_is_unproven_not_failed():
     """Too few symbols to solve: `checked` False, `ok` still True.
 
     An unproven volume is not a poisoned one, and a caller that refuses on
     `ok` False must not be made to refuse a partial residue.
     """
-    row = i_format_row()
+    row = fossil_i().row
     bits = _i_certificates()
     keys = sorted(bits)[:200]
     report = close_mod.consistency(
@@ -269,9 +268,8 @@ def test_below_k_the_check_is_unproven_not_failed():
 
 # ------------------------------------- a poisoned symbol OUTSIDE the basis
 
-@needs_i_generation
 def test_a_poisoned_repair_symbol_is_caught_named_and_corrected():
-    row = i_format_row()
+    row = fossil_i().row
     bits = _i_certificates()
     _systematic, repair = _split_by_basis(row, bits)
     victim = repair[0]
@@ -298,19 +296,18 @@ def test_a_poisoned_repair_symbol_is_caught_named_and_corrected():
     # emitted bytes — the envelope's own sha, checked here against the
     # generation manifest's, which the run never sees.
     assert found["close"]["verified"] is True
-    assert found["close"]["payload_sha256"] == i_emitted_sha256()
+    assert found["close"]["payload_sha256"] == _emitted_sha256()
     # THE LAST-DITCH CORRECTION: observed ^ e reproduces the emitted bits.
     name = ",".join(str(part) for part in victim)
     assert found["corrections"][name]["n_bits_flipped"] == 3
     assert np.array_equal(found["corrected_user_bits"][name],
-                          i_emitted_user_bits()[victim])
+                          fossil_i_user_bits()[victim])
     assert found["corrections_verified"]["consistent"] is True
     assert found["corrections_verified"]["n_inconsistent"] == 0
 
 
 # ---------------------------------------- a poisoned symbol IN the basis
 
-@needs_i_generation
 def test_a_poisoned_source_symbol_is_localized_by_column_consensus():
     """The hard case: the poison is a SYSTEMATIC row, so the source is wrong.
 
@@ -322,7 +319,7 @@ def test_a_poisoned_source_symbol_is_localized_by_column_consensus():
     the same error pattern — which is what makes the AND-reduction of
     their generator rows name the poisoned column.
     """
-    row = i_format_row()
+    row = fossil_i().row
     bits = _i_certificates()
     systematic, _repair = _split_by_basis(row, bits)
     victim = systematic[0]
@@ -354,16 +351,15 @@ def test_a_poisoned_source_symbol_is_localized_by_column_consensus():
     assert evidence["n_bits_disagreeing"] == 5
     assert evidence["false_candidate_bound"] < 1e-30
     assert found["close"]["verified"] is True
-    assert found["close"]["payload_sha256"] == i_emitted_sha256()
+    assert found["close"]["payload_sha256"] == _emitted_sha256()
     name = ",".join(str(part) for part in victim)
     assert np.array_equal(found["corrected_user_bits"][name],
-                          i_emitted_user_bits()[victim])
+                          fossil_i_user_bits()[victim])
     assert found["corrections_verified"]["consistent"] is True
 
 
-@needs_i_generation
 def test_two_poisoned_repair_symbols_are_both_named_in_one_round():
-    row = i_format_row()
+    row = fossil_i().row
     bits = _i_certificates()
     _systematic, repair = _split_by_basis(row, bits)
     victims = sorted((repair[0], repair[7]))
@@ -375,12 +371,11 @@ def test_two_poisoned_repair_symbols_are_both_named_in_one_round():
     assert found["localized"] is True
     assert found["poisoned_keys"] == [list(key) for key in victims]
     assert found["n_rounds"] == 2            # one accusing round, one clean
-    assert found["close"]["payload_sha256"] == i_emitted_sha256()
+    assert found["close"]["payload_sha256"] == _emitted_sha256()
 
 
-@needs_i_generation
 def test_localize_says_so_when_the_system_was_never_poisoned():
-    row = i_format_row()
+    row = fossil_i().row
     found = close_mod.localize(_certs_of(_i_certificates()), row)
     assert found["localized"] is False
     assert found["poisoned_keys"] == []
@@ -388,10 +383,9 @@ def test_localize_says_so_when_the_system_was_never_poisoned():
     assert found["close"]["verified"] is True
 
 
-@needs_i_generation
 def test_the_work_localize_does_is_bounded_and_reported():
     """`max_rounds` is a stated bound, not an aspiration."""
-    row = i_format_row()
+    row = fossil_i().row
     bits = _i_certificates()
     _systematic, repair = _split_by_basis(row, bits)
     bits[repair[0]][1] ^= 1
@@ -402,7 +396,6 @@ def test_the_work_localize_does_is_bounded_and_reported():
     assert "still inconsistent after 0 exclusion round(s)" in found["reason"]
 
 
-@needs_i_generation
 def test_a_clean_recheck_with_no_redundancy_left_is_not_a_localization():
     """Dropping symbols until `have == K` makes consistency VACUOUS.
 
@@ -411,7 +404,7 @@ def test_a_clean_recheck_with_no_redundancy_left_is_not_a_localization():
     nothing, and the report says `redundancy_exhausted` rather than
     claiming a poisoned key was found.
     """
-    row = i_format_row()
+    row = fossil_i().row
     bits = _i_certificates()
     _systematic, repair = _split_by_basis(row, bits)
     for key in repair[:4]:
@@ -423,7 +416,6 @@ def test_a_clean_recheck_with_no_redundancy_left_is_not_a_localization():
     assert len(found["poisoned_keys"]) == 4
 
 
-@needs_i_generation
 def test_a_check_at_exactly_k_is_vacuous_and_says_so():
     """`ok` True with nothing redundant is SILENCE, not a clean bill.
 
@@ -436,7 +428,7 @@ def test_a_check_at_exactly_k_is_vacuous_and_says_so():
     `n_redundant` is 0 here and nothing was tested.  Reviewer probe,
     2026-09-04.
     """
-    row = i_format_row()
+    row = fossil_i().row
     bits = _i_certificates()
     systematic, _repair = _split_by_basis(row, bits)
     exact = {key: bits[key] for key in systematic}
@@ -454,7 +446,6 @@ def test_a_check_at_exactly_k_is_vacuous_and_says_so():
         "integrity_failure"
 
 
-@needs_i_generation
 def test_a_mixed_poison_refuses_rather_than_guessing():
     """One systematic AND one repair symbol poisoned: no name, no guess.
 
@@ -466,7 +457,7 @@ def test_a_mixed_poison_refuses_rather_than_guessing():
     (reviewer probe, 2026-09-04): the refusal is honest, and the close on
     the un-excluded set still reports the envelope's failure.
     """
-    row = i_format_row()
+    row = fossil_i().row
     bits = _i_certificates()
     systematic, repair = _split_by_basis(row, bits)
     bits[systematic[3]][1:6] ^= 1
@@ -480,67 +471,32 @@ def test_a_mixed_poison_refuses_rather_than_guessing():
     assert "refused" in rules
 
 
-@needs_i_generation
-def test_the_clean_sheet_i_check_is_proven():
-    """The same field the other way: 606 redundant comparisons ran."""
-    report = close_mod.consistency(_certs_of(_i_certificates()),
-                                   i_format_row())
-    assert report["proven"] is True
-    assert report["n_redundant"] == I_N_REDUNDANT
-
-
 # --------------------------------------------------- the close's own door
 
-@needs_i_generation
-def test_close_carries_the_consistency_report_and_localizes_on_request():
-    """`close(..., localize_poison=True)` is one call end to end.
+@pytest.mark.parametrize("basis", ["repair", "systematic"])
+def test_close_localizes_a_poison_and_only_the_basis_decides_if_it_saw_it(
+        basis):
+    """`close(..., localize_poison=True)` is one call end to end, and the
+    poisoned symbol's BASIS is the whole contrast.
 
-    MEASURED HERE, and the whole reason this check is not redundant with
-    the close: a poisoned REPAIR symbol leaves the close VERIFIED.  Every
+    MEASURED HERE, and the reason this check is not redundant with the
+    close: a poisoned REPAIR symbol leaves the close VERIFIED.  Every
     systematic row of sheet I's identity is present, so
     `Decoder._solve_block` takes its fast path and never reads a repair
     row at all — the envelope passes, the payload is byte-exact, and the
     volume nonetheless carries a certificate that cannot have come from
     it.  Only the re-encoding sees it, and only `--localize` names it.
-    """
-    class _Inputs:
-        pass
-
-    row = i_format_row()
-    bits = _i_certificates()
-    _systematic, repair = _split_by_basis(row, bits)
-    victim = repair[0]
-    bits[victim][3] ^= 1
-    run = _Inputs()
-    run.row = row
-    run.rank_report = I_K_TOTAL
-    run.certificates = {key: close_mod.as_certificate(key, value,
-                                                      source="emitted")
-                        for key, value in bits.items()}
-    out = close_mod.close(run, {}, localize_poison=True)
-    assert out["verified"] is True                 # the close saw nothing
-    assert out["payload_sha256"] == i_emitted_sha256()
-    assert out["consistency"]["ok"] is False       # the re-encoding did
-    assert out["consistency"]["inconsistent_keys"] == [list(victim)]
-    assert out["localize"]["poisoned_keys"] == [list(victim)]
-    assert out["localize"]["close"]["payload_sha256"] == i_emitted_sha256()
-
-
-@needs_i_generation
-def test_a_poison_inside_the_basis_is_what_makes_the_close_itself_fail():
-    """The companion to the case above, and the contrast that names it.
-
-    A poisoned SYSTEMATIC symbol lands in the solved source, so the
-    envelope catches it and `close` refuses — but with no key and no
+    A poisoned SYSTEMATIC symbol lands in the solved source instead, so
+    the envelope catches it and `close` refuses — but with no key and no
     correction, which is the whole gap `--localize` fills.
     """
     class _Inputs:
         pass
 
-    row = i_format_row()
+    row = fossil_i().row
     bits = _i_certificates()
-    systematic, _repair = _split_by_basis(row, bits)
-    victim = systematic[0]
+    systematic, repair = _split_by_basis(row, bits)
+    victim = repair[0] if basis == "repair" else systematic[0]
     bits[victim][3] ^= 1
     run = _Inputs()
     run.row = row
@@ -549,18 +505,22 @@ def test_a_poison_inside_the_basis_is_what_makes_the_close_itself_fail():
                                                       source="emitted")
                         for key, value in bits.items()}
     out = close_mod.close(run, {}, localize_poison=True)
-    assert out["verified"] is False
-    assert out["status"] == "integrity_failure"
-    assert out["payload_sha256"] is None
-    assert out["consistency"]["ok"] is False
+    if basis == "repair":
+        assert out["verified"] is True             # the close saw nothing
+        assert out["payload_sha256"] == _emitted_sha256()
+        assert out["consistency"]["inconsistent_keys"] == [list(victim)]
+    else:
+        assert out["verified"] is False
+        assert out["status"] == "integrity_failure"
+        assert out["payload_sha256"] is None
+        assert out["localize"]["close"]["verified"] is True
+    assert out["consistency"]["ok"] is False       # the re-encoding did
     assert out["localize"]["poisoned_keys"] == [list(victim)]
-    assert out["localize"]["close"]["verified"] is True
-    assert out["localize"]["close"]["payload_sha256"] == i_emitted_sha256()
+    assert out["localize"]["close"]["payload_sha256"] == _emitted_sha256()
 
 
-@needs_i_generation
 def test_close_without_the_check_asks_the_fountain_nothing():
-    row = i_format_row()
+    row = fossil_i().row
 
     class _Inputs:
         pass
@@ -574,4 +534,4 @@ def test_close_without_the_check_asks_the_fountain_nothing():
     out = close_mod.close(run, {}, check_consistency=False)
     assert "consistency" not in out
     assert out["verified"] is True
-    assert out["payload_sha256"] == i_emitted_sha256()
+    assert out["payload_sha256"] == _emitted_sha256()

@@ -322,7 +322,8 @@ The analyzer reports the enabling arithmetic against itself: `corner_fit_rms_px`
 warp marks reach 6.07 dots. Cells at c4/c6 absorb 3 dots (0.75 / 0.50 cell) and
 read clean; c2 and c1 cannot and do not.
 
-Adversarial checks that survived (details in `scratch/e025/`):
+Adversarial checks that survived (the refuter scripts were retired 2026-10-09; the numbers
+below are the record):
 
 * **Not density banding.** Inside a 41%-BER band of `spatial/top/c2`, cells
   whose four neighbours all match them read 0.0019 (white) / 0.0222 (ink),

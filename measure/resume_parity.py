@@ -36,8 +36,8 @@ from donegeo_parity import certificate_signature, fixtures
 def _decode(root: Path, label: str, scans: tuple[tuple[Path, float], ...],
             format_ref: str, workers: int = 1,
             resume: Path | None = None) -> dict:
-    from holo3 import data, engine, snapshot
-    from holo3.diag import model as diag_model
+    from holo.receiver import data, engine, snapshot
+    from holo.receiver.diag import model as diag_model, readout
 
     run_dir = root / "runs" / label
     request = data.DecodeRequest(
@@ -60,7 +60,7 @@ def _decode(root: Path, label: str, scans: tuple[tuple[Path, float], ...],
     # (`getattr` so this instrument also reads a pre-cause tree)
     causes: dict[str, int] = {}
     for event in events:
-        if isinstance(event, data.WindowRetired):
+        if isinstance(event, data.WorkerRetired):
             cause = getattr(event, "cause", "") or "unnamed"
             causes[cause] = causes.get(cause, 0) + 1
     return {
@@ -69,8 +69,8 @@ def _decode(root: Path, label: str, scans: tuple[tuple[Path, float], ...],
         "workers": workers,
         "resumed_from": None if resume is None else str(resume),
         "status": result.status,
-        "tiles_row": diag_model.six_row_status(folded)[4],
-        "replayed": diag_model.status(folded)["replayed"],
+        "tiles_row": readout.six_row_status(folded)[4],
+        "replayed": readout.status(folded)["replayed"],
         "payload_sha256": result.payload_sha256,
         "n_bytes": None if result.payload is None else len(result.payload),
         "certified": n_certs,
@@ -99,7 +99,7 @@ def _ratio(first: dict, second: dict) -> dict:
 
 
 def roundtrip(root: Path, name: str, scans, format_ref: str) -> dict:
-    from holo3 import snapshot
+    from holo.receiver import snapshot
 
     first = _decode(root, f"{name}-first", scans, format_ref)
     state = Path(first["state_path"])
@@ -165,7 +165,7 @@ def workers_parity(root: Path, name: str, scans, format_ref: str) -> dict:
 
 
 def collect(root: Path, only: tuple[str, ...] | None) -> dict:
-    from holo3.tests import _h3_sims
+    from holo.receiver.tests import _h3_sims
 
     scans = fixtures(root)
     k_ref = _h3_sims.K_FORMAT_REF

@@ -6,26 +6,26 @@ each call site resolves the module attribute at call time, and
 `uninstall()` puts the originals back.  The seams, by file and line as of
 2026-09-03:
 
-1. `holo3/format/identity.py:434  resolve_format_ref`
+1. `src/holo/receiver/format/identity.py:495  resolve_format_ref`
    teaches the process ONE extra id, the `PV:` sentinel, and delegates
-   everything else.  Both consumers (`holo3/cli.py:86`,
-   `holo3/store.py:72`) go through the module attribute.
-2. `holo3/format/identity.py:489  build_site_geometry`
+   everything else.  Both consumers (`src/holo/receiver/cli.py:100`,
+   `src/holo/receiver/store.py:77`) go through the module attribute.
+2. `src/holo/receiver/format/identity.py:562  build_site_geometry`
    returns the SOURCE cmy8 geometry for the plane-view row.  The cell
    SETS are already equal (`row.py`); this buys the cmy8 DUST ORDER, so
-   `calibrate.build_site_lookup`'s `index` (calibrate.py:88-102) lines up
-   with `pilots.dust_state_values`.  One caller: `holo3/store.py:74`.
-3. `holo3/plugins/tiles.py:364  _attempt_k`
+   `calibrate.build_site_lookup`'s `index` (calibrate.py:100-114) lines up
+   with `pilots.dust_state_values`.  One caller: `src/holo/receiver/store.py:79`.
+3. `src/holo/receiver/plugins/tiles.py:399  _attempt_k`
    the K attempt XORs `_tile_scramble_bits` (the K page scramble,
-   tiles.py:154) and calls `tile_codec.decode_tile` (slot permutation and
+   tiles.py:173) and calls `tile_codec.decode_tile` (slot permutation and
    a shortening scatter over 4,096).  A cmy8 stream is dithered by
    `keystream.cmy8_dither_bits` and permuted by
    `keystream.color_cell_permutation` over the 3,976 payload cells.  The
    replacement runs production's own `_sequential_payload` and the cmy8
    stream codec on evidence column 0.  Single call site,
-   `tiles.py:479` — `attempt_tile` and everything around it (`_combine`,
+   `tiles.py:521` — `attempt_tile` and everything around it (`_combine`,
    `component_signature`, fact/event minting) stays production.
-4. `holo3/plugins/calibrate.py:105  format_reference_values`
+4. `src/holo/receiver/plugins/calibrate.py:121  format_reference_values`
    word sites (kind 0) are ALREADY correct for C — the function asks
    `pilots.word_values(seed, counter, PLANE_K)` and a word state is 0 or
    3, so C equals the address bit.  The 20 dust sites (kind 1) are read
@@ -33,29 +33,29 @@ each call site resolves the module attribute at call time, and
    the cmy8 dust cycle.  The wrapper overwrites exactly those rows.
    +20% labels per tile, and the dust cells are the only ones where C and
    M differ at all.
-5. `holo3/plugins/words.py:63  reference_page`
-   the same defect in the POSE scorer's reference field (`words.py:67`
+5. `src/holo/receiver/plugins/words.py:87  reference_page`
+   the same defect in the POSE scorer's reference field (`words.py:91`
    `color = family is not K`): 20 of 120 reference values wrong.  Used by
-   `pose.py:195` and `cold.py:244`; the BCH word matcher itself is clean
+   `pose.py:241` and `cold.py:252`; the BCH word matcher itself is clean
    (`words.word_site_index`, :126, is word-sites-only).
-6. `holo3/plugins/tiles.py:110  source_tag`
+6. `src/holo/receiver/plugins/tiles.py:125  source_tag`
    certificates and events would otherwise be sourced `tiles/<stage>`.
    The plane view's mints are `planeview/<stage>` so a fold back into a
    production snapshot is never mistaken for a production tile.  `source`
    carries no control flow in holo3 (only the conflict messages at
-   `store.py:904` and `tiles.py:546-547`).
+   `store.py:936` and `tiles.py:596-597`).
 
-7. `holo3/plugins/tiles.py:printed_cells_for` AND `holo3/plugins/
+7. `src/holo/receiver/plugins/tiles.py:printed_cells_for` AND `src/holo/receiver/plugins/
    refine.py:34`'s own binding of the same name — see
    `make_printed_cells` (added by review, 2026-09-03).  Production's
    version is the K re-encode; a plane-view tile was not printed that
    way, and the K version does not raise, it lies.  Both live consumers
    are K-only and therefore ON in a plane-view run.
 
-8. `holo3/format/close.py  CloseProgress`
+8. `src/holo/receiver/format/close.py  CloseProgress`
    MEASURED, and the seam map got this one wrong.  The map said the
    metadata bit is harmless because the plane-view row is not pooled and
-   carries one stream, so `store._fold_certificate` (store.py:893) files
+   carries one stream, so `store._fold_certificate` (store.py:925) files
    each tile's bit at a unique index `counter` — no collision, no
    IntegrityError, and `--no-close` covers the rest.  Two of those three
    are true.  What the map missed is that the engine also runs an
@@ -76,19 +76,19 @@ each call site resolves the module attribute at call time, and
    never calls `settle()`, so `CloseProgress.result` stays None, no
    count plan is built and nothing downstream of the gate runs.
 
-NOT PATCHED, deliberately.  `intake.derived_planes` (intake.py:126-128)
+NOT PATCHED, deliberately.  `intake.derived_planes` (intake.py:138-140)
 already returns `(("g", None),)` for a single-channel raster whatever the
-family, and `store.sampling_planes` (store.py:163) returns that single
+family, and `store.sampling_planes` (store.py:175) returns that single
 plane.  `store._fold_certificate`'s own per-index consistency check
-(store.py:893-909) files one bit per `counter` and never sees a second,
+(store.py:925-941) files one bit per `counter` and never sees a second,
 so it is left alone.  `k_total` is consulted only inside `close.py`, and
 `--no-close` is mandatory: the plane view's fountain ESI is
 `counter*3 + plane`, not `counter`.
 
-THE TOOLBOX TRADE, stated: a K row turns OFF swim (swim.py:467/486/522),
+THE TOOLBOX TRADE, stated: a K row turns OFF swim (swim.py:468/486/522),
 color_region (:679), color_pooled (:168), fields/plane-fields (:778),
 plane_k (:581) and uplift (`color_arms.arms_for_family(K)` is empty) —
-and turns ON refine (refine.py:574/617, K-only) and revisit (:121);
+and turns ON refine (refine.py:667/617, K-only) and revisit (:121);
 both read certified printed fields, which is why seam 7 exists.
 `local_ctx` keeps a real K path (`_prepare_k`, :551).  The plane view is
 not the colour receiver minus colour; it is the K receiver, with
@@ -107,19 +107,19 @@ import numpy as np
 # is already a patch (`lib.ldpc.CODES` builds every rung at import; the
 # `words._SITE_INDEX_CACHE` is keyed by `sites_seed`, identical for both
 # rows, so it is harmless either way).
-from holo3 import cli as h3_cli
-from holo3 import store as h3_store
-from holo3.format import close as h3_close
-from holo3.format import identity, keystream, metadata, pilots, tile_codec
-from holo3.format.identity import FormatRow, SiteGeometry
-from holo3.lib import ldpc
-from holo3.plugins import calibrate, refine, tiles, words
+from holo.receiver import cli as h3_cli
+from holo.receiver import store as h3_store
+from holo.receiver.format import close as h3_close
+from holo.receiver.format import identity, keystream, metadata, pilots, tile_codec
+from holo.receiver.format.identity import FormatRow, SiteGeometry
+from holo.receiver.lib import ldpc
+from holo.receiver.plugins import calibrate, refine, tiles, words
 
 from .row import PLANE_OF
 
 #: Imported for their side effects and named here so the import is not
 #: mistaken for dead: `lib.ldpc` builds every LDPC rung at import
-#: (ldpc.py:90) and `holo3.store` binds the plugin table.  Both must be
+#: (ldpc.py:102) and `holo.receiver.store` binds the plugin table.  Both must be
 #: resident BEFORE a single seam is replaced.
 PRIMED: tuple[object, ...] = (h3_store, ldpc)
 
@@ -288,8 +288,8 @@ def make_attempt(plane_row: FormatRow) -> Callable[..., Any]:
     permutation), `cmy8_dither_bits`, `cmy8_decode_stream` (which
     un-dithers exactly once and then runs `decode_frame`), and `_result`.
     The one thing spelled out here rather than delegated to
-    `_attempt_cmy8` is the evidence column: arity-1 K evidence is
-    (4096, 1), so the stream reads column 0, whereas `_attempt_cmy8`
+    `_attempt_stream` is the evidence column: arity-1 K evidence is
+    (4096, 1), so the stream reads column 0, whereas `_attempt_stream`
     would index `sequential[:, fact.plane]` and the row's `plane` field
     must stay `PLANE_K` for `words.addressing_plane`.
     """
@@ -337,8 +337,7 @@ def make_attempt(plane_row: FormatRow) -> Callable[..., Any]:
 def _dust_plane_bits(row: FormatRow, counter: int,
                      plane_index: int) -> np.ndarray:
     """The target plane's bit at each of the tile's 20 dust sites."""
-    states = pilots.dust_state_values(
-        row.seed, (counter,), row.dust_base_cycle, row.n_dust)[0]
+    states = pilots.dust_state_values(row.seed, (counter,), row)[0]
     return tile_codec.states_to_planes(states)[:, plane_index]
 
 
@@ -389,8 +388,8 @@ def make_printed_cells(plane_row: FormatRow,
     silently returns a WRONG printed field.
 
     Two production consumers, both K-only and both live on a plane-view
-    run: `refine.certified_fields` (refine.py:117, the certified-feedback
-    pose targets at refine.py:606) and `local_ctx._k_components`
+    run: `refine.certified_fields` (refine.py:142, the certified-feedback
+    pose targets at refine.py:705) and `local_ctx._k_components`
     (local_ctx.py:382, the donor labels of the local-context fit).  Wrong
     targets cannot mint a wrong certificate — the LDPC syndrome and the
     CRC still gate — but they can move a good pose and poison a context
@@ -452,8 +451,7 @@ def make_reference_page(plane_row: FormatRow,
         dust = pilots.dust_site_cells_yx(row.sites_seed, row.n_dust)
         index = np.arange(tiles_y * tiles_x, dtype=np.int64)
         counters = page * (tiles_y * tiles_x) + index
-        states = pilots.dust_state_values(
-            row.seed, counters, row.dust_base_cycle, row.n_dust)
+        states = pilots.dust_state_values(row.seed, counters, row)
         bits = tile_codec.states_to_planes(states)[..., plane_index]
         extra_y = (index // tiles_x)[:, None] * TILE_CELLS + dust[None, :, 0]
         extra_x = (index % tiles_x)[:, None] * TILE_CELLS + dust[None, :, 1]

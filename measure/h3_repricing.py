@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 """COLOUR-LANE REPRICING — one sim decode, its bits, and its job order.
 
-    PYTHONPATH=. env314t/bin/python measure/h3_repricing.py \\
+    PYTHONPATH=src:. env/bin/python measure/h3_repricing.py \\
         --tree . --sim color --workers 1 --complete \\
-        --fixtures scratch/h3-repricing/fixtures \\
-        --run-root scratch/h3-repricing/runs/color-w1-head \\
-        --out scratch/h3-repricing/color-w1-head.json
+        --fixtures build/h3-repricing/fixtures \\
+        --run-root build/h3-repricing/runs/color-w1-head \\
+        --out build/h3-repricing/color-w1-head.json
 
 WHY. The colour lane's scheduling defect (assembly priced as a head
 re-fit) is invisible in a payload sha: the run still closes, it simply
@@ -22,11 +22,21 @@ compared without a rebuild) and records three things per run:
     the first job that minted a certificate, which is what the defect
     actually costs (colour payload work strictly after placement).
 
-Sim captures come from the holo3 test fixture builders through the
-persistent cache directory ``--fixtures``, so both trees decode the
-byte-identical capture.  Nothing here reimplements a decode: the argv
-is parsed by holo3's own parser and run through ``engine._Engine`` the
-way ``cli._decode`` does.
+Sim captures come from the receiver's test fixture builders
+(``holo.receiver.tests``) through the persistent cache directory
+``--fixtures``, so both trees decode the byte-identical capture.
+Nothing here reimplements a decode: the argv is parsed by
+``holo.receiver.cli``'s own parser and run through ``engine._Engine``
+the way ``cli._decode`` does.
+
+THE TREE. holo3 is the record's name; the module is ``holo.receiver``
+under ``<tree>/src`` since the 2026-09-05 move (2099338) — there is no
+``holo3`` package any more.  ``--tree`` puts ``<tree>/src`` FIRST on
+``sys.path`` (ahead of whatever PYTHONPATH says), and before any
+capture or decode the tool resolves ``holo.receiver.__file__`` and
+refuses unless it lies under that ``<tree>/src``: a comparison whose
+two runs silently imported the same receiver measures nothing.  The
+record carries the resolved file as ``holo3_file``.
 
 MEMORY: one decode per process; the process exits when the decode does.
 """
@@ -34,6 +44,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib
 import json
 import os
 import sys
@@ -45,9 +56,40 @@ SIMS = ("k", "color", "k-degraded", "k-mixed", "color-hard",
         "color-hard-shifted", "color-hard-pair")
 
 
-def _load_tree(tree: Path) -> None:
-    root = str(Path(tree).resolve())
-    sys.path.insert(0, root)
+def _load_tree(tree: Path) -> Path:
+    """Put ``<tree>/src`` first on ``sys.path``; return that directory.
+
+    ``holo`` lives under ``src/``, so inserting the tree's ROOT (as this
+    tool did before 2026-10-03) left PYTHONPATH to decide which receiver
+    ran and made ``--tree`` inert.  The root follows ``src`` for any
+    top-level sibling (``measure``) a caller imports; ``src`` wins.
+    """
+    root = Path(tree).resolve()
+    src = root / "src"
+    if not (src / "holo" / "receiver").is_dir():
+        raise SystemExit(f"h3_repricing: --tree {root} has no "
+                         f"src/holo/receiver")
+    for entry in (str(root), str(src)):
+        while entry in sys.path:
+            sys.path.remove(entry)
+    sys.path.insert(0, str(root))
+    sys.path.insert(0, str(src))
+    return src
+
+
+def _receiver_file(src: Path) -> Path:
+    """``holo.receiver.__file__``, refused unless it lies under ``src``.
+
+    Called BEFORE any capture or decode: a ``holo`` already imported
+    from another tree (``sys.modules`` wins over ``sys.path``) would
+    otherwise cost a whole decode before anyone noticed.
+    """
+    module = importlib.import_module("holo.receiver")
+    location = Path(module.__file__).resolve()
+    if not location.is_relative_to(Path(src).resolve()):
+        raise SystemExit(f"h3_repricing: holo.receiver resolved to "
+                         f"{location}, not under the chosen tree's {src}")
+    return location
 
 
 def _capture(sim: str, fixtures: Path) -> tuple:
@@ -56,11 +98,11 @@ def _capture(sim: str, fixtures: Path) -> tuple:
     Both trees read the same cache directory, so a comparison is never
     confounded by a re-render.
     """
-    from holo3.tests import _h3_sims, conftest as h3_conftest
+    from holo.receiver.tests import _h3_fixture_build, _h3_sims
 
     # the harness's OWN cache key, never a copy of it: a re-derivation
     # here silently forks the cache the moment a sim is added
-    root = Path(fixtures).resolve() / h3_conftest._cache_key()
+    root = Path(fixtures).resolve() / _h3_fixture_build._cache_key()
 
     def materialise(name: str, expected: dict, builder) -> Path:
         outdir = root / name
@@ -103,7 +145,7 @@ def _degraded_capture(base, outdir: Path):
     """conftest's degraded K raster, rebuilt outside the pytest fixture."""
     import tifffile
 
-    from holo3.tests import _h3_sims, conftest as h3_conftest
+    from holo.receiver.tests import _h3_sims, conftest as h3_conftest
 
     target = Path(outdir) / "sim-k-degraded-1200dpi.tiff"
     if not target.is_file():
@@ -127,7 +169,7 @@ def _certificate_signature(certificates: dict) -> str:
 
 
 def _fire_log(events: tuple, plugin: str) -> list[dict]:
-    from holo3 import data
+    from holo.receiver import data
 
     rows = []
     index = 0
@@ -145,7 +187,7 @@ def _fire_log(events: tuple, plugin: str) -> list[dict]:
 
 
 def _interleave(events: tuple) -> dict:
-    from holo3 import data
+    from holo.receiver import data
 
     index = 0
     total = 0
@@ -187,7 +229,7 @@ def _latency(events: tuple) -> dict:
     placement to be exhausted shows up here as every fraction landing
     at ~100% of the place jobs, against the K path's steady climb.
     """
-    from holo3 import data
+    from holo.receiver import data
 
     jobs = [event for event in events if isinstance(event, data.JobDone)]
     n_place = sum(1 for job in jobs if job.plugin == "place")
@@ -216,8 +258,8 @@ def _watch_color_lane(records: list) -> None:
     """
     import dataclasses
 
-    from holo3 import engine
-    from holo3.plugins import color_region
+    from holo.receiver import engine
+    from holo.receiver.plugins import color_region
 
     original = color_region.COLOR_DESCRIPTOR.prepare
 
@@ -257,7 +299,7 @@ def _watch_color_lane(records: list) -> None:
 
 
 def _plugin_jobs(events: tuple) -> dict:
-    from holo3 import data
+    from holo.receiver import data
 
     counts: dict[str, int] = {}
     for event in events:
@@ -267,7 +309,7 @@ def _plugin_jobs(events: tuple) -> dict:
 
 
 def _plugin_cpu(events: tuple) -> dict:
-    from holo3 import data
+    from holo.receiver import data
 
     totals: dict[str, float] = {}
     for event in events:
@@ -290,10 +332,10 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--no-close", dest="no_close", action="store_true")
     args = parser.parse_args(argv)
 
-    _load_tree(args.tree)
+    receiver_file = _receiver_file(_load_tree(args.tree))
     captures = _capture(args.sim, args.fixtures)
 
-    from holo3 import cli, engine
+    from holo.receiver import cli, engine
 
     lane_probe: list = []
     _watch_color_lane(lane_probe)
@@ -325,7 +367,7 @@ def main(argv: list[str] | None = None) -> int:
     payload = result.payload
     record = {
         "tree": str(Path(args.tree).resolve()),
-        "holo3_file": str(Path(sys.modules["holo3"].__file__).resolve()),
+        "holo3_file": str(receiver_file),
         "sim": args.sim,
         "workers": args.workers,
         "complete": bool(args.complete),

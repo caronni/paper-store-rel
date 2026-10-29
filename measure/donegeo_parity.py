@@ -6,11 +6,11 @@ signature (address + user bits), the per-plugin job counts and the
 engine's own scheduling counters.  Two trees are compared by diffing the
 two JSON files:
 
-    PYTHONPATH=<baseline tree> python holo3/measure/donegeo_parity.py \
+    PYTHONPATH=<baseline tree> python src/holo/receiver/measure/donegeo_parity.py \
         --out baseline.json
-    PYTHONPATH=<work tree>     python holo3/measure/donegeo_parity.py \
+    PYTHONPATH=<work tree>     python src/holo/receiver/measure/donegeo_parity.py \
         --out work.json
-    python holo3/measure/donegeo_parity.py --compare baseline.json work.json
+    python src/holo/receiver/measure/donegeo_parity.py --compare baseline.json work.json
 
 The certificate signature is the gate: identical payloads with a moved
 certificate set is a yield change, not a scheduling change.
@@ -39,9 +39,9 @@ CASES: tuple[tuple[str, str, int, bool], ...] = (
 
 
 def _tree_root() -> Path:
-    import holo3
+    import holo.receiver
 
-    return Path(holo3.__file__).resolve().parent
+    return Path(holo.receiver.__file__).resolve().parent
 
 
 def fixtures(root: Path) -> dict[str, tuple[tuple[Path, float], ...]]:
@@ -49,8 +49,8 @@ def fixtures(root: Path) -> dict[str, tuple[tuple[Path, float], ...]]:
     import numpy as np
     import tifffile
 
-    from holo3.tests import _h3_sims
-    from holo3.tests import conftest as h3_conftest
+    from holo.receiver.tests import _h3_sims
+    from holo.receiver.tests import conftest as h3_conftest
 
     reason = _h3_sims.producer_unavailable_reason()
     if reason is not None:
@@ -94,7 +94,7 @@ def fixtures(root: Path) -> dict[str, tuple[tuple[Path, float], ...]]:
 
 
 def _format_ref(fixture: str) -> str:
-    from holo3.tests import _h3_sims
+    from holo.receiver.tests import _h3_sims
 
     return (_h3_sims.COLOR_FORMAT_REF if fixture == "color"
             else _h3_sims.K_FORMAT_REF)
@@ -113,7 +113,7 @@ def certificate_signature(certificates: dict) -> tuple[str, int]:
 
 def run_case(label: str, fixture: str, workers: int, complete: bool,
              scans: tuple[tuple[Path, float], ...], root: Path) -> dict:
-    from holo3 import data, engine
+    from holo.receiver import data, engine
 
     run_dir = root / "runs" / label
     request = data.DecodeRequest(

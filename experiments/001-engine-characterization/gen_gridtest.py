@@ -12,7 +12,7 @@ plus representative scrambled encoding patches (cell=3 main, cell=2 comparison,
 crosses (3-dot arms — 2-dot features print, 1-dot don't, per run 001.1) with an
 orientation square so analysis can register scans unambiguously.
 
-Output: scratch/gridtest.ps (+ manifest + ground-truth .npy).
+Output: build/gridtest.ps (+ manifest + ground-truth .npy).
 Print:  ../../scripts/print_plane.sh build/gridtest.ps   (JetDirect 9100)
 Scan:   2400 dpi grey, no descreen/sharpen/auto-contrast.
 """

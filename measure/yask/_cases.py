@@ -38,18 +38,21 @@ cut entirely inside the printed field there is no paper, so Otsu splits
 crops for a colour sheet should include real page margin — or, as here,
 skip the decode and bring the poses.
 
-Run ``python -m measure.yask._cases --case H-smoke`` to cut a crop and
-print its record.
+Run ``python -m measure.yask._cases --case H-smoke --out DIR`` to cut a
+crop and print its record.
 """
 from __future__ import annotations
 
 import collections
+import dataclasses
 import json
 import lzma
 from dataclasses import dataclass
 from pathlib import Path
 
 import numpy as np
+
+from measure import _evidence
 
 from . import _paths
 
@@ -77,59 +80,66 @@ class Sheet:
     #: capture key -> (path, dpi, sha256).
     captures: dict[str, tuple[Path, float, str]]
 
+    def under(self, root: Path) -> "Sheet":
+        """This sheet with every input path joined onto ``root``."""
+        return dataclasses.replace(
+            self, gen_dir=root / self.gen_dir,
+            events_xz=root / self.events_xz,
+            certified_tiles_json=root / self.certified_tiles_json,
+            captures={key: (root / path, dpi, sha)
+                      for key, (path, dpi, sha) in self.captures.items()})
+
 
 SHEET_H = Sheet(
     key="H",
     format_ref="L:c2-cmy8-r0850-p120-x1@3392x2368",
-    gen_dir=_paths.E033 / "H-c2-cmy8r0850-q090-4mm",
+    gen_dir=_paths.SHEET_H / "emission",
     events_xz=_paths.OVERNIGHT / "sheetH-maxstack-events.jsonl.xz",
-    certified_tiles_json=(_paths.OVERNIGHT
-                          / "sheetH-maxstack-certified-tiles.json"),
+    certified_tiles_json=_paths.CERTIFIED_TILES,
     tiles_yx=(53, 37),
     # sha256 of the file IS the capture id holo3 mints
     # (``intake.ingest_capture``), so this table is self-checking: a
     # capture whose sha does not appear in the harvest's CaptureOpen
     # events is refused by name rather than silently mismatched.
     captures={
-        "1200a": (_paths.SCRATCH_IN / ("xerox-canon-18.8-H-c2-cmy8-r850-"
-                                       "q90-p120-4mm-1200dpi-a.tiff"),
+        "1200a": (_paths.SHEET_H / "captures/H-canon-1200rgb-a.tiff",
                   1200.0,
                   "af580c3cf54f26488ef0a8dc956bf7222fa3195b4a1bc99c316"
                   "e0d68646d963c"),
-        "1200b": (_paths.SCRATCH_IN / ("xerox-canon-18.8-H-c2-cmy8-r850-"
-                                       "q90-p120-4mm-1200dpi-b.tiff"),
+        "1200b": (_paths.SHEET_H / "captures/H-canon-1200rgb-b.tiff",
                   1200.0,
                   "d792e00a45e77cbf8da102db64397b5271fb605b0a4976dd686"
                   "6f5ba3069f3fb"),
-        "2400a": (_paths.SCRATCH_IN / ("xerox-canon-18.8-H-c2-cmy8-r850-"
-                                       "q90-p120-4mm-2400dpi-a.tiff"),
+        "2400a": (_paths.SHEET_H / "captures/H-canon-2400rgb-a.tiff",
                   2400.0,
                   "68c16fcbf29b23d72765dbaaf96c88c8df162b90640b392f25b"
                   "cd1d03f3b0ed9"),
-        "2400b": (_paths.SCRATCH_IN / ("xerox-canon-18.8-H-c2-cmy8-r850-"
-                                       "q90-p120-4mm-2400dpi-b.tiff"),
+        "2400b": (_paths.SHEET_H / "captures/H-canon-2400rgb-b.tiff",
                   2400.0,
                   "4fddac74cef1f0152d7ff1a066c9e13835bda51af1f5faaff02"
                   "d6e2a707d16be"),
-        "4800a": (_paths.SCRATCH_IN / ("xerox-canon-18.8-H-c2-cmy8-r850-"
-                                       "q90-p120-4mm-4800dpi-a.tiff"),
+        "4800a": (_paths.SHEET_H / "captures/H-canon-4800rgb-a.tiff",
                   4800.0,
                   "f6920518c82a2ea2d50e438259ee7caf31bdc34eaae2547cc42"
                   "27b5e97c85680"),
-        "4800b": (_paths.SCRATCH_IN / ("xerox-canon-18.8-H-c2-cmy8-r850-"
-                                       "q90-p120-4mm-4800dpi-b.tiff"),
+        "4800b": (_paths.SHEET_H / "captures/H-canon-4800rgb-b.tiff",
                   4800.0,
                   "9c022bd308aea90a09ff772c3f35f9c2ca873b7815cbb313924"
                   "d1cdb8be8901f"),
-        "4800c": (_paths.SCRATCH_IN / ("xerox-canon-18.8-H-c2-cmy8-r850-"
-                                       "q90-p120-4mm-4800dpi-c.tiff"),
+        "4800c": (_paths.SHEET_H / "captures/H-canon-4800rgb-c.tiff",
                   4800.0,
                   "f642cab0416ccd8186fc2180c4ec3dcea0a38c45c7325ebf4fe"
                   "ccc4cb9da4e6d"),
     },
 )
 
+#: The declared sheets, every path RELATIVE to the evidence root.
 SHEETS = {SHEET_H.key: SHEET_H}
+
+
+def sheet_for(key: str) -> Sheet:
+    """A declared sheet resolved under the evidence root."""
+    return SHEETS[key].under(_paths.evidence_root())
 
 
 @dataclass(frozen=True)
@@ -328,12 +338,13 @@ def write_crop(case: Case, sheet: Sheet, box: tuple[int, int, int, int],
     return record
 
 
-def prepare(case: Case) -> dict:
+def prepare(case: Case, crop_dir: Path) -> dict:
     """Everything a run needs about a case's geometry and its crop."""
-    sheet = SHEETS[case.sheet]
+    sheet = sheet_for(case.sheet)
     path, dpi, sha = sheet.captures[case.capture]
-    _paths.refuse_if_absent((path, sheet.events_xz, sheet.gen_dir,
+    _paths.refuse_if_absent((path, sheet.gen_dir,
                              sheet.certified_tiles_json))
+    _paths.refuse_if_withdrawn(sheet.events_xz)
     poses, captures = read_harvest(sheet)
     if sha not in captures:
         raise SystemExit(
@@ -344,7 +355,7 @@ def prepare(case: Case) -> dict:
     page_cells = (sheet.tiles_yx[0] * TILE, sheet.tiles_yx[1] * TILE)
     cells = cell_bbox(case, page_cells)
     box = px_bbox(cells, affine, facts["shape_yx"])
-    crop = write_crop(case, sheet, box, _paths.SCRATCH / "crops")
+    crop = write_crop(case, sheet, box, crop_dir)
     return {
         "case": case, "sheet": sheet, "capture_sha256": sha,
         "capture_path": str(path), "dpi": dpi,
@@ -368,11 +379,16 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=main.__doc__)
     parser.add_argument("--case", required=True,
                         help=f"one of {sorted(CASES_BY_ID)}")
+    _evidence.add_argument(parser)
+    parser.add_argument("--out", type=Path, required=True,
+                        help="directory the crop is written to")
     args = parser.parse_args(argv)
+    _paths.use_evidence_root(args.evidence_root)
+    _paths.evidence_root()
     if args.case not in CASES_BY_ID:
         raise SystemExit(f"yask: unknown case {args.case!r}; declared: "
                          f"{sorted(CASES_BY_ID)}")
-    record = prepare(CASES_BY_ID[args.case])
+    record = prepare(CASES_BY_ID[args.case], args.out)
     certified = record.pop("certified")
     record.pop("sheet")
     case = record.pop("case")

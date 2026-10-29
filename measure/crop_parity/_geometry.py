@@ -2,7 +2,9 @@
 
 PURE over plain data (no I/O, no receiver imports) — the half the
 self-check pins. Ported from ``holo2/measure/crop_cases.py``'s geometry
-section with two changes: the affine is fitted PER CAPTURE (sheet I is
+section (holo2, retired 2026-09-05, deleted at a805888; that module is
+described in ``docs/archive/holo2/measure-README.md``) with two
+changes: the affine is fitted PER CAPTURE (sheet I is
 three captures of one page, each with its own paper pose), and the
 target unit carries a stream id.
 
@@ -30,7 +32,9 @@ import numpy as np
 #: One tile is 64x64 cells in printed format v1.
 TILE_CELLS = 64
 
-#: Fixed, not knobs (the holo2 harness's mechanics 4 and 5).
+#: Fixed, not knobs (the holo2 harness's mechanics 4 and 5; holo2 was
+#: retired 2026-09-05, deleted at a805888 — see
+#: docs/archive/holo2/measure-README.md).
 PX_PAD_CELLS = 32
 CONTROL_RIM_CELLS = 32
 

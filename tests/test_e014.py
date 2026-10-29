@@ -9,6 +9,7 @@ BLIND decode of c2 pages is deliberately deferred, see gen_e014 docstring).
 from __future__ import annotations
 
 import hashlib
+import pytest
 import json
 import os
 import subprocess
@@ -23,6 +24,10 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 ROOT = Path(__file__).resolve().parents[1]
 EXP = ROOT / "experiments" / "014-c2-print"
 BUILD = EXP / "build"
+
+# 2026-09-06: every test here reads a build that a test regenerates in place.
+# One xdist worker per build directory (pyproject: --dist loadgroup).
+pytestmark = pytest.mark.xdist_group("build-014")
 sys.path.insert(0, str(EXP))
 
 from paperholo import compose, pilots  # noqa: E402

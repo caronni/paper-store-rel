@@ -22,8 +22,8 @@ a real scan would not have.
 
 Usage (from repo root):
   env/bin/python experiments/016-arch3-c2-volume/gen_confetti_session.py \
-      [--scan scratch/e016c2hp-canon4800gray.tiff] \
-      [--out scratch/confetti_session] \
+      --scan <evidence>/e016c2hp-canon4800gray.tiff \
+      [--out experiments/016-arch3-c2-volume/build/confetti_session] \
       [--schedule 45x6,25x14,12x40,8x60,6x80] [--gap-mm 6]
 
 Determinism: all randomness flows from modulation.rng under the label
@@ -135,8 +135,9 @@ def shelf_pack(sizes: list[tuple[int, int]], gap: int
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--scan", default="scratch/e016c2hp-canon4800gray.tiff")
-    ap.add_argument("--out", default="scratch/confetti_session")
+    ap.add_argument("--scan", required=True,
+                    help="scan A, e016c2hp-canon4800gray.tiff (evidence archive)")
+    ap.add_argument("--out", default="experiments/016-arch3-c2-volume/build/confetti_session")
     ap.add_argument("--schedule", default="45x6,25x14,12x40,8x60,8xall",
                     help="per-scan SIZEmm x COUNT (COUNT 'all' = aligned "
                          "raster-sweep, 'sweep' = dense 1-mm greedy sweep)"

@@ -4,9 +4,9 @@ Printed sheets are self-describing (metadata channel + payload
 envelope); this JSON exists for humans and for print-run bookkeeping.
 
 Two identity namespaces write through here.  A v1 row records the legacy
-spec id and its printer-derived geometry.  A v2 row records the canonical
-format id (which IS the seed) plus the emission facts that are
-deliberately NOT identity: paper profile, engine grid, dots/cell, and
+spec id and the page its fossil carries (A4 x margin).  A v2 row records
+the canonical format id (which IS the seed) plus the emission facts that
+are deliberately NOT identity: paper profile, engine grid, dots/cell, and
 where the field landed on the page (FORMAT-SPACE §7/§9).
 """
 from __future__ import annotations
@@ -14,8 +14,10 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from ..format.descriptor import FormatSpec
 from ..format.layout import TILE_CELLS
 from ..format.profiles import Family
+from .plan import tier_word
 from .sheet import SheetLayout
 
 
@@ -28,22 +30,62 @@ def _column_groups_block(spec) -> dict:
         "symbol_bits": groups.symbol_bits,
         "carried_per_tile": dict(zip(spec.stream_ids, groups.carried)),
         "spare_bits_per_site": str(groups.spare_bits_per_site),
-        "dead_plane_ceiling": {
+        f"dead_{tier_word(spec)}_ceiling": {
             stream_id: str(groups.plane_tier_ceiling(index))
             for index, stream_id in enumerate(spec.stream_ids)},
     }}
 
 
-def write_manifest(path: Path, vol, *, profile=None,
+_CMYK1_RENDERER = {
+    "color_space": "DeviceCMYK",
+    "bits_per_component": 1,
+    "plane_order": ["C", "M", "Y"],
+    "K": "zero",
+    "operation": "one composite image",
+}
+
+
+def _renderer_block(
+        rgb_solid: tuple[tuple[int, int, int], ...] | None) -> dict:
+    """The route's construct; ``rgb`` names the three values sent."""
+    if rgb_solid is None:
+        return dict(_CMYK1_RENDERER)
+    return {
+        "route": "rgb",
+        "color_space": "DeviceRGB",
+        "plane_order": ["C", "M", "Y"],
+        "rgb_solid": {plane: list(rgb)
+                      for plane, rgb in zip("CMY", rgb_solid, strict=True)},
+        "W": "unpainted paper",
+        "operation": "three imagemasks, one per toner",
+        "filter": "ASCII85",
+    }
+
+
+def _cmy_law_block(spec: FormatSpec) -> dict:
+    if spec.codec_family is not Family.CMY:
+        return {}
+    return {
+        "state_ids": list(spec.codec.state_ids),
+        "word_zero_rule": "domain 9, u = n_dust + site, MSB → Y",
+        "dust_law": "balance",
+    }
+
+
+def write_manifest(path: Path, vol, *,
                    printer_id: str | None = None,
-                   sheet: SheetLayout | None = None) -> dict:
-    """profile: the PayloadProfile actually used, or None for explicit
-    coding + dial selections (recorded as "custom"). Every manifest
-    carries the provisional flag until a print qualifies
-    (HOLO-DESIGN §11).
+                   sheet: SheetLayout | None = None,
+                   rgb_solid: tuple[tuple[int, int, int], ...] | None = None
+                   ) -> dict:
+    """Every selection is explicit (format + dial), recorded as the
+    "custom" profile; every manifest carries the provisional flag until a
+    print qualifies (HOLO-DESIGN §11).
 
     sheet: the v2 emission placement (required for a v2 row, refused for
-    a v1 row, whose page geometry is derived)."""
+    a v1 row, whose page geometry is derived).
+
+    rgb_solid: the C, M, Y device-RGB values of an ``rgb``-route colour
+    emission; None = the ``cmyk1`` composite."""
     spec = vol.plan.spec
     is_v2 = spec.coding.namespace == "v2"
     if is_v2 and sheet is None:
@@ -85,10 +127,8 @@ def write_manifest(path: Path, vol, *, profile=None,
         **({"status": "provisional — no printed format has qualified yet"}
            if is_v2 else
            {"v1_status": "provisional — no format-v1 print qualified yet"}),
-        "profile": ({"name": profile.name, "evidence": profile.evidence,
-                     "priced_on": profile.priced_on} if profile is not None
-                    else {"name": "custom",
-                          "evidence": "none — explicit parameters"}),
+        "profile": {"name": "custom",
+                    "evidence": "none — explicit parameters"},
         "printer_id": printer_id,
         "spec_id": spec.spec_id,
         # The canonical v2 id is the whole identity AND the seed payload.
@@ -140,7 +180,7 @@ def write_manifest(path: Path, vol, *, profile=None,
             "n_streams": spec.n_streams,
             "esi": "counter*n_streams + stream_idx",
             "metadata_k_field": "k_meta (k_total = n_streams*k_meta)",
-            "plane_tier": vol.plan.plane_tier,
+            f"{tier_word(spec)}_tier": vol.plan.plane_tier,
             **_column_groups_block(spec),
         }} if spec.pooled_fountain else {}),
         "pages": page_rows,
@@ -154,18 +194,13 @@ def write_manifest(path: Path, vol, *, profile=None,
             "codec_id": spec.codec_id,
             "state_names": list(spec.codec.state_names),
             "word_states": list(spec.codec.word_states),
+            **_cmy_law_block(spec),
             "furniture": {
                 "word_sites": 100,
                 "dust_sites": spec.n_dust,
                 "payload_cells": spec.payload_cells,
             },
-            "renderer": {
-                "color_space": "DeviceCMYK",
-                "bits_per_component": 1,
-                "plane_order": ["C", "M", "Y"],
-                "K": "zero",
-                "operation": "one composite image",
-            },
+            "renderer": _renderer_block(rgb_solid),
             "streams": [
                 {
                     "stream_id": stream.stream_id,

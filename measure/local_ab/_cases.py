@@ -38,6 +38,7 @@ from pathlib import Path
 
 import numpy as np
 
+from measure import _evidence
 from measure.crop_parity import _geometry
 
 from . import _paths
@@ -50,7 +51,7 @@ FORMAT_REF = "L:c2-cmy8-r0700-p120-x1@3392x2368"
 TILES_YX = (53, 37)
 PAGE_CELLS = (TILES_YX[0] * TILE, TILES_YX[1] * TILE)
 
-GEN_DIR = _paths.E033 / "I-c2-cmy8r0700-q090-4mm"
+GEN_DIR = _paths.SHEET_I / "emission"
 PAYLOAD = GEN_DIR / "payload-counting.bin"
 PAYLOAD_SHA256 = ("2445b95db5b49bf3e05eb2538e9e247d289a48a4fed2e46e"
                   "b7ba78ab61e4350b")
@@ -58,21 +59,25 @@ PAYLOAD_BYTES = 1_798_761
 
 EVENTS_XZ = _paths.OVERNIGHT / "sheet-I-events.jsonl.xz"
 
-#: capture key -> (path, dpi, capture id). The capture id IS the file's
-#: sha256 (``intake.ingest_capture`` mints it that way), so this table is
+
+def evidence(path: Path) -> Path:
+    """A declared input path joined onto the evidence root."""
+    return _paths.evidence_root() / path
+
+
+#: capture key -> (path, dpi, capture id), every path relative to the
+#: evidence root. The capture id IS the file's sha256
+#: (``intake.ingest_capture`` mints it that way), so this table is
 #: self-checking: a capture whose id does not appear in the harvest's
 #: ``CaptureOpen`` events is refused BY NAME rather than mismatched.
 CAPTURES: dict[str, tuple[Path, float, str]] = {
-    "a": (_paths.SCRATCH_IN / ("xerox-canon-18.8-I-c2-cmy8-r700-q90-p120-"
-                               "4mm-2400dpi.tiff"), 2400.0,
+    "a": (_paths.SHEET_I / "captures/I-canon-2400rgb.tiff", 2400.0,
           "269d81217ec48a5e57ae5736baf091f0afe3f66dd15539c0f39dfc6cffde"
           "a30c"),
-    "b": (_paths.SCRATCH_IN / ("xerox-canon-18.8-I-c2-cmy8-r700-q90-p120-"
-                               "4mm-2400dpi-displaced.tiff"), 2400.0,
+    "b": (_paths.SHEET_I / "captures/I-canon-2400rgb-displaced.tiff", 2400.0,
           "a410631d6ff6a8519767a4cdb7c55bd6e5b90b549a7450d017e783064991"
           "e8dd"),
-    "c": (_paths.SCRATCH_IN / ("xerox-canon-18.8-I-c2-cmy8-r700-q90-p120-"
-                               "4mm-2400dpi-displaced2.tiff"), 2400.0,
+    "c": (_paths.SHEET_I / "captures/I-canon-2400rgb-displaced2.tiff", 2400.0,
           "36b90a50f272bb02982286b18657a8630eaa378eb7ac553e3a54461e548d"
           "55af"),
 }
@@ -138,7 +143,8 @@ def read_harvest() -> tuple[dict, dict, dict]:
     poses: dict[tuple[str, int], list[dict]] = collections.defaultdict(list)
     captures: dict[str, dict] = {}
     certified: set[tuple[int, int, int, str]] = set()
-    with lzma.open(EVENTS_XZ, "rt", encoding="utf-8") as handle:
+    _paths.refuse_if_withdrawn(evidence(EVENTS_XZ))
+    with lzma.open(evidence(EVENTS_XZ), "rt", encoding="utf-8") as handle:
         for line in handle:
             line = line.strip()
             if not line:
@@ -201,6 +207,7 @@ def write_crop(case: Case, capture_key: str, box: tuple[int, int, int, int],
     import tifffile
 
     path, dpi, _capture_id = CAPTURES[capture_key]
+    path = evidence(path)
     out_dir.mkdir(parents=True, exist_ok=True)
     target = out_dir / f"{case.case_id}-{capture_key}.tiff"
     px0, py0, px1, py1 = box
@@ -225,11 +232,12 @@ def write_crop(case: Case, capture_key: str, box: tuple[int, int, int, int],
     return record
 
 
-def prepare(case: Case) -> dict:
+def prepare(case: Case, crop_dir: Path) -> dict:
     """Everything a run needs about a case: geometry, crops, baseline."""
-    _paths.refuse_if_absent(
-        tuple(path for path, _dpi, _cid in CAPTURES.values())
-        + (EVENTS_XZ, PAYLOAD))
+    _paths.refuse_if_absent(tuple(
+        evidence(path) for path in
+        [path for path, _dpi, _cid in CAPTURES.values()]
+        + [PAYLOAD]))
     poses, captures, baseline = read_harvest()
     cells = cell_bbox(case)
     crops: dict[str, dict] = {}
@@ -243,7 +251,7 @@ def prepare(case: Case) -> dict:
         affine = native_affine_for(capture_id, poses)
         box = _geometry.px_bbox_for(cells, affine,
                                     captures[capture_id]["shape_yx"])
-        crops[key] = write_crop(case, key, box, _paths.SCRATCH / "crops")
+        crops[key] = write_crop(case, key, box, crop_dir)
         fits[key] = {"n_poses": affine.n_poses,
                      "px_per_cell": affine.px_per_cell,
                      "residual_median_px": affine.residual_median_px,
@@ -270,11 +278,16 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=main.__doc__)
     parser.add_argument("--case", required=True,
                         help=f"one of {sorted(CASES_BY_ID)}")
+    _evidence.add_argument(parser)
+    parser.add_argument("--out", type=Path, required=True,
+                        help="directory the crops are written to")
     args = parser.parse_args(argv)
+    _paths.use_evidence_root(args.evidence_root)
+    _paths.evidence_root()
     if args.case not in CASES_BY_ID:
         raise SystemExit(f"local_ab: unknown case {args.case!r}; declared: "
                          f"{sorted(CASES_BY_ID)}")
-    record = prepare(CASES_BY_ID[args.case])
+    record = prepare(CASES_BY_ID[args.case], args.out)
     residue = record.pop("production_residue_in_target")
     print(json.dumps({**record, "n_production_residue": len(residue)},
                      indent=1, default=str))

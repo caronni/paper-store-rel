@@ -24,8 +24,11 @@ THE THREE FAMILIES, each following its own emitter exactly:
   ``VolumeCode`` per stream (with its ``stream_id`` and
   ``fountain_aux``), one shared metadata bit per tile.
 * **pooled CMY8 (-v1)** — the pooled branch: ONE fountain over
-  ``esi = counter*n + stream``, sliced stream-minor, and one DISTINCT
+  ``esi = counter*n + stream`` with the row's ``column_groups``, sliced
+  stream-minor and cut to each stream's own width, and one DISTINCT
   metadata equation per stream at ``equation_index(counter, s, n)``.
+  A uniform row is one group under the frozen order and the cut is
+  the whole symbol, so it reconstructs bit-identically either way.
 
 All three are q-independent: q only sizes the page count in
 ``plan_volume``, and the page count is an input here (1 for every
@@ -133,7 +136,8 @@ def reconstruct(format_ref: str, payload: bytes,
         k_meta, pooled_source = streamset.pooled_pack_payload(payload, layout)
         pooled_code = fountain.VolumeCode(
             n_streams * k_meta, spec.symbol_bits, spec.seed,
-            tiles_per_page=tpp, n_streams=n_streams)
+            tiles_per_page=tpp, n_streams=n_streams,
+            groups=spec.column_groups)
         metadata_k = k_meta
     else:
         packed = streamset.pack_payload(payload, layout)
@@ -153,8 +157,9 @@ def reconstruct(format_ref: str, payload: bytes,
             pooled = pooled_code.encode_symbols(
                 pooled_source,
                 np.arange(page * spp, (page + 1) * spp, dtype=np.int64))
-            symbols = {stream_id: pooled[index::n_streams]
-                       for index, stream_id in enumerate(spec.stream_ids)}
+            symbols = {stream.stream_id: pooled[index::n_streams,
+                                                :stream.symbol_bits]
+                       for index, stream in enumerate(spec.stream_profiles)}
             bound = metadata.max_equation_index(n_streams)
             meta_bits = np.stack([
                 metadata.tile_bits(

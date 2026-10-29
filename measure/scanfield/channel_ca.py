@@ -1,6 +1,6 @@
 """Is scanner per-channel geometry worth compensating for a colour decode?
 
-One number decides it.  ``holo3/plugins/fields.py`` will not publish a
+One number decides it.  ``src/holo/receiver/plugins/fields.py`` will not publish a
 per-plane registration field whose delta is under ``MIN_DELTA_DOTS =
 0.25`` printed dots, because below that the read side is better off
 keeping its standing correction.  A scanner-channel field would ride the
@@ -39,8 +39,12 @@ Arms
 
 Read-only on every capture.  No scan, no print, no decode.
 
-    cd <repo>          # or any worktree
-    PYTHONPATH=measure env/bin/python -m scanfield.channel_ca --all
+    cd <repo>
+    PYTHONPATH=measure env/bin/python -m scanfield.channel_ca --all \\
+        --evidence-root <evidence> --out build/scanfield
+
+Historical record (2026-09); the discovery and sheet-I captures (paths
+relative to ``--evidence-root``) are in the evidence archive.
 """
 from __future__ import annotations
 
@@ -50,11 +54,13 @@ import math
 import sys
 import time
 from collections import defaultdict
+from dataclasses import replace
 from pathlib import Path
 from typing import Any, Sequence
 
 import numpy as np
 
+import _evidence
 from scanner._edge import UM_PER_INCH, analyze_edge, compare_channels
 from scanner._sheet import Sheet
 from scanner.ink_psf import SHEETS
@@ -63,11 +69,8 @@ from . import _margin, _targets
 from ._figure import draw_offset_map
 from ._marks import mark_offsets, selftest
 
-SCANS = Path("scratch")
-OUT_DIR = SCANS / "scanfield"
-
 PRINT_DPI = 600.0
-FLOOR_DOTS = 0.25                 # holo3/plugins/fields.py MIN_DELTA_DOTS
+FLOOR_DOTS = 0.25                 # src/holo/receiver/plugins/fields.py MIN_DELTA_DOTS
 C2_CELL_DOTS = 2.0
 PAYLOAD_X_MM = (4.0, 206.0)
 PAYLOAD_Y_MM = (4.0, 293.0)
@@ -77,8 +80,8 @@ COLOUR_SHEETS = ("e031-color", "e028-color")
 MARGIN_CAPTURES: tuple[_margin.MarginCapture, ...] = tuple(
     _margin.MarginCapture(
         key=f"sheetI-2400-{suffix or 'a'}",
-        path=SCANS / ("xerox-canon-18.8-I-c2-cmy8-r700-q90-p120-4mm-"
-                      f"2400dpi{suffix}.tiff"),
+        path=Path("paper-store-evidence-holo-2026-10/033-xerox-rung-experiments/"
+                  f"I/captures/I-canon-2400rgb{suffix}.tiff"),
         scan_dpi=2400.0,
         record="experiments/033 sheet I (c2-cmy8-r0700, VERIFIED)")
     for suffix in ("", "-displaced", "-displaced2"))
@@ -95,12 +98,12 @@ def _in_payload(x_mm: float, y_mm: float) -> bool:
 
 # --- arms -----------------------------------------------------------------
 
-def marks_arm(keys: Sequence[str], tone: str | None,
+def marks_arm(keys: Sequence[str], tone: str | None, evidence_root: Path,
               verbose: bool = True) -> list[dict[str, Any]]:
     specs = _targets.mark_specs()
     rows: list[dict[str, Any]] = []
     for key in keys:
-        sheet = Sheet(SHEETS[key])
+        sheet = Sheet(SHEETS[key].under(evidence_root))
         dpi = sheet.spec.scan_dpi
         kept = 0
         with sheet:
@@ -127,12 +130,12 @@ def marks_arm(keys: Sequence[str], tone: str | None,
     return rows
 
 
-def edges_arm(keys: Sequence[str], tone: str | None,
+def edges_arm(keys: Sequence[str], tone: str | None, evidence_root: Path,
               verbose: bool = True) -> list[dict[str, Any]]:
     specs = _targets.edge_specs()
     rows: list[dict[str, Any]] = []
     for key in keys:
-        sheet = Sheet(SHEETS[key])
+        sheet = Sheet(SHEETS[key].under(evidence_root))
         dpi = sheet.spec.scan_dpi
         halfwidth = 40.0 * dpi / 4800.0
         kept = 0
@@ -204,10 +207,11 @@ def _polarity_pairs(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return out
 
 
-def margin_arm(tone: str | None, segments: int,
+def margin_arm(tone: str | None, segments: int, evidence_root: Path,
                verbose: bool = True) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
-    for capture in MARGIN_CAPTURES:
+    for declared in MARGIN_CAPTURES:
+        capture = replace(declared, path=evidence_root / declared.path)
         if not capture.path.exists():
             if verbose:
                 print(f"  margin {capture.key}: MISSING {capture.path}",
@@ -452,7 +456,7 @@ def verdict(summary: dict[str, Any], repro: dict[str, Any]) -> dict[str, Any]:
     over_floor = worst_raw["value"] >= FLOOR_DOTS
     return {
         "floor_dots": FLOOR_DOTS,
-        "floor_source": "holo3/plugins/fields.py MIN_DELTA_DOTS",
+        "floor_source": "src/holo/receiver/plugins/fields.py MIN_DELTA_DOTS",
         "payload_band_x_mm": list(PAYLOAD_X_MM),
         "payload_band_y_mm": list(PAYLOAD_Y_MM),
         "worst_raw_offset": worst_raw,
@@ -488,12 +492,22 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--no-figure", dest="figure", action="store_false",
                         help="skip the PNG offset map")
     parser.add_argument("--sheets", nargs="+", default=list(COLOUR_SHEETS))
-    parser.add_argument("--out", type=Path, default=OUT_DIR)
+    _evidence.add_argument(parser)
+    parser.add_argument("--out", type=Path, required=True)
     args = parser.parse_args(argv)
     if args.all:
         args.selftest = args.marks = args.edges = args.margin = True
     if not (args.selftest or args.marks or args.edges or args.margin):
         parser.error("choose an arm (or --all)")
+    if args.marks or args.edges or args.margin:
+        args.evidence_root = _evidence.resolve(args.evidence_root,
+                                               tool="channel_ca")
+    if args.marks or args.edges:
+        _evidence.need(*(path for key in args.sheets if key in SHEETS
+                         for spec in (SHEETS[key].under(args.evidence_root),)
+                         for path in (spec.capture, spec.report,
+                                      spec.manifest)), tool="channel_ca")
+    root = args.evidence_root or Path()
 
     report: dict[str, Any] = {
         "instrument": "measure/scanfield/channel_ca",
@@ -504,7 +518,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         "tone_curve": args.tone,
         "floor_dots": FLOOR_DOTS,
         "sheets": {key: {
-            "capture": str(SHEETS[key].capture),
+            "capture": str(root / SHEETS[key].capture),
             "sha256": SHEETS[key].sha256,
             "engine": SHEETS[key].engine_label,
             "scan_dpi": SHEETS[key].scan_dpi,
@@ -521,15 +535,15 @@ def main(argv: Sequence[str] | None = None) -> int:
         report["selftest_worst_error_dots"] = worst
         print(f"  selftest: worst |error| {worst:.5f} dots", file=sys.stderr)
     if args.marks:
-        rows += marks_arm(args.sheets, args.tone)
+        rows += marks_arm(args.sheets, args.tone, args.evidence_root)
         arms.append("marks")
     if args.edges:
-        edge_rows = edges_arm(args.sheets, args.tone)
+        edge_rows = edges_arm(args.sheets, args.tone, args.evidence_root)
         paired = _polarity_pairs(edge_rows)
         rows += edge_rows + paired
         arms += ["edges", "edges-paired"]
     if args.margin:
-        rows += margin_arm(args.tone, args.margin_segments)
+        rows += margin_arm(args.tone, args.margin_segments, args.evidence_root)
         arms.append("margin")
 
     report["rows"] = rows

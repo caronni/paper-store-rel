@@ -10,7 +10,9 @@ experiments/026-pilot-density-subsample.md (control must reproduce the
 expected everywhere; site-count law predicts floor ~ 1/sqrt(f)).
 
 Run from repo root:
-  env/bin/python experiments/026-pilot-density-subsample/probe_e026.py [--quick]
+  env/bin/python experiments/026-pilot-density-subsample/probe_e026.py \\
+      --scan-root <evidence>/scans [--quick] [--c3]
+(the e012/e014 Canon captures are in the evidence archive)
 """
 import hashlib
 import json
@@ -30,18 +32,21 @@ from paperholo import acquire, formats, place, scannorm  # noqa: E402
 
 QUICK = "--quick" in sys.argv
 C3 = "--c3" in sys.argv          # 026.1 replication arm: e012 c3 intact sheet
+if "--scan-root" not in sys.argv[:-1]:
+    sys.exit(__doc__)
+SCAN_ROOT = Path(sys.argv[sys.argv.index("--scan-root") + 1])
 if C3:
     import gen_e012 as _gen  # noqa: E402
     CD = 3
-    SCANS = (("A", ROOT / "scans/xerox-e012-A-canon-4800.tiff",
+    SCANS = (("A", SCAN_ROOT / "xerox-e012-A-canon-4800.tiff",
               ((0.3, 0.3), (0.3, 0.55), (0.3, 0.75), (0.55, 0.4),
                (0.7, 0.35), (0.7, 0.65))),)
 else:
     import gen_e014 as _gen  # noqa: E402
     CD = 2
-    SCANS = (("C", ROOT / "scans/xerox-e014-A-canon-4800gray-C-flattened.tiff",
+    SCANS = (("C", SCAN_ROOT / "xerox-e014-A-canon-4800gray-C-flattened.tiff",
               ((0.3, 0.2), (0.3, 0.35), (0.3, 0.5), (0.3, 0.65), (0.3, 0.8))),
-             ("B", ROOT / "scans/xerox-e014-A-canon-4800gray-B-displaced.tiff",
+             ("B", SCAN_ROOT / "xerox-e014-A-canon-4800gray-B-displaced.tiff",
               ((0.3, 0.3), (0.3, 0.6), (0.7, 0.4))))
 SEED = _gen.SEED
 spec = _gen.make_spec()

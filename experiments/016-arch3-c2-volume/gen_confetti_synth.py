@@ -17,7 +17,7 @@ are calibrated by test to land in the measured real-scan band (ctx BER
 
 Same carve schedule / shelf packing / manifest as the scan-based
 generator (imported), same rng label family. Usage:
-  env/bin/python gen_confetti_synth.py [--out scratch/confetti_synth]
+  env/bin/python gen_confetti_synth.py [--out experiments/016-arch3-c2-volume/build/confetti_synth]
       [--schedule ...] [--backing white] [--blur 2.0] [--noise 5.0]
 """
 import argparse
@@ -84,7 +84,7 @@ def render_piece(refl_cells: np.ndarray, rect: tuple[int, int, int],
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--out", default="scratch/confetti_synth")
+    ap.add_argument("--out", default="experiments/016-arch3-c2-volume/build/confetti_synth")
     # default ends in descending dense sweeps: THIS generator's legacy
     # default issued 65.5% of the field (the real-toner confetti_session
     # fixture reads 67.1% — different rng label) — below the fountain's
@@ -97,7 +97,7 @@ def main() -> None:
     # fixture is the big-sweep schedule below (98.0% issued, union
     # ceiling 1734, single-piece ceiling 1603 > K):
     #   --schedule 38xsweep,12xsweep,8xsweep,6xsweep,5xsweep \
-    #   --out scratch/confetti_synth_close
+    #   --out experiments/016-arch3-c2-volume/build/confetti_synth_close
     ap.add_argument("--schedule", default="45x6,25x14,12x40,8x60,"
                                           "12xsweep,8xsweep,6xsweep,5xsweep")
     ap.add_argument("--gap-mm", type=float, default=6.0)

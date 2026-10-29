@@ -19,10 +19,10 @@ error correlation, not as a recommended combiner (012.3: it LOSES to the
 best single scan on healthy c3; errors are print-frozen).
 
 Run from experiments/012-pilot-print/:
-    ../../env/bin/python score_canon_scans.py [--quick]
+    ../../env/bin/python score_canon_scans.py --scan-dir <evidence>/scans [--quick]
 --quick: 1200 dpi scan only, center window only (smoke).
-Scans expected in scans/ (untracked; shas in the 012.3 run table). Missing
-files are skipped with a notice so the script stays runnable everywhere.
+Scans expected in --scan-dir (evidence archive; shas in the 012.3 run
+table). Missing files are skipped with a notice.
 """
 from __future__ import annotations
 
@@ -50,11 +50,11 @@ NULL_STRIDE = 7919
 WIN_PX = 1884                       # window edge at 2 px/dot (~40 mm)
 
 SCANS = [
-    ("1200", ROOT / "scans/xerox-e012-A-canon-1200.png", 1,
+    ("1200", "xerox-e012-A-canon-1200.png", 1,
      [(0.5, 0.5), (0.42, 0.42), (0.58, 0.58)]),
-    ("2400", ROOT / "scans/xerox-e012-A-canon-2400bw.png", 2,
+    ("2400", "xerox-e012-A-canon-2400bw.png", 2,
      [(0.5, 0.5), (0.42, 0.42)]),
-    ("4800", ROOT / "scans/xerox-e012-A-canon-4800.tiff", 4,
+    ("4800", "xerox-e012-A-canon-4800.tiff", 4,
      [(0.5, 0.5), (0.42, 0.42)]),
 ]
 
@@ -83,6 +83,7 @@ def _crop_down(arr: np.ndarray, fy: float, fx: float, f: int) -> np.ndarray:
 
 def main() -> None:
     ap = argparse.ArgumentParser()
+    ap.add_argument("--scan-dir", type=Path, required=True)
     ap.add_argument("--quick", action="store_true")
     args = ap.parse_args()
 
@@ -97,9 +98,10 @@ def main() -> None:
     report: dict = {"quick": args.quick, "scans": {}, "majority": {}}
     center: dict[str, tuple[np.ndarray, np.ndarray]] = {}
 
-    for name, path, f, positions in scans:
+    for name, fname, f, positions in scans:
+        path = args.scan_dir / fname
         if not path.exists():
-            print(f"{name}: {path} missing — skipped (scans/ is untracked; "
+            print(f"{name}: {path} missing — skipped (scans live in the evidence archive; "
                   f"shas in the 012.3 run table)", flush=True)
             continue
         if args.quick:

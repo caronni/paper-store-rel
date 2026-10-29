@@ -27,13 +27,17 @@ registration (never re-derived).  Per crop reports:
   * band phase-diff coherence at the locked pitch (trackability metric)
   * expected pitch from the registration affine (GT: cell_dots * px/dot)
 
-Usage: env/bin/python scratch/probe17_lattice_lock.py <case> [...]
+Usage: env/bin/python experiments/017-color-channel/probes/probe17_lattice_lock.py \\
+           --scan-dir <evidence>/scans --e004-build <gen_e004's build> \\
+           --e006-build <gen_e006's build> <case> [...]
        cases: e004-home e004-xerox loopc-home loopbw-home loopc-xerox
               loopbw-xerox office-scanner all
-Writes scratch/probe17_out/<case>.json
+Writes experiments/017-color-channel/build/probe17_out/<case>.json (the
+record of the run is probe17_out/ beside this file).
 """
 from __future__ import annotations
 
+import argparse
 import json
 import sys
 import time
@@ -41,7 +45,7 @@ from pathlib import Path
 
 import numpy as np
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "src"))
 for rel in ("experiments/002-calibration-page",):
     sys.path.insert(0, str(ROOT / rel))
@@ -51,8 +55,8 @@ from paperholo import acquire as acq              # noqa: E402
 from paperholo.scannorm import measure_cell_pitch, ScanRefused  # noqa: E402
 from paperholo.sync import estimate_lattice       # noqa: E402
 
-SCANS = ROOT / "scans"
-OUT = ROOT / "scratch" / "probe17_out"
+SCANS = Path()                                     # set from --scan-dir
+OUT = ROOT / "experiments/017-color-channel/build/probe17_out"
 DPD = 600 / 25.4                                   # layout dots per mm
 
 # screen-period line probes, px at 1200 dpi scan (halve for 600 dpi scans)
@@ -142,8 +146,7 @@ def probe_crop(luma: np.ndarray, cell_px_nominal: float,
 # e004 checkerboard cases (registered tile crops)
 # ---------------------------------------------------------------------------
 
-E004_MANIFEST = ROOT / ("experiments/004-finalists-checkerboard/build/"
-                        "e004_manifest.json")
+E004_MANIFEST = Path()                             # set from --e004-build
 CLASS_CELL = {"A3": 3, "A4": 4, "B1": 2}           # B2 = dot-level, skipped
 INSET_MM = 1.8                                     # dodge tile edges/labels
 
@@ -198,8 +201,8 @@ def run_e004(scan_path: Path, n_per_class: dict[str, int],
 # loop-page cases (registered band crops)
 # ---------------------------------------------------------------------------
 
-E006C_MANIFEST = ROOT / "experiments/006-loop-pages/build/e006c_manifest.json"
-E006BW_MANIFEST = ROOT / "experiments/006-loop-pages/build/e006bw_manifest.json"
+E006C_MANIFEST = Path()                            # set from --e006-build
+E006BW_MANIFEST = Path()
 BAND_INSET_DOTS = 8
 N_BANDS = 6                                        # spread over the page
 N_XWIN = 2                                         # x windows per band
@@ -311,8 +314,19 @@ CASES = {
 
 
 def main() -> None:
-    OUT.mkdir(exist_ok=True)
-    args = sys.argv[1:] or ["all"]
+    global SCANS, E004_MANIFEST, E006C_MANIFEST, E006BW_MANIFEST
+    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    ap.add_argument("cases", nargs="*", default=["all"])
+    ap.add_argument("--scan-dir", type=Path, required=True)
+    ap.add_argument("--e004-build", type=Path, required=True)
+    ap.add_argument("--e006-build", type=Path, required=True)
+    a = ap.parse_args()
+    SCANS = a.scan_dir
+    E004_MANIFEST = a.e004_build / "e004_manifest.json"
+    E006C_MANIFEST = a.e006_build / "e006c_manifest.json"
+    E006BW_MANIFEST = a.e006_build / "e006bw_manifest.json"
+    OUT.mkdir(parents=True, exist_ok=True)
+    args = a.cases
     names = list(CASES) if args == ["all"] else args
     for name in names:
         print(f"=== {name} ===", flush=True)

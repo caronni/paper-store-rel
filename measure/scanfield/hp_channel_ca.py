@@ -48,8 +48,9 @@ its sign flips in platen coordinates, and at 90 degrees its two axes
 exchange.  A platen-locked effect does neither.  The corpus that was
 never meant for this question happens to answer it exactly.
 
-    cd <repo>          # or any worktree
-    PYTHONPATH=measure env/bin/python -m scanfield.hp_channel_ca --all
+    cd <repo>
+    PYTHONPATH=measure env/bin/python -m scanfield.hp_channel_ca --all \\
+        --evidence-root <evidence> --out build/scanfield
 """
 from __future__ import annotations
 
@@ -64,13 +65,14 @@ from typing import Any, Sequence
 
 import numpy as np
 
+import _evidence
+
 from . import hp_comb, hp_inventory, hp_targets
 from ._marks import mark_offsets, selftest
 from .channel_ca import (C2_CELL_DOTS, CHANNELS, FLOOR_DOTS, PAYLOAD_X_MM,
                          PAYLOAD_Y_MM, PRINT_DPI, _in_payload,
                          antisymmetry, platen_model, verdict)
 
-OUT_DIR = hp_inventory.OUT_DIR
 SCAN_DPI = 1200.0
 BIN_MM = 12.0                     # platen-x bin for the profile comparison
 MIN_BIN_COUNT = 3
@@ -542,7 +544,7 @@ def field_verdict(summary: dict[str, Any], arm: str = "marks"
                   ) -> dict[str, Any]:
     """The second decision: would a scanner FIELD be publishable?
 
-    ``holo3/plugins/fields.py publishable`` gates on the MEDIAN magnitude
+    ``src/holo/receiver/plugins/fields.py publishable`` gates on the MEDIAN magnitude
     of the fitted delta over its support, not on a maximum, so the
     honest comparison for a field is the median absolute deviation from
     the platen-wide constant.  This is deliberately a separate verdict
@@ -560,7 +562,7 @@ def field_verdict(summary: dict[str, Any], arm: str = "marks"
                      "max": entry["max_abs_demeaned_dots"]}
     return {
         "floor_dots": FLOOR_DOTS,
-        "floor_gate": "holo3/plugins/fields.py publishable() — median "
+        "floor_gate": "src/holo/receiver/plugins/fields.py publishable() — median "
                       "magnitude of the fitted field over its support",
         "worst_median_abs_demeaned_dots": worst["median"],
         "worst_max_abs_demeaned_dots": worst["max"],
@@ -591,14 +593,19 @@ def main(argv: Sequence[str] | None = None) -> int:
                         default=["primary", "control", "k-only"])
     parser.add_argument("--bin-mm", type=float, default=BIN_MM)
     parser.add_argument("--no-figure", dest="figure", action="store_false")
-    parser.add_argument("--out", type=Path, default=OUT_DIR)
+    _evidence.add_argument(parser)
+    parser.add_argument("--out", type=Path, required=True)
     args = parser.parse_args(argv)
     if args.all:
         args.selftest = args.marks = args.holes = args.comb = True
     if not (args.selftest or args.marks or args.holes or args.comb):
         parser.error("choose an arm (or --all)")
 
+    hp_inventory.use_evidence_root(args.evidence_root)
     captures = hp_inventory.take(tuple(args.roles))
+    if not captures and (args.marks or args.holes or args.comb):
+        _evidence.need(*(capture.path for capture in hp_inventory.HOME_COLOUR
+                         if capture.role in args.roles), tool="hp_channel_ca")
     report: dict[str, Any] = {
         "instrument": "measure/scanfield/hp_channel_ca",
         "purpose": "does the home/HP flatbed's per-channel geometry clear "

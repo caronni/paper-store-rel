@@ -14,7 +14,7 @@ This is the first fragment volume, the first multi-page volume and
 the first duplex sheet in the holo3 record, and the first colour
 confetti on paper at all (e018's confetti was K-only on the home
 engine). It is also the run that exposed the receiver's single-page
-default and drove the PAGE-DOMAIN line (holo3/docs/PAGE-DOMAIN.md).
+default and drove the PAGE-DOMAIN line (src/holo/receiver/docs/PAGE-DOMAIN.md).
 
 ## The object
 
@@ -189,6 +189,72 @@ fields minted no certificates directly, as on sheet I.
   3/9) are the material for one — a resume A/B on the archived facts,
   no new scan needed.
 
+## Branch record — the page-field receiver on sheet J: VERIFIED a third time, MERGED 2026-09-12
+
+Recorded from the run archive 2026-09-12. The work is branch
+`page-field-receiver`, tree `pre-v1-v2-deletion-136-gd7eabd21` in all
+four run `tree` files, merged to main 2026-09-12; nothing here promotes
+anything. The receiver-line record with the full chain table, the costs
+and the confounds is `src/holo/receiver/docs/PAGE-FIELD-PLAN.md` §5.2;
+the bars it feeds are `docs/PAGE-FIELD-DESIGN.md` §6 B6 and B7; the
+table is NOT reprinted here.
+
+Four runs on machine 4 at 14 workers over the same ten captures as chain B,
+`--complete`, the fossil identity `L:c2-cmy8-r0547@53x37`, the page field
+unconditional (that branch deleted `--plane-fields`; these runs asked for
+nothing, where chains A and B asked for the v1 fitter by name), with one
+analyzer ladder folded in after the first: four 2400 captures to 3,402
+certificates and no close (1 h 36); the analyzer's all-arms ladder +156
+in 7 h 11 wall with controls and parity not run for this campaign; the
+receiver resumed on those and minted ONE (28 min); capture 6a took the
+count past K with five loads (20 min, interrupted, close deferred and
+never solved); all ten closed **VERIFIED**, sha `fbbab289…`, **8,102**
+certificates (C 2,738 / M 2,749 / Y 2,615; tiles with ≥ 1 stream 2,768
+of 3,922, 70.6 %; all three 2,613, 66.6 %) in 3 h 17. So sheet J is
+recovered byte-exact a third time, from the same paper and captures, on
+a different tree and machine; `J-all-20260910.bin` re-hashes to the
+emission.
+
+**Read this beside chain B, not against it.** +215 over chain B's 7,887,
+of which 156 are the analyzer's, so the receiver axis is AT MOST +59
+(+0.75 %) and possibly less (the fold's 156 stood for every later arm) —
+and the two differ five ways at once: a resume chain against one
+from-scratch run, the analyzer's certificates on one side only, the
+ctrl-C in the fourth run, 14 workers against 12, and the tree. **Machine 4
+cpu-seconds are not this log's machine 2 and laptop seconds and are never
+compared with them**; jobs are comparable in kind (436,771 across four
+runs against 327,453 in one) but chaining inflates them. The chain was
+never below K after its fourth run and `--complete` defers the close, so
+it has no counterpart to this log's "K reached at 2.3 % of the CPU".
+
+**What is new about the sheet, rather than about the branch.** The page
+field published on ALL six page-planes at 82 % / 81 % support, where this
+log's per-lane fitter published C alone and refused M (0.12 dots) and Y
+(0.22 / 0.08); Y trails C and M by 11.7–12.4 points of the page there,
+the same asymmetry the certificates show at ~7 %. No tile in any plane's
+field support was measured on more than 7 of the ten captures (eight
+platen loads; the 4800s are rescans of 3a's and 4a's). And the
+address-word contradiction alarm (D1, landed after these chains; its
+first firings were sheet H's two on 2026-09-06) fired for the first time
+on fragment material, on the page rule, and more than once in a run: 16
+lines over two physical conflicts, both one survey region holding two
+scraps — the D1 note in
+`src/holo/receiver/docs/retirement_docs-2026-09/RULINGS.md`. Nothing was
+quarantined and the close is byte-exact.
+
+**The analyzer on this residue.** 156 of 2,688 covered targets (5.8 %;
+the residue was 69 % never-addressed or below the attempt floor), 145 /
+9 / 2 / 0 by generation, every one single-witness; handed back, the
+receiver certified one tile adjacent to no analyzer key. The lever on a
+fragment sheet was a capture, not a battery. The analyzer's own record is
+`analyzer/J-CONFETTI-2026-09-10.md`.
+
+**Owed, unchanged.** The 4800 pair A/B: the two rescans entered the last
+run together with 7a, 8a and 9a, exactly as in both chains above, so this
+chain gives no controlled 4800-against-2400 answer either. A resumed run's
+census counts only its own marks, so the chain has only an uncertified
+total to set beside chain B's: 3,664 against 3,879.
+
 ## Standing rules check
 
 Single sheet, single print day, one engine pairing, one cut:
@@ -207,10 +273,10 @@ AltaLink footing.
   68649 / 78759 / complete.81777; laptop 52093 / 54028; the aborted
   56088 argv+tree); `scan-shas.txt`.
 - Primary run dirs incl. `facts.npz` resume seeds (57–211 MB) stay
-  on machine 2 (`<volume>/J-run*`); payloads `J.out` and
+  on <host> (`<volume>/J-run*`); payloads `J.out` and
   `J-complete.out` there, both verified.
 - Scans: `scratch/xerox-canon-1.9-J-*.tiff` (12 files, 31 GB; also
-  on machine 2). Emission: `scratch/c2-cmy8-r0547-q06860-1MiB/`.
+  on <host>). Emission: `scratch/c2-cmy8-r0547-q06860-1MiB/`.
 - Event-stream reductions for this log: session scratchpad
   (`events_pass.py`); every number above re-derives from the
   archived events + reports.
@@ -226,3 +292,25 @@ AltaLink footing.
 - The 4800 pair A/B on the archived facts (see above).
 - The 930 failed tile-streams: no per-scrap or per-band analysis
   yet; the residue analyzer proposed for sheet H applies unchanged.
+
+## Addendum 2026-10-11 — the whole sheet WAS decoded
+
+The print section above says the whole-sheet scans
+(`…-full-2400-{a,b}.tiff`, published in the holo release as
+`035-sheet-j-confetti/J-copy2-whole`) were part of no run here, and the
+owed list carries their decode as not started. The second physical sheet
+was decoded, on machine 2 on 2026-09-03, from those two 2400 dpi captures
+alone: run `J-run-full.89382`, tree 1faa7a2b
+(`pre-gpt-5.6-cleanup-20260804-912-g1faa7a2b`), 12 workers,
+`--plane-fields --complete --pages 2`. Close **VERIFIED**, sha256
+`fbbab289f7f94b25736c58be46a994c441fd02552cc6022352e3d86d2fab7c83`
+(== the confetti sheet's payload, the same emission), **11,545 of
+11,766** tile-streams (C 3,871 / M 3,876 / Y 3,798). The run's `argv`,
+`tree` and `report.json` are published under
+`035-sheet-j-confetti/J-copy2-whole/records/runs/J-run-full.89382/`, its
+ten panes under
+`035-sheet-j-confetti/J-copy2-whole/figures/panes/J-run-full.89382/`; a
+re-run on today's tree declares the confetti row's `L:` identity (the
+release README carries the command). The rule stands: the whole-sheet
+captures never share a run with the confetti captures (evidence line,
+docs/EVIDENCE-ARCHIVE-2026-10-08.md §8a).

@@ -1,6 +1,6 @@
 """P5-level-rates summary: net-density scenarios + confusion diagnostics
-from scratch/probe17_level_rates_report.json (run probe17_level_rates.py
-first). Pure post-processing, no scan access."""
+from probe17_level_rates_report.json (the record beside this file, or the
+report given as the one argument). Pure post-processing, no scan access."""
 from __future__ import annotations
 
 import json
@@ -9,7 +9,7 @@ from pathlib import Path
 
 import numpy as np
 
-REPO = Path(__file__).resolve().parents[1]
+REPO = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(REPO / "src"))
 from paperholo import ldpc  # noqa: E402
 
@@ -31,8 +31,9 @@ def scenario(name: str, per_level: dict[str, tuple[str, float]]) -> None:
 
 
 def main() -> None:
-    rep = json.loads((REPO / "scratch" / "probe17_level_rates_report.json")
-                     .read_text())
+    report = (Path(sys.argv[1]) if len(sys.argv) > 1 else
+              Path(__file__).resolve().parent / "probe17_level_rates_report.json")
+    rep = json.loads(report.read_text())
     for sc in rep["scans"]:
         print(f"\n== {sc['scan']} ==")
         conf = np.array(sc["state_confusion_7st"], np.float64)

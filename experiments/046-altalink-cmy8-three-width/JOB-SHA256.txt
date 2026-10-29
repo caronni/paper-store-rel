@@ -1,0 +1,3 @@
+# e046 (generated 2026-10-12): payload and printed job, byte-identical regeneration by generate_set.py --verify
+f8c0be638ebd11c7262f18a7dc59edec390ecd9335a2b13edfc74f6daf60af56  counting-A-c2-1782790.bin
+45bcedaf1a194e64c2d013a413427df1199198159acebb0ee3ca908b4ba90e2d  E046-A-page000.ps

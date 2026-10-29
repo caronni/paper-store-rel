@@ -87,9 +87,7 @@ def manifest_dir(gen_dir: Path | str) -> Path:
         f"no manifest.json under {gen_dir} or {gen_dir / 'volume'}")
 
 
-def _install_holo1() -> Any:
-    from measure.yask import _paths
-    _paths.install_src()
+def _gt_module() -> Any:
     from measure.crop_parity import _gt
     return _gt
 
@@ -183,7 +181,6 @@ class _holo1_resolution:
         self._original: Any = None
 
     def __enter__(self) -> str:
-        _install_holo1()
         from holo.format import resolve as holo1_resolve
         try:
             spec = holo1_resolve.resolve_format_ref(self.ref)
@@ -260,7 +257,7 @@ def load_truth(gen_dir: Path | str | None, payload_path: Path | str,
                 f"{declared_pages} emitted page(s)")
 
     ref = format_ref or row.row_id
-    gt_module = _install_holo1()
+    gt_module = _gt_module()
     with _holo1_resolution(ref, row) as resolved_ref:
         gt = gt_module.reconstruct(resolved_ref, payload, n_pages)
     if tuple(gt.tiles_yx) != tuple(row.tiles_yx):
@@ -328,7 +325,7 @@ def _sample_tiles(truth: Truth, page: int, sample: int,
 
 def gate_certificates(truth: Truth, inputs: RunInputs) -> dict:
     """Gate 1: every snapshot certificate equals its GT user bits."""
-    gt_module = _install_holo1()
+    gt_module = _gt_module()
     gt = gt_module.GroundTruth(
         format_ref=truth.format_ref, payload_sha256=truth.payload_sha256,
         tiles_yx=truth.tiles_yx, streams=truth.streams,

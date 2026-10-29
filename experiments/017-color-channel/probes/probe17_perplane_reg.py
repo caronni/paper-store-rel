@@ -18,17 +18,19 @@ Method:
     (probe17_dust_fit.py).
 
 Usage:
-  env/bin/python scratch/probe17_perplane_reg.py scans/finalists.png [more...]
-Writes scratch/probe17_reg_<scanstem>.npz
+  env/bin/python experiments/017-color-channel/probes/probe17_perplane_reg.py \\
+      --e004-build <gen_e004's build> <evidence>/scans/finalists.png [more...]
+Writes experiments/017-color-channel/build/probe17_reg_<scanstem>.npz
 """
 from __future__ import annotations
 
+import argparse
 import sys
 from pathlib import Path
 
 import numpy as np
 
-_REPO = Path(__file__).resolve().parents[1]
+_REPO = Path(__file__).resolve().parents[3]
 for rel in ("experiments/002-calibration-page",
             "experiments/003-modulation-probes",
             "experiments/001-engine-characterization",
@@ -41,9 +43,8 @@ import cal_core as cc  # noqa: E402
 import scanlab  # noqa: E402
 from scipy.ndimage import uniform_filter  # noqa: E402
 
-E004 = _REPO / "experiments/004-finalists-checkerboard"
-MANIFEST = E004 / "build/e004_manifest.json"
-BUILD = E004 / "build"
+BUILD = Path()     # gen_e004's build dir, set from --e004-build
+MANIFEST = Path()  # BUILD / "e004_manifest.json"
 
 STATES7 = ("W", "C", "M", "Y", "CM", "CY", "MY")
 PURE = {"C": 1, "M": 2, "Y": 3}
@@ -182,10 +183,17 @@ def main(scan_paths: list[str]) -> None:
             print(f"  {name}: lock={view.local_offset_dots} "
                   f"q={view.local_quality:.2f} n_cells={n} "
                   f"tileY(dy,dx)={out[f'{tname}/Y/tile'][:2].round(3)}")
-        dest = _REPO / "scratch" / f"probe17_reg_{spath.stem}.npz"
+        dest = _REPO / "experiments/017-color-channel/build" / f"probe17_reg_{spath.stem}.npz"
+        dest.parent.mkdir(parents=True, exist_ok=True)
         np.savez_compressed(dest, **out)
         print(f"  -> {dest}")
 
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    _ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    _ap.add_argument("--e004-build", type=Path, required=True)
+    _ap.add_argument("scans", nargs="+")
+    _args = _ap.parse_args()
+    BUILD = _args.e004_build
+    MANIFEST = BUILD / "e004_manifest.json"
+    main(_args.scans)

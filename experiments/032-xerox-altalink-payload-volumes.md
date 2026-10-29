@@ -251,6 +251,26 @@ C 620 / M 43 / Y 0 — so the diagnostic exists.
 3. If the hypothesis survives: state the graceful-degradation property in
    HOLO-DESIGN as a reason to prefer per-plane coding at marginal channels,
    and reconsider whether `cmy7-pack7` earns its density at c2 at all.
+   **DISPOSED 2026-10-05**: cmy7-pack7 earns its density nowhere measured
+   at c2 on any engine, and at c3 by inference from the c2 closes (the
+   only colour close at c3 in this record is cmy7's own, above; no
+   c3-cmy8 sheet has been read on a healthy engine) — the AltaLink reads cmy8 with the
+   triple to 100 % (e036/e037); the M281 on fresh toner fails M and Y in
+   every state outside one 4–5 mm band (e038), and a page with every
+   payload triple removed is screened identically (S1dash, record in
+   docs/REDUCED-ALPHABET-ERASURE-ROWS.md §6); the Canon closes cmy8 G with
+   the triple (e040). The hypothesis above fares as follows: cmy8's
+   per-plane degradation is MEASURED (e038: a complete C plane, 839/840,
+   with M and Y failing), while pack7's failure at those rates is
+   inferred, not printed; and the AltaLink c2-cmy7 capture that motivated
+   it closed VERIFIED at 686,859 B once the detector improved
+   (COLOR-UPLIFT-MEASUREMENTS §14.3), so its original failure was
+   detector-frozen, not proof of the joint-symbol mechanism. The cmy7
+   line is CLOSED on the owner's wrap-up instruction; the
+   graceful-degradation preference is recorded in that note, not in
+   HOLO-DESIGN (declined: the freeze is user-declared, the note is a
+   parked design). Item 1 above is moot with the line closed and was
+   never run.
 4. Print-date attribution for the M281 c2-cmy7 sheet is not established in
    this log — the capture was scanned 2026-08-06, but whether it was printed
    during the e030 wave or later was not determined.
@@ -267,3 +287,18 @@ Emitted volumes: `scratch/e030/holo-c2-cmy8-q05-counting`,
 `scratch/e030/holo-c2-cmy7-q05-counting`,
 `scratch/e030/holo-c3-cmy7-q05-counting`,
 `scratch/e028/holo-c2-r0700-q07-ink-counting`.
+
+## Addendum 2026-10-09 — six crosswise rescans of the c2-cmy8-v0 sheet
+
+Six crosswise Canon rescans of this log's `c2-cmy8-p120-v0` AltaLink sheet (the sheet turned on the platen, "top"/"bot"
+placements), taken 2026-09-02/03 and never logged here; retained by ruling D10 (2026-10-09). Under `scratch/5.8/`,
+`xerox-canon-5.8-e032-c2-cmy8-v0-r0550x0550x0547-q05-6mm-<suffix>.tiff`; sha256 from the raw-hash pass of 2026-10-09 (sha256 over the retained evidence):
+
+| suffix | bytes | mtime | sha256 |
+|---|---|---|---|
+| `2400dpi-quer-top-a` | 1,718,864,112 | 2026-09-02 22:30 | `cbbd0ef468bd6b85edc25356508af1d759fdede8d5cf4c9b1cb409185a0ddf8d` |
+| `4800dpi-quer-top-a` | 6,875,455,728 | 2026-09-02 23:07 | `6bd9507fe66afd64dbc8f7dee76b1c796fac3f32d7f9b28ad6137b44b3fd94f1` |
+| `4800dpi-quer-top-b` | 6,875,455,728 | 2026-09-02 23:43 | `5645a28d09bb38170a8f854349488e277735834e6faaf9de1eb65511b0e987c0` |
+| `2400dpi-quer-bot-a` | 1,718,864,112 | 2026-09-02 23:53 | `69c254414e31c3b0339d5e6ea37f4c8828f2646f9b63cbf11317354c7305b4f0` |
+| `4800dpi-quer-bot-a` | 6,875,455,728 | 2026-09-03 00:29 | `223811c74842d2eb49bc2696a25356eda7b1225b2640cec320170bd447a8e5ad` |
+| `4800dpi-quer-bot-b` | 6,875,455,728 | 2026-09-03 01:06 | `8316b760e5df268a8d83d046746f5b9737eecf5acfdf34c89c6c2b858fee8581` |

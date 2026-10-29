@@ -1,0 +1,186 @@
+PAPER-STORE VOLUME PLATE. Promise, proof, conventions. ink=1 MSB-first.
+ASCII: 33=! 34=" 35=# 36=$ 37=% 38=& 39=' 40=( 41=) 42=* 43=+ 44=, 45=- 46=. 47=/ 48=0 49=1 50=2 51=3 52=4 53=5 54=6 55=7 56=8 57=9 58=: 59=; 60=< 61== 62=> 63=? 64=@ 65=A 66=B 67=C 68=D 69=E 70=F 71=G 72=H 73=I 74=J 75=K 76=L 77=M 78=N 79=O 80=P 81=Q 82=R 83=S 84=T 85=U 86=V 87=W 88=X 89=Y 90=Z 91=[ 92=\ 93=] 94=^ 95=_ 96=` 97=a 98=b 99=c 100=d 101=e 102=f 103=g 104=h 105=i 106=j 107=k 108=l 109=m 110=n 111=o 112=p 113=q 114=r 115=s 116=t 117=u 118=v 119=w 120=x 121=y 122=z 123={ 124=| 125=} 126=~
+keywords: False None True and as assert async await break class continue def del elif else except finally for from global if import in is lambda nonlocal not or pass raise return try while with yield
+builtins: abs aiter all anext any ascii bin bool breakpoint bytearray bytes callable chr classmethod compile complex copyright credits delattr dict dir divmod enumerate eval exec exit filter float format frozenset getattr globals hasattr hash help hex id input int isinstance issubclass iter len license list locals map max memoryview min next object oct open ord pow print property quit range repr reversed round set setattr slice sorted staticmethod str sum super tuple type vars zip
+#!/usr/bin/env python3
+"""Find payload-textured scraps, approve them, and pack them losslessly.
+
+This is deliberately a standalone utility.  Its small structure-tensor front
+end is copied from the coarse idea qualified by experiment e021, but this file
+does not import paperholo or any experiment module.
+
+Typical use::
+
+    python util/scrap_pack.py scan.tiff
+    python util/scrap_pack.py scan.png -o scan-packed.png --cell-px 24
+
+``--cell-px`` is the nominal payload-cell pitch in the input raster.  It is 24
+pixels for the common c3 payload scanned at 4800 dpi.  The coarse survey uses
+roughly 8/3 of that pitch (64 pixels by default), and each detected box is
+expanded by ``--margin-cells`` payload cells before packing.
+"""
+from __future__ import annotations
+
+import argparse
+import html
+import os
+import secrets
+import tempfile
+import threading
+import webbrowser
+from dataclasses import dataclass
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from pathlib import Path
+from typing import Iterable
+from urllib.parse import urlparse
+
+import imagecodecs
+import numpy as np
+import tifffile
+from PIL import Image, ImageDraw
+from scipy import ndimage
+
+TENSOR_SCORE_FLOOR = 0.003
+FULL_PNG_VERIFY_BYTES = 512 * 1024 * 1024
+
+
+@dataclass(frozen=True, order=True)
+class Box:
+    """Half-open native-pixel rectangle, ``(y0, x0, y1, x1)``."""
+
+    y0: int
+    x0: int
+    y1: int
+    x1: int
+
+    @property
+    def height(self) -> int:
+        return self.y1 - self.y0
+
+    @property
+    def width(self) -> int:
+        return self.x1 - self.x0
+
+
+@dataclass(frozen=True)
+class Raster:
+    """Depth-preserving input raster."""
+
+    array: np.ndarray
+    path: Path
+
+
+@dataclass(frozen=True)
+class Placement:
+    """Placement of one source box on the packed canvas."""
+
+    source_index: int
+    y: int
+    x: int
+    rotated: bool = False
+
+
+def _validate_raster(array: np.ndarray, path: Path) -> np.ndarray:
+    a = np.asarray(array)
+    if a.ndim == 3 and a.shape[-1] not in (3, 4):
+        if a.shape[0] in (3, 4):
+            a = np.moveaxis(a, 0, -1)
+        else:
+            raise ValueError(
+                f"{path}: expected grey, RGB, or RGBA; got shape {a.shape}"
+            )
+    elif a.ndim not in (2, 3):
+        raise ValueError(
+            f"{path}: expected one image, not shape {a.shape}"
+        )
+    if a.dtype.kind != "u" or a.dtype.itemsize not in (1, 2):
+        raise ValueError(
+            f"{path}: expected unsigned 8- or 16-bit samples; got {a.dtype}"
+        )
+    return a
+
+
+def load_image(path: str | Path) -> Raster:
+    """Load one TIFF or PNG without reducing its sample depth."""
+
+    source = Path(path)
+    suffix = source.suffix.lower()
+    if suffix in (".tif", ".tiff"):
+        with tifffile.TiffFile(source) as tif:
+            if len(tif.series) != 1:
+                raise ValueError(f"{source}: expected one TIFF image series")
+            axes = tif.series[0].axes
+            if any(axis in axes for axis in "TZQ"):
+                raise ValueError(
+                    f"{source}: expected a single-page TIFF, axes={axes!r}"
+                )
+            page = tif.series[0].pages[0]
+            photometric = getattr(
+                page.photometric, "name", str(page.photometric)
+            ).upper()
+            if photometric not in {"MINISBLACK", "RGB"}:
+                detail = (
+                    "CMYK/Separated" if photometric == "SEPARATED"
+                    else photometric
+                )
+                raise ValueError(
+                    f"{source}: unsupported TIFF photometric {detail}; "
+                    "expected MINISBLACK grey or RGB(A)"
+                )
+            orientation_tag = page.tags.get("Orientation")
+            orientation = (
+                int(orientation_tag.value) if orientation_tag is not None else 1
+            )
+            if orientation != 1:
+                raise ValueError(
+                    f"{source}: unsupported TIFF orientation {orientation}; "
+                    "normalize to top-left first"
+                )
+            if int(page.samplesperpixel) == 4:
+                extras = {
+                    getattr(value, "name", str(value)).upper()
+                    for value in page.extrasamples
+                }
+                if photometric != "RGB" or extras != {"UNASSALPHA"}:
+                    raise ValueError(
+                        f"{source}: four-channel TIFF must be RGB with one "
+                        "unassociated alpha channel"
+                    )
+        try:
+            array = tifffile.imread(source, out="memmap")
+        except Exception:
+            array = tifffile.imread(source)
+    elif suffix == ".png":
+        # Pillow down-converts RGB16 PNG.  imagecodecs/libpng does not.
+        array = imagecodecs.imread(source, codec="png", memmap=False)
+    else:
+        raise ValueError(f"{source}: input must be TIFF or PNG")
+    return Raster(_validate_raster(array, source), source)
+
+
+def _source_block_mean(array: np.ndarray, factor: int) -> np.ndarray:
+    """Block-average a possibly huge/memory-mapped raster in short bands."""
+
+    h = array.shape[0] // factor * factor
+    w = array.shape[1] // factor * factor
+    if h == 0 or w == 0:
+        return np.zeros((0, 0), np.float32)
+    oh, ow = h // factor, w // factor
+    out = np.empty((oh, ow), np.float32)
+    scale = float(np.iinfo(array.dtype).max)
+    # Eight output rows bounds color-RGB16 temporaries even on wide scans.
+    for oy0 in range(0, oh, 8):
+        oy1 = min(oh, oy0 + 8)
+        source = array[oy0 * factor:oy1 * factor, :w]
+        if source.ndim == 2:
+            work = np.asarray(source, np.float32)
+            out[oy0:oy1] = work.reshape(
+                oy1 - oy0, factor, ow, factor
+            ).mean(axis=(1, 3), dtype=np.float32) / scale
+        else:
+            target = np.zeros((oy1 - oy0, ow), np.float32)
+            if source.shape[-1] == 4:
+                alpha = np.asarray(source[..., 3], np.float32) / scale
+                transparent = 1.0 - alpha
+                for channel in range(3):
+                    work = np.asarray(source[..., channel], np.float32) 

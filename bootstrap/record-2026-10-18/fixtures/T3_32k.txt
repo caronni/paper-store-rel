@@ -1,0 +1,957 @@
+### confetti3.py
+import sys
+from pathlib import Path
+_SRC = str(Path(__file__).resolve().parent / 'src')
+if _SRC not in sys.path:
+    sys.path.insert(0, _SRC)
+from holo.receiver.cli import main
+if __name__ == '__main__':
+    raise SystemExit(main())
+### src/holo/__init__.py
+
+### src/holo/receiver/__init__.py
+
+### src/holo/receiver/__main__.py
+from holo.receiver.cli import main
+raise SystemExit(main())
+### src/holo/receiver/cli.py
+from __future__ import annotations
+import argparse
+import math
+import os
+import sys
+import tempfile
+from pathlib import Path
+from . import data, engine, schedule
+from .format import identity
+
+class _Parser(argparse.ArgumentParser):
+
+    def error(self, message: str) -> None:
+        self.print_usage(sys.stderr)
+        print(f'{self.prog}: error: {message}', file=sys.stderr)
+        raise SystemExit(1)
+
+class _DeclaredDpi(argparse.Action):
+
+    def __call__(self, parser: argparse.ArgumentParser, namespace: argparse.Namespace, values: object, option_string: str | None=None) -> None:
+        setattr(namespace, self.dest, [*getattr(namespace, self.dest), values])
+        namespace.dpi_forced = [*namespace.dpi_forced, bool(self.const)]
+
+def _build_parser() -> _Parser:
+    parser = _Parser(prog='holo3')
+    commands = parser.add_subparsers(dest='command', required=True)
+    decode = commands.add_parser('decode')
+    decode.add_argument('scans', nargs='+', type=Path)
+    decode.add_argument('--dpi', action=_DeclaredDpi, const=False, type=float, default=[])
+    decode.add_argument('--dpi-force', dest='dpi', action=_DeclaredDpi, const=True, type=float, metavar='DPI', help="declare a scan's dpi like --dpi (same order) and make the survey take the declared pitch for that scan instead of voting one: for a capture whose lattice vote the survey cannot read (c2 at 4800 dpi, 2026-10-02; the e039 one-axis screen)")
+    decode.set_defaults(dpi_forced=[])
+    decode.add_argument('--format', dest='format_ref')
+    decode.add_argument('--coding')
+    decode.add_argument('--printer')
+    decode.add_argument('--max-pages', dest='max_pages', type=int, default=None)
+    decode.add_argument('--out', type=Path, required=True)
+    decode.add_argument('--workers', type=int, default=1)
+    decode.add_argument('--complete', action='store_true')
+    decode.add_argument('--no-close', dest='no_close', action='store_true')
+    decode.add_argument('--no-pooled-color-context', dest='pooled_color_context', action='store_false')
+    decode.add_argument('--refine-gate', dest='refine_gate', choices=data.REFINE_GATES, default=data.REFINE_GATE_CONTEXT, help="which detector the black-and-white refinement adoption gate scores: the region's adopted context correction, or the marginal fit alone")
+    decode.add_argument('--diag', type=int, metavar='PORT')
+    decode.add_argument('--run-dir', dest='run_dir', type=Path)
+    decode.add_argument('--resume', type=Path, metavar='STATE_FILE')
+    decode.add_argument('--snapshot-every', dest='snapshot_every_min', type=float, default=30.0, metavar='MINUTES', help='safety facts.npz cadence (0 = off); SIGUSR1 dumps on demand, ctrl-T prints status')
+    schedule = commands.add_parser('schedule')
+    schedule.add_argument('--format', dest='format_ref')
+    return parser
+
+def _format_ref(args: argparse.Namespace) -> str:
+    if args.format_ref is not None:
+        if args.coding is not None or args.printer is not None:
+            raise ValueError('--format and --coding/--printer are exclusive routes')
+        return str(args.format_ref)
+    if args.coding is None or args.printer is None:
+        raise ValueError('format identity required: --format REF, or both --coding ID and --printer ID')
+    try:
+        return identity.coding_printer_ref(args.coding, args.printer)
+    except KeyError as exc:
+        raise ValueError(f'unknown --coding/--printer identity: {exc}')
+
+def run_dir_for(base: Path) -> Path:
+    return base.with_name(f'{base.name}.{os.getpid()}')
+
+def _request(args: argparse.Namespace) -> engine.DecodeRequest:
+    if len(args.dpi) != len(args.scans):
+        raise ValueError(f'exactly one --dpi per scan: {len(args.scans)} scans, {len(args.dpi)} --dpi values')
+    dpis = tuple((float(value) for value in args.dpi))
+    for scan, dpi in zip(args.scans, dpis):
+        if not math.isfinite(dpi) or dpi <= 0:
+            raise ValueError(f'declared --dpi {dpi} for {scan} must be finite and positive')
+    if args.out.exists():
+        raise ValueError(f'refusing to overwrite existing --out {args.out}')
+    if args.workers < 1:
+        raise ValueError(f'--workers {args.workers} must be >= 1')
+    format_ref = _format_ref(args)
+    row = identity.resolve_format_ref(format_ref)
+    if args.max_pages is not None:
+        if args.max_pages < 1:
+            raise ValueError(f'--max-pages {args.max_pages} must be >= 1')
+        if args.max_pages > row.max_pages:
+            raise ValueError(f'--max-pages {args.max_pages} exceeds {row.max_pages} possible')
+    run_dir = run_dir_for(args.run_dir) if args.run_dir is not None else Path(tempfile.mkdtemp(prefix='holo3-'))
+    return engine.DecodeRequest(scans=tuple(args.scans), dpis=dpis, dpi_forced=tuple((bool(flag) for flag in args.dpi_forced)), format_ref=format_ref, max_pages=args.max_pages, workers=args.workers, complete=bool(args.complete), no_close=bool(args.no_close), diag_port=args.diag, run_dir=run_dir, pooled_color_context=bool(args.pooled_color_context), refine_gate=str(args.refine_gate), resume=args.resume, snapshot_every_s=float(args.snapshot_every_min) * 60.0 if args.snapshot_every_min and args.snapshot_every_min > 0 else None)
+
+def _status_rows(events: list[data.Event], result: data.RunResult) -> tuple[str, ...]:
+    try:
+        from .diag import model, readout
+        folded = model.fold(model.empty(), events)
+        rows = list(readout.all_rows(folded))
+        splits = readout.plane_cert_counts(folded)
+        if len(splits) > 1:
+            joined = ' · '.join((f'{stream}:{count}' for stream, count in splits))
+            rows.append(f'planes   certified [{joined}]')
+        shortfall = readout.close_shortfall_line(folded)
+        if shortfall is not None:
+            rows.append(f'needs    {shortfall}')
+        churn = readout.churn_advisory(folded)
+        if churn is not None:
+            rows.append(f'churn    {churn}')
+        isolation = readout.ladder_isolation_advisory(folded)
+        if isolation is not None:
+            rows.append(f'ladder   {isolation}')
+        return tuple(rows)
+    except Exception:
+        return (f'status   {result.status}', f'tiles    CERTIFIED {result.certified}')
+
+def _accounting_table(result: data.RunResult) -> tuple[str, ...]:
+    header = f"{'plugin':<12} {'jobs':>6} {'cpu_s':>9} {'certs':>6} {'poses':>6} {'words':>6}"
+    lines = [header]
+    for row in result.plugin_rows:
+        lines.append(f'{row.plugin:<12} {row.jobs:>6} {row.cpu_seconds:>9.2f} {row.certificates:>6} {row.poses:>6} {row.words:>6}')
+    return tuple(lines)
+
+def _publish_payload(out_path: Path, payload: bytes) -> None:
+    temporary: Path | None = None
+    try:
+        descriptor, name = tempfile.mkstemp(prefix=f'.{out_path.name}.', suffix='.tmp', dir=out_path.parent)
+        temporary = Path(name)
+        with os.fdopen(descriptor, 'wb') as stream:
+            stream.write(payload)
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.link(temporary, out_path)
+        directory = os.open(out_path.parent, os.O_RDONLY)
+        try:
+            os.fsync(directory)
+        finally:
+            os.close(directory)
+    except FileExistsError:
+        raise ValueError(f'refusing to overwrite existing payload: {out_path}')
+    except OSError as exc:
+        raise ValueError(f'could not write recovered payload {out_path}: {exc}')
+    finally:
+        if temporary is not None:
+            try:
+                temporary.unlink()
+            except FileNotFoundError:
+                pass
+
+def _decode(args: argparse.Namespace) -> int:
+    events: list[data.Event] = []
+    try:
+        request = _request(args)
+        result = engine.decode(request, events)
+    except data.IntegrityError as exc:
+        print(f'holo3: integrity error: {exc}', file=sys.stderr)
+        return 1
+    except (ValueError, OSError) as exc:
+        print(f'holo3: {exc}', file=sys.stderr)
+        return 1
+    for line in _status_rows(events, result):
+        print(line, file=sys.stderr)
+    for line in _accounting_table(result):
+        print(line, file=sys.stderr)
+    print(f'run dir: {request.run_dir}', file=sys.stderr)
+    if result.status == 'verified' and result.payload is not None:
+        try:
+            _publish_payload(args.out, result.payload)
+        except ValueError as exc:
+            print(f'holo3: {exc}', file=sys.stderr)
+            return 1
+        print(f'VERIFIED {len(result.payload)} bytes sha256 {result.payload_sha256}')
+        return 0
+    print(f'NOT RECOVERED — status {result.status}, {result.certified} certificates', file=sys.stderr)
+    return 2
+
+def _schedule(args: argparse.Namespace) -> int:
+    row = None
+    if args.format_ref is not None:
+        try:
+            row = identity.resolve_format_ref(str(args.format_ref))
+        except (KeyError, ValueError) as exc:
+            print(f'holo3: unknown --format: {exc}', file=sys.stderr)
+            return 1
+    for line in schedule.render(engine.DESCRIPTORS, row):
+        print(line)
+    return 0
+
+def main(argv: list[str] | None=None) -> int:
+    args = _build_parser().parse_args(argv)
+    if args.command == 'schedule':
+        return _schedule(args)
+    return _decode(args)
+### src/holo/receiver/data.py
+from __future__ import annotations
+from dataclasses import dataclass, field
+from fractions import Fraction
+from pathlib import Path
+import numpy as np
+WindowId = tuple[str, int, int, tuple[int, int, int, int]]
+RegionKey = tuple[str, int, int]
+LaneKey = tuple[str, int]
+TileKey = tuple[int, int, int]
+CertKey = tuple[int, int, int, str]
+RefineBasis = tuple[tuple, ...]
+StoodPoses = tuple[tuple[float, ...], ...]
+
+@dataclass(frozen=True)
+class Level:
+    index: int
+    ppc: Fraction
+    scale: Fraction
+    shape_px: tuple[int, int]
+    label: str
+
+@dataclass(frozen=True)
+class Capture:
+    capture_id: str
+    path: Path
+    dpi: float
+    shape_px: tuple[int, int]
+    channels: int
+    platen_backing: float
+    levels: tuple[Level, ...]
+    plane_dir: Path
+    dpi_forced: bool = False
+
+@dataclass(frozen=True)
+class PlaneRaster:
+    capture_id: str
+    level_index: int
+    plane: str
+    path: Path
+    shape_px: tuple[int, int]
+
+    def open(self) -> np.ndarray:
+        return np.load(self.path, mmap_mode='r')
+
+@dataclass(frozen=True)
+class Region:
+    capture_id: str
+    region_index: int
+    origin_yx: tuple[int, int]
+    step_px: int
+    cells: np.ndarray
+    extent_px: tuple[int, int]
+    area_mm2: float
+    median_tensor_score: float
+
+@dataclass(frozen=True)
+class CaptureSurvey:
+    capture_id: str
+    regions: tuple[Region, ...]
+    pitch_class: Fraction | None
+    pitch_px: float | None
+
+@dataclass(frozen=True)
+class Window:
+    window_id: tuple[str, int, int, tuple[int, int, int, int]]
+    capture_id: str
+    level_index: int
+    region_index: int
+    extent_cells: tuple[int, int, int, int]
+    supported_cells: int
+    depth: int
+    lane_depth: int
+    ordinal: int
+    parent: tuple[str, int, int, tuple[int, int, int, int]] | None = None
+
+@dataclass(frozen=True)
+class LatticeSeed:
+    capture_id: str
+    level_index: int
+    region_index: int
+    rows: np.ndarray
+    support_cells: int
+    window_ordinal: int = 0
+
+def lattice_seed_ordinal(seed: LatticeSeed) -> tuple[int, int]:
+    return (int(seed.support_cells), -int(seed.window_ordinal))
+
+@dataclass(frozen=True)
+class Placement:
+    window_id: tuple[str, int, int, tuple[int, int, int, int]]
+    capture_id: str
+    level_index: int
+    region_index: int
+    patch_ordinal: int
+    page: int
+    rot_k: int
+    page_origin_yx: tuple[int, int]
+    native_affine: tuple[float, float, float, float, float, float]
+    pitch_px: float
+    route: str
+    local_cells_yx: np.ndarray
+    quality: float = 0.0
+    refine_basis: RefineBasis = ()
+    stood_affines: StoodPoses = ()
+ROUTE_REFINE: str = 'refine'
+FIELD_BASIS_KEY: str = 'field'
+
+def basis_field_revision(basis: RefineBasis) -> int:
+    for key in basis:
+        if key[0] == FIELD_BASIS_KEY:
+            return int(key[1])
+    return 0
+
+def placement_ordinal(placement: Placement) -> tuple[int, int, int, float]:
+    basis = placement.refine_basis
+    return (int(placement.route == ROUTE_REFINE), basis_field_revision(basis), sum((1 for key in basis if key[0] != FIELD_BASIS_KEY)), -float(placement.quality))
+
+@dataclass(frozen=True)
+class WindowEvidence:
+    window_id: tuple[str, int, int, tuple[int, int, int, int]]
+    capture_id: str
+    level_index: int
+    region_index: int
+    patch_ordinal: int
+    page: int
+    page_cells_yx: np.ndarray
+    scores: np.ndarray
+    reference_values: np.ndarray
+    knots: np.ndarray
+    probs: np.ndarray
+    n_search: int
+    marginal_llr: np.ndarray
+    printed_llr: np.ndarray
+    accepted: bool
+    refusal_reason: str
+    heldout_logloss: float | None
+    ctx_adopted: bool
+
+@dataclass(frozen=True)
+class RegionCtx:
+    capture_id: str
+    level_index: int
+    region_index: int
+    offsets: np.ndarray
+    adopted: bool
+    reason: str
+    validation_logloss: float | None = None
+
+def region_ctx_ordinal(ctx: RegionCtx) -> tuple[int, float]:
+    if not ctx.adopted:
+        return (0, -float('inf'))
+    if ctx.validation_logloss is None:
+        return (1, -float('inf'))
+    return (1, -float(ctx.validation_logloss))
+
+@dataclass(frozen=True)
+class OwnedPageEvidence:
+    capture_id: str
+    level_index: int
+    page: int
+    cells_yx: np.ndarray
+    printed_llr: np.ndarray
+    owner_window: np.ndarray
+
+@dataclass(frozen=True)
+class WindowRows:
+    patch_ordinal: int
+    window_id: tuple[str, int, int, tuple[int, int, int, int]]
+    page: int
+    local_cells_yx: np.ndarray
+    page_cells_yx: np.ndarray
+    scan_points_yx: np.ndarray
+    states: np.ndarray
+    furniture_kind: np.ndarray
+    known_component_bits: np.ndarray
+    known_component_mask: np.ndarray
+    heldout_logloss: float | None
+
+@dataclass(frozen=True)
+class PlaneField:
+    page: int
+    plane: int
+    delta_dots_xy: np.ndarray
+    support: np.ndarray
+    uncertainty_dots: np.ndarray
+    n_observations: int
+    n_captures: int
+    ordinal: int
+
+@dataclass(frozen=True)
+class FieldObservations:
+    capture_id: str
+    page: int
+    tile_code: np.ndarray
+    plane: np.ndarray
+    delta_dots_xy: np.ndarray
+    measured_xy: np.ndarray
+    weight: np.ndarray
+    source: np.ndarray
+    window: np.ndarray
+    window_ids: tuple[WindowId, ...]
+    window_generation: np.ndarray
+    revision: int
+
+@dataclass(frozen=True)
+class EvidenceRevision:
+    capture_id: str
+    page: int
+    revision: int
+
+def plane_field_ordinal(field: PlaneField) -> tuple[int]:
+    return (int(field.ordinal),)
+
+def field_observations_ordinal(observations: FieldObservations) -> tuple[int]:
+    return (int(observations.revision),)
+
+@dataclass(frozen=True)
+class ColorEvidenceRow:
+    capture_id: str
+    level_index: int
+    patch_ordinal: int
+    page: int
+    page_cells_yx: np.ndarray
+    values: np.ndarray
+    heldout_logloss: float
+
+@dataclass(frozen=True)
+class ColorCtxPopulation:
+    capture_id: str
+    level_index: int
+    page: int
+    rung: str
+    keys_pyx: np.ndarray
+    scores: np.ndarray
+    states: np.ndarray
+    kinds: np.ndarray
+    bins: np.ndarray
+    search: np.ndarray
+
+@dataclass(frozen=True)
+class PooledColorCtx:
+    page: int
+    rung: str
+    offsets: np.ndarray
+    applied: np.ndarray
+    adopted: bool
+    reason: str
+    n_lanes: int
+    n_rows: int
+    validation_logloss: float | None = None
+
+def pooled_ctx_ordinal(cell: PooledColorCtx) -> tuple[int, int, int, float]:
+    evidence = (int(cell.n_lanes), int(cell.n_rows))
+    if not cell.adopted or cell.validation_logloss is None:
+        return (int(cell.adopted), *evidence, -float('inf'))
+    return (1, *evidence, -float(cell.validation_logloss))
+
+@dataclass(frozen=True)
+class Certificate:
+    page: int
+    ty: int
+    tx: int
+    stream_id: str
+    user_bits: np.ndarray
+    source: str
+
+@dataclass(frozen=True)
+class AttemptFact:
+    page: int
+    ty: int
+    tx: int
+    stream_id: str
+    stage: str
+    outcome: str
+    n_informative: int
+    n_iters: int
+    syndrome_ok: bool | None
+    crc_ok: bool | None
+    components: tuple[tuple[str, int], ...] = ()
+    generation: int = 0
+
+class IntegrityError(Exception):
+    pass
+
+@dataclass(frozen=True)
+class RegionMark:
+    region_index: int
+    origin_yx: tuple[int, int]
+    shape_cells: tuple[int, int]
+    pitch_px: float | None
+    support_cells: int
+    cells: np.ndarray | None = None
+    step_px: int = 0
+
+@dataclass(frozen=True)
+class RunOpen:
+    format_id: str
+    pages: int
+    tiles_yx: tuple[int, int]
+    stream_ids: tuple[str, ...]
+    n_captures: int
+    workers: int
+    family: str
+    pitch_in: float = 0.0
+    display_id: str = ''
+    color_row_adopt: str = 'last'
+
+@dataclass(frozen=True)
+class CaptureOpen:
+    capture: str
+    dpi: float
+    shape_yx: tuple[int, int]
+    channels: int
+    duplicate: bool
+    ordinal: int = 0
+    levels_ppc: tuple[str, ...] = ()
+
+@dataclass(frozen=True)
+class SnapshotReplayed:
+    facts: tuple[tuple[str, int], ...]
+    certified: int
+
+@dataclass(frozen=True)
+class SurveyDone:
+    capture: str
+    n_regions: int
+    regions: tuple[RegionMark, ...]
+    pitch_class: str | None
+    preview: np.ndarray | None
+    preview_decim: int
+
+@dataclass(frozen=True)
+class SurveyPitchFallback:
+    capture: str
+    declared_pitch_in: str
+    pitch_px: float
+    n_regions: int
+    cause: str = 'tie or no snap'
+
+@dataclass(frozen=True)
+class PoseCommitted:
+    capture: str
+    level_index: int
+    region_index: int
+    extent_cells: tuple[int, int, int, int]
+    page: int
+    route: str
+    mismatch: float
+    accepted: bool
+    page_origin_yx: tuple[int, int] = (0, 0)
+    rot_k: int = 0
+    pitch_px: float = 0.0
+    native_affine: tuple[float, float, float, float, float, float] = (0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+    shape_yx: tuple[int, int] = (0, 0)
+
+@dataclass(frozen=True)
+class WindowSettled:
+    capture: str
+    level_index: int
+    region_index: int
+    extent_cells: tuple[int, int, int, int]
+    state: str
+
+@dataclass(frozen=True)
+class CalibrateAdopted:
+    capture: str
+    pool_id: str
+    adopted: bool
+    reason: str
+
+@dataclass(frozen=True)
+class TileOutcome:
+    page: int
+    ty: int
+    tx: int
+    stream_id: str
+    source: str
+    result: str
+    bp_iters: int
+
+@dataclass(frozen=True)
+class WorkerSeated:
+    plugin: str
+    subject: object
+    stage: str
+    cost: int
+
+@dataclass(frozen=True)
+class WorkerRetired:
+    plugin: str
+    subject: object
+    cause: str
+
+@dataclass(frozen=True)
+class EngineStat:
+    queued: tuple[tuple[str, int], ...]
+    inflight: int
+    stale_skips: int
+    retired: int
+    attempts_hist: tuple[tuple[str, int], ...]
+    wakes: int = 0
+    inflight_jobs: tuple[tuple[str, object, str], ...] = ()
+    consult_cpu_s: float = 0.0
+    retire_causes: tuple[tuple[str, int], ...] = ()
+
+@dataclass
+class StatBoard:
+    value: EngineStat | None = None
+
+@dataclass(frozen=True)
+class WordOutcome:
+    page: int
+    ty: int
+    tx: int
+    errors: int
+    sites: int
+
+@dataclass(frozen=True)
+class AddressCoverage:
+    page: int
+    tiles: tuple[tuple[int, int, bytes], ...]
+
+@dataclass(frozen=True)
+class Contradiction:
+    capture: str
+    window_id: tuple[str, int, int, tuple[int, int, int, int]]
+    standing_window_id: tuple[str, int, int, tuple[int, int, int, int]]
+    route: str
+    standing_route: str
+    page: int
+    standing_page: int
+    page_origin_yx: tuple[int, int]
+    standing_page_origin_yx: tuple[int, int]
+    rot_k: int
+    standing_rot_k: int
+    tile_yx: tuple[int, int]
+    standing_tile_yx: tuple[int, int]
+    overlap_cells: tuple[int, int, int, int]
+    delta_cells_yx: tuple[float, float]
+
+@dataclass(frozen=True)
+class JobDone:
+    plugin: str
+    subject: object
+    cost: int
+    cpu_s: float
+    n_certificates: int
+    n_poses: int
+    n_words: int
+
+@dataclass(frozen=True)
+class CloseBlockRow:
+    stream_id: str | None
+    block: int
+    have: int
+    needed: int
+    rank: int | None
+    solved: bool
+    short: int
+    groups_open: int
+    n_groups: int
+    group_rows: tuple[int, ...] = ()
+    group_rank: tuple[int | None, ...] = ()
+    group_solved: tuple[bool, ...] = ()
+
+@dataclass(frozen=True)
+class CloseCheck:
+    certified: int
+    symbols_used: int
+    k_total: int | None
+    metadata_rank: int
+    metadata_n_unique: int
+    blocks: tuple[CloseBlockRow, ...]
+    status: str
+    blocks_counting: bool = False
+
+@dataclass(frozen=True)
+class RunDone:
+    status: str
+    payload_sha256: str | None
+    n_bytes: int | None
+    certified: int
+
+@dataclass(frozen=True)
+class FieldPlaneRow:
+    plane: int
+    plane_name: str
+    median_delta_dots: float
+    median_uncertainty_dots: float
+    support_tiles: int
+    n_observations: int
+    n_captures: int
+    known: bool
+    delta_grid_dots_xy: np.ndarray
+    magnitude_grid_dots: np.ndarray
+    has_data: np.ndarray
+    held: bool = False
+
+@dataclass(frozen=True)
+class FieldSolved:
+    page: int
+    planes: tuple[FieldPlaneRow, ...]
+    residual_by_capture_plane: tuple[tuple[str, int, float, float, int], ...]
+    tiles_yx: tuple[int, int]
+    block_tiles_yx: tuple[int, int]
+    revision: int
+    passes: int
+    converged: bool
+Event = RunOpen | CaptureOpen | SnapshotReplayed | SurveyDone | SurveyPitchFallback | PoseCommitted | WindowSettled | WorkerSeated | WorkerRetired | EngineStat | WordOutcome | AddressCoverage | Contradiction | CalibrateAdopted | TileOutcome | JobDone | CloseCheck | RunDone | FieldSolved
+
+@dataclass(frozen=True)
+class PluginRow:
+    plugin: str
+    jobs: int = 0
+    cpu_seconds: float = 0.0
+    certificates: int = 0
+    poses: int = 0
+    words: int = 0
+
+@dataclass(frozen=True)
+class JobResult:
+    facts: tuple[object, ...]
+    events: tuple[object, ...]
+    cpu_s: float
+
+@dataclass(frozen=True)
+class RunResult:
+    status: str
+    payload: bytes | None
+    payload_sha256: str | None
+    certified: int
+    plugin_rows: tuple[PluginRow, ...] = field(default_factory=tuple)
+REFINE_GATE_CONTEXT: str = 'context'
+REFINE_GATE_MARGINAL: str = 'marginal'
+REFINE_GATES: tuple[str, ...] = (REFINE_GATE_CONTEXT, REFINE_GATE_MARGINAL)
+
+@dataclass(frozen=True)
+class DecodeRequest:
+    scans: tuple[Path, ...]
+    dpis: tuple[float, ...]
+    format_ref: str
+    max_pages: int | None
+    workers: int
+    complete: bool
+    no_close: bool
+    diag_port: int | None
+    run_dir: Path
+    pooled_color_context: bool = True
+    resume: Path | None = None
+    snapshot_every_s: float | None = 1800.0
+    refine_gate: str = REFINE_GATE_CONTEXT
+    dpi_forced: tuple[bool, ...] = ()
+### src/holo/receiver/descriptor.py
+from __future__ import annotations
+from collections.abc import Callable, Hashable
+from dataclasses import dataclass
+from . import data
+KEY_POSE_AFFINE = 'pose_affine'
+KEY_POSE_ROUTE = 'pose_route'
+KEY_PLACE_STAGE = 'place_stage'
+KEY_EVIDENCE_FIT = 'evidence_fit'
+KEY_EVIDENCE_READ = 'evidence_read'
+KEY_COLOR_ROW = 'color_row'
+KEY_COLOR_POP = 'color_pop'
+KEY_POOLED_CTX = 'pooled_ctx'
+KEY_REGION_PITCH = 'region_pitch'
+KEY_REGION_CTX = 'region_ctx'
+KEY_LATTICE_SEED = 'lattice_seed'
+KEY_LANE_POSES = 'lane_poses'
+KEY_PAGE_CERTS = 'page_certs'
+KEY_TILE = 'tile'
+KEY_LIVE_PAGES = 'live_pages'
+KEY_PLANE_FIELD = 'plane_field'
+KEY_FIELD_OBS = 'field_obs'
+KEY_ATTEMPT = 'attempt'
+KEY_WINDOW_DONE = 'window_done'
+KEY_KINDS: tuple[str, ...] = (KEY_POSE_AFFINE, KEY_POSE_ROUTE, KEY_PLACE_STAGE, KEY_EVIDENCE_FIT, KEY_EVIDENCE_READ, KEY_COLOR_ROW, KEY_COLOR_POP, KEY_POOLED_CTX, KEY_REGION_PITCH, KEY_REGION_CTX, KEY_LATTICE_SEED, KEY_LANE_POSES, KEY_PAGE_CERTS, KEY_TILE, KEY_LIVE_PAGES, KEY_PLANE_FIELD, KEY_FIELD_OBS, KEY_ATTEMPT, KEY_WINDOW_DONE)
+TERMINAL_FACTS: tuple[tuple[str, str], ...] = (('Capture', 'declares a capture; births `survey` by type'), ('CaptureSurvey', 'mints the frames and the window plan; births `place` through the Window facts it ingests'), ('Window', 'births the `place` row; no standing row reads a window'), ('ColorLaneFit', "the colour row's own output -- the debt it clears and the head it publishes belong to the job that emitted it, and that job is `color` itself"), ('EvidenceRevision', 'resume-only ordinal restore; the rows that read it are born by the placements folded beside it'))
+RETIRE_CERTIFIED = 'certified'
+RETIRE_PAGE_DONE = 'page_done'
+RETIRE_REACH_EXHAUSTED = 'reach_exhausted'
+Subject = Hashable
+FactKey = tuple
+Job = Callable[[], data.JobResult]
+
+@dataclass(frozen=True)
+class PluginDescriptor:
+    name: str
+    subject_kind: str
+    born_by: tuple[type, ...]
+    subjects_of: Callable[[object, object], tuple[Subject, ...]]
+    reads: Callable[[object, Subject], tuple[FactKey, ...]]
+    eligible: Callable[[object, Subject], bool]
+    stage: Callable[[object, Subject], str | None]
+    cost: Callable[[object, Subject, str, int, int], int]
+    retire: Callable[[object, Subject], str | None]
+    prepare: Callable[[object, Subject, str], Job | None]
+    produces: tuple[type, ...]
+    prices: tuple[tuple[str, int], ...]
+
+@dataclass
+class WorkerBookmark:
+    plugin: str
+    subject: Subject
+    reads: tuple[FactKey, ...]
+    version: int = 0
+    tried_version: int = -1
+    attempts: int = 0
+    last_cost: int = 0
+    retired: bool = False
+    inflight: bool = False
+    pending: bool = False
+    seat_seq: int = -1
+    seat_cost: int = 0
+### src/holo/receiver/engine.py
+from __future__ import annotations
+import hashlib
+import heapq
+import subprocess
+import sys
+import time
+from concurrent.futures import FIRST_COMPLETED, Future, ThreadPoolExecutor, wait
+from pathlib import Path
+from . import data, operator, sched_trace, snapshot
+from .data import DecodeRequest
+from .descriptor import FactKey, PluginDescriptor, Subject, WorkerBookmark
+from .format import close as format_close
+from .format.identity import FormatRow
+from .plugins import calibrate, color_pooled, color_refine, color_region, fields, fields_collect, local_ctx, place_sched, plane_k, refine, survey, swim, tiles_sched, uplift
+from .store import _Store
+from .store_folds import ADOPT_LAST, ENV_COLOR_ROW_ADOPT
+__all__ = ['DESCRIPTORS', 'DESCRIPTOR_BY_NAME', 'DecodeRequest', 'decode']
+ATTEMPT_BUCKETS: tuple[tuple[int, str], ...] = ((1, '1'), (2, '2'), (5, '3-5'), (10, '6-10'))
+
+def attempt_bucket(n_attempts: int) -> str:
+    for limit, label in ATTEMPT_BUCKETS:
+        if n_attempts <= limit:
+            return label
+    return '>10'
+DESCRIPTORS: tuple[PluginDescriptor, ...] = (survey.SURVEY_DESCRIPTOR, place_sched.PLACE_DESCRIPTOR, calibrate.CALIBRATE_DESCRIPTOR, calibrate.CTX_DESCRIPTOR, color_region.COLOR_DESCRIPTOR, color_pooled.POOLED_CTX_DESCRIPTOR, tiles_sched.SCAN_DESCRIPTOR, tiles_sched.UNION_DESCRIPTOR, tiles_sched.RETRY_DESCRIPTOR, tiles_sched.COND_DESCRIPTOR, local_ctx.LOCAL_DESCRIPTOR, fields_collect.COLLECT_DESCRIPTOR, fields.FIELDS_DESCRIPTOR, refine.REFINE_DESCRIPTOR, color_refine.COLOR_REFINE_DESCRIPTOR, uplift.UPLIFT_DESCRIPTOR, plane_k.PLANEK_DESCRIPTOR, swim.SWIM_DESCRIPTOR)
+DESCRIPTOR_BY_NAME: dict[str, PluginDescriptor] = {descriptor.name: descriptor for descriptor in DESCRIPTORS}
+
+def check_single_writer(descriptors: tuple[PluginDescriptor, ...]) -> None:
+    producers: dict[type, set[str]] = {}
+    for descriptor in descriptors:
+        for produced in descriptor.produces:
+            producers.setdefault(produced, set()).add(descriptor.name)
+    for produced in sorted(producers, key=lambda item: item.__name__):
+        names = producers[produced]
+        if len(names) < 2:
+            continue
+        if len({name.split('.')[0] for name in names}) <= 1:
+            continue
+        raise data.IntegrityError(f'fact type {produced.__name__} has multiple writer domains: {sorted(names)}')
+
+def _intake_run(request: DecodeRequest, row: FormatRow) -> tuple[tuple[data.Capture, ...], tuple[data.PlaneRaster, ...], tuple[object, ...]]:
+    from .plugins import intake
+    forced = tuple(request.dpi_forced)
+    forced += (False,) * (len(request.scans) - len(forced))
+    return intake.ingest_captures(request.scans, request.dpis, row.pitch_in, row.family, request.run_dir, forced)
+
+class _Engine(_Store):
+    _trace: sched_trace.NullTrace | sched_trace.SchedTrace = sched_trace.NullTrace()
+    _trace_on: bool = False
+
+    def __init__(self, request: DecodeRequest, events: list[data.Event]) -> None:
+        check_single_writer(DESCRIPTORS)
+        super().__init__(request, events)
+        self._frontier: list[tuple[int, int, str, str, Subject]] = []
+        self._seq = 0
+        self._inflight: dict[Future, tuple[str, Subject, int, int, str]] = {}
+        self._bookmarks: dict[tuple[str, Subject], WorkerBookmark] = {}
+        self._index: dict[FactKey, set[tuple[str, Subject]]] = {}
+        self._n_certs_at_last_consult = -1
+        self._close_progress: format_close.CloseProgress | None = None
+        self._consult_cpu_s = 0.0
+        self._diag_server: object | None = None
+        self._queued: dict[str, int] = {}
+        self._stale_skips = 0
+        self._retired_count = 0
+        self._retire_causes: dict[str, int] = {}
+        self._attempts_hist: dict[str, int] = {}
+        self._sched_emitted: dict[tuple[str, Subject], tuple[str, int]] = {}
+        self._wakes = 0
+        self._stat_board = data.StatBoard()
+        self._doors = operator.OperatorDoors()
+
+    def run(self) -> data.RunResult:
+        self._start()
+        if self._request.resume is not None and self._certificates:
+            result = self._close_consult(final=False)
+            if result is not None and result.status == 'verified':
+                return self._finish(result)
+        self._doors.arm()
+        verified: format_close.CloseResult | None = None
+        draining = False
+        abandoned = False
+        executor = ThreadPoolExecutor(max_workers=self._request.workers)
+        try:
+            trace = self._trace
+            while True:
+                trace.sample(self)
+                if self._doors.service(self) and (not draining):
+                    draining = True
+                    print(f'stop requested: draining {len(self._inflight)} in-flight jobs', file=sys.stderr, flush=True)
+                if self._doors.abandon_wanted:
+                    abandoned = True
+                    print(f'stop: abandoning {len(self._inflight)} in-flight jobs; their facts are not in the snapshot and the process exits when they return', file=sys.stderr, flush=True)
+                    break
+                if not draining:
+                    trace.enter('fill')
+                    try:
+                        self._fill(executor)
+                    finally:
+                        trace.leave()
+                if not self._inflight:
+                    break
+                trace.enter('wait')
+                try:
+                    done, _pending = wait(set(self._inflight), return_when=FIRST_COMPLETED, timeout=operator.DRAIN_POLL_S if draining else None)
+                finally:
+                    trace.leave()
+                grew = False
+                trace.enter('merge')
+                try:
+                    for future in sorted(done, key=lambda f: self._inflight[f][3]):
+                        grew = self._merge(future) or grew
+                finally:
+                    trace.leave()
+                trace.enter('stat')
+                try:
+                    self._stat_board.value = self._engine_stat()
+                finally:
+                    trace.leave()
+                if grew:
+                    result = self._close_consult(final=False)
+                    if result is not None and result.status == 'verified':
+                        verified = result
+                        break
+            if verified is None and (not abandoned):
+                result = self._close_consult(final=True)
+                if result is not None and result.status == 'verified':
+                    verified = result
+        finally:
+            executor.shutdown(wait=False, cancel_futures=True)
+            self._doors.disarm()
+        return self._finish(verified)
+
+    def _start(self) -> None:
+        self._request.run_dir.mkdir(parents=True, exist_ok=True)
+        if sched_trace.enabled_by_env():
+            self._trace = sched_trace.arm(self._request.run_dir, workers=self._request.workers)
+            self._trace_on = True
+            print(f'sched-trace: armed, writing {self._request.run_dir / sched_trace.DIR_NAME}', file=sys.stderr, flush=True)
+   

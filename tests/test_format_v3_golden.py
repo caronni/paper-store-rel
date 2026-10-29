@@ -22,6 +22,7 @@ Runs under pytest, or standalone: env/bin/python tests/test_format_v3_golden.py
 from __future__ import annotations
 
 import hashlib
+import pytest
 import json
 import subprocess
 import sys
@@ -33,6 +34,11 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 EXP = ROOT / "experiments" / "012-pilot-print"
 BUILD = EXP / "build"
+
+# 2026-09-06: every test here reads a build that a test regenerates in place;
+# test_e012.py writes the same directory.  One xdist worker per build directory
+# (pyproject: --dist loadgroup).
+pytestmark = pytest.mark.xdist_group("build-012")
 
 from paperholo import bch, pilots  # noqa: E402
 

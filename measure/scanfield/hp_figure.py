@@ -148,7 +148,7 @@ def draw_hp_offset_map(path: Path, report: dict[str, Any]) -> None:
     draw.text((28, 36), f"HP M281fdw flatbed, 1200 dpi colour, tone "
                         f"{report.get('tone_curve')}; red = R-G, blue = B-G, "
                         f"red rules = {FLOOR_DOTS} dots "
-                        f"(holo3/plugins/fields.py MIN_DELTA_DOTS)",
+                        f"(src/holo/receiver/plugins/fields.py MIN_DELTA_DOTS)",
               fill=MUTED)
 
     ticks_x = [0, 50, 100, 150, 200]

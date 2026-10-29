@@ -1,0 +1,11 @@
+Refuter record, candidate bwt (2026-10-18). Files: rh.py (decoder = marker region only,
+exec'd in a fresh namespace; builder enc*.py), fuzz.py (157 cases x 3 variants, 0 fail),
+leak.py (LCS dec*/primer vs T1-T3: 23-32 B dec, 47-49 B primer = generic idioms, no leak),
+spec_reimpl.py (CM decoder rewritten from plate_spec_items: arrays not dicts, index-sorted
+primer suffixes, 64-bit asserts) -> bit-exact on KAV/T1/T2 both modes.
+Runs: run_seed0_small.jsonl, run_seed0_T4.jsonl, run_seed4242.jsonl. Every size, KAV hex,
+compressed sha and output sha identical across PYTHONHASHSEED 0 / 4242 and both encoder runs.
+All claimed sizes reproduce to the byte (3 variants x 4 files x 2 modes); all round trips ok.
+Spec gaps: initial b=f=run=0 (MTF f=e=0) unstated; model state carries from primer into
+payload (implied, not said); |w| bound is measured, not derived (64-bit suffices: step<=2^12
+per bit); primed mode needs the typed dec.py byte-identical incl. harness/docstring/newlines.

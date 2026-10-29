@@ -73,6 +73,10 @@ def _controlled_failure(
 
 
 def _two_distinct_records(tmp_path: Path):
+    # 2026-09-05: two windows per scan, not the full grid (the same idiom
+    # test_e023b_session._fixture uses for partial=True).  The frontier
+    # contract needs a union of two distinct scans, not a whole page, and
+    # validate_invariants() — which the caller runs nine times — is O(ledger).
     descriptor = t23._descriptor(b"paper-store/e023b-bp-frontier")
     rng = np.random.default_rng(2315)
     values, _user, _framed = t23._coded_page(descriptor, rng)
@@ -85,7 +89,7 @@ def _two_distinct_records(tmp_path: Path):
             origin_px=(y * t23.PITCH + t23.PITCH / 2 - 0.5,
                        x * t23.PITCH + t23.PITCH / 2 - 0.5),
             scan_id=scan_id)
-            for y, x, h, w in t23._grid_windows(values.shape)]
+            for y, x, h, w in t23._grid_windows(values.shape)[:2]]
         rows.append(t23._scan_row(
             tmp_path, scan_id, image, placements))
     upstream = payloaddec.load_e022_session(t23._write_state(
@@ -120,6 +124,23 @@ def _full_and_partial_records(tmp_path: Path):
     records = [session_test._record(descriptor, scan, image)
                for scan, image in zip(upstream.scans, images, strict=True)]
     return descriptor, records
+
+
+@pytest.fixture(scope="module")
+def demoted_baseline(tmp_path_factory):
+    """One applied scan with a single certificate demoted to a consistent
+    failure — the shared prefix of the two --bp-retry CLI tests."""
+    # 2026-09-05: _fixture + apply_scan + _demote_one_certificate is ~2.8 s of
+    # each CLI test and identical in both.  Built once here; every consumer
+    # forks before it touches anything, and the CLI invocations, the
+    # monkeypatching and the assertions stay in the test bodies.
+    root = tmp_path_factory.mktemp("bp-retry-baseline")
+    descriptor, upstream, image, _user, _framed = session_test._fixture(root)
+    session = receiver.ReceiverSession.create(descriptor, (0,), 1600.0)
+    session, _ = receiver.apply_scan(
+        session, session_test._record(descriptor, upstream.scans[0], image))
+    session, key, _parent = _demote_one_certificate(session)
+    return descriptor, upstream, session, key
 
 
 def _replace_attempt(
@@ -486,14 +507,9 @@ def test_detector_profile_and_context_sidecar_are_frozen_and_replayed(
 
 
 def test_cli_bp_retry_is_state_only_and_commits_once(
-        tmp_path: Path, monkeypatch) -> None:
-    descriptor, upstream, image, _user, _framed = session_test._fixture(
-        tmp_path)
-    session = receiver.ReceiverSession.create(descriptor, (0,), 1600.0)
-    session, _ = receiver.apply_scan(
-        session, session_test._record(
-            descriptor, upstream.scans[0], image))
-    session, key, _parent = _demote_one_certificate(session)
+        tmp_path: Path, monkeypatch, demoted_baseline) -> None:
+    descriptor, upstream, baseline, key = demoted_baseline
+    session = baseline.fork()
     state_path = tmp_path / "bp-cli.pkl"
     report_path = tmp_path / "bp-cli.json"
     receiver.save_session(state_path, session)
@@ -530,14 +546,9 @@ def test_cli_bp_retry_is_state_only_and_commits_once(
 
 
 def test_cli_bp_retry_diag_failure_is_observer_only(
-        tmp_path: Path, monkeypatch) -> None:
-    descriptor, upstream, image, _user, _framed = session_test._fixture(
-        tmp_path)
-    session = receiver.ReceiverSession.create(descriptor, (0,), 1600.0)
-    session, _ = receiver.apply_scan(
-        session, session_test._record(
-            descriptor, upstream.scans[0], image))
-    session, _key, _parent = _demote_one_certificate(session)
+        tmp_path: Path, monkeypatch, demoted_baseline) -> None:
+    descriptor, _upstream, baseline, _key = demoted_baseline
+    session = baseline.fork()
     expected, counts = receiver.retry_failed_bp(session)
     assert counts["certified"] == 1
 

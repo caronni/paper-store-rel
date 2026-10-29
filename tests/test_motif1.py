@@ -22,11 +22,16 @@ import tempfile
 from pathlib import Path
 
 import numpy as np
+import pytest
 from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[1]
 EXP = ROOT / "experiments" / "010-motif-b2"
 BUILD = EXP / "build"
+
+# 2026-09-06: every test here reads a build that a test regenerates in place.
+# One xdist worker per build directory (pyproject: --dist loadgroup).
+pytestmark = pytest.mark.xdist_group("build-010-motif1")
 sys.path.insert(0, str(EXP))
 sys.path.insert(0, str(ROOT / "src"))
 
@@ -242,7 +247,6 @@ def test_analyzer_null_control_is_chance() -> None:
     A = _analyzer()
     mf = _manifest()
     d = _dictionary()
-    twins = A.build_twins(A.mc.dropout_pairs(d, mf["b"]))
     # score the CLEAN field, then compare the detector output to a rolled GT
     field = A._assemble_page_field(mf, d)
     grey = field.astype(float)
@@ -266,6 +270,13 @@ def test_analyzer_null_control_is_chance() -> None:
 
 # -- 9. ANALYZER: sim round-trip end-to-end, finite + dropout-confusion -------
 
+# 2026-09-05: the measured-M281 sim round-trip over all three regions is
+# 9.4 s, half the module, and it asserts only coherence (finite metrics,
+# a verdict string) on a closed no-go experiment. Slow-gated, not shrunk:
+# sim_roundtrip has no size dial, so the stimulus is all-or-nothing.
+@pytest.mark.skipif(
+    os.environ.get("HOLO_RUN_SLOW_TESTS") != "1",
+    reason="set HOLO_RUN_SLOW_TESTS=1 for the motif-B2 sim round-trip")
 def test_analyzer_sim_roundtrip_end_to_end() -> None:
     """The measured-M281 sim round-trip runs end-to-end and returns FINITE
     metrics in every region, with the dropout-confusion number populated and a

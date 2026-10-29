@@ -4,8 +4,9 @@ The synthetic half builds a ledger by hand around a real format row, so
 the certificate comparison, the per-rung bits-wrong columns (read out of
 the packed hard vectors the ledger now carries) and the WRONG report can
 be exercised with no run dir and no pixels.  The sheet-I half runs the
-whole command against the real `I-resume3` ledger and the emitted
-payload, and then against a payload with one byte flipped — which is
+whole command against a three-row ledger over a volume emitted at test
+time (2026-10-09; it was sheet I's `I-resume3` ledger and payload under
+scratch/), and then against a payload with one byte flipped — which is
 what replaced the oracle-permutation control: the blind columns come
 straight off the ledger and do not move, the oracle columns do.
 """
@@ -28,13 +29,7 @@ from analyzer.types import (VERDICT_CERTIFIED, VERDICT_CERTIFIED_LIST,
                             Exposure, Truth)
 
 from . import _synthetic as syn
-from ._analyzer_fixtures import I_GEN_DIR, I_PAYLOAD, REPO
-
-I_LEDGER = REPO / "scratch/analyzer/I-resume3/ledger.jsonl"
-
-needs_i_ledger = pytest.mark.skipif(
-    not I_LEDGER.exists() or not I_PAYLOAD.exists(),
-    reason=f"the sheet-I ledger {I_LEDGER} or its payload is absent")
+from ._analyzer_fixtures import emitted_volume
 
 
 def _truth_for(frame, *, bits=None) -> Truth:
@@ -88,20 +83,45 @@ def test_a_missing_ledger_refuses_rather_than_scoring_nothing(tmp_path):
         score_mod.read_headers([])
 
 
-def test_the_ledgers_are_streamed_not_materialised():
+def test_the_ledgers_are_streamed_not_materialised(tmp_path, monkeypatch):
     """The 26 GB lesson: sheet H's five ledgers are 18 GB of JSON.
 
     `read_headers` reads one line per file and the row loop goes
-    through `ledger.iter_rows`, so nothing ever holds a whole ledger.
+    through `ledger.iter_rows_latest`, so nothing ever holds a whole
+    ledger.  The grep says the call is written; the spy below says a
+    scoring run actually went through it (2026-09-20).
     """
     import inspect
     source = inspect.getsource(score_mod)
     assert "ledger_mod.iter_rows" in source
     assert "ledger_mod.read_rows" not in source   # the 26 GB call
 
+    frame = syn.build_frame()
+    path = tmp_path / "ledger.jsonl"
+    path.write_text(
+        json.dumps({"type": "header", "format_ref": frame.ref}) + "\n"
+        + json.dumps(_ledger_row(frame, bits=frame.user)) + "\n", "utf-8")
+    payload = tmp_path / "payload.bin"
+    payload.write_bytes(bytes(range(64)))
+    seen: list[str] = []
+    original = ledger_mod.iter_rows_latest
+
+    def spy(target, **kwargs):
+        seen.append(str(target))
+        return original(target, **kwargs)
+
+    monkeypatch.setattr(ledger_mod, "iter_rows_latest", spy)
+    score_mod.score([path], payload, tmp_path / "out", n_pages=1)
+    assert seen == [str(path)]
+
 
 def test_a_row_beyond_the_reconstructed_pages_refuses(tmp_path):
-    """Never mis-scored: page 1 against a one-page reconstruction stops."""
+    """Never mis-scored: page 1 against a one-page reconstruction stops.
+
+    The payload is synthetic (any bytes reconstruct one page of truth),
+    so the test runs in a fresh checkout — it used to read the sheet-I
+    payload from `scratch/`, which only the original checkout holds.
+    """
     frame = syn.build_frame()
     row = _ledger_row(frame, bits=frame.user)
     row["page"] = 1
@@ -110,8 +130,10 @@ def test_a_row_beyond_the_reconstructed_pages_refuses(tmp_path):
         stream.write(json.dumps({"type": "header",
                                  "format_ref": frame.ref}) + "\n")
         stream.write(json.dumps(row) + "\n")
+    payload = tmp_path / "payload.bin"
+    payload.write_bytes(bytes(i & 0xFF for i in range(4096)))
     with pytest.raises(score_mod.ScoreError, match="pass --pages 2"):
-        score_mod.score([path], I_PAYLOAD, tmp_path / "out")
+        score_mod.score([path], payload, tmp_path / "out")
 
 
 # ------------------------------------------------------ one row, scored
@@ -298,17 +320,41 @@ def test_the_report_says_the_splits_need_the_emitted_field():
     assert "## Capture agreement on the wrong cells" in text
 
 
-# ----------------------------------------------------- the sheet-I legs
+# ------------------------------------------ the emitted-volume legs (F1)
 
-@needs_i_ledger
-def test_the_sheet_i_ledger_scores_clean_against_the_emitted_payload(
+#: Three certified rows, two planes: what `I-resume3` held on sheet I.
+LEDGER_KEYS = ((0, 2, 3, "C"), (0, 5, 6, "Y"), (0, 7, 1, "C"))
+
+
+def _emitted_ledger(tmp_path: Path) -> Path:
+    """Three certified ledger rows carrying the emitted user bits."""
+    from types import SimpleNamespace
+    volume = emitted_volume()
+    path = tmp_path / "ledger.jsonl"
+    lines = [json.dumps({"type": "header", "format_ref": volume.format_ref})]
+    for key in LEDGER_KEYS:
+        lines.append(json.dumps(_ledger_row(
+            SimpleNamespace(key=key), bits=volume.truth.user_bits[key])))
+    path.write_text("\n".join(lines) + "\n", "utf-8")
+    return path
+
+
+def _flipped_payload(tmp_path: Path, index: int, mask: int) -> Path:
+    volume = emitted_volume()
+    data = bytearray(volume.payload_path.read_bytes())
+    data[index] ^= mask
+    corrupt = tmp_path / "payload-flipped.bin"
+    corrupt.write_bytes(bytes(data))
+    return corrupt
+
+
+def test_the_emitted_ledger_scores_clean_against_the_emitted_payload(
         tmp_path):
     """Q1: three certificates, checked bit for bit, none wrong."""
-    header = score_mod.score([I_LEDGER], I_PAYLOAD, tmp_path,
-                             gt_dir=I_GEN_DIR)
-    print(f"\nscore(I-resume3): {header['n_certificates_checked']} "
-          f"certificates checked, {header['n_wrong']} wrong, "
-          f"{header['n_false_accept']} false accept(s)")
+    volume = emitted_volume()
+    header = score_mod.score([_emitted_ledger(tmp_path)],
+                             volume.payload_path, tmp_path,
+                             gt_dir=volume.emit_dir)
     assert header["n_certificates_checked"] == 3
     assert header["n_wrong"] == 0 and header["n_false_accept"] == 0
     assert header["verdicts"] == {"certified": 3}
@@ -319,29 +365,48 @@ def test_the_sheet_i_ledger_scores_clean_against_the_emitted_payload(
     lines = (tmp_path / "score.jsonl").read_text("utf-8").splitlines()
     assert json.loads(lines[0])["type"] == "header"
     assert len(lines) == 4
+    # ... and the picture the scorer draws off those very rows
+    written = score_mod.render_maps(_rows(tmp_path), tmp_path,
+                                    tiles_yx=(10, 10), scale=2)
+    assert sorted(path.name for path in written) == ["bits-wrong-C.png",
+                                                     "bits-wrong-Y.png"]
 
 
-@needs_i_ledger
-def test_a_payload_with_one_flipped_byte_is_reported_wrong(tmp_path):
-    """What replaced the oracle-permutation control.
+def test_a_flipped_byte_is_reported_wrong_and_the_cli_exits_2(tmp_path):
+    """What replaced the oracle-permutation control, through the door.
 
     The ledger is BLIND — the same file, unchanged — so every column
     that comes off it is identical between the two scorings; the only
     thing that moves is the payload comparison, which is exactly the
     claim the permutation control used to defend by running the battery
-    twice.
+    twice.  Both scorings go through `cli.main` (2026-09-20), so the
+    EXIT CODES and the comparison come off ONE pair of runs: 0 on the
+    emitted payload, `EXIT_WRONG` on the flipped one.  Which ledger keys
+    the flip reaches is derived here from the two truths, not assumed.
     """
-    corrupt = tmp_path / "payload-flipped.bin"
-    data = bytearray(I_PAYLOAD.read_bytes())
-    data[1000] ^= 0xFF
-    corrupt.write_bytes(bytes(data))
+    from analyzer import cli
+    from analyzer import truth as truth_mod
+    volume = emitted_volume()
+    ledger = _emitted_ledger(tmp_path)
+    corrupt = _flipped_payload(tmp_path, 1000, 0xFF)
+    flipped = truth_mod.load_truth(None, corrupt, volume.row, 1,
+                                   format_ref=volume.format_ref)
+    reached = {key for key in LEDGER_KEYS
+               if not np.array_equal(flipped.user_bits[key],
+                                     volume.truth.user_bits[key])}
+    assert reached, "the flip must reach at least one ledger key"
 
-    good = score_mod.score([I_LEDGER], I_PAYLOAD, tmp_path / "good",
-                           gt_dir=I_GEN_DIR)
-    bad = score_mod.score([I_LEDGER], corrupt, tmp_path / "bad")
-    print(f"\nflipped-byte payload: {bad['n_wrong']} wrong, keys "
-          f"{[item['key'] for item in bad['wrong_keys']]}")
-    assert bad["n_wrong"] == 3 and good["n_wrong"] == 0
+    assert cli.main(["score", "--ledger", str(ledger),
+                     "--payload", str(volume.payload_path),
+                     "--gt-dir", str(volume.emit_dir),
+                     "--out", str(tmp_path / "good")]) == 0
+    assert cli.main(["score", "--ledger", str(ledger),
+                     "--payload", str(corrupt),
+                     "--out", str(tmp_path / "bad")]) == cli.EXIT_WRONG
+    good = _score_header(tmp_path / "good")
+    bad = _score_header(tmp_path / "bad")
+    assert bad["n_wrong"] == len(reached) and good["n_wrong"] == 0
+    assert {tuple(item["key"]) for item in bad["wrong_keys"]} == reached
     assert all(item["bits_wrong"] > 0 for item in bad["wrong_keys"])
     # the BLIND columns are the ledger's own and do not move
     for left, right in zip(_rows(tmp_path / "good"), _rows(tmp_path / "bad")):
@@ -354,43 +419,21 @@ def test_a_payload_with_one_flipped_byte_is_reported_wrong(tmp_path):
     assert bad["payload_source"].startswith("given bytes")
 
 
+def _score_header(out_dir: Path) -> dict:
+    header, _rows_read = ledger_mod.read_rows(out_dir / score_mod.SCORE_ROWS)
+    return header
+
+
 def _rows(out_dir: Path) -> list[dict]:
     _header, rows = ledger_mod.read_rows(out_dir / score_mod.SCORE_ROWS)
     return rows
 
 
-@needs_i_ledger
-def test_the_cli_score_exits_2_when_a_certificate_disagrees(tmp_path):
-    from analyzer import cli
-    corrupt = tmp_path / "payload-flipped.bin"
-    data = bytearray(I_PAYLOAD.read_bytes())
-    data[2048] ^= 0x0F
-    corrupt.write_bytes(bytes(data))
-    assert cli.main(["score", "--ledger", str(I_LEDGER),
-                     "--payload", str(I_PAYLOAD), "--gt-dir", str(I_GEN_DIR),
-                     "--out", str(tmp_path / "clean")]) == 0
-    assert cli.main(["score", "--ledger", str(I_LEDGER),
-                     "--payload", str(corrupt),
-                     "--out", str(tmp_path / "dirty")]) == cli.EXIT_WRONG
-
-
-@needs_i_ledger
 def test_a_payload_the_manifest_disowns_refuses(tmp_path):
     """With `--gt-dir` the two must agree; without it, no gate exists."""
     from analyzer import truth as truth_mod
-    corrupt = tmp_path / "payload-flipped.bin"
-    data = bytearray(I_PAYLOAD.read_bytes())
-    data[7] ^= 0x01
-    corrupt.write_bytes(bytes(data))
+    volume = emitted_volume()
+    corrupt = _flipped_payload(tmp_path, 7, 0x01)
     with pytest.raises(truth_mod.TruthError, match="the manifest declares"):
-        score_mod.score([I_LEDGER], corrupt, tmp_path / "out",
-                        gt_dir=I_GEN_DIR)
-
-
-@needs_i_ledger
-def test_the_bits_wrong_map_is_the_scorer_s_picture(tmp_path):
-    score_mod.score([I_LEDGER], I_PAYLOAD, tmp_path, gt_dir=I_GEN_DIR)
-    written = score_mod.render_maps(_rows(tmp_path), tmp_path,
-                                    tiles_yx=(4, 4), scale=2)
-    assert sorted(path.name for path in written) == ["bits-wrong-C.png",
-                                                     "bits-wrong-Y.png"]
+        score_mod.score([_emitted_ledger(tmp_path)], corrupt,
+                        tmp_path / "out", gt_dir=volume.emit_dir)

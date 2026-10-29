@@ -44,7 +44,7 @@ deterministic interleave).
 
 Run (repo root, ~5-10 min):
   env/bin/python experiments/002-calibration-page/analyze_overlap2.py \
-      scans/test-scan-overlap2.png
+      <evidence>/scans/test-scan-overlap2.png
 Outputs: build/overlap2_report.json, build/RESULTS-002.2-draft.md,
 human summary on stdout.
 """
@@ -66,9 +66,7 @@ import analyze_composite_probe as acp  # noqa: E402  (002.1 discriminators — r
 import cal_color as ccol  # noqa: E402  (QDA/MI machinery — reused verbatim)
 import cal_core as cc  # noqa: E402     (frozen analyzer core)
 
-REPO = _HERE.parent.parent
 MANIFEST_PATH = cc.BUILD / "overlap2_manifest.json"
-DEFAULT_SCAN = REPO / "scans" / "test-scan-overlap2.png"
 EXPECTED_SCAN_SHA256 = ("19e58f247c31faf7e55a2a1aa303f2e8cafb22c6"
                         "4a150bfe2b66b146e588be62")
 OUT_REPORT = cc.BUILD / "overlap2_report.json"
@@ -1015,6 +1013,6 @@ if __name__ == "__main__":
     import argparse
 
     ap = argparse.ArgumentParser(description="002.2 overlap2 analyzer")
-    ap.add_argument("scan", nargs="?", default=str(DEFAULT_SCAN))
+    ap.add_argument("scan")
     args = ap.parse_args()
     analyze(Path(args.scan))

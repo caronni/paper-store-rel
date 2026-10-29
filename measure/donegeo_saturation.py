@@ -6,13 +6,15 @@ windows over it, plus a set of never-placed (parked) windows sitting
 inside the certified area — and reports, per gated row, how much
 scheduling work the gate turns into an eligible-refusal.
 
-    PYTHONPATH=.:src python measure/donegeo_saturation.py
+    PYTHONPATH=src:. python measure/donegeo_saturation.py
 
 The two costs it prices are the ones a pop actually pays: the gate
 itself (`store.window_fully_done`, both branches) and the prepare it
-replaces (`revisit`'s ring consult, which walks every committed pose of
-the region).  The calibrate row's avoided cost is a raster sample and
-is not priced here — only counted.
+replaces (`place`'s own ring consult, which walks every committed pose
+of the region — until 2026-09-21 the `revisit` row paid that consult a
+second time on exactly these parked windows, and its deletion is the
+first thing this bench measured the value of).  The calibrate row's
+avoided cost is a raster sample and is not priced here — only counted.
 """
 
 from __future__ import annotations
@@ -22,9 +24,9 @@ import time
 from dataclasses import replace
 from pathlib import Path
 
-from holo3 import data, engine
-from holo3.plugins import calibrate, place_sched, revisit
-from holo3.tests import _h3_facts
+from holo.receiver import data, engine
+from holo.receiver.plugins import calibrate, place_sched
+from holo.receiver.tests import _h3_facts
 
 FORMAT_REF = _h3_facts.FORMAT_REF          # c3-k-r0550@7x7 — 49 tiles
 TILE_CELLS = 64
@@ -112,7 +114,7 @@ def report(n_parked: int = 40, repeats: int = 200) -> None:
         repeats)
     print(f"gate cost: placed branch {placed_gate * 1e6:.1f} us, "
           f"pose-free branch {parked_gate * 1e6:.1f} us")
-    print(f"prepare cost it replaces (revisit ring consult over "
+    print(f"prepare cost it replaces (ring consult over "
           f"{len(instance.placements())} poses): {consult * 1e6:.1f} us")
 
     # counterfactual: what the same pops did before the gate existed
@@ -120,14 +122,10 @@ def report(n_parked: int = 40, repeats: int = 200) -> None:
                            if instance.placement(wid) is not None)
     calibrate_after = sum(1 for wid in placed
                           if calibrate._window_eligible(instance, wid))
-    parked_after = sum(1 for wid in parked
-                       if revisit._revisit_eligible(instance, wid))
     place_retires = sum(1 for wid in parked
-                        if place_sched._place_retire(instance, wid))
+                        if place_sched.place_retire_cause(instance, wid))
     print(f"calibrate pops that fire a job: {calibrate_before} -> "
           f"{calibrate_after} (one raster sample + fit each)")
-    print(f"revisit pops on parked rows that reach prepare: "
-          f"{len(parked)} -> {parked_after}")
     print(f"place: {place_retires} of {len(parked)} parked rows retire at "
           f"their next pop")
     saved = len(parked) * (consult - parked_gate)

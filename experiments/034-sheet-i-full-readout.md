@@ -18,7 +18,7 @@ This log is the receiver-side campaign record. It is also the first
 production use of the lean fact-snapshot resume, the first real-paper
 yield of tiles.planek / tiles.swim / the honest-units plane fields,
 and the second measured data point on the 4800 question. Machine:
-machine 2 (64 GB), 12 workers throughout. Data curated from the
+<host> (machine 2, 64 GB), 12 workers throughout. Data curated from the
 run dirs by a six-agent extraction pass over `report.json` +
 `events.jsonl` + `facts.npz` (read-only); events archived under
 `scratch/sheetI-20260831/`.
@@ -49,7 +49,7 @@ The ordinary rows did the mass work: tiles.scan 4,723, union 327,
 retry 280, local 213. The colour/field late-stage plugins minted
 zero — this tree's field fitter was the pre-units-fix one (54 fits,
 zero PlaneField facts published; the defect record is in
-holo3/conversion_docs/ARMS-2026-08-31.md). tiles.local consumed 73%
+src/holo/receiver/docs/conversion_docs/ARMS-2026-08-31.md). tiles.local consumed 73%
 of the run's CPU (129,017 cpu-s) for its 213 — the known cost
 profile. Y closed at 1,634/1,961 (83.3%) with 91,880 failed Y
 attempts against 12,893 C / 5,893 M: the AltaLink Y x-registration
@@ -125,6 +125,15 @@ the controlled experiment; this is the existence proof.
 
 ## The three that remain
 
+> **2026-09-07 (e037):** all three were certified from a SINGLE 2400 dpi
+> capture of this sheet — (0,0,C) by the analyzer's `patch+affine` arm at
+> the base rung, the two Y tiles earlier in the same chain, to the
+> ordinary battery. That overturns BOTH characterizations below — item
+> 1's "local damage" and item 2's "format-axis losses": all three were
+> arm-reachable. Sheet I then finished at **5,883/5,883 from that one
+> capture**, C, M and Y each 1,961/1,961, close verified byte-exact.
+> `experiments/037-sheet-i-single-capture.md`.
+
 1. **(0,0,C)** — the page-corner tile, 565 attempts across the
    chain, BP to the 300-iteration cap, zero successes. Local damage,
    not a plane effect: the same tile's M certified only via retry,
@@ -185,7 +194,7 @@ end-to-end truth anchor.
 
 - `scratch/sheetI-20260831/` — per-run `argv`, `report.json`,
   field/page panes, and the four `events.jsonl.xz` (~73 MB raw).
-- `facts.npz` snapshots stay on machine 2 (`/tmp/I/…`, 1.7 GB + 3×
+- `facts.npz` snapshots stay on <host> (`/tmp/I/…`, 1.7 GB + 3×
   ~200 MB) as resume seeds; payload `holo3-I-resume-3.bin` verified.
 - Extraction scripts: session scratchpad (six-agent read-only pass);
   derivations reproducible from the archived events + snapshot.

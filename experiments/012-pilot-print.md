@@ -154,7 +154,8 @@ independent) matched. Verified: the carried office file renders dot-exact
 paper always carried the frozen build. Lesson institutionalized: GT via
 the gen module or extract-from-render, never a retyped draw (docstring
 warning already existed in gen_e012.py; score_canon_scans.py embeds the
-rule). Forensics artifacts: scratch/wf/*.{py,json} (session-local).
+rule). Forensics artifacts: scratch/wf/*.{py,json} (session-local; the scripts
+retired 2026-10-09, their result stands above).
 
 **Receiver hardening shipped from the forensics (suite 226→228):**
 `acquire_and_decode` gained (i) true `anchor_rounds=0` skip (was silently
@@ -185,3 +186,29 @@ e014 + 007.9 batch scans; Canon characterization protocol.
 | 012.3 | 2026-07-08 | Canon 4800 dpi grey scan, same sheet A, re-placed (8 px/dot) | scans/xerox-e012-A-canon-4800.tiff | 2d0c5a2192492b979d75a90bdb0dddd7b7029fb8f629c6eaacbb4f5dc640b1db |
 | 012.3 | 2026-07-09 | Phantom-payload incident (wrong-dtype GT re-derivation → 50% reads) + 3-workflow forensics + RETRACTION of all "paper ≠ build" intermediates; true scoring via score_canon_scans.py: blind 0.64–3.97% BER, envelope PASS on all gates (RESULTS above) | build/e012_scan_report.json | deterministic fields |
 | 012.3 | 2026-07-09 | Receiver hardening from forensics: anchor_rounds=0 skip + post-fold word-certification gate + tests/test_acquire_gates.py; adversarially reviewed; suite 228 green | src/paperholo/acquire.py | — |
+
+## Addendum 2026-10-11 — the office print, re-read
+
+From the genesis and office-machine reads of 2026-10-10 (evidence line,
+docs/EVIDENCE-ARCHIVE-2026-10-08.md §8a). The 2026-07-08 office print bundle
+was built between 15:43 and 15:56 CEST; e012 was printed between 15:56 and
+about 20:02 CEST (the earliest e012 Canon scan file on machine 1,
+`scans/xerox-e012-A-canon-1200.png`, mtime 20:02:19 CEST; the genesis
+read's figure of 19:13 carried no time zone). (Corrected 2026-10-13, docs/GENESIS.md §8.6: the 07-08 18:37Z session
+listing already shows `xerox-e012-A-7.8-canon-scan-4800.png` dated 19:13
+local, a file that did not survive on machine 1; so e012 was home and on the
+Canon by 19:13 CEST, and 20:02 is only the earliest surviving file. The
+office files beside this log carry the printer's address as found since
+`8af69c80`.) The reconstruction above, "via
+its sha-gated print_office.sh", is UNCONFIRMED: the script uses `declare -A`
+(bash 4), which macOS's bash 3.2 lacks, and the operator's recollection
+(2026-10-10, a recollection, not a record) is that office printing very
+likely went through `lpr -o raw`. The bundle was built twice: the first
+(15:43, without e014) is tarball 9f7c8986…, the one this log cites (012.2);
+the second (with e014) is tarball a07479ba…, the one e014 cites. e004, e006bw
+and e006c, queued in both, were never printed. (Corrected 2026-10-13 by the owner, from his
+printouts: "004 and 006 among many many others were printed both on the HP
+and on the office printer with dates around 6.7 - 8.7." See docs/GENESIS.md §4.) Both bundle READMEs
+(`README-bundle1.md`, `README-bundle2.md`) and the first bundle's
+`print_office.sh` (no e014 in its sha table) are beside this log at
+`office-2026-07-08/` (the printer's IP replaced by `<ip>`).

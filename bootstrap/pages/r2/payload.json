@@ -1,0 +1,57 @@
+{
+ "format": "R2v1",
+ "spec": "bootstrap/R2-FORMAT.md v1 (2026-10-20)",
+ "pages": 3,
+ "capacity_bytes_per_page": 5304,
+ "capacity_bytes": 15912,
+ "payload_bytes": 14472,
+ "payload_sha256": "3dc24e25ea3dc0de9558f042c459af3366a4bc143766664b8f52514261287811",
+ "headroom_bytes": 1440,
+ "chunks": 557,
+ "chunks_per_page": [
+  204,
+  204,
+  149
+ ],
+ "fourth_copies": [
+  3,
+  3,
+  149
+ ],
+ "white_slots": [
+  0,
+  0,
+  19
+ ],
+ "data_crc32": 2636038507,
+ "bundle": {
+  "file": "build/bundle/b.py",
+  "bytes": 50533,
+  "sha256": "579e5f1ca85c7088cbac3b23ee0bd04e0d900c57feb23ea32b7d6bda441a9080"
+ },
+ "primer": {
+  "file": "build/loader/r.py",
+  "bytes": 5133,
+  "sha256": "2412220b0915758f88d60e4f5c2a93da5dd5a0533be475e2bf3caf6deb3d1627",
+  "what": "what a.py writes: the loader's definitions + the reader"
+ },
+ "coder": {
+  "what": "cm2 v2, big-integer rANS (typed/cm2_enc.py)",
+  "orders": [
+   0,
+   1,
+   2,
+   3,
+   4,
+   6,
+   8,
+   12,
+   16
+  ]
+ },
+ "container": "the coder state x as big-endian bytes, minimal length, no length prefix: the header in the bullseye blocks carries the length and the CRC-32",
+ "round_trip": "typed/cm2_dec.py decode(payload, len(b.py), r.py) == b.py",
+ "bundle_pad_newlines": 0,
+ "refused_by_gen": [],
+ "refusal_rule": "gen.py exit status 3 (the header also passes its check read turned): one newline appended to b.py, make_typed again (N2, B2 follow the bundle), compress again, gen.py again; at most 8 tries"
+}

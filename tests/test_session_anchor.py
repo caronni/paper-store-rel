@@ -15,16 +15,18 @@ cell field (the gen_confetti_synth recipe) + optical channel, NO dev
 morphology (session machinery test; channel realism proven on real
 toner in 016/018)."""
 import importlib.util
+import os
 import sys
 from pathlib import Path
 
 import numpy as np
+import pytest
 from scipy import ndimage
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from paperholo import compose, fountain, place, segment, tilemap  # noqa: E402
+from paperholo import compose, fountain, segment, tilemap  # noqa: E402
 
 _spec = importlib.util.spec_from_file_location(
     "e018_session_decode",
@@ -36,9 +38,12 @@ PPC = 8                      # px/cell = 1600 dpi at c3
 PAPER, INK, BACKING = 205.0, 45.0, 224.0
 MARGIN_CELLS = 48            # blank page margin around the field (~12 mm)
 
-
-def _page_cells():
-    import gen_e018_shim  # noqa: F401  (never exists — placeholder)
+# 2026-09-05: slow-lane gate (the tests/test_e025.py convention). A MARK,
+# not an in-body skip: the __main__ runner below calls the test directly,
+# and a mark is inert there.
+_SLOW = pytest.mark.skipif(
+    os.environ.get("HOLO_RUN_SLOW_TESTS") != "1",
+    reason="set HOLO_RUN_SLOW_TESTS=1 for the 018.2 failure-class chain")
 
 
 def _compose_cells():
@@ -129,9 +134,16 @@ def _run_chain(canvas, expect_origins):
     return out, pds
 
 
+# 2026-09-05: 19.8 s (segment + anchor chain + certification on three
+# pieces). Moved to the slow lane, NOT shrunk: 018.3 records these as the
+# durable synthetics of the 018.2 forensics, and the 350-cell piece is
+# exactly what crosses the window-split thresholds the p5 class exists to
+# exercise — a smaller piece would test the rigid model instead. The
+# default lane keeps the 0-false half (test_phantom_sliver_refused) and
+# the p8 placement units in tests/test_place_overhang.py.
+@_SLOW
 def test_edge_margin_overhang_and_distorted_and_rotated():
     gen = np.random.default_rng(1803)
-    H_E = H_C + 2 * MARGIN_CELLS
     pieces = []
     # (i) p8 class: bottom-edge piece, half field / half blank margin,
     #     mild rotation. Field bottom edge in EXT coords = MARGIN+H_C.

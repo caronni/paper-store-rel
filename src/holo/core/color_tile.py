@@ -1,4 +1,4 @@
-"""Pure provisional CMY7 and CMY8 payload-tile codecs.
+"""Pure provisional CMY7, CMY8 and CMY payload-tile codecs.
 
 This module joins the already-frozen binary frame and channel-mapper leaves.
 It deliberately does not know page geometry, pilot/dust furniture, physical
@@ -19,6 +19,14 @@ CMY8 convention
 The final axis is always C, M, Y.  Each component owns an independent FEC
 frame and dither; direct presence mapping merely colocates their transmitted
 bits in one physical state.  Decode outcomes remain independent.
+
+CMY convention
+--------------
+
+Two streams, ``hi`` and ``lo``, each an independent FEC frame and dither
+whose bits are one LABEL bit per cell; the frozen label table maps the
+pair to a W/C/M/Y presence state.  Each stream decodes through
+:func:`cmy8_decode_stream` on its label-bit LLRs.
 """
 from __future__ import annotations
 
@@ -281,6 +289,32 @@ def cmy8_encode_payload(
         presence[:, plane] = encode_frame(
             np.asarray(user), bank) ^ dither_vector
     return channel.cmy8_map(presence)
+
+
+def cmy_encode_payload(
+    user_bits_by_stream: Mapping[str, np.ndarray],
+    banks_by_stream: Mapping[str, FecBankProfile],
+    dither_bits_by_stream: Mapping[str, np.ndarray],
+) -> np.ndarray:
+    """Encode the hi and lo frames of one CMY tile to presence states."""
+    streams = channel.CMY_LABEL_STREAMS
+    for name, values in (("user_bits_by_stream", user_bits_by_stream),
+                         ("banks_by_stream", banks_by_stream),
+                         ("dither_bits_by_stream", dither_bits_by_stream)):
+        if not isinstance(values, Mapping):
+            raise TypeError(f"{name} must be a stream-ID mapping")
+        if sorted(values) != sorted(streams):
+            raise ValueError(
+                f"{name} must contain exactly {streams}, "
+                f"got {tuple(values)}")
+    hi, lo = (
+        encode_frame(np.asarray(user_bits_by_stream[stream_id]),
+                     banks_by_stream[stream_id])
+        ^ _bits(np.asarray(dither_bits_by_stream[stream_id]),
+                (banks_by_stream[stream_id].transmitted_bits,),
+                f"dither_bits_by_stream[{stream_id!r}]")
+        for stream_id in streams)
+    return channel.cmy_label_states(hi, lo)
 
 
 def cmy8_decode_payload(

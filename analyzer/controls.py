@@ -52,7 +52,8 @@ from . import frame as frame_mod
 from . import inputs as inputs_mod
 from . import ladder as ladder_mod
 from . import residue as residue_mod
-from .types import VERDICT_CERTIFIED, AnalyzerConfig, Key, LedgerRow
+from .types import (DEFAULT_ARMS, PROFILES, VERDICT_CERTIFIED, AnalyzerConfig,
+                    Key, LedgerRow)
 
 #: DESIGN §8: "at least eight tiles away" — beyond the registration
 #: period, so the donor's pixels cannot be a shifted view of the target.
@@ -63,9 +64,55 @@ POSITIVE_CONTROL_BAR = 0.70
 POSITIVE_CONTROL_MIN_STRATUM = 20
 PARITY_BAR = 0.80
 
+def certificate_fed_arms(*rosters: Sequence[str]) -> tuple[str, ...]:
+    """Of the arms named here, the ones whose field reads certificates.
+
+    BY CONSTRUCTION, not by literal (PAGE-FIELD-PLAN A6, finding 13).
+    `arms.FIELD_SOURCE` is TOTAL over `arms.REGISTER_ARMS` and says what
+    each register arm's field is fitted from, so this asks the table
+    rather than the name: an arm registered without a classification
+    raises in `arms` at import, and one classified `certified` is
+    refused the day it is added.  A `field2` arm, fitted from furniture
+    alone, is ADMITTED and must stay admitted — it is the blind
+    cross-check, and refusing it would withhold nothing.
+    """
+    named: set[str] = set()
+    for roster in rosters:
+        named |= {str(arm) for arm in roster}
+    return tuple(sorted(
+        arm for arm in named
+        if arms_mod.FIELD_SOURCE[arms_mod.parse_arm(arm)[1]] == "certified"))
+
+
+def _refused_under_withholding(config: AnalyzerConfig) -> tuple[str, ...]:
+    """`config.refused_arms` plus every certificate-fed arm IT can run.
+
+    `FIELD_ARMS` covers the rosters that exist in the code; a control run
+    with `--arms` names its own, and that battery is where a
+    certificate-fed arm would actually run.  Both are refused, so the
+    withholding pass cannot read a field fitted from the certificates it
+    withheld whatever roster it was handed.
+    """
+    return tuple(sorted(
+        set(config.refused_arms) | set(FIELD_ARMS)
+        | set(certificate_fed_arms(config.arms, config.reroll_only_arms))))
+
+
 #: The positive control refuses every arm whose input was fitted WITH the
-#: withheld certificates (DESIGN §8, review finding B5).
-FIELD_ARMS: tuple[str, ...] = ("subtract+field", "subtract+field+offset")
+#: withheld certificates (DESIGN §8, review finding B5).  UNCONDITIONAL
+#: since 2026-09-12: the receiver's blind tier is retired, so a
+#: production page field is always solved from certified templates plus
+#: furniture and the reason is "it always does", not "it may have".
+#:
+#: This is the rosters the CODE knows — the default battery and every
+#: profile's, re-roll placements included — because refusing an arm a
+#: pass does not run costs nothing.  It is NOT the whole guard: a run's
+#: own `--arms` is walked at call time by `_refused_under_withholding`,
+#: which is what a control actually applies.
+FIELD_ARMS: tuple[str, ...] = certificate_fed_arms(
+    DEFAULT_ARMS,
+    *(profile.get("arms", ()) for profile in PROFILES.values()),
+    *(profile.get("reroll_only_arms", ()) for profile in PROFILES.values()))
 
 
 class ControlError(RuntimeError):
@@ -196,7 +243,7 @@ def _decode_at(inputs: Any, certs: Mapping[Key, Any], donor: Key,
     folds = cal.split_folds(footprint.page_cells_yx, int(config.seed))
     chosen = []
     for lane in lanes:
-        knobs = fp._knobs_for(inputs, config, donor, lane, None, None)
+        knobs = fp._knobs_for(inputs, config, donor, None)
         candidates = []
         for arm in config.battery_for(str(stream_id)):
             evidence = arms_mod.evidence_for(inputs, certs, donor, lane, arm,
@@ -210,9 +257,16 @@ def _decode_at(inputs: Any, certs: Mapping[Key, Any], donor: Key,
         chosen.append(dc_replace(winner, key=address))
     if not chosen:
         return {"refusal": "every_arm_refused", "results": []}
+    # W8 B2 wiring: the DONOR's sibling state, so `platt-state` weights
+    # the null combination the way the live path weights its own.  The
+    # ladder knobs stay the config's bare bag — no `refit`, no
+    # `sibling_state` — so L3f sees `no_refit` and L7c `no_sibling_state`
+    # here, exactly as L3/L7a already refuse on the null arm.
+    donor_state = fp.sequential_state_for(inputs, certs, donor)
     results = []
     for rule in config.rules:
-        combined = combine_mod.combine(chosen, rule)
+        combined = combine_mod.combine(chosen, rule,
+                                       sibling_state=donor_state)
         results.extend(ladder_mod.run_ladder(
             combined, inputs.row, address, rungs=fp.expand_rungs(config.rungs),
             knobs=dict(config.knobs), exposure=exposure,
@@ -366,7 +420,7 @@ def positive_control(inputs: Any, withheld: Sequence[Key],
     if not withheld:
         raise ControlError("positive_control: the withhold set is empty")
     config = AnalyzerConfig() if config is None else config
-    refused = tuple(sorted(set(config.refused_arms) | set(FIELD_ARMS)))
+    refused = _refused_under_withholding(config)
     config = dc_replace(config, refused_arms=refused, max_generations=1,
                         targets_from="positive_control")
     keys = tuple(withheld)
@@ -557,7 +611,7 @@ def stratified_holdout(inputs: Any,
         raise ControlError(
             f"stratified holdout {spec!r} selected no certificate — check "
             f"the source strings against the run's own (PLAN §1.3)")
-    refused = tuple(sorted(set(config.refused_arms) | set(FIELD_ARMS)))
+    refused = _refused_under_withholding(config)
     local = dc_replace(config, refused_arms=refused, max_generations=1,
                        rules=HOLDOUT_RULES, rungs=HOLDOUT_RUNGS,
                        targets_from=f"holdout_stratified:{spec}")
@@ -652,10 +706,18 @@ def _min_unsat(row: LedgerRow) -> int | None:
 
 #: DESIGN §8's parity configurations: the DEFAULT arm is the gate; the
 #: other two are REPORTED beside it, never gating.
+#: `patch+offset` joins them 2026-09-07, REPORTED beside the gate like the
+#: other two.  K1/K3-certified (APPROACHES §6.9) re-derived 0 of 8 on the
+#: dead band's own certificates under all three configurations above and
+#: read as "CONTROLS FAILED"; those eight tiles were certified by the patch
+#: family, and no configuration here could read them, so the number
+#: measured the control's own coverage rather than the run's parity.  The
+#: gate stays the DEFAULT arm — production's own — so the bar is unchanged.
 PARITY_CONFIGURATIONS: tuple[tuple[str, str, str], ...] = (
     ("default", "subtract+offset", "production"),
     ("subtract+committed/ctx-none", "subtract+committed", "none"),
     ("head+offset", "head+offset", "production"),
+    ("patch+offset", "patch+offset", "production"),
 )
 
 

@@ -52,7 +52,7 @@ from typing import Any, Iterable, Mapping, Sequence
 
 import numpy as np
 
-from holo3 import data, snapshot
+from holo.receiver import data, snapshot
 
 from . import close as close_mod
 from . import ledger as ledger_mod
@@ -164,8 +164,16 @@ def _exposure_of(header: Mapping[str, Any]) -> dict:
 
 
 def read_ledger(path: Path | str) -> tuple[dict, list[dict]]:
-    header, rows = ledger_mod.read_rows(path)
-    return header, rows
+    """Header and the LAST row per key, materialised.
+
+    Kept for the callers that want the rows in hand; `export` itself
+    streams (`ledger_mod.iter_rows_latest`), because the file it is
+    pointed at can be 4.5 GB and the certificates it is looking for are
+    a few hundred kilobytes of it.
+    """
+    stats = ledger_mod.ReadStats()
+    rows = list(ledger_mod.iter_rows_latest(path, stats=stats))
+    return ledger_mod.read_header(path), rows
 
 
 def _is_list_rung(rung: str | None) -> bool:
@@ -197,7 +205,7 @@ class Collected:
 
 def collect(snapshot_certs: Mapping[Key, Any],
             ledgers: Sequence[tuple[str, Mapping[str, Any],
-                                    Sequence[Mapping[str, Any]]]],
+                                    Iterable[Mapping[str, Any]]]],
             *, include_list_rungs: bool = True) -> Collected:
     """Certificates from the ledgers, minus what the snapshot already has.
 
@@ -259,7 +267,7 @@ def collect(snapshot_certs: Mapping[Key, Any],
 
 
 def certificates_for(collected: Collected) -> tuple[Any, ...]:
-    """`holo3.data.Certificate` per collected key, in key order."""
+    """`holo.receiver.data.Certificate` per collected key, in key order."""
     out = []
     for key in collected.keys:
         page, ty, tx, stream_id = key
@@ -385,13 +393,21 @@ def export(snapshot_path: Path | str, ledger_paths: Sequence[Path | str],
             f"--out {out_path} is the input snapshot; an export never "
             f"overwrites the base a resume must be able to fall back to")
 
-    ledgers: list[tuple[str, dict, list[dict]]] = []
+    # STREAMED, last row per key, a half-written last line tolerated and
+    # COUNTED (2026-09-13).  This tool is the recovery door of a killed
+    # pass — point it at that pass's `mints.jsonl`, or at the partial
+    # `ledger.jsonl` itself — so it must read exactly what a kill leaves
+    # behind, and the manifest must say that is what it read.
+    ledgers: list[tuple[str, dict, Any]] = []
+    stats_by_name: dict[str, ledger_mod.ReadStats] = {}
     for path in ledger_paths:
         path = Path(path)
         if not path.exists():
             raise ExportError(f"ledger {path} is absent")
-        header, rows = read_ledger(path)
-        ledgers.append((str(path), header, rows))
+        stats = ledger_mod.ReadStats()
+        stats_by_name[str(path)] = stats
+        ledgers.append((str(path), ledger_mod.read_header(path),
+                        ledger_mod.iter_rows_latest(path, stats=stats)))
 
     used_ref, ref_from = _format_ref(ledgers, format_ref)
     facts = snapshot.read(snapshot_path)
@@ -403,7 +419,7 @@ def export(snapshot_path: Path | str, ledger_paths: Sequence[Path | str],
     consistency: dict | None = None
     consistency_reason = "no format ref (no ledger header declares one)"
     if used_ref is not None:
-        from holo3.format import identity
+        from holo.receiver.format import identity
         try:
             row = identity.resolve_format_ref(used_ref)
         except ValueError as error:
@@ -426,14 +442,17 @@ def export(snapshot_path: Path | str, ledger_paths: Sequence[Path | str],
         "ledgers": [
             {"path": name,
              "sha256": file_sha256(name),
-             "n_rows": len(rows),
+             "n_rows": int(stats_by_name[name].rows),
+             "n_rows_superseded": int(stats_by_name[name].superseded),
+             "truncated_lines": int(stats_by_name[name].truncated_lines),
+             "partial": bool(stats_by_name[name].partial),
              "format_ref": header.get("format_ref"),
              "run_dir": header.get("run_dir"),
              "seed": header.get("seed"),
              "rungs": header.get("rungs"),
              "rules": header.get("rules"),
              "exposure": _exposure_of(header)}
-            for name, header, rows in ledgers],
+            for name, header, _rows in ledgers],
         "format_ref": used_ref,
         "format_ref_from": ref_from,
         "include_list_rungs": bool(include_list_rungs),

@@ -6,7 +6,7 @@ from collections import Counter
 
 import numpy as np
 
-from holo3.plugins import calibrate as cal
+from holo.receiver.plugins import calibrate as cal
 
 RNG = np.random.default_rng(20260829)
 

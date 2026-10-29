@@ -29,8 +29,9 @@ def _overlap(a, b):
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("image", nargs="?", type=Path,
-                        default=ROOT / "scratch/e018/decimated-1_1600.tiff")
+    parser.add_argument("image", type=Path,
+                        help="the run of record read e018/decimated-1_1600.tiff "
+                             "(evidence archive)")
     parser.add_argument("--dpi", type=float, default=1600.0)
     parser.add_argument("--work-cell-px", type=float, default=2.0)
     parser.add_argument("--out", type=Path,

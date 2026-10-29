@@ -9,7 +9,7 @@ all four into one value:
 * ``events.jsonl`` — ``RunOpen`` carries the format ref and the printed
   pitch, ``TileOutcome`` the run's own mints (the withhold set of the
   positive control, §8);
-* ``facts.npz`` — the flat fact tuple (``holo3.snapshot.read``): the
+* ``facts.npz`` — the flat fact tuple (``holo.receiver.snapshot.read``): the
   accepted placements, the certificates, the plane fields and the pooled
   colour context;
 * ``<capture12>/l{NN}-{r,g,b}.npy`` — the per-lane plane rasters, opened
@@ -32,14 +32,14 @@ from __future__ import annotations
 import json
 from fractions import Fraction
 from pathlib import Path
-from typing import Any, Iterator, Sequence
+from typing import Any, Iterable, Iterator, Sequence
 
 import numpy as np
 
-from holo3 import snapshot
-from holo3.format import close as fmt_close
-from holo3.format import identity, metadata
-from holo3.plugins import calibrate, intake
+from holo.receiver import snapshot
+from holo.receiver.format import close as fmt_close
+from holo.receiver.format import identity, metadata
+from holo.receiver.plugins import calibrate, intake
 
 from .types import CaptureFact, Key, Lane, LaneId, RunInputs
 
@@ -218,7 +218,7 @@ def metadata_bit(inputs: RunInputs, key: Key) -> int | None:
     (`close.metadata_from_certificates`, trusted at rank 24 and >= 48
     distinct equations, resolved in `_metadata_state` above), and the bit
     is that word evaluated at this tile's equation — which is exactly
-    what `holo3/format/close.py` inverts.  Returns ``None`` while the
+    what `src/holo/receiver/format/close.py` inverts.  Returns ``None`` while the
     word is untrusted.
 
     It sat in `truth.py` until 2026-09-04 with a docstring explaining
@@ -261,6 +261,52 @@ def _metadata_state(certificates, row) -> tuple[int | None, int | None,
         return None, version, state, None
     k = (k_total // len(row.streams)) if row.pooled_fountain else k_total
     return _metadata_word(int(version), int(k)), version, state, k_total
+
+
+# --------------------------------------------------------- the families
+
+def sort_facts(facts: Iterable[Any]) -> dict[str, Any]:
+    """One pass over a snapshot, split into the families `RunInputs` holds.
+
+    `plane_fields` is keyed `(page, plane)` and by nothing else: the
+    displacement is the printer's, frozen at print time, so the capture,
+    the decimation level, the lane and the scrap are axes the receiver's
+    evidence POOLS over (`holo.receiver.data.PlaneField`,
+    docs/PAGE-FIELD-DESIGN.md §2.2).  A key carrying any of them is the
+    error the receiver's own line retired at W2 and the analyzer's
+    page-field plan retires here (PAGE-FIELD-PLAN A1).
+
+    Split out of `load_run` so a synthetic fact can drive the branch
+    without a 7 MB run dir behind it.
+    """
+    placements: list = []
+    certificates: dict[Key, Any] = {}
+    plane_fields: dict[tuple[int, int], Any] = {}
+    pooled_ctx: dict[tuple[int, str], Any] = {}
+    lattice_seeds: list = []
+    windows: dict[Any, Any] = {}
+    surveys: dict[str, Any] = {}
+    for fact in facts:
+        name = type(fact).__name__
+        if name == "Placement":
+            placements.append(fact)
+        elif name == "Certificate":
+            certificates[(int(fact.page), int(fact.ty), int(fact.tx),
+                          str(fact.stream_id))] = fact
+        elif name == "PlaneField":
+            plane_fields[(int(fact.page), int(fact.plane))] = fact
+        elif name == "PooledColorCtx":
+            pooled_ctx[(int(fact.page), str(fact.rung))] = fact
+        elif name == "LatticeSeed":
+            lattice_seeds.append(fact)
+        elif name == "Window":
+            windows[fact.window_id] = fact
+        elif name == "CaptureSurvey":
+            surveys[str(fact.capture_id)] = fact
+    return {"placements": placements, "certificates": certificates,
+            "plane_fields": plane_fields, "pooled_ctx": pooled_ctx,
+            "lattice_seeds": lattice_seeds, "windows": windows,
+            "surveys": surveys}
 
 
 # ------------------------------------------------------------- load_run
@@ -318,31 +364,14 @@ def load_run(run_dir: Path | str, *, lanes: str = LANES_FINEST_COVERING,
         for fact in report["capture_facts"])
 
     facts = snapshot.read(run_dir / snapshot.NAME)
-    placements: list = []
-    certificates: dict[Key, Any] = {}
-    plane_fields: dict[tuple[str, int, int, int], Any] = {}
-    pooled_ctx: dict[tuple[int, str], Any] = {}
-    lattice_seeds: list = []
-    windows: dict[Any, Any] = {}
-    surveys: dict[str, Any] = {}
-    for fact in facts:
-        name = type(fact).__name__
-        if name == "Placement":
-            placements.append(fact)
-        elif name == "Certificate":
-            certificates[(int(fact.page), int(fact.ty), int(fact.tx),
-                          str(fact.stream_id))] = fact
-        elif name == "PlaneField":
-            plane_fields[(str(fact.capture_id), int(fact.level_index),
-                          int(fact.page), int(fact.plane))] = fact
-        elif name == "PooledColorCtx":
-            pooled_ctx[(int(fact.page), str(fact.rung))] = fact
-        elif name == "LatticeSeed":
-            lattice_seeds.append(fact)
-        elif name == "Window":
-            windows[fact.window_id] = fact
-        elif name == "CaptureSurvey":
-            surveys[str(fact.capture_id)] = fact
+    sorted_facts = sort_facts(facts)
+    placements = sorted_facts["placements"]
+    certificates = sorted_facts["certificates"]
+    plane_fields = sorted_facts["plane_fields"]
+    pooled_ctx = sorted_facts["pooled_ctx"]
+    lattice_seeds = sorted_facts["lattice_seeds"]
+    windows = sorted_facts["windows"]
+    surveys = sorted_facts["surveys"]
 
     declared_pages = tuple(int(page) for page in report.get("pages", ()))
     placed_pages = {int(item.page) for item in placements}

@@ -1,5 +1,10 @@
 """W9 — can a better statistic separate 'oversampled' from 'destroyed'?
 
+Historical record of the W8/W9/W10 campaign; the captures are in the
+evidence archive (shas in the e031 log), joined onto --scan-root:
+    env/bin/python experiments/031-xerox-altalink-discovery/w9_capture_forensics.py \\
+        --scan-root <evidence>
+
 Read-only. On a blank-paper patch of each capture, measures four things.
 Verdicts recorded in docs/CHARACTERIZE-WORKPLAN.md W9:
 
@@ -34,18 +39,22 @@ one sheet, and the single-patch cross-DPI agreement this file
 once showed was luck.  See CHARACTERIZE-WORKPLAN W9/W10; the
 flatness/knee advisory built on it was retired.
 """
+import argparse
 import gzip
 import sys
 import numpy as np
 import tifffile
 
 CAPS = [
-    ("e031 xerox discovery B/W", "scratch/in/xerox-canon-cal-bw.tiff", 4800, False),
-    ("e031 xerox discovery clr", "scratch/in/xerox-canon-cal-color.tiff", 4800, True),
-    ("e028 m281 discovery B/W", "scratch/e028/e028-m281-20260804-bw-01-canon-4800gray.tiff", 4800, False),
-    ("e032 xerox c3-cmy7 2400", "scratch/in/xerox-canon-c3-cmy7-2400dpi.tiff", 2400, True),
+    ("e031 xerox discovery B/W", "in/xerox-canon-cal-bw.tiff", 4800, False),
+    ("e031 xerox discovery clr", "in/xerox-canon-cal-color.tiff", 4800, True),
+    ("e028 m281 discovery B/W", "e028/e028-m281-20260804-bw-01-canon-4800gray.tiff", 4800, False),
+    ("e032 xerox c3-cmy7 2400", "in/xerox-canon-c3-cmy7-2400dpi.tiff", 2400, True),
 ]
-ROOT = "<repo>/"
+_ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+_ap.add_argument("--scan-root", required=True,
+                 help="evidence dir standing for the old scratch/ root")
+ROOT = _ap.parse_args().scan_root.rstrip("/") + "/"
 PATCH_MM = 8.0
 
 

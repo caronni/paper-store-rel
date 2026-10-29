@@ -33,12 +33,13 @@ arms only exist post-placement, so BER/calibration deltas are reported on
 the placed population (declared; that population IS the binder).
 
 Population: sub-grain pieces (< 26 mm long side) of the white-lid
-real-toner fixture scratch/confetti_session_white — the placer-path
+real-toner fixture confetti_session_white — the placer-path
 population where the binder lives (big pieces go through the word path).
 
 Usage (from experiments/016-arch3-c2-volume/):
-  ../../env/bin/python probes/p2_detector_ab.py [--fixture ../../scratch/
-      confetti_session_white] [--limit N] [--out build/p2_detector_ab.json]
+  ../../env/bin/python probes/p2_detector_ab.py --fixture <confetti_session_white>
+      [--limit N] [--out build/p2_detector_ab.json]
+(the fixture is gen_confetti_session.py --backing white over scan A)
 """
 from __future__ import annotations
 
@@ -349,8 +350,7 @@ def gt_ber(bits: np.ndarray, kmask: np.ndarray, pl: place.Placement,
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--fixture", type=Path,
-                    default=ROOT / "scratch/confetti_session_white")
+    ap.add_argument("--fixture", type=Path, required=True)
     ap.add_argument("--limit", type=int, default=0,
                     help="cap pieces PER SCAN (0 = all sub-grain pieces); "
                          "per-scan so every size class is sampled — the "

@@ -1,0 +1,262 @@
+{
+ "key": "lzdict",
+ "dir": "<tmp>",
+ "primed_primer": "primer.txt + the variant own dec file (whole file), in that order",
+ "python": "3.13.16",
+ "variants": {
+  "main": {
+   "file": "dec.py",
+   "count_lines": "lines=20 chars=739",
+   "tests": {
+    "T1": {
+     "unprimed": {
+      "size": 3263,
+      "enc_s": 1.0,
+      "dec_s": 0.05,
+      "roundtrip_ok": true
+     },
+     "primed": {
+      "size": 3098,
+      "enc_s": 1.23,
+      "dec_s": 0.05,
+      "roundtrip_ok": true
+     }
+    },
+    "T2": {
+     "unprimed": {
+      "size": 5400,
+      "enc_s": 2.24,
+      "dec_s": 0.08,
+      "roundtrip_ok": true
+     },
+     "primed": {
+      "size": 5205,
+      "enc_s": 2.37,
+      "dec_s": 0.07,
+      "roundtrip_ok": true
+     }
+    },
+    "T3": {
+     "unprimed": {
+      "size": 8545,
+      "enc_s": 4.12,
+      "dec_s": 0.11,
+      "roundtrip_ok": true
+     },
+     "primed": {
+      "size": 8299,
+      "enc_s": 4.03,
+      "dec_s": 0.1,
+      "roundtrip_ok": true
+     }
+    },
+    "T4": {
+     "unprimed": {
+      "size": 152459,
+      "enc_s": 123.14,
+      "dec_s": 1.67,
+      "roundtrip_ok": true
+     },
+     "primed": {
+      "size": 151835,
+      "enc_s": 119.89,
+      "dec_s": 1.6,
+      "roundtrip_ok": true
+     }
+    }
+   },
+   "kav": {
+    "input": "paper-store bootstrap",
+    "len": 30,
+    "hex": "5fd517c4b6681d770b9c74a346cd91b8e7800f6253fc2a70b94ce9c76308"
+   }
+  },
+  "raw": {
+   "file": "dec_raw.py",
+   "count_lines": "lines=15 chars=496",
+   "tests": {
+    "T1": {
+     "unprimed": {
+      "size": 3562,
+      "enc_s": 0.11,
+      "dec_s": 0.02,
+      "roundtrip_ok": true
+     },
+     "primed": {
+      "size": 3250,
+      "enc_s": 0.1,
+      "dec_s": 0.02,
+      "roundtrip_ok": true
+     }
+    },
+    "T2": {
+     "unprimed": {
+      "size": 5852,
+      "enc_s": 0.21,
+      "dec_s": 0.02,
+      "roundtrip_ok": true
+     },
+     "primed": {
+      "size": 5493,
+      "enc_s": 0.19,
+      "dec_s": 0.02,
+      "roundtrip_ok": true
+     }
+    },
+    "T3": {
+     "unprimed": {
+      "size": 9334,
+      "enc_s": 0.37,
+      "dec_s": 0.03,
+      "roundtrip_ok": true
+     },
+     "primed": {
+      "size": 8902,
+      "enc_s": 0.4,
+      "dec_s": 0.03,
+      "roundtrip_ok": true
+     }
+    },
+    "T4": {
+     "unprimed": {
+      "size": 169789,
+      "enc_s": 17.52,
+      "dec_s": 0.24,
+      "roundtrip_ok": true
+     },
+     "primed": {
+      "size": 169158,
+      "enc_s": 17.84,
+      "dec_s": 0.36,
+      "roundtrip_ok": true
+     }
+    }
+   },
+   "kav": {
+    "input": "paper-store bootstrap",
+    "len": 23,
+    "hex": "38184e065390b4e674379c8ca20311bcde748049ca0220"
+   }
+  }
+ },
+ "greedy_vs_optimal": {
+  "main": {
+   "T1": {
+    "unprimed": [
+     3366,
+     3263
+    ],
+    "primed": [
+     3262,
+     3098
+    ]
+   },
+   "T2": {
+    "unprimed": [
+     5629,
+     5400
+    ],
+    "primed": [
+     5495,
+     5205
+    ]
+   },
+   "T3": {
+    "unprimed": [
+     9073,
+     8545
+    ],
+    "primed": [
+     8850,
+     8299
+    ]
+   }
+  },
+  "raw": {
+   "T1": {
+    "unprimed": [
+     3827,
+     3562
+    ],
+    "primed": [
+     3491,
+     3250
+    ]
+   },
+   "T2": {
+    "unprimed": [
+     6282,
+     5852
+    ],
+    "primed": [
+     5912,
+     5493
+    ]
+   },
+   "T3": {
+    "unprimed": [
+     10066,
+     9334
+    ],
+    "primed": [
+     9647,
+     8902
+    ]
+   }
+  },
+  "note": "[greedy longest-match (min length 3, shortest distance), optimal DP]; same decoder"
+ },
+ "ablations_unprimed": {
+  "v1_full_tree_contexts_20_lines": {
+   "T1": 3573,
+   "T2": 5839,
+   "T3": 9152,
+   "T4": 158315
+  },
+  "rolz_order1_context": {
+   "T1": 4525,
+   "T2": 6962,
+   "T3": 10297,
+   "note": "encoder-only, shift 4/4, o1 symbol ctx; negative"
+  },
+  "rep_last_distance": {
+   "T1": 3717,
+   "T2": 6046,
+   "T3": 9439,
+   "note": "vs 3654/5957/9334 same-day baseline; 21 reps in 4006 matches; negative"
+  },
+  "literal_ctx_prevbyte_hi3": {
+   "T1": 3380,
+   "T2": 5498,
+   "T3": 8621,
+   "note": "vs 3299/5440/8601 matched-shift control; negative"
+  },
+  "adaptation_shift_4_4_vs_4_5": {
+   "T1": [
+    3266,
+    3263
+   ],
+   "T2": [
+    5410,
+    5400
+   ],
+   "T3": [
+    8568,
+    8545
+   ]
+  }
+ },
+ "baselines": {
+  "T1_xz9e": 3336,
+  "T2_xz9e": 5412,
+  "T3_xz9e": 8544,
+  "T4_xz9e": 145264,
+  "T4_bzip2": 142758,
+  "T4_ppmd_o16": 122234,
+  "T4_lpaq1": 110661,
+  "T2_brotli": 4895,
+  "T2_ppmd": 4667,
+  "T2_lpaq1": 4666
+ },
+ "pythonhashseed_check": "enc output identical (sha256) under PYTHONHASHSEED=1,2,3 on T1; decoder dict keys are ints only"
+}

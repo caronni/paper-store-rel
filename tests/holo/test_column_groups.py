@@ -22,6 +22,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 from fractions import Fraction
 from pathlib import Path
 
@@ -128,6 +129,32 @@ def test_plane_tier_ceilings_follow_the_carried_weights():
     top = groups_law.column_groups(_ladder_widths("r0850", "r0850", "r0775"))
     assert top.any_plane_ceiling == Fraction(40, 61)
     assert top.plane_tier_ceiling(2) == Fraction(42, 61)
+
+
+# The cmy pairs (docs/CMY-DESIGN.md §3.2) pool through the same law at
+# n = 2.  p120 and p300 are pinned from the design text by
+# test_cmy_vectors; these are the densities between, where Z is not
+# monotone in p (the furniture axis's FORMAT-SPACE §18 finding).
+@pytest.mark.parametrize("pair,p,widths,z,carried,any_one,reserve", [
+    ("r0775x0700", 101, (3066, 2746), 19, (19, 17), Fraction(17, 36), 21),
+    ("r0775x0700", 150, (3017, 2697), 28, (28, 25), Fraction(25, 53), 21),
+    ("r0775x0700", 200, (2967, 2647), 9, (9, 8), Fraction(8, 17), 20),
+    ("r0700x0625", 101, (2746, 2426), 17, (17, 15), Fraction(15, 32), 21),
+    ("r0700x0625", 150, (2697, 2377), 25, (25, 22), Fraction(22, 47), 21),
+    ("r0700x0625", 200, (2647, 2327), 8, (8, 7), Fraction(7, 15), 19),
+    ("r0850x0700", 101, (3386, 2746), 21, (21, 17), Fraction(17, 38), 21),
+    ("r0850x0700", 150, (3337, 2697), 26, (26, 21), Fraction(21, 47), 21),
+    ("r0850x0700", 200, (3287, 2647), 5, (5, 4), Fraction(4, 9), 19),
+])
+def test_cmy_pairs_group_by_the_same_law_at_every_furniture_density(
+        pair, p, widths, z, carried, any_one, reserve):
+    spec = parse_format_id(f"c2-cmy-{pair}-p{p}@10x10")
+    assert spec.stream_symbol_bits == widths
+    g = spec.column_groups
+    assert (g.n_groups, g.carried) == (z, carried)
+    assert g.any_plane_ceiling == g.plane_tier_ceiling(0) == any_one
+    assert g.plane_tier_ceiling(1) == Fraction(z, z + carried[1])
+    assert capacity.rank_reserve_for(1, solves_per_block=z) == reserve
 
 
 # -------------------------------------------------------------- slot map
@@ -446,7 +473,20 @@ EMIT_GOLDENS = {
 }
 
 
-@pytest.mark.parametrize("ref", sorted(EMIT_GOLDENS))
+# The 53x37 lever is a whole printed-size emission — a fork guard on a
+# separate identity, not per-commit feedback, so it rides the slow lane
+# while the two 10x10 rows stay in every commit's reach (2026-09-20).
+@pytest.mark.parametrize("ref", [
+    pytest.param(
+        ref,
+        marks=pytest.mark.skipif(
+            os.environ.get("HOLO_RUN_SLOW_TESTS") != "1",
+            reason=("set HOLO_RUN_SLOW_TESTS=1 for the printed-size "
+                    "emission goldens"),
+        ) if ref == LEVER_53 else (),
+    )
+    for ref in sorted(EMIT_GOLDENS)
+])
 def test_uneven_row_emission_goldens(ref: str, tmp_path: Path):
     spec = parse_format_id(ref)
     golden = EMIT_GOLDENS[ref]

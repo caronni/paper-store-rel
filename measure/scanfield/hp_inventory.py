@@ -40,9 +40,19 @@ Headers only: the PNG IHDR is 25 bytes at a fixed offset, so the colour
 type of a 300 MB capture costs one 64-byte read.  sha256 is computed
 only for captures the measurement actually uses, and matched against the
 log where the log recorded one.
+
+Historical record (2026-09); the home-flatbed captures it reads (the
+``scans/`` directory of the record, ``name`` below) are in the published
+evidence archive, each at its ``published`` path joined onto
+``--evidence-root`` (``measure/_evidence.py``).  The archive publishes a
+PNG with its metadata chunks stripped (pixels untouched), so
+``sha256_matches_log`` reads False wherever chunks were removed; the
+IDAT sha in the release's MANIFEST.tsv is the check then.
+Output lands in the required ``--out``.
 """
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
 import struct
@@ -52,9 +62,10 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-REPO = Path("<repo>")
-SCANS = REPO / "scans"
-OUT_DIR = REPO / "scratch" / "scanfield"
+import _evidence
+
+#: The evidence root, set by ``use_evidence_root``.
+EVIDENCE_ROOT: Path | None = None
 
 COLOUR_TYPES = {0: "grey", 2: "RGB", 3: "palette", 4: "grey+alpha", 6: "RGBA"}
 HOME_FLATBED = "HP CLJ Pro M281fdw flatbed (home flatbed 1200)"
@@ -62,7 +73,10 @@ HOME_FLATBED = "HP CLJ Pro M281fdw flatbed (home flatbed 1200)"
 
 @dataclass(frozen=True)
 class Capture:
-    """One archived capture and what the record says produced it."""
+    """One archived capture and what the record says produced it.
+
+    ``name`` is the record's own name for it (the experiment logs cite
+    it); ``published`` is its path under the evidence root."""
 
     name: str
     scanner: str
@@ -75,10 +89,12 @@ class Capture:
     role: str = ""
     placement: str = ""
     header: dict[str, Any] = field(default_factory=dict)
+    published: str = ""
 
     @property
     def path(self) -> Path:
-        return SCANS / self.name
+        return _evidence.resolve(EVIDENCE_ROOT,
+                                 tool="scanfield") / self.published
 
     @property
     def colour(self) -> bool:
@@ -94,92 +110,123 @@ HOME_COLOUR: tuple[Capture, ...] = (
             "004.0", "finalists checkerboard: K cell tiles (B1 c2, B2 RLL) "
             "+ CMY composite tiles (A3 7-state, A4) + labels",
             "a9148acc5d7a47b409f96122e0bdd90e7ef455362020e0650c37208cdea7ccf6",
-            role="primary", placement="flat 0 deg"),
+            role="primary", placement="flat 0 deg",
+            published="paper-store-evidence-paperholo-era/004-finalists-checkerboard/finalists/captures/finalists-hpflatbed-1200rgb.png"),
     Capture("finalists-1-col.png", HOME_FLATBED, "M281", "colour", 1200.0,
             "004.0b", "same sheet as finalists.png, rescan 1",
-            role="primary", placement="re-placed, ~0 deg"),
+            role="primary", placement="re-placed, ~0 deg",
+            published="paper-store-evidence-paperholo-era/004-finalists-checkerboard/finalists/captures/finalists-hpflatbed-1200rgb-1.png"),
     Capture("finalists-2-col.png", HOME_FLATBED, "M281", "colour", 1200.0,
             "004.0b", "same sheet, rescan 2",
-            role="primary", placement="displaced"),
+            role="primary", placement="displaced",
+            published="paper-store-evidence-paperholo-era/004-finalists-checkerboard/finalists/captures/finalists-hpflatbed-1200rgb-2.png"),
     Capture("finalists-3-col.png", HOME_FLATBED, "M281", "colour", 1200.0,
             "004.0b", "same sheet, rescan 3 (top part only)",
-            role="primary", placement="rotated 90 deg"),
+            role="primary", placement="rotated 90 deg",
+            published="paper-store-evidence-paperholo-era/004-finalists-checkerboard/finalists/captures/finalists-hpflatbed-1200rgb-3.png"),
     Capture("finalists-4-col.png", HOME_FLATBED, "M281", "colour", 1200.0,
             "004.0b", "same sheet, rescan 4",
-            role="primary", placement="rotated 180 deg"),
+            role="primary", placement="rotated 180 deg",
+            published="paper-store-evidence-paperholo-era/004-finalists-checkerboard/finalists/captures/finalists-hpflatbed-1200rgb-4.png"),
     Capture("xerox-e004-finalists-hp-scan.png", HOME_FLATBED, "AltaLink",
             "colour", 1200.0, "004.1",
             "the SAME page printed on the AltaLink — the MIC control: an "
             "engine that lays yellow tracking dots, dark in blue",
-            role="control", placement="flat"),
+            role="control", placement="flat",
+            published="paper-store-evidence-paperholo-era/007-office-disc/altalink-library/captures/finalists-hpflatbed-1200rgb.png"),
     Capture("006bw-scan-1-color.png", HOME_FLATBED, "M281", "colour", 1200.0,
             "006.0", "LOOP-BW page: K-only content, acquired in colour mode",
-            role="k-only", placement="flat"),
+            role="k-only", placement="flat",
+            published="paper-store-evidence-paperholo-era/006-loop-pages/e006bw/captures/e006bw-hpflatbed-1200rgb-1.png"),
     Capture("xerox-001-patterns-K-hp-scan.png", HOME_FLATBED, "AltaLink",
             "colour", 1200.0, "007.6",
             "e001 K-plane pattern page printed on the AltaLink",
-            role="k-only", placement="flat"),
+            role="k-only", placement="flat",
+            published="paper-store-evidence-paperholo-era/007-office-disc/altalink-library/captures/001patterns-p1-K-hpflatbed-1200rgb.png"),
     Capture("test-scan-calpage-color.png", HOME_FLATBED, "M281", "colour",
             1200.0, "002.0", "CAL-1 calibration page",
             "2bbb87042851dae071bcf197adc1152a979f8cf170019499898ab1795930a9f6",
-            role="secondary", placement="flat"),
+            role="secondary", placement="flat",
+            published="paper-store-evidence-paperholo-era/002-calibration-page/calpage/captures/calpage-hpflatbed-1200rgb.png"),
     Capture("test-scan-calpage-color-quer-top.png", HOME_FLATBED, "M281",
             "colour", 1200.0, "002.0b", "CAL-1, transverse placement (top)",
-            role="secondary", placement="transverse, top"),
+            role="secondary", placement="transverse, top",
+            published="paper-store-evidence-paperholo-era/002-calibration-page/calpage/captures/calpage-hpflatbed-1200rgb-quer-top.png"),
     Capture("test-scan-calpage-color-quer-bot.png", HOME_FLATBED, "M281",
             "colour", 1200.0, "002.0b", "CAL-1, transverse placement (bottom)",
-            role="secondary", placement="transverse, bottom"),
+            role="secondary", placement="transverse, bottom",
+            published="paper-store-evidence-paperholo-era/002-calibration-page/calpage/captures/calpage-hpflatbed-1200rgb-quer-bot.png"),
     Capture("test-scan-modprobe.png", HOME_FLATBED, "M281", "colour", 1200.0,
             "003.0", "modulation probes (RLL, voids, coloured pilots)",
             "a5de3fe82e2dc2baf89557bf2fa74c906ab094773c6a361fd29877773049e963",
-            role="secondary", placement="flat"),
+            role="secondary", placement="flat",
+            published="paper-store-evidence-paperholo-era/003-modulation-probes/modprobe/captures/modprobe-hpflatbed-1200rgb.png"),
     Capture("test-scan-composite-probe.png", HOME_FLATBED, "M281", "colour",
             1200.0, "002.1", "composite/overlap probe page",
             "c0187114827938058bf11d2c1b5c4cd0710ca2566e74b424fff547b0d7c05a8a",
-            role="secondary", placement="flat"),
+            role="secondary", placement="flat",
+            published="paper-store-evidence-paperholo-era/002-calibration-page/composite-probe/captures/composite-probe-hpflatbed-1200rgb.png"),
     Capture("test-scan-overlap2.png", HOME_FLATBED, "M281", "colour", 1200.0,
             "002.2", "plane-overlap probe page",
             "19e58f247c31faf7e55a2a1aa303f2e8cafb22c64a150bfe2b66b146e588be62",
-            role="secondary", placement="flat"),
+            role="secondary", placement="flat",
+            published="paper-store-evidence-paperholo-era/002-calibration-page/overlap2/captures/overlap2-hpflatbed-1200rgb.png"),
     Capture("005.1.png", HOME_FLATBED, "M281", "colour", 1200.0, "005.1",
-            "density ladder, @PJL DENSITY=1 print", role="secondary"),
+            "density ladder, @PJL DENSITY=1 print", role="secondary",
+            published="paper-store-evidence-paperholo-era/005-density-ladder/density1/captures/density1-hpflatbed-1200rgb.png"),
     Capture("005.2.png", HOME_FLATBED, "M281", "colour", 1200.0, "005.2",
-            "density ladder, DENSITY=5 print", role="secondary"),
+            "density ladder, DENSITY=5 print", role="secondary",
+            published="paper-store-evidence-paperholo-era/005-density-ladder/density5/captures/density5-hpflatbed-1200rgb.png"),
     Capture("005.3.png", HOME_FLATBED, "M281", "colour", 1200.0, "005.3",
-            "density ladder, DENSITY=3 + RET=OFF print", role="secondary"),
+            "density ladder, DENSITY=3 + RET=OFF print", role="secondary",
+            published="paper-store-evidence-paperholo-era/005-density-ladder/density3-retoff/captures/density3-retoff-hpflatbed-1200rgb.png"),
     Capture("006col-scan-2-col.png", HOME_FLATBED, "M281", "colour", 1200.0,
-            "006.0", "LOOP-C colour loop page", role="secondary"),
+            "006.0", "LOOP-C colour loop page", role="secondary",
+            published="paper-store-evidence-paperholo-era/006-loop-pages/e006c/captures/e006c-hpflatbed-1200rgb-2.png"),
     Capture("006col-scan-3-col.png", HOME_FLATBED, "M281", "colour", 1200.0,
-            "006.0", "LOOP-C, rescan", role="secondary"),
+            "006.0", "LOOP-C, rescan", role="secondary",
+            published="paper-store-evidence-paperholo-era/006-loop-pages/e006c/captures/e006c-hpflatbed-1200rgb-3.png"),
     Capture("006col-scan-4-col.png", HOME_FLATBED, "M281", "colour", 1200.0,
-            "006.0", "LOOP-C, rescan", role="secondary"),
+            "006.0", "LOOP-C, rescan", role="secondary",
+            published="paper-store-evidence-paperholo-era/006-loop-pages/e006c/captures/e006c-hpflatbed-1200rgb-4.png"),
     Capture("e007off-page-1.png", HOME_FLATBED, "AltaLink", "colour", 1200.0,
-            "007.0", "office DISC-1 page 1", role="secondary"),
+            "007.0", "office DISC-1 page 1", role="secondary",
+            published="paper-store-evidence-paperholo-era/007-office-disc/m281-disc1/captures/disc1-p1-hpflatbed-1200rgb.png"),
     Capture("e007off-page-2.png", HOME_FLATBED, "AltaLink", "colour", 1200.0,
-            "007.0", "office DISC-1 page 2", role="secondary"),
+            "007.0", "office DISC-1 page 2", role="secondary",
+            published="paper-store-evidence-paperholo-era/007-office-disc/m281-disc1/captures/disc1-p2-hpflatbed-1200rgb.png"),
     Capture("xerox-cal-hp-scan.png", HOME_FLATBED, "AltaLink", "colour",
             1200.0, "007.6", "CAL-1 printed on the AltaLink",
-            role="secondary"),
+            role="secondary",
+            published="paper-store-evidence-paperholo-era/007-office-disc/altalink-library/captures/calpage-hpflatbed-1200rgb.png"),
     Capture("xerox-comp-hp-scan.png", HOME_FLATBED, "AltaLink", "colour",
             1200.0, "007.6", "composite probe on the AltaLink",
-            role="secondary"),
+            role="secondary",
+            published="paper-store-evidence-paperholo-era/007-office-disc/altalink-library/captures/composite-probe-hpflatbed-1200rgb.png"),
     Capture("xerox-overlap-hp-scan.png", HOME_FLATBED, "AltaLink", "colour",
             1200.0, "007.6", "overlap probe on the AltaLink",
-            role="secondary"),
+            role="secondary",
+            published="paper-store-evidence-paperholo-era/007-office-disc/altalink-library/captures/overlap2-hpflatbed-1200rgb.png"),
     Capture("xerox-loop-c-hp-scan.png", HOME_FLATBED, "AltaLink", "colour",
-            1200.0, "006.3", "LOOP-C on the AltaLink", role="secondary"),
+            1200.0, "006.3", "LOOP-C on the AltaLink", role="secondary",
+            published="paper-store-evidence-paperholo-era/007-office-disc/altalink-library/captures/e006c-hpflatbed-1200rgb.png"),
     Capture("xerox-disc-1a-p1-hp-scan.png", HOME_FLATBED, "AltaLink",
-            "colour", 1200.0, "007.6", "DISC-1a page 1", role="secondary"),
+            "colour", 1200.0, "007.6", "DISC-1a page 1", role="secondary",
+            published="paper-store-evidence-paperholo-era/007-office-disc/altalink-library/captures/disc1-a-p1-hpflatbed-1200rgb.png"),
     Capture("xerox-disc-1a-p2-hp-scan.png", HOME_FLATBED, "AltaLink",
-            "colour", 1200.0, "007.6", "DISC-1a page 2", role="secondary"),
+            "colour", 1200.0, "007.6", "DISC-1a page 2", role="secondary",
+            published="paper-store-evidence-paperholo-era/007-office-disc/altalink-library/captures/disc1-a-p2-hpflatbed-1200rgb.png"),
     Capture("xerox-disc-1b-p1-hp-scan.png", HOME_FLATBED, "AltaLink",
-            "colour", 1200.0, "007.6", "DISC-1b page 1", role="secondary"),
+            "colour", 1200.0, "007.6", "DISC-1b page 1", role="secondary",
+            published="paper-store-evidence-paperholo-era/007-office-disc/altalink-library/captures/disc1-b-p1-hpflatbed-1200rgb.png"),
     Capture("xerox-disc-1b-p2-hp-scan.png", HOME_FLATBED, "AltaLink",
-            "colour", 1200.0, "007.6", "DISC-1b page 2", role="secondary"),
+            "colour", 1200.0, "007.6", "DISC-1b page 2", role="secondary",
+            published="paper-store-evidence-paperholo-era/007-office-disc/altalink-library/captures/disc1-b-p2-hpflatbed-1200rgb.png"),
     Capture("xerox-mic-blank-hp-scan.png", HOME_FLATBED, "AltaLink", "colour",
             1200.0, "007.7", "BLANK paper from the AltaLink — the MIC hunt; "
             "no printed marks, so no targets, but a clean comb specimen",
-            role="blank"),
+            role="blank",
+            published="paper-store-evidence-paperholo-era/007-office-disc/altalink-library/captures/001patterns-p6-micblank-hpflatbed-1200rgb.png"),
 )
 
 # Colour captures that exist but are NOT the home flatbed, kept in the
@@ -308,13 +355,22 @@ def build(hash_roles: tuple[str, ...] = ALL_ROLES) -> dict[str, Any]:
     }
 
 
+def use_evidence_root(path: Path | None) -> None:
+    """Pin the evidence root every ``Capture.path`` joins (refused here,
+    by name, when neither the flag nor the env var gives one)."""
+    global EVIDENCE_ROOT
+    EVIDENCE_ROOT = _evidence.resolve(path, tool="scanfield")
+
+
 def main(argv: list[str] | None = None) -> int:
-    argv = list(sys.argv[1:] if argv is None else argv)
-    out_dir = OUT_DIR
-    if "--out" in argv:
-        out_dir = Path(argv[argv.index("--out") + 1])
-    fast = "--no-hash" in argv
-    report = build(hash_roles=() if fast else ALL_ROLES)
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    _evidence.add_argument(parser)
+    parser.add_argument("--out", type=Path, required=True)
+    parser.add_argument("--no-hash", action="store_true")
+    args = parser.parse_args(argv)
+    use_evidence_root(args.evidence_root)
+    out_dir = args.out
+    report = build(hash_roles=() if args.no_hash else ALL_ROLES)
     out_dir.mkdir(parents=True, exist_ok=True)
     path = out_dir / "hp-inventory.json"
     path.write_text(json.dumps(report, indent=1))

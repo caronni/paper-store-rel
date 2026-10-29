@@ -30,7 +30,8 @@ inline/unrecorded -- positions here are deterministic scan fractions,
 off-crease enforced via the enclosing lock's absolute coordinates
 (|row-1673| > 30 cells for the largest sub-window).
 
-Run from repo root: python experiments/014-c2-print/probe_0144.py
+Run from repo root: python experiments/014-c2-print/probe_0144.py \\
+    --scan-dir <evidence>/scans
 """
 import sys
 import time
@@ -57,7 +58,10 @@ page_tiles = (spec.page_cells_yx[0] // P, spec.page_cells_yx[1] // P)
 CPM = 600 / 25.4 / CD           # cells per mm (11.81 at c2@600)
 PX_CELL = CD * 8                # scan px per cell at 4800 dpi
 
-SCAN = ROOT / "scans/xerox-e014-A-canon-4800gray-C-flattened.tiff"
+if "--scan-dir" not in sys.argv[:-1]:
+    sys.exit(__doc__)
+SCAN_DIR = Path(sys.argv[sys.argv.index("--scan-dir") + 1])  # evidence archive
+SCAN = SCAN_DIR / "xerox-e014-A-canon-4800gray-C-flattened.tiff"
 CREASE_ROW, CREASE_HALO = 1673, 30
 ENCL_MM = 25
 SIZES_MM = (6, 8, 10)

@@ -1,4 +1,4 @@
-"""Immutable numerical profiles for the K, CMY7, and CMY8 tile codecs.
+"""Immutable numerical profiles for the K, CMY7, CMY8 and CMY tile codecs.
 
 This module is deliberately small.  A format row selects one profile; the
 profile states the codec family, physical alphabet, durable evidence
@@ -39,6 +39,7 @@ class Family(str, enum.Enum):
     K = "k"
     CMY7 = "cmy7"
     CMY8 = "cmy8"
+    CMY = "cmy"
 
 
 @dataclass(frozen=True)
@@ -101,13 +102,14 @@ class CodecProfile:
             raise ValueError(f"{self.codec_id}: invalid physical alphabet")
         expected_states = (
             ("W", "K") if self.family is Family.K
-            else channel.STATE_NAMES[:len(self.state_names)]
+            else tuple(name for name in channel.STATE_NAMES
+                       if name in self.state_names)
         )
         if self.state_names != expected_states:
             raise ValueError(
                 f"{self.codec_id}: non-canonical physical alphabet")
-        if self.word_states[0] not in range(len(self.state_names)) \
-                or self.word_states[1] not in range(len(self.state_names)):
+        if self.word_states[0] not in self.state_ids \
+                or self.word_states[1] not in self.state_ids:
             raise ValueError(f"{self.codec_id}: word states outside alphabet")
         if self.word_states[0] == self.word_states[1]:
             raise ValueError(f"{self.codec_id}: binary word states must differ")
@@ -115,12 +117,16 @@ class CodecProfile:
             raise ValueError(f"{self.codec_id}: invalid furniture count")
         if not 0 <= self.n_dust <= self.n_sites - WORD_SITES:
             raise ValueError(f"{self.codec_id}: invalid dust count")
-        if self.n_dust > 0 and not self.dust_base_cycle:
+        if self.n_dust > 0 and not self.dust_base_cycle \
+                and self.family is not Family.CMY:
             raise ValueError(
                 f"{self.codec_id}: dust sites need a dust base cycle")
-        if any(state not in range(len(self.state_names))
+        if any(state not in self.state_ids
                for state in self.dust_base_cycle):
             raise ValueError(f"{self.codec_id}: dust states outside alphabet")
+        if self.family is Family.CMY and self.dust_base_cycle:
+            raise ValueError(
+                f"{self.codec_id}: cmy dust is the balance law, not a cycle")
         if self.evidence_values_per_cell < 1:
             raise ValueError(f"{self.codec_id}: invalid evidence width")
         if self.bits_per_mapper_unit < 1 or self.cells_per_mapper_unit < 1:
@@ -130,6 +136,14 @@ class CodecProfile:
         stream_ids = tuple(stream.stream_id for stream in self.streams)
         if len(set(stream_ids)) != len(stream_ids):
             raise ValueError(f"{self.codec_id}: duplicate stream IDs")
+
+    @property
+    def state_ids(self) -> tuple[int, ...]:
+        """The alphabet's state ids: K's (0, 1), else presence ids."""
+        if self.family is Family.K:
+            return (0, 1)
+        return tuple(channel.STATE_NAMES.index(name)
+                     for name in self.state_names)
 
     @property
     def payload_cells(self) -> int:

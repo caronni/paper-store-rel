@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 """The battery: one crop decode, then both arms over its frozen store.
 
-    PYTHONPATH=. <python> -m measure.local_ab.harness --case I-tl \\
-        --workers 4 --decode-diag 8026
+    PYTHONPATH=src:. <python> -m measure.local_ab.harness --case I-tl \\
+        --workers 4 --decode-diag 8026 \\
+        --evidence-root <evidence> --out build/local-ab
 
 Order of operations, and why:
 
@@ -53,8 +54,10 @@ from pathlib import Path
 
 import numpy as np
 
-from holo3.descriptor import PluginDescriptor
-from holo3.plugins import local_ctx
+from holo.receiver.descriptor import PluginDescriptor
+from holo.receiver.plugins import local_ctx
+
+from measure import _evidence
 
 from . import _ab, _cases, _paths
 
@@ -64,7 +67,7 @@ def _reconstruct_gt():
     _paths.install_src()
     from measure.crop_parity import _gt
 
-    payload = _gt.load_payload(_cases.PAYLOAD, _cases.PAYLOAD_SHA256,
+    payload = _gt.load_payload(_cases.evidence(_cases.PAYLOAD), _cases.PAYLOAD_SHA256,
                                _cases.PAYLOAD_BYTES)
     return _gt, _gt.reconstruct(_cases.FORMAT_REF, payload, pages=1)
 
@@ -125,7 +128,7 @@ def _decode(case: _cases.Case, record: dict, run_dir: Path, workers: int,
     import signal
     import threading
 
-    from holo3 import cli, engine
+    from holo.receiver import cli, engine
 
     def _stop() -> None:
         # A REAL SIGINT, not ``_thread.interrupt_main``. Measured
@@ -192,14 +195,14 @@ def _agrees(row: dict, outcome: _ab.SubjectResult) -> bool:
 # --- the replay: the CHANGED row against the recorded verdict ----------
 
 
-def _recorded(case: _cases.Case) -> dict:
+def _recorded(case: _cases.Case, out: Path) -> dict:
     """The measurement's own per-subject verdicts, keyed by subject.
 
     Read-only, and never rewritten: the recorded reports are the record
     the hybrid was ruled from, so a replay compares ITSELF to them
     rather than restating them.
     """
-    path = _paths.SCRATCH / "reports" / f"{case.case_id}.json"
+    path = out / "reports" / f"{case.case_id}.json"
     if not path.is_file():
         raise SystemExit(f"local_ab: no recorded report at {path}; the "
                          f"replay compares against the measurement")
@@ -224,7 +227,7 @@ def _expected(row: dict) -> tuple[bool, str | None]:
 
 
 def _replay_case(store: object, found: tuple, case: _cases.Case,
-                 ) -> tuple[list[dict], dict, dict, dict]:
+                 out: Path) -> tuple[list[dict], dict, dict, dict]:
     """The two arms AND the changed row, on one store, per subject.
 
     Both halves are needed, and for different reasons.
@@ -244,7 +247,7 @@ def _replay_case(store: object, found: tuple, case: _cases.Case,
     as absent, never as failures: the row cannot be blamed for not
     replaying a subject that no longer exists.
     """
-    recorded = _recorded(case)
+    recorded = _recorded(case, out)
     rows: list[dict] = []
     minted: dict = {}
     null_minted: dict = {}
@@ -662,10 +665,10 @@ def _replay_markdown(case: _cases.Case, payload: dict) -> str:
 
 def run_case(case: _cases.Case, workers: int, diag_port: int | None,
              fresh: bool, verify: int, budget_s: float,
-             replay: bool = False) -> tuple[int, dict]:
+             out: Path, replay: bool = False) -> tuple[int, dict]:
     gt_module, gt = _reconstruct_gt()
-    record = _cases.prepare(case)
-    run_dir = _paths.SCRATCH / "runs" / case.case_id
+    record = _cases.prepare(case, out / "crops")
+    run_dir = out / "runs" / case.case_id
     if fresh and run_dir.exists():
         shutil.rmtree(run_dir)
     run_dir.mkdir(parents=True, exist_ok=True)
@@ -679,7 +682,8 @@ def run_case(case: _cases.Case, workers: int, diag_port: int | None,
     armed = _ab.armed_addresses(events)
     found, census = _ab.subjects(store, case.target_positions, armed)
     if replay:
-        rows, summary, minted, null_minted = _replay_case(store, found, case)
+        rows, summary, minted, null_minted = _replay_case(store, found, case,
+                                                          out)
         audits.append(_audit(gt_module, gt, minted, "replay certificates"))
         audits.append(_audit(gt_module, gt, null_minted,
                              "N0 null certificates"))
@@ -795,7 +799,12 @@ def main(argv: list[str] | None = None) -> int:
                         help="run local_ctx.prepare_local itself on every "
                              "subject and compare to the recorded report "
                              "instead of running the two arms")
+    _evidence.add_argument(parser)
+    parser.add_argument("--out", type=Path, required=True,
+                        help="artefact directory (crops/, runs/, reports/)")
     args = parser.parse_args(argv)
+    _paths.use_evidence_root(args.evidence_root)
+    _paths.evidence_root()
     if args.case not in _cases.CASES_BY_ID:
         raise SystemExit(f"local_ab: unknown case {args.case!r}; declared: "
                          f"{sorted(_cases.CASES_BY_ID)}")
@@ -803,7 +812,8 @@ def main(argv: list[str] | None = None) -> int:
     try:
         code, payload = run_case(case, args.workers, args.decode_diag,
                                  args.fresh, args.verify,
-                                 args.decode_seconds, args.replay)
+                                 args.decode_seconds, args.out,
+                                 args.replay)
     except Exception as exc:                          # GT refusal included
         from measure.crop_parity._gt import GTValidationError
 
@@ -811,7 +821,7 @@ def main(argv: list[str] | None = None) -> int:
             print(f"local_ab: {exc}")
             return 3
         raise
-    out_dir = _paths.SCRATCH / "reports"
+    out_dir = args.out / "reports"
     out_dir.mkdir(parents=True, exist_ok=True)
     # A replay NEVER overwrites the recorded report: the measurement is
     # the record the hybrid was ruled from, and a replay is evidence

@@ -4,7 +4,7 @@ Two scanners, one question:
 
 > Across the platen, how far apart do R, G and B put the same physical
 > mark, in 600-dpi printed dots, and does that reach the field service's
-> **0.25-dot publish floor** (`holo3/plugins/fields.py MIN_DELTA_DOTS`)
+> **0.25-dot publish floor** (`src/holo/receiver/plugins/fields.py MIN_DELTA_DOTS`)
 > anywhere a payload region sits?
 
 | scanner | instrument | verdict |
@@ -192,8 +192,9 @@ engine that cannot produce it says otherwise.
 ## How to run
 
 ```
-cd <repo>          # or any worktree
-PYTHONPATH=measure env/bin/python -m scanfield.channel_ca --all
+cd <repo>
+PYTHONPATH=measure env/bin/python -m scanfield.channel_ca --all \
+    --evidence-root <evidence> --out build/scanfield
 ```
 
 `scanfield` is the package and every module imports its siblings by
@@ -212,14 +213,15 @@ locator).
 | `--tone {srgb,gamma22,none}` | which capture transfer function to invert — the robustness control |
 | `--sheets` | which discovery captures (default both colour ones) |
 | `--margin-segments N` | boundary splits per side in the margin arm (default 10) |
-| `--out DIR` | default `scratch/scanfield/` |
+| `--evidence-root DIR` | the published evidence archive root the input paths below join (else `$PAPER_EVIDENCE_ROOT`; refused by name when neither is given; `--selftest` needs none) |
+| `--out DIR` | required: where the JSON and figure land |
 
 Measured 0 / 12 / 1 / 3 s for the four arms on a warm page cache. Every
 capture is opened as a memmap and only the target crops are ever
 materialized, so a 6.9 GB TIFF costs its targets and not its size; the
 whole run peaks well under a gigabyte and never touches a decode.
 
-Output: `scratch/scanfield/channel-ca[-<tone>].json` — every target with
+Output: `<out>/channel-ca[-<tone>].json` — every target with
 its platen position and per-channel offset, the per-arm summary with the
 fitted platen model, the antisymmetry test, the cross-capture pairing
 and the verdict block — plus `channel-ca[-<tone>].png`, the offset map:
@@ -229,13 +231,18 @@ scanner only; C puts the payload boundary (scanner + printer) over the
 scanner-only marks at the same platen x, which is the attribution in one
 picture; D is capture against capture per target. `--no-figure` skips it.
 
-## Inputs (all read-only, all sha-pinned upstream in `scanner/ink_psf.py`)
+## Inputs (all read-only, all sha-pinned upstream in `scanner/ink_psf.py`, relative to `--evidence-root`; in the evidence archive)
 
 | capture | what | record |
 |---|---|---|
-| `scratch/in/xerox-canon-cal-color.tiff` | HCAL-R1 discovery colour, AltaLink C8245, Canon 4800 RGB | experiments/031 |
-| `scratch/e028/e028-m281-20260804-color-01-canon-4800rgb.tiff` | the same authored page, HP M281fdw | experiments/028 capture 028.1b |
-| `scratch/xerox-canon-18.8-I-…-2400dpi{,-displaced,-displaced2}.tiff` | sheet I payload, three placements | experiments/033 |
+| `paper-store-evidence-holo-2026-10/031-xerox-altalink-discovery/discovery/captures/discovery-color-canon-4800rgb.tiff` | HCAL-R1 discovery colour, AltaLink C8245, Canon 4800 RGB | experiments/031 |
+| `paper-store-evidence-holo-2026-10/028-discovery-m281/discovery/captures/discovery-color-canon-4800rgb.tiff` | the same authored page, HP M281fdw | experiments/028 capture 028.1b |
+| `paper-store-evidence-holo-2026-10/033-xerox-rung-experiments/I/captures/I-canon-2400rgb{,-displaced,-displaced2}.tiff` | sheet I payload, three placements | experiments/033 |
+
+2026-10-09: inputs renamed to the published archive paths (the table above; the reports and page
+plans are `scanner/ink_psf.py`'s `SHEETS`). Captures are published as `.tiff.jxl` and rebuilt by
+the release's `tools/unpack.sh`; `--marks`/`--edges` refuse by name when an input is absent, the
+margin arm keeps reporting a missing capture as MISSING.
 
 Targets are located through the page manifest and the HCAL corner
 affine (`scanner/_sheet`), never by pinned pixels, and manifest and
@@ -324,7 +331,7 @@ shape to be worth a field.
 | instrument resolution (selftest at 1200 dpi) | 0.0033 | 0.14 | 75x under |
 
 The first row clears the floor and the fourth does not, and that pair is
-the whole verdict. `holo3/plugins/fields.py publishable()` gates on the
+the whole verdict. `src/holo/receiver/plugins/fields.py publishable()` gates on the
 **median magnitude of the fitted field over its support** — what varies,
 not what the level is — because a constant per-channel offset is already
 absorbed by the per-plane pose and by the plane field's own constant
@@ -576,10 +583,12 @@ worth a field even if the material existed.
 ### How to run
 
 ```
-cd <repo>          # or any worktree
-PYTHONPATH=measure env/bin/python -m scanfield.hp_inventory
+cd <repo>
+PYTHONPATH=measure env/bin/python -m scanfield.hp_inventory \
+    --evidence-root <evidence> --out build/scanfield
 PYTHONPATH=measure env/bin/python -m scanfield.hp_channel_ca --all \
-    --roles primary control k-only secondary blank
+    --roles primary control k-only secondary blank \
+    --evidence-root <evidence> --out build/scanfield
 ```
 
 | flag | what it does |
@@ -592,11 +601,13 @@ PYTHONPATH=measure env/bin/python -m scanfield.hp_channel_ca --all \
 | `--roles` | which captures — default `primary control k-only` |
 | `--tone {srgb,gamma22,none}` | transfer-function control |
 | `--bin-mm` | platen bin for the profile reproducibility (default 12) |
+| `--evidence-root DIR` | the published evidence archive root; each capture is read at its `published` path in `hp_inventory.HOME_COLOUR` (else `$PAPER_EVIDENCE_ROOT`; refused by name when neither is given) |
+| `--out DIR` | required: where the JSON and figure land |
 
-`hp_inventory` writes `scratch/scanfield/hp-inventory.json` (every capture
+`hp_inventory` writes `<out>/hp-inventory.json` (every capture
 with its experiment, engine, placement and sha256; the five hashes the
 logs recorded are checked). `hp_channel_ca` writes
-`scratch/scanfield/hp-channel-ca.json` and `.png`, the four-panel offset
+`<out>/hp-channel-ca.json` and `.png`, the four-panel offset
 map on the same ±0.30-dot scale as the Canon's: A lateral, B transport
 (the finding), C the placement arm against both predictions, D the comb
 phase test against its noise band.
@@ -604,3 +615,11 @@ phase test against its noise band.
 One capture is resident at a time — these are 557 MB decoded and PNG has
 no windowed read — and the whole 31-capture run peaks around 3.4 GB and
 touches no decode.
+
+2026-10-09: inputs renamed to the published archive paths — every `hp_inventory` capture keeps the
+record's `name` (the experiment logs cite it; the reports key on it) and gains its `published`
+path under `paper-store-evidence-paperholo-era/` (002–007 `…/captures/*-hpflatbed-1200rgb*.png`).
+The archive strips a PNG's metadata chunks (pixels untouched), so `sha256_matches_log` reads False
+wherever chunks were removed — the IDAT sha in the release's MANIFEST.tsv is then the check.
+`hp_inventory` still reports an absent capture as `present: false`; `hp_channel_ca` refuses by
+name when none of the requested roles is present.

@@ -26,6 +26,7 @@ import sys
 import time
 
 import numpy as np
+import pytest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
@@ -58,6 +59,19 @@ def _crop_scan(cells: int, crop_dots_yx: tuple[int, int], crop_dots: int,
     p = ChannelParams(seed=chan_seed, scan_seed=chan_seed + 1,
                       geometry=geometry)
     return print_scan(crop, p)
+
+
+def _frag_geo(chan_seed: int) -> np.ndarray:
+    """The 540-dot geometry crop at the odd offset (91,137), rotated -90."""
+    # 2026-09-05: owned here instead of being left in _cache by
+    # test_blind_roundtrip_geometry_true — test_negative_controls used to
+    # rebuild it silently whenever that test did not run in the same process,
+    # which is now the default lane's situation.
+    key = f"frag_geo_{chan_seed}"
+    if key not in _cache:
+        _cache[key] = np.ascontiguousarray(np.rot90(
+            _crop_scan(300, (91, 137), 540, chan_seed, True), -1))
+    return _cache[key]
 
 
 def _abs_cells(spec: compose.ComposeSpec,
@@ -149,6 +163,13 @@ def test_stage_a_b_pure_cells() -> None:
           f"{acc['n_sites_checked']} sites; rot90 orientations all rejected")
 
 
+# 2026-09-05: 12 blind acquisitions (3 crops x 4 rotations) = 12 s, the
+# module's largest cost. Slow-gated, not shrunk: the pinned coverage counts
+# (13653/13529/13769) are measured once on these frozen crop offsets and
+# channel seeds, so every offset and rotation has to stay.
+@pytest.mark.skipif(
+    os.environ.get("HOLO_RUN_SLOW_TESTS") != "1",
+    reason="set HOLO_RUN_SLOW_TESTS=1 for the zero-channel bookkeeping sweep")
 def test_bookkeeping_zero_channel() -> None:
     """Coordinate bookkeeping (the contract's likely-bug zone), written and
     run FIRST on the near-noiseless channel: 3 known crop offsets x 4
@@ -222,6 +243,14 @@ def test_bookkeeping_zero_channel() -> None:
                   f"tiles {res.n_tiles_decoded}/{res.n_tiles_attempted}")
 
 
+# 2026-09-05: 3 channel seeds x a 180x180-cell blind acquisition = 7 s, the
+# module's largest cost. Slow-gated per function (the module's cheap tests
+# stay in the default lane), not shrunk: the 540-dot crop at (91,137) is what
+# the edge-exclusion window [31,209]x[46,224] and the seed-314 measured
+# boundary were measured on, so neither the crop nor the seed set may move.
+@pytest.mark.skipif(
+    os.environ.get("HOLO_RUN_SLOW_TESTS") != "1",
+    reason="set HOLO_RUN_SLOW_TESTS=1 for the 3-seed geometry round-trip")
 def test_blind_roundtrip_geometry_true() -> None:
     """Full blind round-trip under measured geometry: 300x300-cell page,
     ~180x180-cell crop at an odd dot offset, k=1 rotation, channel seed sweep
@@ -230,13 +259,11 @@ def test_blind_roundtrip_geometry_true() -> None:
     >= 2/3 seeds with correct address+orientation, payload BER < 8%, and a
     0.50 +- 0.02 null control."""
     spec, composed = _page(300)
-    crop_yx, crop_dots = (91, 137), 540  # 180x180 cells at an odd offset
+    crop_yx = (91, 137)  # _frag_geo's 540-dot crop: 180x180 cells, odd offset
     exp_oy, exp_ox = crop_yx[0] / CELL_DOTS, crop_yx[1] / CELL_DOTS
     results = {}
     for s in (7, 42, 314):
-        scan = _crop_scan(300, crop_yx, crop_dots, s, True)
-        _cache[f"frag_geo_{s}"] = frag = np.ascontiguousarray(
-            np.rot90(scan, -1))
+        frag = _frag_geo(s)
         t0 = time.time()
         res = acquire.acquire_and_decode(frag, spec, SEED)
         dt = time.time() - t0
@@ -286,7 +313,7 @@ def test_blind_roundtrip_geometry_true() -> None:
     # produce a correct-address Stage-A candidate (do not silently lower bars)
     res314 = results[314][0]
     if not res314.ok:
-        frag = _cache["frag_geo_314"]
+        frag = _frag_geo(314)
         grid = acquire.lock_grid(np.ascontiguousarray(np.rot90(frag, 1)))
         hard, _ = acquire.cell_bits_blind(
             acquire.sample_cell_means(np.rot90(frag, 1), grid))
@@ -461,10 +488,7 @@ def test_blind_roundtrip_v3_geometry_true() -> None:
 def test_negative_controls() -> None:
     """Wrong seed / blank paper / wrong plane hint must fail cleanly."""
     spec, _ = _page(300)
-    frag = _cache.get("frag_geo_7")
-    if frag is None:
-        scan = _crop_scan(300, (91, 137), 540, 7, True)
-        frag = np.ascontiguousarray(np.rot90(scan, -1))
+    frag = _frag_geo(7)
 
     res = acquire.acquire_and_decode(frag, spec, b"paper-store/WRONG-SEED")
     assert not res.ok

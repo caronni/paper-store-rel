@@ -41,7 +41,9 @@ Determinism: this module uses no randomness (CLAUDE.md rule satisfied
 vacuously; families document their own seeded controls).
 
 Run (real scans, ~2-3 min, ~2 GB resident):
-  env/bin/python experiments/002-calibration-page/analyze_calpage.py
+  env/bin/python experiments/002-calibration-page/analyze_calpage.py \
+      <evidence>/scans/test-scan-calpage-bw.png \
+      <evidence>/scans/test-scan-calpage-color.png
 """
 from __future__ import annotations
 
@@ -67,9 +69,6 @@ import cal_color  # noqa: E402
 import cal_geometry  # noqa: E402
 import cal_structural  # noqa: E402
 
-REPO = _HERE.parent.parent
-DEFAULT_BW = REPO / "scans" / "test-scan-calpage-bw.png"
-DEFAULT_COLOR = REPO / "scans" / "test-scan-calpage-color.png"
 DEFAULT_OUT = cc.BUILD / "calpage_report.json"
 DEFAULT_OVERLAYS = cc.BUILD / "analysis-calpage"
 
@@ -625,8 +624,8 @@ def print_summary(rep: dict) -> None:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description="CAL-1 full analyzer (exp 002)")
-    ap.add_argument("scan_bw", nargs="?", default=str(DEFAULT_BW))
-    ap.add_argument("scan_color", nargs="?", default=str(DEFAULT_COLOR))
+    ap.add_argument("scan_bw")
+    ap.add_argument("scan_color")
     ap.add_argument("--out", default=str(DEFAULT_OUT))
     ap.add_argument("--overlays-dir", default=str(DEFAULT_OVERLAYS))
     args = ap.parse_args()

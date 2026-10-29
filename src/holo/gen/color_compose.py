@@ -1,4 +1,4 @@
-"""Provisional CMY7/CMY8 tile and page composition.
+"""Provisional CMY7/CMY8/CMY tile and page composition.
 
 This is the color counterpart of :mod:`holo.gen.compose`, kept separate so
 the established K numerical path remains unchanged.  It owns only the join
@@ -8,9 +8,10 @@ between row-declared fountain symbols and a canonical physical state field:
   SAME bit on -v0 rows, one DISTINCT per-stream equation on pooled -v1
   rows (equation_index = counter*n_streams + stream_idx, §13.35);
 * the row-selected color tile codec produces sequential payload states;
-* a row/address-keyed permutation places those states on the 3,976 payload
-  cells; and
-* the exact W/CM word and known-state dust overwrite their p120 furniture.
+* a row/address-keyed permutation places those states on the row's payload
+  cells (4,096 - p, i.e. 3,976 at the printed p120); and
+* the codec's exact word and known-state dust overwrite the row's
+  furniture.
 
 Rendering is a later, lossless projection from state IDs to C/M/Y presence
 planes.  Scanner colors and detector calibration do not belong here.
@@ -26,6 +27,12 @@ from ..format import metadata, pilots
 from ..format.descriptor import FormatSpec
 from ..format.profiles import Family
 from .compose import cells_to_dots
+
+COLOR_FAMILIES = (Family.CMY7, Family.CMY8, Family.CMY)
+_PER_STREAM_ENCODERS = {
+    Family.CMY8: color_tile.cmy8_encode_payload,
+    Family.CMY: color_tile.cmy_encode_payload,
+}
 
 
 def _symbol(
@@ -79,22 +86,23 @@ def _payload_states(
             keystream.cmy7_dither_bits(
                 spec.seed, counter, bank.transmitted_bits),
         )
-    if spec.codec_family is Family.CMY8:
+    if spec.codec_family in _PER_STREAM_ENCODERS:
         banks = {
             stream.stream_id: stream.fec
             for stream in spec.stream_profiles
         }
         users = dict(zip(spec.stream_ids, user_bits, strict=True))
+        # the dither aux is the stream's ordinal + 1 (C/M/Y 1-3, hi/lo 1-2)
         dithers = {
             stream.stream_id: keystream.cmy8_dither_bits(
                 spec.seed,
-                stream.stream_id,
+                aux,
                 counter,
                 stream.fec.transmitted_bits,
             )
-            for stream in spec.stream_profiles
+            for aux, stream in enumerate(spec.stream_profiles, start=1)
         }
-        return color_tile.cmy8_encode_payload(
+        return _PER_STREAM_ENCODERS[spec.codec_family](
             users, banks, dithers)
     raise ValueError(f"{spec.codec_id}: not a provisional color codec")
 
@@ -102,10 +110,14 @@ def _payload_states(
 def _color_geometry(
     spec: FormatSpec,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    payload_cells = pilots.color_payload_cell_indices(spec.family_seed)
-    word_cells, dust_cells = pilots.color_site_cells_yx(spec.family_seed)
+    word_cells = pilots.word_site_cells_yx(spec.family_seed)
+    dust_cells = pilots.dust_site_cells_yx(spec.family_seed, spec.n_dust)
     word_flat = word_cells[:, 0] * 64 + word_cells[:, 1]
     dust_flat = dust_cells[:, 0] * 64 + dust_cells[:, 1]
+    occupied = np.zeros(64 * 64, dtype=bool)
+    occupied[word_flat] = True
+    occupied[dust_flat] = True
+    payload_cells = np.flatnonzero(~occupied).astype(np.int64, copy=False)
     return payload_cells, word_flat, dust_flat
 
 
@@ -177,11 +189,11 @@ def compose_color_tile(
     version: int = 0,
 ) -> np.ndarray:
     """Compose one addressed 64x64 canonical color-state tile."""
-    if spec.codec_family not in (Family.CMY7, Family.CMY8):
+    if spec.codec_family not in COLOR_FAMILIES:
         raise ValueError(f"{spec.codec_id}: not a provisional color codec")
     symbols = _symbols_for_tile(spec, symbols_by_stream)
     word = metadata.encode_metadata(version, k_total)
-    word_states = pilots.color_word_states(spec.seed, [counter])[0]
+    word_states = pilots.color_word_states(spec.seed, [counter], spec.codec)[0]
     dust_states = pilots.dust_state_values(
         spec.seed, [counter], spec.codec)[0]
     return _compose_validated_tile(
@@ -252,7 +264,7 @@ def compose_color_page_cells(
         metadata_bits = np.repeat(
             metadata.tile_bits(word, counters)[:, None], n_streams, axis=1)
     geometry = _color_geometry(spec)
-    word_states = pilots.color_word_states(spec.seed, counters)
+    word_states = pilots.color_word_states(spec.seed, counters, spec.codec)
     dust_states = pilots.dust_state_values(
         spec.seed, counters, spec.codec)
     for local in range(spec.tiles_per_page):

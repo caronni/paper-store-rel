@@ -31,7 +31,7 @@ Determinism: no randomness anywhere in this module.
 
 Run (repo root, ~5-8 min):
   env/bin/python experiments/002-calibration-page/analyze_composite_probe.py \
-      scans/test-scan-composite-probe.png
+      <evidence>/scans/test-scan-composite-probe.png
 Outputs: build/composite_probe_report.json + human summary on stdout.
 """
 from __future__ import annotations
@@ -50,9 +50,7 @@ if str(_HERE) not in sys.path:
 
 import cal_core as cc  # noqa: E402  (frozen analyzer core — do not edit)
 
-REPO = _HERE.parent.parent
 MANIFEST_PATH = cc.BUILD / "composite_probe_manifest.json"
-DEFAULT_SCAN = REPO / "scans" / "test-scan-composite-probe.png"
 EXPECTED_SCAN_SHA256 = ("c0187114827938058bf11d2c1b5c4cd0710ca2566e"
                         "74b424fff547b0d7c05a8a")
 
@@ -641,7 +639,7 @@ if __name__ == "__main__":
     import argparse
 
     ap = argparse.ArgumentParser(description="002.1 composite probe analyzer")
-    ap.add_argument("scan", nargs="?", default=str(DEFAULT_SCAN))
+    ap.add_argument("scan")
     ap.add_argument("--out", default=str(cc.BUILD / "composite_probe_report.json"))
     ap.add_argument("--xcheck-calpage", action="store_true",
                     help="instead: recompute the XCHECK_002_0 reference "

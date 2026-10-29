@@ -1,5 +1,9 @@
 #!/usr/bin/env python
-"""DONE-GEOMETRY §8 census over the e029 durable state (read-only).
+"""FROZEN 2026-09-05: imports the v1 receiver, deleted that day on the
+retirement branch; last runnable at the tag pre-v1-v2-deletion.  Kept as
+the e029 record, not maintained.
+
+DONE-GEOMETRY §8 census over the e029 durable state (read-only).
 
 Two views per committed level of the ink-page session:
 
@@ -23,10 +27,13 @@ origins round down.  Nothing here mutates state.
 
 Usage (repo root):
   PYTHONPATH=src env/bin/python \
-      experiments/029-holo-v1-first-print/census_done_geometry.py
+      experiments/029-holo-v1-first-print/census_done_geometry.py \
+      <run dir>    # the e029 session, e028/holo-c2-r0700-q07-ink-counting
+                   # in the evidence archive
 """
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
 from collections import defaultdict
@@ -37,8 +44,7 @@ from scipy.ndimage import binary_erosion
 
 from holo.receive.session import load_session
 
-ROOT = Path(__file__).resolve().parents[2]
-RUN = ROOT / "scratch/e028/holo-c2-r0700-q07-ink-counting"
+RUN = Path()      # the run dir, set from argv in __main__
 OUT = Path(__file__).with_name("DONE-GEOMETRY-CENSUS.json")
 GRID = 16          # native px per mask cell (= one c2 cell at 4800 dpi)
 QUAD_INSET = 1     # grid cells shrunk per side when marking a done tile
@@ -287,4 +293,7 @@ def main() -> None:
 
 
 if __name__ == "__main__":
+    _ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    _ap.add_argument("run_dir", type=Path)
+    RUN = _ap.parse_args().run_dir
     main()

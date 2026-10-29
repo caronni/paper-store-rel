@@ -1,0 +1,20 @@
+baseline k=1664 (r0406 edge-identical to harness data): True
+baseline k=1280 (r0313 edge-identical to harness data): True
+baseline k=1600 (r0391 edge-identical to harness data): True
+baseline k=1216 (r0297 edge-identical to harness data): True
+baseline k=2880 (frozen production codes r0700 re-keyed edge-identical): True
+baseline k=3520 (frozen production codes r0850 re-keyed edge-identical): True
+[decoder] using prod (requested prod)
+run_chan counts == harness channels.run_task (bsc/awgn/eras, r0313): True
+mode smoke: 12 configs over k=(1664, 1280, 1600, 1216, 2880, 3520), workers 3, out scratch/rung-ladder-20260930/search/chk/id-smoke-prod (verify 3.8 s)
+[     30s] s0 9/12 s1 7/9 s2walk 6/6 s2fine 1/6 s2side 0/6 | stages {1664: 'final', 1280: 'final', 1600: 'final', 1216: 'screen0/1', 2880: 'screen0/1', 3520: 'screen0/1'} | decodes 2180 (72/s) queue 64 errors 0
+[     35s] k=1600 DONE
+[     44s] k=1664 DONE
+[     52s] k=1280 DONE
+[     60s] s0 12/12 s1 9/10 s2walk 6/9 s2fine 6/6 s2side 6/6 | stages {1664: 'done', 1280: 'done', 1600: 'done', 1216: 'walk', 2880: 'walk', 3520: 'screen0/1'} | decodes 4260 (70/s) queue 2 errors 0
+[     66s] k=2880 DONE
+[     74s] k=1216 DONE
+[     77s] k=3520 DONE
+[     77s] s0 12/12 s1 10/10 s2walk 10/10 s2fine 10/10 s2side 10/10 | stages {1664: 'done', 1280: 'done', 1600: 'done', 1216: 'done', 2880: 'done', 3520: 'done'} | decodes 5680 (74/s) queue 0 errors 0
+wall 77 s; stopped=False; errors=0
+finished; errors 0; summary -> scratch/rung-ladder-20260930/search/chk/id-smoke-prod/TABLES-search.md

@@ -5,7 +5,7 @@ This sheet predates the fiducial crosses, so registration is translation
 voting over patch-sized blobs (no orientation ambiguity arose in practice —
 if in doubt, prefer gridtest sheets, which carry fiducials + orientation mark).
 
-Usage: python analyze_linetest.py [scan.png]   (default ../../scans/test-scan-2.png)
+Usage: python analyze_linetest.py <scan.png>   (the run's scan: <evidence>/scans/test-scan-2.png)
 """
 from __future__ import annotations
 
@@ -22,7 +22,9 @@ PRINT_DPI = 600
 S = SCAN_DPI / PRINT_DPI  # scan px per printer dot
 
 root = Path(__file__).parent / "build"
-scan_path = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(__file__).parent / "../../scans/test-scan-2.png"
+if len(sys.argv) != 2:
+    sys.exit(__doc__)
+scan_path = Path(sys.argv[1])
 scan = np.asarray(Image.open(scan_path).convert("L")).astype(np.float32)
 man = json.load(open(root / "linetest_manifest.json"))
 patches = man["patches"]

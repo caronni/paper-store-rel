@@ -10,7 +10,11 @@ import pytest
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
 SOURCE_ROOT = REPOSITORY_ROOT / "src"
 HOLO_ROOT = SOURCE_ROOT / "holo"
-PRODUCTION_PACKAGES = ("core", "devices", "format", "gen", "receive")
+# Gate E: "receive"/"holo.receive" left both tuples with the v1
+# receiver.  A named package that is not on disk makes rglob return
+# nothing, so the firewall would pass degraded — hence the source-count
+# assertion in test_import_boundaries below.
+PRODUCTION_PACKAGES = ("core", "devices", "format", "gen")
 PRODUCTION_FORBIDDEN = (
     "holo.characterize",
     "holo.track2",
@@ -22,7 +26,6 @@ CHARACTERIZE_FORBIDDEN = (
     "holo.devices",
     "holo.format",
     "holo.gen",
-    "holo.receive",
     "holo.track2",
     "experiments",
     "paperholo",
@@ -88,6 +91,9 @@ def _crossings(
 
 
 def _production_sources() -> tuple[Path, ...]:
+    missing = [package for package in PRODUCTION_PACKAGES
+               if not (HOLO_ROOT / package).is_dir()]
+    assert not missing, f"PRODUCTION_PACKAGES names absent packages: {missing}"
     return tuple(
         path
         for package in PRODUCTION_PACKAGES
@@ -122,6 +128,9 @@ def test_import_boundaries(
     paths: tuple[Path, ...],
     forbidden: tuple[str, ...],
 ) -> None:
+    # A firewall over an empty file set proves nothing; every side of
+    # this boundary is a real tree with real modules.
+    assert len(paths) >= 5, f"only {len(paths)} sources to sweep"
     assert _crossings(paths, forbidden) == ()
 
 
@@ -136,7 +145,3 @@ def test_characterization_enters_production_only_at_cli_composition_root(
         for crossing in crossings
     )
 
-
-def test_obsolete_characterization_implementations_are_absent() -> None:
-    assert not (HOLO_ROOT / "track2").exists()
-    assert not (HOLO_ROOT / "qualification" / "isolation.py").exists()

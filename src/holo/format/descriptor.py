@@ -155,10 +155,11 @@ class Coding:
             raise ValueError(
                 f"{self.coding_id}: codec has {self.codec.n_sites} sites "
                 f"but coding declares {self.n_sites}")
-        if self.pooled_fountain != (self.codec.family is Family.CMY8):
+        if self.pooled_fountain != (
+                self.codec.family in (Family.CMY8, Family.CMY)):
             raise ValueError(
                 f"{self.coding_id}: v2 pooling is a family fact "
-                f"(cmy8 = pooled, others not)")
+                f"(cmy8 and cmy = pooled, others not)")
 
     @property
     def n_sites(self) -> int:

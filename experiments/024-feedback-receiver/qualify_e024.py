@@ -1237,7 +1237,11 @@ def main() -> int:
     parser.add_argument(
         "--out", type=Path,
         default=BUILD / "qualify_e024_report.json")
+    parser.add_argument(
+        "--e018-gt", type=Path, required=True,
+        help="the frozen e018 render truth dir (sha-pinned by the helper)")
     args = parser.parse_args()
+    e023b_qual.GT_PATH = args.e018_gt / "K__e018_field.npy"
 
     try:
         baselines = _parse_baselines(args.baseline)

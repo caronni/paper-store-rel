@@ -529,12 +529,12 @@ def main() -> int:
                          "the 016.5-frozen doctrine in its native cell "
                          "units; it transfers to c3 exactly.")
     ap.add_argument("--diag", nargs="?", const=str(
-                        ROOT / "experiments/018-confetti-c3-play/scratch/diag"),
+                        ROOT / "experiments/018-confetti-c3-play/build/diag"),
                     default=None, metavar="DIR",
                     help="ADDITIVE live diagnostic viewer (experiments/018-"
                          "confetti-c3-play/diag.py). Serves an auto-refreshing "
                          "glass+reference web view at localhost:--diag-port and "
-                         "writes numbered PNG frames to DIR (default scratch/"
+                         "writes numbered PNG frames to DIR (default build/"
                          "diag), refreshed PER PIECE. Absent = the decode path "
                          "is byte-identical to a plain run (verified in "
                          "tests/test_diag.py).")

@@ -16,6 +16,7 @@ either behavior: the granted resolution is inferred from the raster width.
 from __future__ import annotations
 
 import hashlib
+import pytest
 import json
 import shutil
 import subprocess
@@ -27,6 +28,12 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[1]
 EXP = ROOT / "experiments" / "002-calibration-page"
 BUILD = EXP / "build"
+
+# 2026-09-06: every test here reads a build that a test regenerates in place;
+# test_composite_probe.py, test_modprobe.py, test_overlap2.py write the same
+# directory.  One xdist worker per build directory (pyproject: --dist
+# loadgroup).
+pytestmark = pytest.mark.xdist_group("build-002-003-probes")
 
 sys.path.insert(0, str(EXP))
 import stripdec  # noqa: E402

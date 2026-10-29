@@ -11,6 +11,7 @@ import pytest
 from holo.core import channel, keystream
 from holo.format import pilots
 from holo.format.descriptor import CODINGS, get_coding
+from holo.format.lattice import parse_format_id
 # Frozen singletons are module-private (FORMAT-SPACE P1); the
 # format-law pins reach them through the public catalog.
 CMY7_P120_V0 = CODINGS["c2-cmy7-p120-v0"].codec
@@ -136,7 +137,6 @@ def test_profile_alphabets_streams_and_fec_arithmetic_are_exact():
                  for child in cmy7[0].fec.children) == (4096, 3419, 3419)
     assert cmy7[0].fec.transmitted_bits == 10934
     assert cmy7[0].user_bits == 5974 and cmy7[0].symbol_bits == 5973
-    assert 3976 // 4 == 994 and 994 * 11 == 10934
 
     cmy8 = CMY8_P120_V0.streams
     assert CMY8_P120_V0.stream_ids == ("C", "M", "Y")
@@ -174,7 +174,8 @@ def test_word_and_dust_value_vectors_and_quotas():
     counters = (0, 1, 2)
     for row_id in COLOR_ROW_IDS:
         row = get_format_row(row_id)
-        words = pilots.color_word_states(row.seed, (0, 1, (1 << 18) - 1))
+        words = pilots.color_word_states(
+            row.seed, (0, 1, (1 << 18) - 1), row.codec)
         dust = pilots.dust_state_values(row.seed, counters, row.codec)
         word_golden, dust_golden = ROW_VALUE_GOLDENS[row_id]
         assert set(np.unique(words)) <= {0, 3}
@@ -182,7 +183,8 @@ def test_word_and_dust_value_vectors_and_quotas():
         assert _sha(dust.tobytes()) == dust_golden
         for counter, states in zip(
                 (0, 1, (1 << 18) - 1), words, strict=True):
-            assert pilots.decode_color_word(states, row.seed) == counter
+            assert pilots.decode_color_word(
+                states, row.seed, row.codec) == counter
 
         if row.codec is CMY7_P120_V0:
             assert all(Counter(states) == Counter({
@@ -223,3 +225,138 @@ def test_registered_words_cross_reject_every_wrong_row():
                 pilots.decode_word(value, target.seed, target.plane) is None
                 for value in values
             ), f"{source.spec_id} was accepted as {target.spec_id}"
+
+
+# ------------------------------------------------------------------ cmy
+
+#: sha256 of the word states at counters (0, 1, 2**18 - 1) and of the
+#: dust states at (0, 1, 2) — the cmy counterpart of ROW_VALUE_GOLDENS:
+#: word '1' C, word '0' the domain-9-keyed W or Y, dust the per-tile
+#: balance law (docs/CMY-DESIGN.md §2.5, R3 as amended, R10).
+CMY_ROW_VALUE_GOLDENS = {
+    "c3-cmy-r0850@35x24": (
+        "ce0f256dca8ad132d19c2fe7a7ccdc81"
+        "73fe815d9359dd62e8ebb966eca41847",
+        "9dc50ad3885377d16be97d29983cf6bd"
+        "b5396cea86d0b905903d40627ee3aa93",
+    ),
+    "c2-cmy-r0775x0700@53x37": (
+        "2b1f93d2642af5abe20de93f1a320946"
+        "85b99e7b820a684354a54f58796e2de6",
+        "94f29c3074c69b0812d4f868130ce59d"
+        "d444f40e08073761f80473a4f8184e34",
+    ),
+    "c2-cmy-r0700-p300@10x10": (
+        "6500c91f7479a8ae36e8d3c3251a693a"
+        "367e65f9eedcad030b2cdccefa14679a",
+        "5d7623b7c43f484fd80bf10b5942335d"
+        "c01079e1e08c6160776e3d3012f53f69",
+    ),
+}
+W, C, M, Y = (int(channel.CMYState[name]) for name in "WCMY")
+
+
+@pytest.mark.parametrize("row_id", sorted(CMY_ROW_VALUE_GOLDENS))
+def test_cmy_word_and_dust_value_vectors(row_id):
+    spec = parse_format_id(row_id)
+    words = pilots.color_word_states(
+        spec.seed, (0, 1, (1 << 18) - 1), spec.codec)
+    dust = pilots.dust_state_values(spec.seed, (0, 1, 2), spec.codec)
+    assert (_sha(words.tobytes()), _sha(dust.tobytes())) == \
+        CMY_ROW_VALUE_GOLDENS[row_id]
+    assert set(np.unique(words)) <= {W, C, Y}
+    assert set(np.unique(dust)) <= {W, C, M, Y}
+    assert dust.shape == (3, spec.n_dust)
+
+
+def test_cmy_words_round_trip_and_survive_a_dead_y_but_not_a_dead_c():
+    spec = parse_format_id("c2-cmy-r0775x0700@53x37")
+    counters = np.arange(64)
+    words = pilots.color_word_states(spec.seed, counters, spec.codec)
+    values = pilots.word_values(spec.seed, counters)
+    assert np.array_equal(words == C, values == 1)
+    dead_y = np.where(words == Y, W, words).astype(np.uint8)
+    dead_c = np.where(words == C, W, words).astype(np.uint8)
+    for counter in counters:
+        for states in (words, dead_y):
+            assert pilots.decode_color_word(
+                states[counter], spec.seed, spec.codec) == counter
+        assert pilots.decode_color_word(
+            dead_c[counter], spec.seed, spec.codec) is None
+    magenta = words[5].copy()
+    magenta[np.flatnonzero(magenta == W)[0]] = M
+    assert pilots.decode_color_word(magenta, spec.seed, spec.codec) is None
+
+
+def test_cmy_word_keys_start_at_the_rows_own_dust_count():
+    for row_id, n_dust in (("c2-cmy-r0700-p101@10x10", 1),
+                           ("c2-cmy-r0700@10x10", 20)):
+        spec = parse_format_id(row_id)
+        assert spec.n_dust == n_dust
+        for counter in (0, 7, 99):
+            words = pilots.color_word_states(
+                spec.seed, [counter], spec.codec)[0]
+            zero = pilots.word_values(spec.seed, [counter])[0] == 0
+            for keyed_at, expect in ((n_dust, True), (21 - n_dust, False)):
+                yellow = keystream.color_word_zero_mask(
+                    spec.seed, counter, keyed_at)
+                assert np.array_equal(words == Y, zero & yellow) is expect
+
+
+def _supply(n_c: int, n_w: int, n_y: int) -> np.ndarray:
+    return np.asarray([C] * n_c + [W] * n_w + [Y] * n_y, dtype=np.uint8)
+
+
+# The balance law on hand-built word supplies (design §2.5, R3): each dust
+# site to the lowest running total, ties M, Y, W, C.  The expected supply
+# (C 50, W 25, Y 25) gives R3's p120/p150/p200/p300 multisets; the probe
+# row's Y-poorest tile (Y 12) splits M 16 / Y 4 (running totals 16 : 16).
+@pytest.mark.parametrize("supply,n_dust,fill,multiset", [
+    ((50, 25, 25), 20, [M] * 20, {M: 20}),
+    ((50, 38, 12), 20, [M] * 12 + [M, Y] * 4, {M: 16, Y: 4}),
+    ((50, 15, 35), 20, [M] * 15 + [M, W] * 2 + [M], {M: 18, W: 2}),
+    ((50, 25, 25), 50, [M] * 25 + [M, Y, W] * 8 + [M],
+     {M: 34, Y: 8, W: 8}),
+    ((50, 25, 25), 100, None, {M: 50, Y: 25, W: 25}),
+    ((50, 25, 25), 200, None, {M: 75, Y: 50, W: 50, C: 25}),
+])
+def test_cmy_dust_balances_the_tiles_word_supply(supply, n_dust, fill,
+                                                 multiset):
+    got = pilots._balance_dust(_supply(*supply), n_dust)
+    assert got.dtype == np.uint8 and got.shape == (n_dust,)
+    if fill is not None:
+        assert got.tolist() == fill
+    assert dict(Counter(got.tolist())) == multiset
+
+
+def test_the_probe_rows_furniture_record():
+    """c2-cmy-r0775x0700@53x37, page 0, measured 2026-10-11 over the
+    format law: the per-tile word '0' count, its Y and W shares, and how
+    many tiles keep twenty M against the split ones."""
+    spec = parse_format_id("c2-cmy-r0775x0700@53x37")
+    counters = np.arange(spec.tiles_per_page)
+    words = pilots.color_word_states(spec.seed, counters, spec.codec)
+    dust = pilots.dust_state_values(spec.seed, counters, spec.codec)
+    n_zero, n_y, n_w = ((words != C).sum(1), (words == Y).sum(1),
+                        (words == W).sum(1))
+    assert (n_zero.min(), n_zero.max()) == (36, 65)
+    assert (n_y.min(), n_y.max(), n_w.min(), n_w.max()) == (12, 40, 14, 39)
+    shapes = Counter(tuple(sorted(Counter(tile.tolist()).items()))
+                     for tile in dust)
+    assert shapes == {
+        ((M, 20),): 1772,
+        ((M, 19), (Y, 1)): 84, ((W, 1), (M, 19)): 52,
+        ((M, 18), (Y, 2)): 26, ((W, 2), (M, 18)): 19,
+        ((M, 17), (Y, 3)): 3, ((W, 3), (M, 17)): 3,
+        ((M, 16), (Y, 4)): 2,
+    }
+    poorest = int(np.argmin(n_y))
+    assert Counter(dust[poorest].tolist()) == {M: 16, Y: 4}
+
+
+def test_cmy_codec_refuses_a_dust_cycle() -> None:
+    """cmy dust is the per-tile balance law (design §2.5, R3 as amended): a cycle would be silently ignored."""
+    from dataclasses import replace
+    from holo.format.families import cmy_codec
+    with pytest.raises(ValueError, match="balance law"):
+        replace(cmy_codec(("r0700", "r0700")), dust_base_cycle=(2, 4))

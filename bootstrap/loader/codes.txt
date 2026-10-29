@@ -1,0 +1,33 @@
+1 xbck
+2 fk8c
+3 7tkw
+4 bze8
+5 8wrt
+6 6aj1
+7 vvk7
+8 d0q6
+9 5266
+10 caga
+11 x2ny
+12 nfb8
+13 3bm8
+14 9maz
+15 5jr1
+16 p3e9
+17 yz31
+18 bm73
+19 g95c
+20 n25f
+21 459c
+22 qgxp
+23 8eea
+24 6ppc
+25 sct0
+26 80wr
+27 ywad
+28 437b
+29 1sje
+a.py lines 29 chars 826 (newlines not counted), longest 68
+data lines 48 chars 3069 incl. checks, no spaces (G 2877 base-32 glyphs = x of 14381 bits; reader N 4564 bytes, N2 50533, B2 327353449; orders (0, 1, 2, 3, 4, 6, 8, 12, 16))
+typed chars 3895
+r.py 5133 bytes = definitions a[39:608] + reader 4564 (the primer of the page, written and read in binary)

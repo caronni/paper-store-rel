@@ -23,6 +23,8 @@ are (aux, major, u, v) per the counter() layout below; plane index =
   7 fountain rows      aux=0      major=block  u=row       v=col word
   8 block assignment   aux=0      major=page   u=local tile v=0
   9 color dust order   aux=0      major=tile   u=base ordinal v=0
+                       (cmy word '0' sites: u = n_dust + site, Y iff
+                       the key's MSB)
  10 CMY7 interleave    aux=0      major=tile   u=code-bit idx v=0
  11 CMY7 dither        aux=0      major=tile   u=wire-bit idx v=0
  12 color cell order   aux=0      major=tile   u=state ordinal v=0
@@ -91,6 +93,14 @@ def color_dust_order_key(seed: bytes, tile_counter: int,
     blk = block(
         seed, DOMAIN_COLOR_DUST_ORDER, 0, tile_counter, base_ordinal, 0)
     return int.from_bytes(blk[:8], "big")
+
+
+def color_word_zero_bit(seed: bytes, tile_counter: int, n_dust: int,
+                        site: int) -> int:
+    """1 = the cmy word site prints Y for bit '0', 0 = W (domain 9's MSB)."""
+    assert n_dust >= 0 and 0 <= site < 100
+    return bit(
+        seed, DOMAIN_COLOR_DUST_ORDER, 0, tile_counter, n_dust + site, 0)
 
 
 def cmy7_interleave_key(seed: bytes, tile_counter: int,

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """The simulated control: two captures, one of them plane-displaced.
 
-    PYTHONPATH=. <python> -m measure.local_ab._sim
+    PYTHONPATH=src:. <python> -m measure.local_ab._sim --out build/local-ab
 
 WHY THIS EXISTS, TWICE OVER.
 
@@ -11,7 +11,7 @@ spends an hour earning it. The null arm's refusal is the load-bearing
 assertion: same pixels, same head, address moved one tile — nothing may
 certify.
 
-**As a measurement in its own right.** `holo3/tests/_h3_sims.py`'s hard
+**As a measurement in its own right.** `src/holo/receiver/tests/_h3_sims.py`'s hard
 pair is the multi-scan law's own regime, built on purpose: ONE emitted
 colour page rendered twice, once in register and once with the Y plane
 displaced by a rounded +/-2-dot sinusoid, both with the same noise draw.
@@ -43,31 +43,29 @@ import numpy as np
 
 from . import _ab, _paths
 
-SIM_DIR = _paths.SCRATCH / "sim"
-
 
 def _sims():
     """The suite's own fixture builders, on this worktree's ``src``.
 
-    Imported as a package member, not by planting `holo3/tests` on
+    Imported as a package member, not by planting `src/holo/receiver/tests` on
     `sys.path`: the hygiene gate resolves instrument imports by path and
     a `sys.path` hack reads to it (correctly) as rot.
     """
     _paths.install_src()
-    from holo3.tests import _h3_sims
+    from holo.receiver.tests import _h3_sims
 
     return _h3_sims
 
 
-def variant_dir(amplitude: float, noise: float) -> Path:
-    return SIM_DIR / f"a{amplitude:g}-n{noise:g}"
+def variant_dir(out: Path, amplitude: float, noise: float) -> Path:
+    return out / "sim" / f"a{amplitude:g}-n{noise:g}"
 
 
-def build(amplitude: float, noise: float,
+def build(out: Path, amplitude: float, noise: float,
           fresh: bool) -> tuple[object, Path, tuple[Path, Path]]:
     """The suite's emit, rendered at one declared (amplitude, noise)."""
     sims = _sims()
-    outdir = variant_dir(amplitude, noise)
+    outdir = variant_dir(out, amplitude, noise)
     outdir.mkdir(parents=True, exist_ok=True)
     control = outdir / sims.CONTROL_TIFF_NAME
     shifted = outdir / sims.SHIFTED_TIFF_NAME
@@ -80,7 +78,7 @@ def build(amplitude: float, noise: float,
 
 def decode(sims, tiffs: tuple[Path, Path], run_dir: Path,
            workers: int) -> tuple[object, object, list, float]:
-    from holo3 import cli, engine
+    from holo.receiver import cli, engine
 
     argv = ["decode", str(tiffs[0]), str(tiffs[1]),
             "--dpi", str(sims.DPI), "--dpi", str(sims.DPI),
@@ -109,6 +107,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--noise-sd", type=float, default=None,
                         help="per-pixel Gaussian sd in 8-bit levels "
                              "(default: the suite's 12.0)")
+    parser.add_argument("--out", type=Path, required=True,
+                        help="artefact directory (sim/, runs/, reports/)")
     args = parser.parse_args(argv)
 
     from .harness import _audit
@@ -118,7 +118,7 @@ def main(argv: list[str] | None = None) -> int:
                  if args.amplitude_dots is None else args.amplitude_dots)
     noise = (sims_probe.SHIFTED_NOISE_SD if args.noise_sd is None
              else args.noise_sd)
-    sims, payload_path, tiffs = build(amplitude, noise, args.fresh)
+    sims, payload_path, tiffs = build(args.out, amplitude, noise, args.fresh)
     _paths.install_src()
     from measure.crop_parity import _gt
 
@@ -127,7 +127,7 @@ def main(argv: list[str] | None = None) -> int:
     gt = _gt.reconstruct(sims.HARD_FORMAT_REF, payload, pages=1)
 
     tag = f"sim-a{amplitude:g}-n{noise:g}"
-    run_dir = _paths.SCRATCH / "runs" / tag
+    run_dir = args.out / "runs" / tag
     if args.fresh and run_dir.exists():
         import shutil
 
@@ -199,7 +199,7 @@ def main(argv: list[str] | None = None) -> int:
                 sum(r.per_origin.cpu_seconds for r in results), 1)},
         "audits": audits,
     }
-    out = _paths.SCRATCH / "reports"
+    out = args.out / "reports"
     out.mkdir(parents=True, exist_ok=True)
     (out / f"{tag}.json").write_text(
         json.dumps(summary, indent=1, default=str) + "\n", encoding="utf-8")

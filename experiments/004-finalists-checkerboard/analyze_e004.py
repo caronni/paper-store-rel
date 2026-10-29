@@ -13,12 +13,14 @@ New here (the two things E004 exists to measure):
   * per-class position maps over the 8x8 balanced grid.
 
 Usage (from experiments/004-finalists-checkerboard/):
-    ../../env/bin/python analyze_e004.py ../../scans/finalists.png
+    ../../env/bin/python analyze_e004.py <evidence>/scans/finalists.png \\
+        --e001-build <001's build dir, holding analysis-test-scan-gridtest/>
 Writes build/e004_report.json; prints the leaderboard vs the pre-registered
 envelopes of experiments/004-finalists-checkerboard.md.
 """
 from __future__ import annotations
 
+import argparse
 import json
 import sys
 import time
@@ -231,7 +233,7 @@ def position_map(manifest: dict, per_tile: dict, key: str) -> dict:
             "by_col": {c: float(np.mean(v)) for c, v in sorted(by_col.items())}}
 
 
-def main(scan_path: str) -> None:
+def main(scan_path: str, e001_build: Path) -> None:
     t0 = time.time()
     manifest = cc.load_manifest(MANIFEST_PATH)
     scan = cc.load_scan(scan_path)
@@ -252,8 +254,7 @@ def main(scan_path: str) -> None:
 
     # frozen 001.4 cross-sheet recal map (003.0a transfer replication)
     frozen = None
-    f = (_HERE.parent / "001-engine-characterization" / "build"
-         / "analysis-test-scan-gridtest" / "encode_c2_v4_metrics.json")
+    f = (e001_build / "analysis-test-scan-gridtest" / "encode_c2_v4_metrics.json")
     if f.exists():
         rel = json.loads(f.read_text())["v4"]["reliability_ctx"]
         centers = np.array([(b["llr_lo"] + b["llr_hi"]) / 2 for b in rel])
@@ -354,4 +355,8 @@ def main(scan_path: str) -> None:
 
 
 if __name__ == "__main__":
-    main(sys.argv[1] if len(sys.argv) > 1 else "../../scans/finalists.png")
+    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    ap.add_argument("scan")
+    ap.add_argument("--e001-build", type=Path, required=True)
+    args = ap.parse_args()
+    main(args.scan, args.e001_build)

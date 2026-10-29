@@ -1,8 +1,12 @@
 """W10 threshold derivation: comb and overshoot on the real captures.
 
+Historical record of the W8/W9/W10 campaign; the captures are in the
+evidence archive (shas in the e031 log), joined onto --scan-root.
+
 Read-only.  Run from the repo root:
     PYTHONPATH=src env/bin/python \\
-        experiments/031-xerox-altalink-discovery/w10_structured_capture_checks.py
+        experiments/031-xerox-altalink-discovery/w10_structured_capture_checks.py \\
+        --scan-root <evidence>
 
 Derives/validates the two W10 constants against real captures plus synthetic
 degraded controls:
@@ -14,6 +18,7 @@ degraded controls:
                           must sit well below it; an unsharp-masked variant
                           of the SAME real crop well above it.
 """
+import argparse
 import io
 import json
 import sys
@@ -29,22 +34,25 @@ from holo.characterize.diagnostics import (  # noqa: E402
 )
 from holo.characterize.layout import build_page  # noqa: E402
 
-ROOT = "<repo>/"
+_ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+_ap.add_argument("--scan-root", required=True,
+                 help="evidence dir standing for the old scratch/ root")
+ROOT = _ap.parse_args().scan_root.rstrip("/") + "/"
 CAPS = [
-    ("xerox disc B/W", ROOT + "scratch/in/xerox-canon-cal-bw.tiff",
+    ("xerox disc B/W", ROOT + "in/xerox-canon-cal-bw.tiff",
      4800, False),
-    ("xerox disc clr", ROOT + "scratch/in/xerox-canon-cal-color.tiff",
+    ("xerox disc clr", ROOT + "in/xerox-canon-cal-color.tiff",
      4800, True),
     ("m281 disc B/W",
-     ROOT + "scratch/e028/e028-m281-20260804-bw-01-canon-4800gray.tiff",
+     ROOT + "e028/e028-m281-20260804-bw-01-canon-4800gray.tiff",
      4800, False),
-    ("xerox c3 2400", ROOT + "scratch/in/xerox-canon-c3-cmy7-2400dpi.tiff",
+    ("xerox c3 2400", ROOT + "in/xerox-canon-c3-cmy7-2400dpi.tiff",
      2400, True),
 ]
 BW_REPORTS = {
-    "xerox disc B/W": ROOT + "scratch/e031/reports-w8/"
+    "xerox disc B/W": ROOT + "e031/reports-w8/"
     "hcal-report-discovery-bw-copy0000-c4fd8826a63743f7.json",
-    "m281 disc B/W": ROOT + "scratch/e028/reports-v4/"
+    "m281 disc B/W": ROOT + "e028/reports-v4/"
     "hcal-report-discovery-bw-copy0000-76d0b6b1161c234e.json",
 }
 

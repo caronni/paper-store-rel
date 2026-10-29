@@ -96,16 +96,21 @@ def test_requested_resolution_is_guarded_and_color_paths_are_distinct() -> None:
     assert b"PATH sequential-overprint-opm1" in postscript
 
 
-def test_color_screen_paths_hold_prn_content_and_geometry_constant() -> None:
+# The screen probes ride the colour discovery page and nothing cheaper
+# (layout.add_color_discovery), so both halves of the split rebuild it for
+# 0.05 s; only the marker half pays the 2.3 s render (2026-09-05).
+def _color_screen_controls() -> tuple[dict, list[dict]]:
     page = build_page(
         stage="discovery",
         kind="color",
         copy_index=4,
         request_code=REQUEST_CODES["default"],
     )
-    controls = [
-        row for row in page["probes"] if row["group"] == "screen"
-    ]
+    return page, [row for row in page["probes"] if row["group"] == "screen"]
+
+
+def test_color_screen_paths_hold_prn_content_and_geometry_constant() -> None:
+    _page, controls = _color_screen_controls()
 
     assert {row["probe_id"] for row in controls} == {
         "screen/path/imagemask-C",
@@ -148,7 +153,12 @@ def test_color_screen_paths_hold_prn_content_and_geometry_constant() -> None:
         for row in controls
     }) == 1
 
+
+def test_each_screen_path_is_announced_in_the_postscript() -> None:
+    page, controls = _color_screen_controls()
+
     postscript = render_page(page)
+
     for row in controls:
         marker = (
             f"% HC-PROBE {row['probe_id']} "

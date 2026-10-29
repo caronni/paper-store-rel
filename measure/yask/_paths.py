@@ -1,19 +1,26 @@
-"""Trees, interpreter, scratch — stated once.
+"""Trees and the evidence root — stated once.
 
-This package lives in a WORKTREE of ``paper-store`` whose checkout is a
-plain ``main`` checkout, so its own ``src/`` is the holo1 generation
-arithmetic the ground truth needs (the ``holo3`` branch's worktree
-deletes ~1,600 lines under ``src/holo/receive``; this one does not).
-Nothing here writes outside the worktree, and every capture, every
-archived event log and every generated stimulus under
-``scratch`` is READ-ONLY.
+Historical instrument (Y-as-K ablation ladder, 2026-08-31); inputs = the
+overnight harvest and the e033 generation set, in the evidence archive.
 
-Artifacts land in ``<worktree>/scratch/yask/`` (gitignored).
+The ground truth needs ``src/holo/{gen,format,core}`` from this tree,
+which survives the v1-receiver retirement of 2026-09-05 (284ae3e). Every
+capture, archived event log and generated stimulus is read-only and
+lives under the EVIDENCE ROOT — ``--evidence-root`` or
+``$PAPER_EVIDENCE_ROOT``, no default — the published evidence archive
+(``measure/_evidence.py``): sheet H's captures and emission under
+:data:`SHEET_H`, the harvest's certificate map under
+:data:`CERTIFIED_TILES`. The 2026-08-30 overnight harvest's event log
+the 2026-08-31 runs read is NOT in the published archive (tier delete);
+it is looked for under :data:`OVERNIGHT` and refused by name when
+absent. Every artefact lands in a required ``--out``.
 """
 from __future__ import annotations
 
 import sys
 from pathlib import Path
+
+from measure import _evidence
 
 #: ``<worktree>/measure/yask``.
 HERE = Path(__file__).resolve().parent
@@ -24,17 +31,42 @@ WORKTREE = HERE.parent.parent
 #: This worktree's ``src`` — the only ``holo`` this package imports.
 HOLO1_SRC = WORKTREE / "src"
 
-#: Read-only evidence: the archived captures and stimuli.
-SCRATCH_IN = Path("scratch")
+#: The environment variable that names the evidence root when no
+#: ``--evidence-root`` was given (``measure/_evidence.py``).
+EVIDENCE_ENV = _evidence.ENV
 
-#: The 2026-08-30 overnight harvest's event logs + certificate maps.
-OVERNIGHT = SCRATCH_IN / "holo3-overnight-events"
+#: Relative to the evidence root: the 2026-08-30 overnight harvest's
+#: event logs, by the record's own name — NOT in the published archive
+#: (tier delete: event journals excluded by rule).
+OVERNIGHT = Path("holo3-overnight-events")
 
-#: The e033 generation set — payloads and per-cell ground-truth fields.
-E033 = SCRATCH_IN / "xerox-v1-20260818"
+#: Relative to the evidence root: the same harvest's sheet-H certificate
+#: map, published.
+CERTIFIED_TILES = Path("paper-store-evidence-holo-2026-10/036-sheet-h-full-readout/"
+                       "records/overnight-20260830/sheetH-maxstack-certified-tiles.json")
 
-#: Everything this package writes.
-SCRATCH = WORKTREE / "scratch/yask"
+#: Relative to the evidence root: e033 sheet H, published — its
+#: ``captures/`` and its ``emission/`` (manifest + payload; the per-cell
+#: ``page000_gt.npy`` is NOT published, it regenerates from ``jobs/page000.ps``
+#: with ``util/ps_gt.py``).
+SHEET_H = Path("paper-store-evidence-holo-2026-10/033-xerox-rung-experiments/H")
+
+#: Why a withdrawn input is refused, spelled once.
+WITHDRAWN = ("tier delete: the overnight harvest's event journals were "
+             "excluded by rule and nothing in the record rebuilds them")
+
+_root: Path | None = None
+
+
+def use_evidence_root(path: Path | None) -> None:
+    """Pin the evidence root for this process (``None`` = the env var)."""
+    global _root
+    _root = None if path is None else Path(path)
+
+
+def evidence_root() -> Path:
+    """The evidence root, or a refusal that names both ways to give it."""
+    return _evidence.resolve(_root, tool="measure")
 
 
 def install_src() -> None:
@@ -46,7 +78,11 @@ def install_src() -> None:
 
 def refuse_if_absent(paths: tuple[Path, ...]) -> None:
     """Fail loudly and by name rather than half-way through a battery."""
-    missing = [str(path) for path in paths if not path.exists()]
-    if missing:
-        raise SystemExit("yask: required input(s) absent: "
-                         + ", ".join(missing))
+    _evidence.need(*paths, tool="yask")
+
+
+def refuse_if_withdrawn(path: Path) -> None:
+    """A withdrawn input (see :data:`WITHDRAWN`), refused by name when
+    it is not at its record path under the root."""
+    if not path.exists():
+        raise _evidence.withdrawn(str(path), tool="yask", why=WITHDRAWN)

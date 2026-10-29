@@ -1,0 +1,1 @@
+env/bin/python scratch/rung-ladder-20260930/search/variants_search.py --overnight --copy-from scratch/rung-ladder-20260930/search/overnight-A --out scratch/rung-ladder-20260930/search/overnight-B2 --workers 14 --decoder fast

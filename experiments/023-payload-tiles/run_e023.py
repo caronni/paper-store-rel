@@ -3,7 +3,7 @@
 CRC-certified LDPC tiles + honest per-tile report out.
 
   env/bin/python experiments/023-payload-tiles/run_e023.py \
-      --e022-state experiments/022-pilot-tile-search/build/session_state.pkl \
+      --e022-state <022's build>/session_state.pkl \
       --state build/e023_decimated.pkl
 
   env/bin/python experiments/023-payload-tiles/run_e023.py \

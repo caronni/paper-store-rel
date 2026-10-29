@@ -11,6 +11,7 @@ import os
 import sys
 
 import numpy as np
+import pytest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..",
@@ -48,6 +49,13 @@ def _build_page() -> tuple[np.ndarray, list[dict]]:
     return page, strips
 
 
+# 2026-09-05: one print_plane plus FOUR scan_plane simulations of a
+# 2880x1440-dot page = 7.7 s, and it is the module's only test. Slow-gated,
+# not shrunk: the correlation bar against the simulator's injected wander
+# needs the repeat scans to average the fresh per-scan steps away.
+@pytest.mark.skipif(
+    os.environ.get("HOLO_RUN_SLOW_TESTS") != "1",
+    reason="set HOLO_RUN_SLOW_TESTS=1 for the strip-tracker warp recovery")
 def test_strip_tracker_recovers_simulated_warp() -> None:
     page, strips = _build_page()
     p = ChannelParams(seed=23, scan_seed=99)

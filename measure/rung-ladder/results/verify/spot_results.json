@@ -1,0 +1,74 @@
+[
+ {
+  "rid": "r0547",
+  "k": 2240,
+  "seed_label": "ldpc-v1/r0547",
+  "restart": 0,
+  "p": 0.055,
+  "eps": 0.0,
+  "fails": 0,
+  "n": 200,
+  "undetected": 0,
+  "mean_iters": 15.9,
+  "cp95": [
+   0.0,
+   0.0183
+  ],
+  "harness": "record: clean; harness log-LLR grid 0/200",
+  "seconds": 0.9
+ },
+ {
+  "rid": "r0700",
+  "k": 2880,
+  "seed_label": "ldpc-v1/r0700",
+  "restart": 0,
+  "p": 0.035,
+  "eps": 0.0,
+  "fails": 1,
+  "n": 200,
+  "undetected": 0,
+  "mean_iters": 25.9,
+  "cp95": [
+   0.0001,
+   0.0275
+  ],
+  "harness": "record 1.5-1.8%; harness 1/200 (log-LLR), 2/200 (mag 4)",
+  "seconds": 1.9
+ },
+ {
+  "rid": "r0313",
+  "k": 1280,
+  "seed_label": "ldpc-v1/r0313",
+  "restart": 0,
+  "p": 0.12,
+  "eps": 0.0,
+  "fails": 0,
+  "n": 200,
+  "undetected": 0,
+  "mean_iters": 52.1,
+  "cp95": [
+   0.0,
+   0.0183
+  ],
+  "harness": "harness p@1% grid point: 2/200 (1 undetected)",
+  "seconds": 2.9
+ },
+ {
+  "rid": "r0313",
+  "k": 1280,
+  "seed_label": "ldpc-v1/r0313",
+  "restart": 0,
+  "p": 0.02,
+  "eps": 0.5,
+  "fails": 1,
+  "n": 200,
+  "undetected": 0,
+  "mean_iters": 53.9,
+  "cp95": [
+   0.0001,
+   0.0275
+  ],
+  "harness": "harness eps=0.5 p=0.02: 0/200",
+  "seconds": 3.0
+ }
+]

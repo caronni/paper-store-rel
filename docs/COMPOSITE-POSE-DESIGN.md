@@ -1,3 +1,16 @@
+> **2026-09-08 — the per-plane term is SUPERSEDED by
+> docs/PAGE-FIELD-DESIGN.md.** That design of record owns the printer's
+> per-plane displacement — one field per (page, plane), page axes,
+> printed dots, evaluated per cell — and supersedes this document's §2
+> row (a), §4.1 and §7 (`SheetField`). It is BUILT in the receiver on
+> branch `page-field-receiver` (commits `4d89686f` (W1) through the W9 landing of 2026-09-12 — `4d89686f^..page-field-receiver`, W1–W9 — merged to main 2026-09-12). The
+> composition order this document argues for is the one that design §2.1
+> adopts (printer, then paper pose, then — if a scanner ever needs one —
+> the scanner, after the pose, on the pixel); the SCANNER factor is still
+> unbuilt and still measured not useful. The measured findings here,
+> including the pose-writer negative (−5 certificates, +2.1 pp), stay as
+> the record.
+
 # The composite pose — printer field ∘ paper pose ∘ scanner field
 
 Version 0.1 — 2026-08-22. Status: DESIGN (INDEPENDENT-PLANES §6 P4), not
@@ -5,6 +18,11 @@ built. Records the 2026-08-22 ruling on WHERE (INDEPENDENT-PLANES P3):
 the unification is executed in src/holo as a null-proof refactor (the
 corpus and instruments are there); holo2 adopts the CONCEPT as doctrine
 and, if colour lands holo2-native, designs the composite in from day one.
+Moot: holo2 was retired 2026-09-05 without colour landing and without
+adopting this doctrine; the v1 receiver — the WHERE this design ruled on —
+was retired the same day at `284ae3e` along with `measure/plane_fields` and
+`measure/_color_uplift_harness`, so any revival re-rules the WHERE against
+holo3 (`src/holo/receiver/lib/plane_field.py`, `plugins/fields.py`, `plugins/swim.py`).
 Governing neighbours: docs/INDEPENDENT-PLANES.md (staging),
 docs/PLANE-FIELDS.md (the (a)-field solver that survives into this
 design), docs/RECEIVE-DESIGN.md (amendment owed at build).
@@ -215,7 +233,7 @@ better on 77–80% of windows, 0.27 → 0.23 dot) and decision-irrelevant
 
 ---
 
-## 7. The service (code-level sketch, src/holo/receive)
+## 7. The service (code-level sketch, src/holo/receive — retired 2026-09-05 at `284ae3e`; read at `git show b167b9f:src/holo/receive/…`)
 
 One module owns the composite; nothing else computes logical→raster.
 
@@ -292,7 +310,8 @@ policy-id bump for behaviour-identical steps.
 - The holo2 port shape: SheetField as a journaled, commutatively-merged
   family (monotone evidence) with the solve as a derived view — fits the
   commit wall; to be written into holo2/docs/DESIGN as doctrine at the
-  H-wave.
+  H-wave. Never done: holo2 was retired 2026-09-05 first; the design
+  doc of record is docs/archive/holo2/DESIGN.md.
 - Sampling cost share (unmeasured) — the one number that could force a
   different service shape.
 

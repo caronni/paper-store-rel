@@ -17,6 +17,7 @@ Writes build/e006bw_report.json.
 """
 from __future__ import annotations
 
+import argparse
 import gc
 import json
 import sys
@@ -44,7 +45,8 @@ import scanlab  # noqa: E402  (fit_gmm_z / llr_field / context_detect — blind)
 import strip_tracker as st  # noqa: E402
 
 BUILD = _HERE / "build"
-SCANS_DIR = _HERE.parents[1] / "scans"
+SCANS_DIR = Path()  # the run's scans (evidence archive), set from --scan-dir
+E001_BUILD = Path()  # 001's build dir, set from --e001-build
 SCANS = {
     "s1col": "006bw-scan-1-color.png",
     "s2bw": "006bw-scan-2-bw.png",
@@ -68,8 +70,7 @@ def blind_ctx_llr(means: np.ndarray) -> np.ndarray:
 
 
 def frozen_recal_map():
-    f = (_HERE.parent / "001-engine-characterization" / "build"
-         / "analysis-test-scan-gridtest" / "encode_c2_v4_metrics.json")
+    f = (E001_BUILD / "analysis-test-scan-gridtest" / "encode_c2_v4_metrics.json")
     rel = json.loads(f.read_text())["v4"]["reliability_ctx"]
     centers = np.array([(b["llr_lo"] + b["llr_hi"]) / 2 for b in rel])
     p = np.clip(k4.pava_nonincreasing(
@@ -352,4 +353,10 @@ def main() -> None:
 
 
 if __name__ == "__main__":
+    _ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    _ap.add_argument("--scan-dir", type=Path, required=True)
+    _ap.add_argument("--e001-build", type=Path, required=True,
+                     help="holds analysis-test-scan-gridtest/ (analyze_gridtest.py)")
+    _args = _ap.parse_args()
+    SCANS_DIR, E001_BUILD = _args.scan_dir, _args.e001_build
     main()

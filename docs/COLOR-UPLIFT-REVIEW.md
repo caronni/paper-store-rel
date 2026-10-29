@@ -1,5 +1,12 @@
 # Color-uplift design and implementation review
 
+> The receiver these measurements were made on — the v1 receiver and its
+> `measure/_color_uplift_harness` — was retired 2026-09-05 at `284ae3e`; this
+> document is the measured record, historical from that sha (readable at
+> `git show b167b9f:…`). holo3 carries the ported arms (`plugins/color_*`,
+> `tiles.uplift`); the mechanism map is src/holo/receiver/docs/retirement_docs-2026-09/HOLO1-MAP.md.
+
+
 Review target: commit **64ddea17aca2503b93459504c154976093f6eeaa** on branch **color-uplift**
 
 Comparison base: **af920291b157da5cc8eb7f964a044692ff431dc6**

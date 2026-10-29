@@ -25,9 +25,19 @@ measured negative therefore survived the fixture fix — and is now a
 stronger statement than it was, because it is made where the residue is
 real rather than where a sampling defect had flattened the channel.
 
+RE-MEASURED 2026-09-12 on the REBUILT fixture — the starved plane
+displaced by 2 px and the page field handed in (the tier's field is
+now a required input, so this scan hands `fixture.plane_fields`):
+equal at TWELVE of the thirteen points, and at plane scale 0.180 the
+`off` arm certifies 2 where `a4b` and `a4b*` certify 0 — the
+conditioning cost two tiles there.  The evidence margin the rebuild
+proved (+143 starved cells, positive across the band) does not reach a
+certificate on this fixture and once costs two; the arm's standing is
+the design's §7.2 record and Germano's ruling.
+
 Usage:
 
-    PYTHONPATH=. env/bin/python measure/uplift_cliff.py <page000_gt.npy>
+    PYTHONPATH=src:. env/bin/python measure/uplift_cliff.py <page000_gt.npy>
 """
 from __future__ import annotations
 
@@ -36,7 +46,7 @@ import tempfile
 from dataclasses import replace
 from pathlib import Path
 
-from holo3.plugins import color_arms, tiles
+from holo.receiver.plugins import color_arms, tiles
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
@@ -68,9 +78,10 @@ def main() -> int:
         image = fixture.render(bits, channel, gains, offsets)
         with tempfile.TemporaryDirectory() as tmp:
             planes = fixture.plane_rasters(image, Path(tmp))
+            fields = fixture.plane_fields(row, channel)
             frontier, _v, _i, _s = probe.run_tier(
                 row, geometry, windows, planes, {}, every_tile,
-                probe.ARM_OFF)
+                probe.ARM_OFF, fields)
             residue = tuple(
                 entry for entry in (
                     (ty, tx, tuple(name for name in all_streams
@@ -84,7 +95,7 @@ def main() -> int:
                         probe.ARM_A4B_UNGATED):
                 gained, verdict, _inputs, _stack = probe.run_tier(
                     row, geometry, windows, planes, dict(frontier),
-                    residue, arm)
+                    residue, arm, fields)
                 counts[arm] = len(gained)
                 if verdict is not None:
                     strata = verdict.strata_adopted

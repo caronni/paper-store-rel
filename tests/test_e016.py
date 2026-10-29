@@ -10,6 +10,7 @@ Runs under pytest, or standalone: env/bin/python tests/test_e016.py
 from __future__ import annotations
 
 import hashlib
+import pytest
 import json
 import os
 import subprocess
@@ -21,6 +22,11 @@ import numpy as np
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 EXP = Path(__file__).resolve().parent.parent / "experiments/016-arch3-c2-volume"
+
+# 2026-09-06: every test here reads a build that a test regenerates in place;
+# test_e018b.py writes the same directory.  One xdist worker per build
+# directory (pyproject: --dist loadgroup).
+pytestmark = pytest.mark.xdist_group("build-016-018")
 sys.path.insert(0, str(EXP))
 
 from paperholo import acquire, fountain, tilemap  # noqa: E402

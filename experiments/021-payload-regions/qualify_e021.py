@@ -6,8 +6,11 @@ candidate count, mask IoU, global c, safe optional angle hints, and no extras.
 Bbox overlap alone never passes.  Synthetic choices use untouched 300-series
 seeds; the six real e018 platens are a separate physical count/c check.
 
-  env/bin/python experiments/021-payload-regions/qualify_e021.py
+  env/bin/python experiments/021-payload-regions/qualify_e021.py --scan-root <evidence>
   env/bin/python experiments/021-payload-regions/qualify_e021.py --skip-real
+
+--scan-root stands for the old scratch/ root (e018/*.tiff and the two
+full-sheet scans, in the evidence archive).
 """
 from __future__ import annotations
 
@@ -395,7 +398,7 @@ def _real_scan(path: Path) -> np.ndarray:
     return np.asarray(array)
 
 
-def q5_real_confetti() -> bool:
+def q5_real_confetti(scan_root: Path) -> bool:
     rows = []
     scans = (
         ("confetti-1", "hp-e018-canon-4800-confetti-1.tiff", 17),
@@ -408,7 +411,7 @@ def q5_real_confetti() -> bool:
         ("confetti-3-2nd", "hp-e018-canon-4800-confetti-3-2ndtake.tiff", 8),
     )
     for name, filename, truth_count in scans:
-        path = ROOT / "scratch/e018" / filename
+        path = scan_root / "e018" / filename
         survey = platen.detect_payload_regions(_real_scan(path), dpi=4800.0)
         angles = sum(
             region.angle_hint_deg is not None for region in survey.regions
@@ -439,17 +442,17 @@ def q5_real_confetti() -> bool:
     return ok
 
 
-def q6_real_full_sheets() -> bool:
+def q6_real_full_sheets(scan_root: Path) -> bool:
     rows = []
     for name, path, expected_c in (
         (
             "e016 c2 K",
-            ROOT / "scratch/e016c2hp-canon4800gray.tiff",
+            scan_root / "e016c2hp-canon4800gray.tiff",
             2,
         ),
         (
             "e017 c3 CMY",
-            ROOT / "scratch/hp-e017-arch-c-canon-4800rgb-take2.tiff",
+            scan_root / "hp-e017-arch-c-canon-4800rgb-take2.tiff",
             3,
         ),
     ):
@@ -498,7 +501,12 @@ def main() -> int:
         "--skip-real", action="store_true",
         help="skip the six native confetti scans and two full-sheet scans",
     )
+    parser.add_argument("--scan-root", type=Path,
+                        help="evidence dir for the real scans; required "
+                             "unless --skip-real")
     args = parser.parse_args()
+    if not args.skip_real and args.scan_root is None:
+        parser.error("--scan-root is required unless --skip-real")
     started = time.perf_counter()
     results = {
         "q1_heldout_masks": q1_heldout_masks(),
@@ -507,8 +515,8 @@ def main() -> int:
         "q4_nulls_mixed": q4_nulls_and_mixed_c(),
     }
     if not args.skip_real:
-        results["q5_real_confetti"] = q5_real_confetti()
-        results["q6_real_full_sheets"] = q6_real_full_sheets()
+        results["q5_real_confetti"] = q5_real_confetti(args.scan_root)
+        results["q6_real_full_sheets"] = q6_real_full_sheets(args.scan_root)
     REPORT["summary"] = results
     REPORT["elapsed_s"] = round(time.perf_counter() - started, 1)
     output = HERE / "build/qualify_report.json"

@@ -19,7 +19,6 @@ CMY7_P120_V0 = CODINGS["c2-cmy7-p120-v0"].codec
 CMY8_P120_V0 = CODINGS["c2-cmy8-p120-v0"].codec
 from holo.format.registry import (
     DEFAULT_DISCOVERY_ROW_IDS,
-    FORMAT_ROWS,
     get_format_row,
 )
 
@@ -39,12 +38,10 @@ def test_v1_rows_appended_catalog_only_and_v0_untouched():
         assert not v0.pooled_fountain
         assert v0.codec is row.codec
         assert row.seed != v0.seed          # implicit signaling separates
+        # The registry-facing tuple itself is pinned once, in
+        # test_color_format_profiles (2026-09-20); what matters here is
+        # that a pooled row is not in it.
         assert row_id not in DEFAULT_DISCOVERY_ROW_IDS
-    assert DEFAULT_DISCOVERY_ROW_IDS == (
-        "c2-r0550@3328x2304",
-        "c2-r0700@3328x2304",
-        "c3-r0550@2240x1536",
-    )
     for coding_id in ("c3-r0550", "c2-r0550", "c2-r0700"):
         assert not get_coding(coding_id).pooled_fountain
     assert not CODINGS["c2-cmy7-p120-v0"].pooled_fountain
@@ -131,6 +128,34 @@ def test_pooled_trust_floor_dead_plane_needs_24_tiles():
         _pooled_observations(word, range(23), streams=(0, 1)),
         max_index=bound)
     assert not short.ok and short.check_shortfall == 2
+
+
+# G5 (docs/CMY-DESIGN.md §2.6): a cmy row pools TWO streams.  Decimation
+# by 2 keeps the degree-24 LFSR primitive (gcd(2, 2^24 - 1) = 1), so 24
+# consecutive same-parity indices — one stream over 24 consecutive tiles —
+# reach rank 24.  Recovery: 12 healthy tiles, or 24 with one stream dead;
+# trust (48 distinct equations): 24 healthy, or 48 with one stream dead.
+@pytest.mark.parametrize("streams,tiles,rank,trusted", [
+    ((0,), 23, 23, False),
+    ((0,), 24, 24, False),
+    ((1,), 24, 24, False),
+    ((0, 1), 11, 22, False),
+    ((0, 1), 12, 24, False),
+    ((0, 1), 23, 24, False),
+    ((0, 1), 24, 24, True),
+    ((1,), 47, 24, False),
+    ((1,), 48, 24, True),
+])
+def test_cmy_two_stream_metadata_floor(streams, tiles, rank, trusted):
+    word = metadata.encode_metadata(0, 2 * 4321)
+    got = metadata.decode_metadata(
+        _pooled_observations(word, range(500, 500 + tiles), streams, n=2),
+        max_index=metadata.max_equation_index(2))
+    assert got.rank == rank
+    assert got.ok is trusted
+    assert got.n_unique_counters == tiles * len(streams)
+    if trusted:
+        assert got.k == 2 * 4321
 
 
 def test_pooled_distinct_vs_replicated_equation_density():

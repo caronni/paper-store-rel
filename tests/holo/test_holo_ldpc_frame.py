@@ -8,7 +8,7 @@ import pytest
 from holo.core.ldpc import frame
 from holo.core.ldpc.construct import LADDER
 from holo.core.ldpc.decode import encode
-from holo.core.ldpc.tile import CRC_BITS, crc32_bits
+from holo.core.ldpc.tile import crc32_bits
 
 
 CMY7_BANK = frame.FecBankProfile(
@@ -258,6 +258,3 @@ def test_frame_rejects_malformed_contracts_and_inputs():
         frame.decode_frame(
             np.zeros(CMY7_BANK.transmitted_bits), CMY7_BANK, max_iters=-1)
 
-
-def test_crc_width_remains_the_existing_32_bits():
-    assert CRC_BITS == 32

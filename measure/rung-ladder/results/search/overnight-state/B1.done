@@ -1,0 +1,1 @@
+env/bin/python scratch/rung-ladder-20260930/search/de_profile.py --overnight --secondary --seeds 12 --out scratch/rung-ladder-20260930/search/overnight-B1 --workers 14 --decoder fast

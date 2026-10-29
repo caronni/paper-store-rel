@@ -23,10 +23,14 @@ cal_color.aligned_cell_densities + _gaussian_cv_classify (deterministic
 interleaved folds). Validation gate: the 8-class run must reproduce the
 archived calpage_report accuracy/MI for that engine.
 
-Run: env/bin/python scratch/probe17_p6_samecells.py   (~2-4 min/scan)
+Run: env/bin/python experiments/017-color-channel/probes/probe17_p6_samecells.py \\
+         --scan-dir <evidence>/scans --e002-build <002's build>   (~2-4 min/scan)
+Writes experiments/017-color-channel/build/probe17_p6_samecells.json (the
+record is the copy beside this file).
 """
 from __future__ import annotations
 
+import argparse
 import gc
 import json
 import sys
@@ -35,21 +39,22 @@ from pathlib import Path
 
 import numpy as np
 
-REPO = Path(__file__).resolve().parent.parent
+REPO = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(REPO / "experiments" / "002-calibration-page"))
 
 import cal_color as ccol  # noqa: E402
 import cal_core as cc  # noqa: E402
 
-B002 = REPO / "experiments/002-calibration-page/build"
-SCANS = {
-    "home_m281": REPO / "scans/test-scan-calpage-color.png",
-    "xerox_altalink": REPO / "scans/xerox-cal-hp-scan.png",
+SCAN_NAMES = {
+    "home_m281": "test-scan-calpage-color.png",
+    "xerox_altalink": "xerox-cal-hp-scan.png",
 }
-REPORTS = {
-    "home_m281": B002 / "calpage_report.json",
-    "xerox_altalink": B002 / "calpage_report_xerox.json",
+REPORT_NAMES = {
+    "home_m281": "calpage_report.json",
+    "xerox_altalink": "calpage_report_xerox.json",
 }
+SCANS: dict[str, Path] = {}    # set from --scan-dir in __main__
+REPORTS: dict[str, Path] = {}  # set from --e002-build in __main__
 NAMES8 = ["W", "C", "M", "CM", "Y", "CY", "MY", "CMY"]
 
 
@@ -194,11 +199,18 @@ def main() -> None:
     out = {}
     for eng in SCANS:
         out[eng] = run_engine(eng)
-    outp = REPO / "scratch" / "probe17_p6_samecells.json"
+    outp = REPO / "experiments/017-color-channel/build/probe17_p6_samecells.json"
+    outp.parent.mkdir(parents=True, exist_ok=True)
     json.dump(out, open(outp, "w"), indent=1)
     print(json.dumps(out, indent=1))
     print(f"\nwritten: {outp}")
 
 
 if __name__ == "__main__":
+    _ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    _ap.add_argument("--scan-dir", type=Path, required=True)
+    _ap.add_argument("--e002-build", type=Path, required=True)
+    _args = _ap.parse_args()
+    SCANS.update({k: _args.scan_dir / v for k, v in SCAN_NAMES.items()})
+    REPORTS.update({k: _args.e002_build / v for k, v in REPORT_NAMES.items()})
     main()

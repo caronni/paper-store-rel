@@ -1,0 +1,278 @@
+{
+ "digests": {
+  "r0250": {
+   "holo_reload": "ac01959a93250abe667e4776bd849717f2ed50cfc142fefbdbaaaa176736185a",
+   "paperholo_build": "ac01959a93250abe667e4776bd849717f2ed50cfc142fefbdbaaaa176736185a",
+   "match": true,
+   "json_restart": 0,
+   "build_restart": 0,
+   "json_heavy_frac": 0.3,
+   "nh_json": 5,
+   "n_edges": 11455,
+   "harness_cache": "ac01959a93250abe667e4776bd849717f2ed50cfc142fefbdbaaaa176736185a",
+   "harness_matches_paperholo": true,
+   "harness_spec": [
+    1024,
+    10
+   ]
+  },
+  "r0297": {
+   "holo_reload": "2f605b4d205a4661e3ce8dbe7d9d7e2eabc539b8da8a414d0171973325014028",
+   "paperholo_build": "2f605b4d205a4661e3ce8dbe7d9d7e2eabc539b8da8a414d0171973325014028",
+   "match": true,
+   "json_restart": 0,
+   "build_restart": 0,
+   "json_heavy_frac": 0.3,
+   "nh_json": 6,
+   "n_edges": 12095,
+   "harness_cache": "2f605b4d205a4661e3ce8dbe7d9d7e2eabc539b8da8a414d0171973325014028",
+   "harness_matches_paperholo": true,
+   "harness_spec": [
+    1216,
+    10
+   ]
+  },
+  "r0313": {
+   "holo_reload": "416eaf089c5a8da1b26e1a05c65e77310aefc7cad306eda5bc65c98c82913dce",
+   "paperholo_build": "416eaf089c5a8da1b26e1a05c65e77310aefc7cad306eda5bc65c98c82913dce",
+   "match": true,
+   "json_restart": 0,
+   "build_restart": 0,
+   "json_heavy_frac": 0.3,
+   "nh_json": 6,
+   "n_edges": 12159,
+   "harness_cache": "416eaf089c5a8da1b26e1a05c65e77310aefc7cad306eda5bc65c98c82913dce",
+   "harness_matches_paperholo": true,
+   "harness_spec": [
+    1280,
+    10
+   ]
+  },
+  "r0391": {
+   "holo_reload": "aefccf45f36e3eeaa811d13b58781309a4fa06ce09d675044e85c477c89f1d39",
+   "paperholo_build": "aefccf45f36e3eeaa811d13b58781309a4fa06ce09d675044e85c477c89f1d39",
+   "match": true,
+   "json_restart": 0,
+   "build_restart": 0,
+   "json_heavy_frac": 0.3,
+   "nh_json": 8,
+   "n_edges": 13375,
+   "harness_cache": "aefccf45f36e3eeaa811d13b58781309a4fa06ce09d675044e85c477c89f1d39",
+   "harness_matches_paperholo": true,
+   "harness_spec": [
+    1600,
+    10
+   ]
+  },
+  "r0406": {
+   "holo_reload": "5b332f8da35a1bd7613f89fbd508bc336d9a2bc55da783f77295a58a526b2ef5",
+   "paperholo_build": "5b332f8da35a1bd7613f89fbd508bc336d9a2bc55da783f77295a58a526b2ef5",
+   "match": true,
+   "json_restart": 0,
+   "build_restart": 0,
+   "json_heavy_frac": 0.3,
+   "nh_json": 8,
+   "n_edges": 13439,
+   "harness_cache": "5b332f8da35a1bd7613f89fbd508bc336d9a2bc55da783f77295a58a526b2ef5",
+   "harness_matches_paperholo": true,
+   "harness_spec": [
+    1664,
+    10
+   ]
+  },
+  "r0469": {
+   "holo_reload": "416115e5c4682461bc1679a4f7fe5ffeb23ec3489d08378000e96a5ddc4cc6ec",
+   "paperholo_build": "416115e5c4682461bc1679a4f7fe5ffeb23ec3489d08378000e96a5ddc4cc6ec",
+   "match": true,
+   "json_restart": 0,
+   "build_restart": 0,
+   "json_heavy_frac": 0.3,
+   "nh_json": 9,
+   "n_edges": 14143,
+   "harness_cache": "416115e5c4682461bc1679a4f7fe5ffeb23ec3489d08378000e96a5ddc4cc6ec",
+   "harness_matches_paperholo": true,
+   "harness_spec": [
+    1920,
+    10
+   ]
+  },
+  "r0313-h14": {
+   "holo_reload": "2f921e338fdddbadfe372acff05033ae7b157a81881893e2470ec557f000c562",
+   "paperholo_build": "2f921e338fdddbadfe372acff05033ae7b157a81881893e2470ec557f000c562",
+   "match": true,
+   "json_restart": 0,
+   "build_restart": 0,
+   "json_heavy_frac": 0.3,
+   "nh_json": 6,
+   "n_edges": 13695,
+   "harness_cache": "2f921e338fdddbadfe372acff05033ae7b157a81881893e2470ec557f000c562",
+   "harness_matches_paperholo": true,
+   "harness_spec": [
+    1280,
+    14
+   ]
+  },
+  "r0313-f50": {
+   "holo_reload": "e2ecee2864b74b020175b9603cd57160d6a16bfeaaed9bdfea9de0a3ef8a4955",
+   "paperholo_build": "e2ecee2864b74b020175b9603cd57160d6a16bfeaaed9bdfea9de0a3ef8a4955",
+   "match": true,
+   "json_restart": 0,
+   "build_restart": 0,
+   "json_heavy_frac": 0.5,
+   "nh_json": 10,
+   "n_edges": 13951,
+   "harness_cache": "e2ecee2864b74b020175b9603cd57160d6a16bfeaaed9bdfea9de0a3ef8a4955",
+   "harness_matches_paperholo": true,
+   "harness_spec": [
+    1280,
+    10
+   ]
+  },
+  "r0391-h14": {
+   "holo_reload": "78948965dae9433671a05ed96f6352cd8734bd2134d33bc80ebefb2bb1489886",
+   "paperholo_build": "78948965dae9433671a05ed96f6352cd8734bd2134d33bc80ebefb2bb1489886",
+   "match": true,
+   "json_restart": 0,
+   "build_restart": 0,
+   "json_heavy_frac": 0.3,
+   "nh_json": 8,
+   "n_edges": 15423,
+   "harness_cache": "78948965dae9433671a05ed96f6352cd8734bd2134d33bc80ebefb2bb1489886",
+   "harness_matches_paperholo": true,
+   "harness_spec": [
+    1600,
+    14
+   ]
+  },
+  "r0391-f50": {
+   "holo_reload": "5bb18f5bc65971f8f5e2c81fb0bd14a175cc7f38fabb018dbb22f9158412c675",
+   "paperholo_build": "5bb18f5bc65971f8f5e2c81fb0bd14a175cc7f38fabb018dbb22f9158412c675",
+   "match": true,
+   "json_restart": 0,
+   "build_restart": 0,
+   "json_heavy_frac": 0.5,
+   "nh_json": 12,
+   "n_edges": 15167,
+   "harness_cache": "5bb18f5bc65971f8f5e2c81fb0bd14a175cc7f38fabb018dbb22f9158412c675",
+   "harness_matches_paperholo": true,
+   "harness_spec": [
+    1600,
+    10
+   ]
+  },
+  "r0547": {
+   "holo_pkg": "4cf6774a8fd3ed6d16878880f89778de172a6e3ed749e6f444537e726f4c9371",
+   "paperholo_build": "4cf6774a8fd3ed6d16878880f89778de172a6e3ed749e6f444537e726f4c9371",
+   "match": true,
+   "n_edges": 14911,
+   "harness_cache": "4cf6774a8fd3ed6d16878880f89778de172a6e3ed749e6f444537e726f4c9371",
+   "harness_matches_paperholo": true,
+   "harness_spec": [
+    2240,
+    10
+   ]
+  },
+  "r0550": {
+   "holo_pkg": "54c72b395776dd1aba2c65dfa49b1e3b9f7e4010266c477a6079b1d214ef477e",
+   "paperholo_build": "54c72b395776dd1aba2c65dfa49b1e3b9f7e4010266c477a6079b1d214ef477e",
+   "match": true,
+   "n_edges": 14911,
+   "harness_cache": "54c72b395776dd1aba2c65dfa49b1e3b9f7e4010266c477a6079b1d214ef477e",
+   "harness_matches_paperholo": true,
+   "harness_spec": [
+    2240,
+    10
+   ]
+  },
+  "r0625": {
+   "holo_pkg": "e98e65155f4e625f185fc202060d2bba4b6f23b70ad3786990ff77c0f059fb71",
+   "paperholo_build": "e98e65155f4e625f185fc202060d2bba4b6f23b70ad3786990ff77c0f059fb71",
+   "match": true,
+   "n_edges": 16127,
+   "harness_cache": "e98e65155f4e625f185fc202060d2bba4b6f23b70ad3786990ff77c0f059fb71",
+   "harness_matches_paperholo": true,
+   "harness_spec": [
+    2560,
+    10
+   ]
+  },
+  "r0700": {
+   "holo_pkg": "b1ef32ed91a17b6d74a20c3f0a415889aa1b0bae767b6c484bfee35b5c3e5913",
+   "paperholo_build": "b1ef32ed91a17b6d74a20c3f0a415889aa1b0bae767b6c484bfee35b5c3e5913",
+   "match": true,
+   "n_edges": 17343,
+   "harness_cache": "b1ef32ed91a17b6d74a20c3f0a415889aa1b0bae767b6c484bfee35b5c3e5913",
+   "harness_matches_paperholo": true,
+   "harness_spec": [
+    2880,
+    10
+   ]
+  },
+  "r0775": {
+   "holo_pkg": "8b0ec36d6bcad660056020e25bc196aac749c7374ccbd576919369407eff0712",
+   "paperholo_build": "8b0ec36d6bcad660056020e25bc196aac749c7374ccbd576919369407eff0712",
+   "match": true,
+   "n_edges": 16191,
+   "harness_cache": "8b0ec36d6bcad660056020e25bc196aac749c7374ccbd576919369407eff0712",
+   "harness_matches_paperholo": true,
+   "harness_spec": [
+    3200,
+    8
+   ]
+  },
+  "r0850": {
+   "holo_pkg": "4be74ca98de10596d556d756914eaa45538fd22a78b5fee8d128dbcb22da33c7",
+   "paperholo_build": "4be74ca98de10596d556d756914eaa45538fd22a78b5fee8d128dbcb22da33c7",
+   "match": true,
+   "n_edges": 14783,
+   "harness_cache": "4be74ca98de10596d556d756914eaa45538fd22a78b5fee8d128dbcb22da33c7",
+   "harness_matches_paperholo": true,
+   "harness_spec": [
+    3520,
+    6
+   ]
+  }
+ },
+ "structure": {
+  "r0313": {
+   "n_chk_no_info_edge_mine": 320,
+   "harness": 320,
+   "chk_deg_mean_mine": 4.317826704545454,
+   "harness_mean": 4.317826704545454,
+   "w2_at_argmin_mine": 12,
+   "harness_min_w2": 12,
+   "min_w1_mine": 58,
+   "harness_min_w1": 58
+  },
+  "r0550": {
+   "n_chk_no_info_edge_mine": 0,
+   "harness": 0,
+   "chk_deg_mean_mine": 8.033943965517242,
+   "harness_mean": 8.033943965517242,
+   "w2_at_argmin_mine": 6,
+   "harness_min_w2": 6,
+   "min_w1_mine": 47,
+   "harness_min_w1": 47
+  },
+  "r0547": {
+   "n_chk_no_info_edge_mine": 0,
+   "harness": 0,
+   "chk_deg_mean_mine": 8.033943965517242,
+   "harness_mean": 8.033943965517242,
+   "w2_at_argmin_mine": 12,
+   "harness_min_w2": 12,
+   "min_w1_mine": 49,
+   "harness_min_w1": 49
+  },
+  "r0250": {
+   "n_chk_no_info_edge_mine": 256,
+   "harness": 256,
+   "chk_deg_mean_mine": 3.7288411458333335,
+   "harness_mean": 3.7288411458333335,
+   "w2_at_argmin_mine": 20,
+   "harness_min_w2": 20,
+   "min_w1_mine": 75,
+   "harness_min_w1": 75
+  }
+ }
+}

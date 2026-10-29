@@ -48,14 +48,19 @@ Bars asserted:
       keeps of single-sid (word) pieces in later rounds;
   (g) monotone (no certified regression) + fixed point within the
       <= 3 round cap.
+
+The word-path fixture is SLOW-LANE (2026-09-05): standalone runs need
+HOLO_RUN_SLOW_TESTS=1 env/bin/python tests/test_repass_v11.py
 """
 import importlib.util
+import os
 import pickle
 import sys
 import tempfile
 from pathlib import Path
 
 import numpy as np
+import pytest
 from scipy import ndimage
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -148,6 +153,10 @@ _CACHE: dict = {}
 
 
 def _fixture():
+    # 2026-09-05: slow lane — 15.7 s fixture + ~57 s of repass rounds.
+    if os.environ.get("HOLO_RUN_SLOW_TESTS") != "1":
+        pytest.skip("set HOLO_RUN_SLOW_TESTS=1 for the e018 repass "
+                    "word-path fixture")
     if not _CACHE:
         canvas = sa._canvas([_render_piece()])
         canvas_u8 = np.clip(np.round(canvas), 0, 255).astype(np.uint8)
@@ -217,6 +226,54 @@ def test_readd_trimmed_preserves_quality():
         raise AssertionError("keep sid collision not caught")
     except ValueError:
         pass
+
+
+def test_resume_round_numbers_past_surviving_sids():
+    """018.8 MAJOR: a second invocation numbers its rounds past any
+    surviving repassN/ sid — a fresh counter re-derives the same emission
+    sids and add_placed_fragment raises mid-round, wedging the state.
+    (The live-state exercise is the slow lane's; this is the rule.)
+    2026-09-05: the resume RULE stays in the default lane; the
+    live-state run is slow-lane."""
+    assert rp.resume_round(["x.png/p0", "x.png/p0/w1"]) == 0
+    assert rp.resume_round(["x.png/p0", "repass1/x.png/p0/w0",
+                            "repass1/keep/x.png/p0"]) == 1
+    assert rp.resume_round(["repass2/keep/repass1/keep/x.png/p0",
+                            "repass1/x.png/p0/w0"]) == 2   # keep-of-keep
+
+
+def test_stakeless_word_piece_skipped_synthetic(tmp_path):
+    """The stakeless-skip branch (018.8 review: executed by NO test) on a
+    hand-built state — failed tiles EXIST on the page but none under the
+    word piece, so the skip must fire before any re-placement. The
+    word-path fixture proves the same branch on real evidence in the slow
+    lane; this keeps the branch executed in the default lane for 0.2 s.
+    2026-09-05: synthetic stand-in — the real word-observation run is
+    slow-lane."""
+    from PIL import Image
+    img = np.full((1200, 1200), 20.0, np.float32)
+    img[200:1000, 200:1000] = np.random.default_rng(0).normal(
+        200, 20, (800, 800))
+    png = tmp_path / "synth.png"
+    Image.fromarray(np.clip(img, 0, 255).astype(np.uint8)).save(png)
+    pds = tilemap.PageDecodeState(sd.spec, sd.SEED, page=0)
+    obs = tilemap.ScanObservation(
+        scan_id=f"{png.name}/p0",
+        payload_cell_index=np.arange(10, dtype=np.int64),
+        payload_llr=np.linspace(-3.0, 3.0, 10), tile_words={(0, 0): 2},
+        n_windows=4, meta={"placement_source": "pilot_words"})
+    pds.scans[obs.scan_id] = obs
+    for key in list(pds.tiles)[-4:]:
+        pds.tiles[key].status = "failed"      # stake elsewhere, not here
+    fc = rp.failed_cell_bool(pds, compose.payload_index_map(pds.spec,
+                                                            pds.seed))
+    assert fc.any() and not fc[obs.payload_cell_index].any()
+    scan_ids = set(pds.scans)
+    stats = rp.repass_round(pds, set(), [png], DPI, 1, ERODE, POLICY)
+    assert stats["stakeless_skipped"] == 1, stats
+    assert stats["refit_pieces"] == 0 and stats["word_pieces"] == 0, stats
+    assert stats["superseded_obs"] == 0, stats
+    assert set(pds.scans) == scan_ids, "stakeless skip churned the state"
 
 
 def test_repass_v11_word_path_machinery():
@@ -369,6 +426,11 @@ if __name__ == "__main__":
     print("PASS matcher (gotcha iii)")
     test_readd_trimmed_preserves_quality()
     print("PASS trim re-add quality (gotcha ii)")
+    test_resume_round_numbers_past_surviving_sids()
+    print("PASS resume-round numbering rule")
+    with tempfile.TemporaryDirectory() as _d:
+        test_stakeless_word_piece_skipped_synthetic(Path(_d))
+    print("PASS stakeless-skip branch (synthetic)")
     test_repass_v11_word_path_machinery()
     print("PASS v1.1-a word-path machinery bars (a)-(g)")
     test_repass_v11_reinvocation_resumes_rounds()

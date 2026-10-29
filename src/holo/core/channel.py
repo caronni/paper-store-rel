@@ -1,4 +1,4 @@
-"""Pure provisional CMY7 and CMY8 channel mappings.
+"""Pure provisional CMY7, CMY8 and CMY channel mappings.
 
 This module owns only the small, format-defining mapping between binary
 channel bits and physical CMY state IDs.  It deliberately does not own FEC,
@@ -19,6 +19,9 @@ Frozen conventions
 * LLRs use the Holo convention ``log P(bit=1) - log P(bit=0)``.
 * CMY7 v0 converts an eleven-bit, MSB-first integer to four
   most-significant-first radix-7 digits.  Digits are state IDs 0..6.
+* CMY labels a cell by two bits, ``hi`` = [state in {C, M}] and
+  ``lo`` = [state in {C, Y}]: label index ``(hi << 1) | lo`` 0..3 is
+  W, Y, M, C (presence IDs 0, 4, 2, 1; cyan is white's antipode).
 
 The soft demappers sum over every legal state candidate with log-sum-exp.
 They never hard-classify a cell and never admit CMY7's 353 unused tuples.
@@ -180,6 +183,80 @@ def cmy8_raw_marginal_llrs(
         )
         out[..., plane] = one - zero
     return out
+
+
+CMY_STATE_IDS: tuple[int, ...] = (0, 1, 2, 4)
+CMY_LABEL_STREAMS: tuple[str, ...] = ("hi", "lo")
+CMY_LABEL_TO_STATE: tuple[int, ...] = (0, 4, 2, 1)
+
+_CMY_LABEL_TABLE = np.asarray(CMY_LABEL_TO_STATE, dtype=np.uint8)
+_CMY_LABEL_TABLE.setflags(write=False)
+_CMY_STATE_TO_LABEL = np.full(8, -1, dtype=np.int8)
+_CMY_STATE_TO_LABEL[_CMY_LABEL_TABLE] = np.arange(4, dtype=np.int8)
+_CMY_STATE_TO_LABEL.setflags(write=False)
+
+
+def _label_bits(values: np.ndarray, name: str) -> np.ndarray:
+    a = np.asarray(values)
+    if a.dtype.kind not in "buif" or not np.isfinite(a).all() \
+            or not np.isin(a, (0, 1)).all():
+        raise ValueError(f"{name} must contain only finite 0/1 values")
+    return a.astype(np.uint8, copy=False)
+
+
+def cmy_label_states(hi: np.ndarray, lo: np.ndarray) -> np.ndarray:
+    """CMY label bits -> presence state IDs through the frozen table."""
+    h = _label_bits(hi, "hi")
+    lo_bits = _label_bits(lo, "lo")
+    if h.shape != lo_bits.shape:
+        raise ValueError(
+            f"hi and lo must share a shape, got {h.shape} and "
+            f"{lo_bits.shape}")
+    return _CMY_LABEL_TABLE[(h << 1) | lo_bits]
+
+
+def cmy_state_labels(states: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    """Presence state IDs -> CMY ``(hi, lo)`` label bits.
+
+    Every state outside the four-state alphabet (CM, CY, MY, CMY) is
+    refused.
+    """
+    s = _states(states, int(CMYState.CMY), "states")
+    index = _CMY_STATE_TO_LABEL[s]
+    if np.any(index < 0):
+        raise ValueError("states outside the cmy alphabet {W, C, M, Y}")
+    return ((index >> 1) & 1).astype(np.uint8), (index & 1).astype(np.uint8)
+
+
+def cmy_soft_demap(scores: np.ndarray, stream: int,
+                   sibling_label_bits: np.ndarray | None = None,
+                   ) -> np.ndarray:
+    """One CMY stream's label-bit LLRs from ``(..., 3)`` state scores.
+
+    The score columns are states C, M, Y (IDs 1, 2, 4) relative to the
+    implicit zero of W.  ``stream`` is the stream index, 0 for ``hi`` and
+    1 for ``lo``.  Without ``sibling_label_bits`` the result is the
+    stream's exact marginal; with the other stream's ``(...)`` label bits
+    it is the conditional given them.  These are LABEL-bit LLRs: a
+    codeword bit's LLR flips sign where the stream's dither is 1.
+    """
+    rel = _relative_scores(scores, 3, (3,), "scores")
+    if isinstance(stream, bool) or stream not in (0, 1):
+        raise ValueError("stream must be 0 (hi) or 1 (lo)")
+    s_c, s_m, s_y = rel[..., 0], rel[..., 1], rel[..., 2]
+    zero = np.zeros_like(s_c)
+    if sibling_label_bits is None:
+        if stream == 0:
+            return np.logaddexp(s_c, s_m) - np.logaddexp(zero, s_y)
+        return np.logaddexp(s_c, s_y) - np.logaddexp(zero, s_m)
+    sibling = _label_bits(sibling_label_bits, "sibling_label_bits")
+    if sibling.shape != s_c.shape:
+        raise ValueError(
+            f"sibling_label_bits must have shape {s_c.shape}, "
+            f"got {sibling.shape}")
+    if stream == 0:
+        return np.where(sibling == 1, s_c - s_y, s_m)
+    return np.where(sibling == 1, s_c - s_m, s_y)
 
 
 def cmy7_map(bits: np.ndarray) -> np.ndarray:

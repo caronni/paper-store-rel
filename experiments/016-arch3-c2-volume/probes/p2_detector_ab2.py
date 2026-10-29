@@ -30,7 +30,7 @@ Pre-registered metrics: admissions (gap gate), 0 wrong placements
 per arm, full-mask GT-BER (continuity), angle moved by refinement.
 
 Usage (from experiments/016-arch3-c2-volume/):
-  ../../env/bin/python probes/p2_detector_ab2.py [--limit N]
+  ../../env/bin/python probes/p2_detector_ab2.py --fixture <confetti_session_white> [--limit N]
       [--out build/p2_detector_ab2.json]
 """
 from __future__ import annotations
@@ -176,8 +176,7 @@ def resample_at(glass, gmask, backing, ang, dyf, dxf, p, n_sub=3):
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--fixture", type=Path,
-                    default=ROOT / "scratch/confetti_session_white")
+    ap.add_argument("--fixture", type=Path, required=True)
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--out", type=Path,
                     default=Path(__file__).resolve().parents[1]

@@ -2,9 +2,9 @@
 
 Three engines, one workload:
 
-* ``cpu1``  — ``holo3.lib.ldpc.decode``, one tile at a time, one thread.
+* ``cpu1``  — ``holo.receiver.lib.ldpc.decode``, one tile at a time, one thread.
 * ``cpu8``  — the same call under a thread pool.  Meaningful only on the
-  free-threaded interpreter (``env314t``); the script records which one
+  free-threaded interpreter (``env/``, the free-threading build); the script records which one
   it is running on so a GIL-bound number is never mistaken for a
   parallel one.
 * ``gpu``   — ``bp_mlx.decode_batch`` at a batch size sweep.
@@ -45,7 +45,7 @@ from pathlib import Path
 
 import numpy as np
 
-from holo3.lib import ldpc
+from holo.receiver.lib import ldpc
 
 SEED = 20260831
 ALPHA = 0.8

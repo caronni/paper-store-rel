@@ -21,6 +21,11 @@ from PIL import Image
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 EXP = ROOT / "experiments" / "018b-payload-sheet"
+
+# 2026-09-06: every test here reads a build that a test regenerates in place;
+# test_e016.py writes the same directory.  One xdist worker per build directory
+# (pyproject: --dist loadgroup).
+pytestmark = pytest.mark.xdist_group("build-016-018")
 sys.path.insert(0, str(EXP))
 
 from paperholo import formats, fountain, ldpc  # noqa: E402

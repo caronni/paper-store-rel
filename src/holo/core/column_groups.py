@@ -5,7 +5,7 @@ The pooled fountain (fountain.py) is GF(2)-column-separable, so its one
 symbol width S can be cut into Z column groups and a narrower stream's
 tile can carry a subset of them. This module is the LAW: the rational
 partition, the ruled choice of Z, what each stream carries, and the
-record of what one tile holds (``TileSlots``). holo3/format/fountain.py
+record of what one tile holds (``TileSlots``). src/holo/receiver/format/fountain.py
 carries the same law and slot map in holo3's docstring-free style
 (without the planner-only ceilings), and holo3's tests pin its law table
 and slot map against this module.

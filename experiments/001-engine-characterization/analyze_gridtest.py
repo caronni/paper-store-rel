@@ -4,7 +4,7 @@ registration -> patch metrics -> encode-patch BER via the scanlab decoder,
 v3 (dense poly2 warp) vs v4 (stepped warp + blind soft output) side by side.
 
 Usage:
-    python analyze_gridtest.py ../../scans/test-scan-gridtest-direct.png
+    python analyze_gridtest.py <evidence>/scans/test-scan-gridtest-direct.png
 Outputs a metrics report to stdout and, per encode patch, error maps /
 overlays (v3 + v4), a y-residual-profile plot, and a v4 metrics JSON to
 build/analysis-<scan-stem>/.
@@ -207,4 +207,6 @@ def main(scan_path: Path) -> None:
 
 
 if __name__ == "__main__":
-    main(Path(sys.argv[1]) if len(sys.argv) > 1 else HERE / "../../scans/test-scan-gridtest-direct.png")
+    if len(sys.argv) != 2:
+        sys.exit(__doc__)
+    main(Path(sys.argv[1]))

@@ -30,10 +30,12 @@ Runs under pytest, or standalone: env/bin/python tests/test_color_receiver.py
 """
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path
 
 import numpy as np
+import pytest
 from scipy import ndimage
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
@@ -41,6 +43,13 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from paperholo import acquire, compose, dust, formats, fountain, ldpc, \
     pilots, scannorm, tilemap  # noqa: E402
 from paperholo.modulation import rng  # noqa: E402
+
+# 2026-09-05: slow-lane gate (the tests/test_e025.py convention). A MARK,
+# not an in-body skip: the module's standalone runner below calls every
+# test_* directly, and a mark is inert on a direct call.
+_SLOW = pytest.mark.skipif(
+    os.environ.get("HOLO_RUN_SLOW_TESTS") != "1",
+    reason="set HOLO_RUN_SLOW_TESTS=1 for the K-registry hypothesis sweep")
 
 SEED = b"paper-store/test-color-receiver"
 DUST = dust.DustLayout(sites_per_tile=24, pure_quota=3)
@@ -315,7 +324,12 @@ def test_color_acquire_guards() -> None:
     except ValueError:
         pass
     # grey scan of a color page: addresses fine, payload pending
-    crop = np.ascontiguousarray(luma[300:1200, 300:1200])
+    # 2026-09-05: 600 px (100 cells), was 900 — every assertion here is a
+    # boolean guard and all of them hold on the smaller crop (measured:
+    # 2.3 + 12.2 s at 900 px, 1.3 + 2.5 s at 600). Do not go lower: blind
+    # identification stops working below 600 px on this page, and this is
+    # the default lane's only acquire-level wrong-seed reject.
+    crop = np.ascontiguousarray(luma[300:900, 300:900])
     res = acquire.acquire_and_decode(crop, spec, SEED)
     assert res.ok
     assert res.diagnostics.get("color_payload_pending") is True
@@ -482,6 +496,11 @@ def test_acquire_scan_color_crop() -> None:
         assert ber < 0.01, f"level {lv} BER {ber:.4f}"
 
 
+# 2026-09-05: 34 s — one blind acquire_scan pass per K hypothesis. Moved to
+# the slow lane (the pin survives there; the default lane keeps
+# test_acquire_scan_color_crop on the identical crop), and deduped on the
+# way so even the slow lane pays 14 s.
+@_SLOW
 def test_acquire_scan_color_vs_k_registry_same_seed() -> None:
     """The reverse D7 direction at acquire level: a COLOR page offered the
     full K-format registry (reshaped, SAME seed) must reject every K-row
@@ -490,10 +509,20 @@ def test_acquire_scan_color_vs_k_registry_same_seed() -> None:
     test_scannorm_formats' registry-wide candidates.)"""
     spec, fd, vspec, data, rgb_u8, cp = _coded_volume()
     crop = np.ascontiguousarray(rgb_u8[313:1213, 401:1301])
+    # 2026-09-05: one row per (layout_version, encoding_id). The reshape
+    # below passes nothing else that distinguishes the rows (same SEED,
+    # geometry, plane, dust=None), so rows sharing that pair are
+    # byte-identical hypotheses; the registry's 7 dustless rows collapse to
+    # 3 (measured 34.5 -> 14.4 s, same verdict, same out.tried ids). Read
+    # from the registry, so a new K coding is still hypothesis-tested.
+    seen: dict = {}
+    for f in formats.FORMAT_REGISTRY:
+        if f.dust is None:
+            seen.setdefault((f.layout_version, f.encoding_id), f)
     k_rows = [formats.FormatDescriptor(f.format_id, SEED, f.layout_version,
                                        f.encoding_id, (240, 240), f.plane,
                                        dust=f.dust)
-              for f in formats.FORMAT_REGISTRY if f.dust is None]
+              for f in seen.values()]
     # K rows FIRST: their plane group is hypothesis-tested before the v4
     # row can win, so every reject is observable in out.tried
     out = formats.acquire_scan(crop, candidates=k_rows + [fd])
@@ -516,7 +545,7 @@ def test_page_decode_coded_volume_byte_exact() -> None:
     assert ident.ok, ident.tried
     assert ident.fmt.format_id == "test-v4-cmy8"
     assert ident.diagnostics["n_windows_ok"] >= 1
-    counts = state.decode_tiles(RATES)
+    state.decode_tiles(RATES)
     # every INTERIOR (fountain-bearing) tile must certify on all 3 levels;
     # page-edge tiles may lose boundary rows to the coverage trim
     interior = set(fountain.interior_tiles(spec))

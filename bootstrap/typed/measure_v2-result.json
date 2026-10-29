@@ -1,0 +1,765 @@
+{
+ "micro": {
+  "base (bytes, divmod, low 0, h%q, untagged, T8)": {
+   "typed": 3024,
+   "a.py chars": 822,
+   "a.py lines": 28,
+   "data chars": 2202,
+   "data lines": 35,
+   "glyphs": 2062,
+   "x bits": 10308,
+   "decode s": 1.99
+  },
+  "decode lines as drafted (s=sum(p); x%s twice; low 1; (not y))": {
+   "typed": 3029,
+   "a.py chars": 830,
+   "a.py lines": 29,
+   "data chars": 2199,
+   "data lines": 35,
+   "glyphs": 2059,
+   "x bits": 10291,
+   "decode s": 2.1
+  },
+  "x%s once, s=sum(p) line": {
+   "typed": 3021,
+   "a.py chars": 821,
+   "a.py lines": 29,
+   "data chars": 2200,
+   "data lines": 35,
+   "glyphs": 2060,
+   "x bits": 10299,
+   "decode s": 2.04
+  },
+  "low 1 with divmod: y=o<p[1], -p[1]*(y<1)": {
+   "typed": 3027,
+   "a.py chars": 825,
+   "a.py lines": 28,
+   "data chars": 2202,
+   "data lines": 35,
+   "glyphs": 2062,
+   "x bits": 10310,
+   "decode s": 2.02
+  },
+  "masks: 256**q-1 and h&q": {
+   "typed": 3028,
+   "a.py chars": 824,
+   "a.py lines": 28,
+   "data chars": 2204,
+   "data lines": 35,
+   "glyphs": 2064,
+   "x bits": 10316,
+   "decode s": 0.3
+  },
+  "tagged key (h%q+q,u)": {
+   "typed": 3027,
+   "a.py chars": 824,
+   "a.py lines": 28,
+   "data chars": 2203,
+   "data lines": 35,
+   "glyphs": 2063,
+   "x bits": 10313,
+   "decode s": 1.99
+  },
+  "k: four explicit terms": {
+   "typed": 3034,
+   "a.py chars": 827,
+   "a.py lines": 28,
+   "data chars": 2207,
+   "data lines": 35,
+   "glyphs": 2067,
+   "x bits": 10331,
+   "decode s": 1.96
+  },
+  "shared e='big' (d uses e; the reader spells e)": {
+   "typed": 3027,
+   "a.py chars": 826,
+   "a.py lines": 28,
+   "data chars": 2201,
+   "data lines": 35,
+   "glyphs": 2061,
+   "x bits": 10303,
+   "decode s": 2.04
+  },
+  "str lines with ord(), text-mode write": {
+   "typed": 3035,
+   "a.py chars": 826,
+   "a.py lines": 28,
+   "data chars": 2209,
+   "data lines": 35,
+   "glyphs": 2069,
+   "x bits": 10341,
+   "decode s": 1.6
+  },
+  "u=1 merged: m,t,h,u=...,1 and h=...;u=1": {
+   "typed": 3027,
+   "a.py chars": 825,
+   "a.py lines": 27,
+   "data chars": 2202,
+   "data lines": 35,
+   "glyphs": 2062,
+   "x bits": 10309,
+   "decode s": 1.24
+  },
+  "bounded h (last 12 bytes) + an output buffer b": {
+   "typed": 3036,
+   "a.py chars": 834,
+   "a.py lines": 28,
+   "data chars": 2202,
+   "data lines": 35,
+   "glyphs": 2062,
+   "x bits": 10308,
+   "decode s": 0.23
+  }
+ },
+ "wall s (last run)": 56.3,
+ "orders": {
+  "(0, 1, 2, 3, 4, 6)": {
+   "typed": 3016,
+   "a.py chars": 817,
+   "a.py lines": 28,
+   "data chars": 2199,
+   "data lines": 35,
+   "glyphs": 2059,
+   "x bits": 10295,
+   "decode s": 1.1,
+   "page bytes": 7256
+  },
+  "(0, 1, 2, 3, 4, 6) tagged": {
+   "typed": 3018,
+   "a.py chars": 819,
+   "a.py lines": 28,
+   "data chars": 2199,
+   "data lines": 35,
+   "glyphs": 2059,
+   "x bits": 10295,
+   "decode s": 1.13,
+   "page bytes": 7256
+  },
+  "(0, 1, 2, 3, 4, 6, 8, 12)": {
+   "typed": 3024,
+   "a.py chars": 822,
+   "a.py lines": 28,
+   "data chars": 2202,
+   "data lines": 35,
+   "glyphs": 2062,
+   "x bits": 10308,
+   "decode s": 1.79,
+   "page bytes": 5452
+  },
+  "(0, 1, 2, 3, 4, 6, 8, 12) tagged": {
+   "typed": 3027,
+   "a.py chars": 824,
+   "a.py lines": 28,
+   "data chars": 2203,
+   "data lines": 35,
+   "glyphs": 2063,
+   "x bits": 10313,
+   "decode s": 1.88,
+   "page bytes": 5452
+  },
+  "(0, 1, 2, 3, 4, 6, 8)": {
+   "typed": 3021,
+   "a.py chars": 819,
+   "a.py lines": 28,
+   "data chars": 2202,
+   "data lines": 35,
+   "glyphs": 2062,
+   "x bits": 10306,
+   "decode s": 1.49,
+   "page bytes": 6262
+  },
+  "(0, 1, 2, 3, 4, 6, 8) tagged": {
+   "typed": 3023,
+   "a.py chars": 821,
+   "a.py lines": 28,
+   "data chars": 2202,
+   "data lines": 35,
+   "glyphs": 2062,
+   "x bits": 10309,
+   "decode s": 1.4,
+   "page bytes": 6263
+  },
+  "(0, 1, 2, 3, 4, 6, 12)": {
+   "typed": 3019,
+   "a.py chars": 820,
+   "a.py lines": 28,
+   "data chars": 2199,
+   "data lines": 35,
+   "glyphs": 2059,
+   "x bits": 10293,
+   "decode s": 1.6,
+   "page bytes": 6140
+  },
+  "(0, 1, 2, 3, 4, 6, 12) tagged": {
+   "typed": 3022,
+   "a.py chars": 822,
+   "a.py lines": 28,
+   "data chars": 2200,
+   "data lines": 35,
+   "glyphs": 2060,
+   "x bits": 10296,
+   "decode s": 1.61,
+   "page bytes": 6140
+  },
+  "(0, 1, 2, 3, 4, 5, 6, 8, 12)": {
+   "typed": 3038,
+   "a.py chars": 824,
+   "a.py lines": 28,
+   "data chars": 2214,
+   "data lines": 35,
+   "glyphs": 2074,
+   "x bits": 10369,
+   "decode s": 1.86,
+   "page bytes": 5188
+  },
+  "(0, 1, 2, 3, 4, 5, 6, 8, 12) tagged": {
+   "typed": 3040,
+   "a.py chars": 826,
+   "a.py lines": 28,
+   "data chars": 2214,
+   "data lines": 35,
+   "glyphs": 2074,
+   "x bits": 10368,
+   "decode s": 1.85,
+   "page bytes": 5188
+  },
+  "(0, 1, 2, 3, 4, 6, 8, 12, 16)": {
+   "typed": 3027,
+   "a.py chars": 825,
+   "a.py lines": 28,
+   "data chars": 2202,
+   "data lines": 35,
+   "glyphs": 2062,
+   "x bits": 10310,
+   "decode s": 1.94,
+   "page bytes": 4855
+  },
+  "(0, 1, 2, 3, 4, 6, 8, 12, 16) tagged": {
+   "typed": 3030,
+   "a.py chars": 827,
+   "a.py lines": 28,
+   "data chars": 2203,
+   "data lines": 35,
+   "glyphs": 2063,
+   "x bits": 10312,
+   "decode s": 1.96,
+   "page bytes": 4855
+  },
+  "(0, 1, 2, 3, 4, 6, 8, 16)": {
+   "typed": 3022,
+   "a.py chars": 822,
+   "a.py lines": 28,
+   "data chars": 2200,
+   "data lines": 35,
+   "glyphs": 2060,
+   "x bits": 10296,
+   "decode s": 1.56,
+   "page bytes": 5395
+  },
+  "(0, 1, 2, 3, 4, 6, 8, 16) tagged": {
+   "typed": 3025,
+   "a.py chars": 824,
+   "a.py lines": 28,
+   "data chars": 2201,
+   "data lines": 35,
+   "glyphs": 2061,
+   "x bits": 10301,
+   "decode s": 1.67,
+   "page bytes": 5396
+  },
+  "(1, 2, 3, 4, 6, 8, 12)": {
+   "typed": 3139,
+   "a.py chars": 820,
+   "a.py lines": 28,
+   "data chars": 2319,
+   "data lines": 37,
+   "glyphs": 2171,
+   "x bits": 10852,
+   "decode s": 1.44,
+   "page bytes": 5451
+  },
+  "(1, 2, 3, 4, 6, 8, 12) tagged": {
+   "typed": 3141,
+   "a.py chars": 822,
+   "a.py lines": 28,
+   "data chars": 2319,
+   "data lines": 37,
+   "glyphs": 2171,
+   "x bits": 10852,
+   "decode s": 1.52,
+   "page bytes": 5452
+  },
+  "(0, 1, 2, 3, 5, 8, 12)": {
+   "typed": 3026,
+   "a.py chars": 820,
+   "a.py lines": 28,
+   "data chars": 2206,
+   "data lines": 35,
+   "glyphs": 2066,
+   "x bits": 10329,
+   "decode s": 1.49,
+   "page bytes": 5929
+  },
+  "(0, 1, 2, 3, 5, 8, 12) tagged": {
+   "typed": 3029,
+   "a.py chars": 822,
+   "a.py lines": 28,
+   "data chars": 2207,
+   "data lines": 35,
+   "glyphs": 2067,
+   "x bits": 10332,
+   "decode s": 1.53,
+   "page bytes": 5929
+  },
+  "(0, 1, 2, 3, 4, 6, 9, 12)": {
+   "typed": 3025,
+   "a.py chars": 822,
+   "a.py lines": 28,
+   "data chars": 2203,
+   "data lines": 35,
+   "glyphs": 2063,
+   "x bits": 10311,
+   "decode s": 1.76,
+   "page bytes": 5427
+  },
+  "(0, 1, 2, 3, 4, 6, 9, 12) tagged": {
+   "typed": 3028,
+   "a.py chars": 824,
+   "a.py lines": 28,
+   "data chars": 2204,
+   "data lines": 35,
+   "glyphs": 2064,
+   "x bits": 10316,
+   "decode s": 1.96,
+   "page bytes": 5427
+  },
+  "(0, 1, 2, 3, 4, 5, 6, 7, 8, 12)": {
+   "typed": 3053,
+   "a.py chars": 826,
+   "a.py lines": 28,
+   "data chars": 2227,
+   "data lines": 35,
+   "glyphs": 2087,
+   "x bits": 10433,
+   "decode s": 2.22,
+   "page bytes": 4973
+  },
+  "(0, 1, 2, 3, 4, 5, 6, 7, 8, 12) tagged": {
+   "typed": 3055,
+   "a.py chars": 828,
+   "a.py lines": 28,
+   "data chars": 2227,
+   "data lines": 35,
+   "glyphs": 2087,
+   "x bits": 10435,
+   "decode s": 2.34,
+   "page bytes": 4973
+  },
+  "(0, 1, 2, 3, 4, 6, 8, 11)": {
+   "typed": 3025,
+   "a.py chars": 822,
+   "a.py lines": 28,
+   "data chars": 2203,
+   "data lines": 35,
+   "glyphs": 2063,
+   "x bits": 10313,
+   "decode s": 1.75,
+   "page bytes": 5485
+  },
+  "(0, 1, 2, 3, 4, 6, 8, 11) tagged": {
+   "typed": 3028,
+   "a.py chars": 824,
+   "a.py lines": 28,
+   "data chars": 2204,
+   "data lines": 35,
+   "glyphs": 2064,
+   "x bits": 10318,
+   "decode s": 1.71,
+   "page bytes": 5485
+  },
+  "(0, 1, 2, 3, 4, 6, 8, 12, 16, 24)": {
+   "typed": 3031,
+   "a.py chars": 828,
+   "a.py lines": 28,
+   "data chars": 2203,
+   "data lines": 35,
+   "glyphs": 2063,
+   "x bits": 10315,
+   "decode s": 2.74,
+   "page bytes": 4419
+  },
+  "(0, 1, 2, 3, 4, 6, 8, 12, 16, 20)": {
+   "typed": 3032,
+   "a.py chars": 828,
+   "a.py lines": 28,
+   "data chars": 2204,
+   "data lines": 35,
+   "glyphs": 2064,
+   "x bits": 10316,
+   "decode s": 2.48,
+   "page bytes": 4440
+  },
+  "(0, 1, 2, 3, 4, 6, 8, 12, 16, 32)": {
+   "typed": 3032,
+   "a.py chars": 828,
+   "a.py lines": 28,
+   "data chars": 2204,
+   "data lines": 35,
+   "glyphs": 2064,
+   "x bits": 10316,
+   "decode s": 2.73,
+   "page bytes": 4409
+  },
+  "(0, 1, 2, 3, 4, 6, 12, 16)": {
+   "typed": 3023,
+   "a.py chars": 823,
+   "a.py lines": 28,
+   "data chars": 2200,
+   "data lines": 35,
+   "glyphs": 2060,
+   "x bits": 10298,
+   "decode s": 1.8,
+   "page bytes": 5312
+  },
+  "(0, 1, 2, 3, 4, 6, 8, 16, 24)": {
+   "typed": 3025,
+   "a.py chars": 825,
+   "a.py lines": 28,
+   "data chars": 2200,
+   "data lines": 35,
+   "glyphs": 2060,
+   "x bits": 10298,
+   "decode s": 2.2,
+   "page bytes": 4768
+  },
+  "(0, 1, 2, 3, 4, 6, 8, 12, 20)": {
+   "typed": 3027,
+   "a.py chars": 825,
+   "a.py lines": 28,
+   "data chars": 2202,
+   "data lines": 35,
+   "glyphs": 2062,
+   "x bits": 10307,
+   "decode s": 2.13,
+   "page bytes": 4824
+  },
+  "(0, 1, 2, 3, 4, 6, 8, 12, 24)": {
+   "typed": 3027,
+   "a.py chars": 825,
+   "a.py lines": 28,
+   "data chars": 2202,
+   "data lines": 35,
+   "glyphs": 2062,
+   "x bits": 10306,
+   "decode s": 2.25,
+   "page bytes": 4808
+  },
+  "(0, 1, 2, 3, 4, 6, 10, 16)": {
+   "typed": 3025,
+   "a.py chars": 823,
+   "a.py lines": 28,
+   "data chars": 2202,
+   "data lines": 35,
+   "glyphs": 2062,
+   "x bits": 10308,
+   "decode s": 1.83,
+   "page bytes": 5346
+  },
+  "(0, 1, 2, 3, 4, 6, 8, 12, 16, 24, 32)": {
+   "typed": 3034,
+   "a.py chars": 831,
+   "a.py lines": 28,
+   "data chars": 2203,
+   "data lines": 35,
+   "glyphs": 2063,
+   "x bits": 10314,
+   "decode s": 3.52,
+   "page bytes": 4136
+  },
+  "(0, 1, 2, 3, 4, 6, 12, 24)": {
+   "typed": 3023,
+   "a.py chars": 823,
+   "a.py lines": 28,
+   "data chars": 2200,
+   "data lines": 35,
+   "glyphs": 2060,
+   "x bits": 10296,
+   "decode s": 2.06,
+   "page bytes": 5274
+  },
+  "(0, 1, 2, 3, 4, 6, 16)": {
+   "typed": 3018,
+   "a.py chars": 820,
+   "a.py lines": 28,
+   "data chars": 2198,
+   "data lines": 35,
+   "glyphs": 2058,
+   "x bits": 10286,
+   "decode s": 1.63,
+   "page bytes": 6105
+  },
+  "(0, 1, 2, 3, 4, 6, 8, 12, 18)": {
+   "typed": 3027,
+   "a.py chars": 825,
+   "a.py lines": 28,
+   "data chars": 2202,
+   "data lines": 35,
+   "glyphs": 2062,
+   "x bits": 10310,
+   "decode s": 2.19,
+   "page bytes": 4835
+  },
+  "(0, 1, 2, 3, 4, 6, 9, 16)": {
+   "typed": 3023,
+   "a.py chars": 822,
+   "a.py lines": 28,
+   "data chars": 2201,
+   "data lines": 35,
+   "glyphs": 2061,
+   "x bits": 10301,
+   "decode s": 1.58,
+   "page bytes": 5368
+  },
+  "(0, 1, 2, 3, 4, 6, 9, 12, 16)": {
+   "typed": 3028,
+   "a.py chars": 825,
+   "a.py lines": 28,
+   "data chars": 2203,
+   "data lines": 35,
+   "glyphs": 2063,
+   "x bits": 10313,
+   "decode s": 2.04,
+   "page bytes": 4837
+  },
+  "(0, 1, 2, 3, 4, 6, 8, 12, 16, 22)": {
+   "typed": 3032,
+   "a.py chars": 828,
+   "a.py lines": 28,
+   "data chars": 2204,
+   "data lines": 35,
+   "glyphs": 2064,
+   "x bits": 10317,
+   "decode s": 2.56,
+   "page bytes": 4427
+  },
+  "(0, 1, 2, 3, 4, 6, 8, 12, 16, 24, 40)": {
+   "typed": 3034,
+   "a.py chars": 831,
+   "a.py lines": 28,
+   "data chars": 2203,
+   "data lines": 35,
+   "glyphs": 2063,
+   "x bits": 10312,
+   "decode s": 3.48,
+   "page bytes": 4132
+  }
+ },
+ "coder": {
+  "P1 reader (primer = the base a.py)": {
+   "(0, 1, 2, 3, 4, 6)": {
+    "v2 bytes (untagged)": 1289,
+    "v2 model entropy bytes": 1288.3,
+    "v2 worst bit cost (bits)": 8.68,
+    "v2 bits costing > 12": 0,
+    "v2 bytes (tagged)": 1289,
+    "v2 tagged worst bit cost": 8.68,
+    "v1 bytes (range coder, 12-bit clamp)": 1290,
+    "v1 model entropy bytes": 1288.7,
+    "v1 worst bit cost (bits)": 8.68
+   },
+   "(0, 1, 2, 3, 4, 6, 8, 12)": {
+    "v2 bytes (untagged)": 1291,
+    "v2 model entropy bytes": 1290.6,
+    "v2 worst bit cost (bits)": 8.68,
+    "v2 bits costing > 12": 0,
+    "v2 bytes (tagged)": 1291,
+    "v2 tagged worst bit cost": 8.68,
+    "v1 bytes (range coder, 12-bit clamp)": 1291,
+    "v1 model entropy bytes": 1290.9,
+    "v1 worst bit cost (bits)": 8.68
+   },
+   "(0, 1, 2, 3, 4, 6, 8, 12, 16)": {
+    "v2 bytes (untagged)": 1292,
+    "v2 model entropy bytes": 1291.7,
+    "v2 worst bit cost (bits)": 8.68,
+    "v2 bits costing > 12": 0,
+    "v2 bytes (tagged)": 1292,
+    "v2 tagged worst bit cost": 8.68,
+    "v1 bytes (range coder, 12-bit clamp)": 1294,
+    "v1 model entropy bytes": 1292.0,
+    "v1 worst bit cost (bits)": 8.68
+   }
+  },
+  "P2 bundle (primer = page r.py)": {
+   "(0, 1, 2, 3, 4, 6)": {
+    "v2 bytes (untagged)": 7256,
+    "v2 model entropy bytes": 7254.7,
+    "v2 worst bit cost (bits)": 16.51,
+    "v2 bits costing > 12": 1,
+    "v2 bytes (tagged)": 7256,
+    "v2 tagged worst bit cost": 16.51,
+    "v1 bytes (range coder, 12-bit clamp)": 7266,
+    "v1 model entropy bytes": 7261.7,
+    "v1 worst bit cost (bits)": 12.0
+   },
+   "(0, 1, 2, 3, 4, 6, 8, 12)": {
+    "v2 bytes (untagged)": 5452,
+    "v2 model entropy bytes": 5451.0,
+    "v2 worst bit cost (bits)": 16.51,
+    "v2 bits costing > 12": 1,
+    "v2 bytes (tagged)": 5452,
+    "v2 tagged worst bit cost": 16.51,
+    "v1 bytes (range coder, 12-bit clamp)": 5462,
+    "v1 model entropy bytes": 5458.7,
+    "v1 worst bit cost (bits)": 12.0
+   },
+   "(0, 1, 2, 3, 4, 6, 8, 12, 16)": {
+    "v2 bytes (untagged)": 4855,
+    "v2 model entropy bytes": 4854.1,
+    "v2 worst bit cost (bits)": 16.51,
+    "v2 bits costing > 12": 1,
+    "v2 bytes (tagged)": 4855,
+    "v2 tagged worst bit cost": 16.51,
+    "v1 bytes (range coder, 12-bit clamp)": 4866,
+    "v1 model entropy bytes": 4862.0,
+    "v1 worst bit cost (bits)": 12.0
+   }
+  }
+ },
+ "timing": {
+  "whole-history h, h%q, divmod (base) | P1 reader 3093 B": {
+   "decode s": 1.67
+  },
+  "whole-history h, h%q, divmod (base) | P2 bundle 38579 B, primer 28077 B": {
+   "decode s": 297.9
+  },
+  "whole-history h, masks h&q, divmod | P1 reader 3093 B": {
+   "decode s": 0.25
+  },
+  "whole-history h, masks h&q, divmod | P2 bundle 38579 B, primer 28077 B": {
+   "decode s": 4.2
+  },
+  "whole-history h, masks h&q, x%s and x//s | P1 reader 3093 B": {
+   "decode s": 0.23
+  },
+  "whole-history h, masks h&q, x%s and x//s | P2 bundle 38579 B, primer 28077 B": {
+   "decode s": 4.8
+  },
+  "v1 range coder (typed/cm2_v1_dec.py) | P2 bundle": {
+   "decode s": 2.8
+  },
+  "bounded h (last 12 bytes) + output buffer, h%q, divmod | P1 reader 3093 B": {
+   "decode s": 0.25
+  },
+  "bounded h (last 12 bytes) + output buffer, h%q, divmod | P2 bundle 38579 B, primer 28077 B": {
+   "decode s": 3.9
+  }
+ },
+ "final": {
+  "masks, (0, 1, 2, 3, 4, 6), divmod": {
+   "typed": 3019,
+   "a.py chars": 819,
+   "a.py lines": 28,
+   "data chars": 2200,
+   "data lines": 35,
+   "glyphs": 2060,
+   "x bits": 10298,
+   "decode s": 0.23,
+   "page bytes": 7256
+  },
+  "masks, (0, 1, 2, 3, 4, 6), x%s and x//s (s line)": {
+   "typed": 3016,
+   "a.py chars": 818,
+   "a.py lines": 29,
+   "data chars": 2198,
+   "data lines": 35,
+   "glyphs": 2058,
+   "x bits": 10286,
+   "decode s": 0.29
+  },
+  "masks, (0, 1, 2, 3, 4, 6, 8, 12), divmod": {
+   "typed": 3028,
+   "a.py chars": 824,
+   "a.py lines": 28,
+   "data chars": 2204,
+   "data lines": 35,
+   "glyphs": 2064,
+   "x bits": 10316,
+   "decode s": 0.24,
+   "page bytes": 5452
+  },
+  "masks, (0, 1, 2, 3, 4, 6, 8, 12), x%s and x//s (s line)": {
+   "typed": 3024,
+   "a.py chars": 823,
+   "a.py lines": 29,
+   "data chars": 2201,
+   "data lines": 35,
+   "glyphs": 2061,
+   "x bits": 10305,
+   "decode s": 0.31
+  },
+  "masks, (0, 1, 2, 3, 4, 6, 8, 12, 16), divmod": {
+   "typed": 3030,
+   "a.py chars": 827,
+   "a.py lines": 28,
+   "data chars": 2203,
+   "data lines": 35,
+   "glyphs": 2063,
+   "x bits": 10315,
+   "decode s": 0.25,
+   "page bytes": 4855
+  },
+  "masks, (0, 1, 2, 3, 4, 6, 8, 12, 16), x%s and x//s (s line)": {
+   "typed": 3027,
+   "a.py chars": 826,
+   "a.py lines": 29,
+   "data chars": 2201,
+   "data lines": 35,
+   "glyphs": 2061,
+   "x bits": 10304,
+   "decode s": 0.3
+  },
+  "masks, (0, 1, 2, 3, 4, 6, 8, 12, 16, 24), divmod": {
+   "typed": 3034,
+   "a.py chars": 830,
+   "a.py lines": 28,
+   "data chars": 2204,
+   "data lines": 35,
+   "glyphs": 2064,
+   "x bits": 10316,
+   "decode s": 0.25,
+   "page bytes": 4419
+  },
+  "masks, (0, 1, 2, 3, 4, 6, 8, 12, 16, 24), x%s and x//s (s line)": {
+   "typed": 3030,
+   "a.py chars": 829,
+   "a.py lines": 29,
+   "data chars": 2201,
+   "data lines": 35,
+   "glyphs": 2061,
+   "x bits": 10305,
+   "decode s": 0.28
+  },
+  "masks, (0, 1, 2, 3, 4, 6, 8, 12, 16, 24, 32), divmod": {
+   "typed": 3038,
+   "a.py chars": 833,
+   "a.py lines": 28,
+   "data chars": 2205,
+   "data lines": 35,
+   "glyphs": 2065,
+   "x bits": 10324,
+   "decode s": 0.33,
+   "page bytes": 4136
+  },
+  "masks, (0, 1, 2, 3, 4, 6, 8, 12, 16, 24, 32), x%s and x//s (s line)": {
+   "typed": 3035,
+   "a.py chars": 832,
+   "a.py lines": 29,
+   "data chars": 2203,
+   "data lines": 35,
+   "glyphs": 2063,
+   "x bits": 10313,
+   "decode s": 0.37
+  }
+ }
+}

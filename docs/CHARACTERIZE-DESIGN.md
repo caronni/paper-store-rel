@@ -82,15 +82,16 @@ The package may use NumPy, SciPy, Pillow, `tifffile` for verified/memory-mapped
 TIFF capture access, and its own minimal one-page PostScript writer. If
 `tifffile` is unavailable, TIFF input is refused explicitly rather than
 silently losing page/color/memory guarantees.
-It must not import experiment modules, `holo.gen`, or `holo.receive`. No file
-under these protected paths is changed by this work:
+It must not import experiment modules or `holo.gen` (nor `holo.receive`,
+which was retired 2026-09-05 at `284ae3e` — the firewall test dropped that
+member the same day). No file under these protected paths is changed by this
+work:
 
 ```
 src/holo/core
 src/holo/devices
 src/holo/format
 src/holo/gen
-src/holo/receive
 src/paperholo
 confetti.py
 pyproject.toml

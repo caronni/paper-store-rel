@@ -47,7 +47,7 @@ Determinism: no randomness anywhere in this module.
 
 Run (repo root, ~6-10 min):
   env/bin/python experiments/003-modulation-probes/analyze_modprobe.py \
-      scans/test-scan-modprobe.png
+      <evidence>/scans/test-scan-modprobe.png
 Outputs: build/modprobe_report.json, build/motif_library.json,
 build/RESULTS-003.0-draft.md, human summary on stdout.
 """
@@ -74,10 +74,8 @@ import cal_color as ccol  # noqa: E402              (QDA/MI machinery — reused
 import cal_core as cc  # noqa: E402                 (analyzer core; per-manifest GT base dir)
 import scanlab  # noqa: E402                        (v4 decode primitives, exp 001)
 
-REPO = _HERE.parent.parent
 BUILD = _HERE / "build"
 MANIFEST_PATH = BUILD / "modprobe_manifest.json"
-DEFAULT_SCAN = REPO / "scans" / "test-scan-modprobe.png"
 EXPECTED_SCAN_SHA256 = ("a5de3fe82e2dc2baf89557bf2fa74c906ab094773c"
                         "6a361fd29877773049e963")
 EXPECTED_MANIFEST_SHA256 = ("c7fcdb6e0413db26eb6bb823a03212624f6156b4"
@@ -1489,6 +1487,6 @@ if __name__ == "__main__":
     import argparse
 
     ap = argparse.ArgumentParser(description="003.0 modprobe analyzer")
-    ap.add_argument("scan", nargs="?", default=str(DEFAULT_SCAN))
+    ap.add_argument("scan")
     args = ap.parse_args()
     analyze(Path(args.scan))

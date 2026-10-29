@@ -8,6 +8,10 @@
 2. Split-half within scan (works for the single AltaLink scan): per tile,
    even/odd anchor cells give two independent tile means; noise on the
    tile mean = rms(h1-h2)/2.
+
+Usage: probe17_verify_structure.py <dir holding probe17_perplane_reg.py's
+       probe17_reg_*.npz for finalists, finalists-2-col and
+       xerox-e004-finalists-hp-scan>
 """
 from __future__ import annotations
 
@@ -45,10 +49,12 @@ def tile_pair_means(data: dict, a: str, b: str, sel=None) -> dict:
 
 
 def main() -> None:
-    scratch = Path(__file__).resolve().parent
-    d1 = load(scratch / "probe17_reg_finalists.npz")
-    d2 = load(scratch / "probe17_reg_finalists-2-col.npz")
-    dx = load(scratch / "probe17_reg_xerox-e004-finalists-hp-scan.npz")
+    if len(sys.argv) != 2:
+        sys.exit(__doc__)
+    reg_dir = Path(sys.argv[1])
+    d1 = load(reg_dir / "probe17_reg_finalists.npz")
+    d2 = load(reg_dir / "probe17_reg_finalists-2-col.npz")
+    dx = load(reg_dir / "probe17_reg_xerox-e004-finalists-hp-scan.npz")
 
     print("== 1. M281 cross-scan repeatability of tile-mean PAIR fields ==")
     for a, b in (("Y", "C"), ("M", "C")):

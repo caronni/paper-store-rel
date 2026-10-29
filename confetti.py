@@ -1,6 +1,6 @@
 #!env/bin/python
-"""Repo-root wrapper for the holo CLI — run as ./confetti.py from
-<repo> (the relative shebang resolves against the CWD,
+"""Repo-root wrapper for the holo CLI — run as ./confetti.py from the
+repo root (the relative shebang resolves against the CWD,
 which is the point: no console script pollutes the venv).
 
 Equivalent forms: env/bin/python src/holo/cli.py ...

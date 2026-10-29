@@ -1,0 +1,32 @@
+{
+ "qr-a": {
+  "decode": "zxingcpp 3.1.1: 826 B, equal to the input",
+  "encoder": "segno 1.6.6",
+  "error": "L",
+  "input_bytes": 826,
+  "input_sha256": "720330aa996e0a5a21628e7086884f1ad0379b4d7c83401067b59e6afa4c8436",
+  "mask": 3,
+  "mode": "byte",
+  "modules": 97,
+  "name": "qr-a",
+  "pbm_sha256": "e7ee2c2231ab9ba1ea373070b51109f38a0464cb1af4f6305dfd3ea4df85c909",
+  "source": "build/sheets/stage1/upper/a.py",
+  "source_sha256": "720330aa996e0a5a21628e7086884f1ad0379b4d7c83401067b59e6afa4c8436",
+  "version": 20
+ },
+ "qr-d": {
+  "decode": "zxingcpp 3.1.1: 2608 B, equal to the input",
+  "encoder": "segno 1.6.6",
+  "error": "L",
+  "input_bytes": 2608,
+  "input_sha256": "fd3ac80e5348be72ab1e65be6e3f2560440bda01a27972a27586e84c912fb241",
+  "mask": 7,
+  "mode": "byte",
+  "modules": 169,
+  "name": "qr-d",
+  "pbm_sha256": "6e7bd3cf16c9bcce4b9b0be9fd75b31234e2bf68843b88f5299a9e94ebcc7154",
+  "source": "build/sheets/stage1/upper/data.txt",
+  "source_sha256": "b29bc54970fc549876be0597d3e0f8da2158d472a29d45875bbc56c7b181d2e5",
+  "version": 38
+ }
+}

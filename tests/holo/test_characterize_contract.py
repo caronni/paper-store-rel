@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import os
+
 import pytest
 
 from holo.characterize.aggregate import combine_calibration_reports
@@ -21,6 +23,14 @@ from holo.characterize.summarize import summarize_grid_rulers
 from holo.characterize.summarize_physical import (
     PAYLOAD_CANARY_GAPS,
     PHYSICAL_TICK_GAPS,
+)
+
+
+_SLOW_CONTRACT = pytest.mark.skipif(
+    os.environ.get("HOLO_RUN_SLOW_TESTS") != "1",
+    reason=(
+        "set HOLO_RUN_SLOW_TESTS=1 for the whole-registry layout proof"
+    ),
 )
 
 
@@ -95,6 +105,9 @@ def test_discovery_layout_is_canonical_overlap_free_and_separate(kind: str) -> N
     assert len(rulers) == (30 if kind == "bw" else 120)
 
 
+# An instrument-completeness proof over all 86 candidates, not per-commit
+# feedback: it builds a page per candidate and verifies each (2026-09-20).
+@_SLOW_CONTRACT
 def test_every_candidate_has_an_overlap_free_calibration_layout() -> None:
     for code, candidate in CANDIDATES_BY_CODE.items():
         page = build_page(

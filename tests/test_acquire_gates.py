@@ -1,5 +1,5 @@
 """Receiver hardening gates (2026-07-09 e012 scan-forensics items; trace in
-scratch/wf/reader-acquire.json):
+the 2026-07-09 e012 scan-forensics record (evidence archive)):
 
 1. anchor_rounds=0 must truly SKIP the anchor stage (diagnostic/negative-
    control hook) — pre-fix, `range(max(anchor_rounds, 1))` made 0 behave as

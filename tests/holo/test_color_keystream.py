@@ -12,6 +12,7 @@ from holo.core import keystream_spec as ref
 
 CMY7_SEED = b"holo/v1/c2-cmy7-p120-v0/3328x2304"
 CMY8_SEED = b"holo/v1/c2-cmy8-p120-v0/3328x2304"
+CMY_SEED = b"holo/v2/1i300-cmy-r0700-p120-v1@53x37"
 
 GOLDEN = {
     "dust7": "f454421b950594c4bad72de50a263054"
@@ -36,6 +37,15 @@ GOLDEN = {
                   "a88cc459f6bb7ae683af55be44520d9",
     "assign8C": "47422e1901ba42c72d33cf440d1d06299"
                 "81ae24c4c94a43552ae768f325a7399",
+}
+
+# The cmy word '0' keys (docs/CMY-DESIGN.md §2.5, R10): packbits of
+# color_word_zero_mask(CMY_SEED, 123, n_dust) at p120's 20 dust and p101's 1.
+CMY_WORD_ZERO_GOLDEN = {
+    20: "4d43c60dfad4611f53219409ce3c27b9"
+        "7f1951de35670414d544d091c3d1417b",
+    1: "e5236bd29934e07385619d40d0b02d08"
+       "29368e25578d202da61930657ad50622",
 }
 
 
@@ -209,3 +219,37 @@ def test_stream_helpers_refuse_unknown_or_wrong_streams():
     with pytest.raises(TypeError, match="stream ID"):
         prod.color_fountain_rows_bits(CMY8_SEED, None, 0, [0], 1)
 
+
+@pytest.mark.parametrize("n_dust", sorted(CMY_WORD_ZERO_GOLDEN))
+def test_cmy_word_zero_mask_is_the_msb_of_domain_9_past_the_dust(n_dust):
+    mask = prod.color_word_zero_mask(CMY_SEED, 123, n_dust)
+    assert mask.dtype == np.bool_ and mask.shape == (100,)
+    assert _sha(np.packbits(mask, bitorder="big").tobytes()) == \
+        CMY_WORD_ZERO_GOLDEN[n_dust]
+    keys = prod.keys64(CMY_SEED, prod.DOMAIN_COLOR_DUST_ORDER, 0, 123,
+                       n_dust + np.arange(100), 0)
+    assert np.array_equal(mask, (keys >> np.uint64(63)).astype(bool))
+    for site in (0, 1, 57, 99):
+        assert int(mask[site]) == ref.color_word_zero_bit(
+            CMY_SEED, 123, n_dust, site)
+
+
+def test_cmy_word_zero_mask_starts_at_n_dust_and_leaves_the_dust_draw():
+    p101, p120 = (prod.color_word_zero_mask(CMY_SEED, 123, n)
+                  for n in (1, 20))
+    assert np.array_equal(p101[19:], p120[:81])      # u = n_dust + site
+    assert not np.array_equal(p101, p120)
+    keys = prod.keys64(CMY_SEED, prod.DOMAIN_COLOR_DUST_ORDER, 0, 123,
+                       np.arange(20), 0)
+    assert np.array_equal(
+        prod.color_dust_permutation(CMY_SEED, 123, 20),
+        np.lexsort((np.arange(20), keys)))
+    assert not np.array_equal(p120, prod.color_word_zero_mask(
+        CMY_SEED, 124, 20))
+    scramble = prod.bits(CMY_SEED, prod.DOMAIN_PILOT_VALUES, prod.PLANE_K,
+                         0, np.arange(100), 0)
+    assert not np.array_equal(p120, scramble.astype(bool))
+    with pytest.raises(ValueError, match=">= 0"):
+        prod.color_word_zero_mask(CMY_SEED, 0, -1)
+    with pytest.raises(TypeError, match="integer"):
+        prod.color_word_zero_mask(CMY_SEED, 0, True)

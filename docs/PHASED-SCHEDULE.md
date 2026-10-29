@@ -1,7 +1,8 @@
 # PHASED-SCHEDULE — the v0.33 phased session schedule (design + execution plan)
 
-Status: **adopted design (user ruling 2026-07-31), implementation in
-progress**. RECEIVE-DESIGN v0.33 is the normative amendment; this document is
+Status: **adopted design (user ruling 2026-07-31), implemented in the v1
+receiver — retired 2026-09-05 at `284ae3e`; historical from that sha, see
+docs/RECEIVE-DESIGN.md's header; holo3's schedule is src/holo/receiver/docs/SCHEDULE.md**. RECEIVE-DESIGN v0.33 is the normative amendment; this document is
 the full design record and execution plan, in the DIAG-IMPROVEMENTS.md mold.
 Provenance: the 2026-07-31 cold-deferral reopening dialogue (PLACEMENT-
 IMPROVEMENTS §1.4b) plus an eight-area verified read of the receiver

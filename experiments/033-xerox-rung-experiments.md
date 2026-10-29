@@ -207,3 +207,24 @@ parked patch (f1bc0d0); the branch commits themselves are unreferenced.
 Still owed from 033.6: the nine unscanned sheets, the 4800 mechanism
 run, operator print-day details, holo2 c4/lattice parity (H-wave).
 
+
+## 033.8 Sheet H — continued in e036 (2026-09-06)
+
+Sheet H's readout became its own campaign: from the seven-capture endrun's
+stall at 4,883/5,883 (2026-09-02) to the whole page, 5,883/5,883, close
+verified byte-exact (2,220,921 B, sha `0ad329fb…` == this log's emission),
+by the analyzer's certificates folded into holo3's snapshots — the record
+is `experiments/036-sheet-h-full-readout.md`. Two things belong here as
+provenance: the six CROSSWISE Canon captures of 2026-09-03/04 (2400
+`1d5da05353b8` top / `b43feeeb615c` bot; 4800 `20580e8e7a00`,
+`c047efeba3f7` top / `68bd6de3801e`, `45e375e7b0ad` bot), added when the
+endrun stalled and never recorded in this log; and the answer to 033.4's
+prediction for r0850 ("wider dead bands, lower threshold"): the bands were
+real, and what closed them was not registration but a learned aperture
+for the three-ink C cells (analyzer/MEASUREMENTS-2026-09-06-C-THIRD-LAYER.md).
+The first r0850 close on paper; single sheet, no promotion.
+
+## Addendum 2026-10-09 — sheet hashes
+
+Every sheet's emitted PostScript, GT and payload sha256 (with spec, printer, margin, seed) is in
+`experiments/033-xerox-rung-experiments/sheets.tsv`; the scan shas in `scan-shas.txt` beside it.

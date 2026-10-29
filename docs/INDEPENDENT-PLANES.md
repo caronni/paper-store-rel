@@ -1432,6 +1432,18 @@ TOOLBOX-INVENTORY §6.13 is re-priced from this measurement.
 ## 4. Avenues, with + / −
 
 ### A. The sheet-level field service (first-class, not bolt-on)
+**2026-09-08 — §4.A is SUPERSEDED by `docs/PAGE-FIELD-DESIGN.md`**, which
+is the design of record for the field and is BUILT in the receiver on
+branch `page-field-receiver` (commits `4d89686f` (W1) through the W9 landing of 2026-09-12 — `4d89686f^..page-field-receiver`, W1–W9 — merged to main 2026-09-12).
+Two of this avenue's premises did not survive: the identity is per
+PRINTED FACE, not per sheet (sheet J's two duplex faces measured
+different fields inside one capture), and "many writers of differing
+quality" is now three attributed evidence TIERS pooled by weighted
+median — lane fits and addressing residuals are deleted, not ranked.
+The rest of the avenue landed as written: one object, many readers, all
+of them through one mapping (`lib/page_map`). The measured argument
+below stays as the record.
+
 One per-plane TRANSLATION field per sheet in print-dot tile space, with
 many writers (every lane of every capture; word/dust anchors; certified
 probes; addressing residuals; successful closer offsets) and many
@@ -1446,7 +1458,8 @@ capture pose / lane decimation.
   state and diag — the sprawl the kiss cleanup removed; − holo2 has no
   colour yet. **WHERE is a ruling** (§6 P3): design holo2-shaped, build
   a thin measured instance in holo1 (landing-zone doctrine), port as
-  doctrine.
+  doctrine. Holo2 was retired 2026-09-05 without ever gaining colour or
+  this port.
 
 **A.2 — plane-aware addressing (the address/payload disparity).**
 Today the field enters ONE seam (payload sampling); word decode, word
@@ -1740,7 +1753,8 @@ All no-toner.
 **P3 — rulings** (yours): WHERE to build A — **RULED 2026-08-22: the
 composite-pose unification executes in src/holo as a null-proof
 refactor; holo2 takes the concept as doctrine (docs/COMPOSITE-POSE-
-DESIGN.md §8)**; Y pricing (per-plane rungs vs quota fork vs
+DESIGN.md §8)** — holo2 was retired 2026-09-05 without doing so; Y
+pricing (per-plane rungs vs quota fork vs
 CMY words — or accept fountain absorption at lower q); policy-id
 archive compatibility (every arm change orphans archived colour states)
 — **BOTH HALVES DONE 2026-08-23.** *Plan half* (ruling "do the prefix

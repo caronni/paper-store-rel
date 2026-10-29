@@ -18,13 +18,13 @@ FOUR THINGS LIVE HERE.
 * :func:`calibrate` — PAVA, BRANCH-WISE.  `subtract` and `global` produce
   a score with TWO populations: cells whose siblings are known are
   cleaned exactly, cells whose siblings are unknown fall back to the
-  projection (`spectral.plane_score`, holo3/lib/spectral.py:173-201).
+  projection (`spectral.plane_score`, src/holo/receiver/lib/spectral.py:173-201).
   One PAVA map over the union is a map fitted on a mixture and applied
   to another mixture — review blocker B12.  So each branch gets its own
   standardisation (`calibrate.window_scores`, one median and one MAD per
   branch) and its own map, each refusing below `pava`'s own floors rather
   than pooling to reach them.  A branch that refuses emits LLR 0 — the
-  erasure spelling `tiles._attempt_cmy8` already understands.
+  erasure spelling `tiles._attempt_stream` already understands.
 
 * :func:`select_arm` — the paired test of DESIGN §4.8.  Arms are compared
   on PER-LABEL log losses over the SELECT fold, which no arm's search
@@ -62,13 +62,15 @@ from typing import Any, Mapping, Sequence
 
 import numpy as np
 
-from holo3.lib import ldpc, pava
-from holo3.plugins import calibrate as calibrate_plugin
-from holo3.plugins import tiles as tiles_plugin
+from holo.receiver.lib import ldpc, pava
+from holo.receiver.plugins import calibrate as calibrate_plugin
+from holo.receiver.plugins import tiles as tiles_plugin
 
+from . import statecal
 from .residue import discriminating_mask
-from .types import (Evidence, Folds, Key, KnownFrame, LaneFootprint,
-                    PageContext, STREAMS, TileFootprint)
+from .types import (BRANCH_ALL, BRANCH_CLEANABLE, BRANCH_OTHER, Evidence,
+                    Folds, Key, KnownFrame, LaneFootprint, PageContext,
+                    STREAMS, TileFootprint)
 
 #: DESIGN §4.8's fold proportions.  Fit gets half because the PAVA map is
 #: the only thing with enough parameters to want them; search and select
@@ -89,13 +91,28 @@ SELECT_SE_MULTIPLE: float = 2.0
 #: plane read certify at all, so they are the default, not extras.
 DEFAULT_ARM: str = "subtract+offset"
 
+#: Every register arm that MINIMISES an objective over the search fold
+#: (the offset grids, the affine swim, the word pose): their
+#: `heldout_logloss_search` is a minimum, not a held-out number, and
+#: `select_arm` refuses to report it as nested CV.  Pinned against
+#: `arms.REGISTER_ARMS` by a test (W8 B1).
+SEARCHED_REGISTER_ARMS: tuple[str, ...] = (
+    "offset", "field+offset", "field2+offset", "affine", "word")
+
 #: DESIGN §4.7: a cleanable-fraction gap this wide between the labels the
 #: map was fitted on and the cargo it is applied to is `extrapolating`.
 EXTRAPOLATION_GAP: float = 0.2
 
-BRANCH_CLEANABLE: str = "cleanable"
-BRANCH_OTHER: str = "other"
-BRANCH_ALL: str = "all"
+#: RE-EXPORTED (W8 B2).  The three branch names now live in `types` so
+#: that `statecal` — which `calibrate` dispatches into — can name
+#: `BRANCH_OTHER` without importing this module.  Every caller that says
+#: `calibrate.BRANCH_CLEANABLE` keeps working.
+__all_branches__ = (BRANCH_CLEANABLE, BRANCH_OTHER, BRANCH_ALL)
+
+#: `branches="state"` — C1's per-sibling-state calibration (W8 B2,
+#: `statecal.state_branch_masks`): one PAVA map and one standardisation
+#: per sibling state, plus `other` where the siblings are unproven.
+BRANCH_STATE: str = statecal.BRANCH_STATE
 
 #: Modes whose score carries the two populations of DESIGN §4.7/B12.
 TWO_POPULATION_MODES: tuple[str, ...] = ("subtract", "global")
@@ -478,12 +495,63 @@ def _apply_local_context(llr: np.ndarray, bins: np.ndarray,
 
 def branch_masks(frame: KnownFrame, target_plane: int, mode: str,
                  usable: np.ndarray) -> dict[str, np.ndarray]:
-    """The populations of DESIGN §4.7 (blocker B12), never pooled."""
+    """The populations of DESIGN §4.7 (blocker B12), never pooled.
+
+    `mode` is the unmix mode (so `subtract`/`global` get the two
+    populations) or the literal `"state"`, which is C1: one population
+    per SIBLING STATE plus `other`.  The state test comes FIRST — a
+    caller who asked for states asked for states, whatever the unmix
+    mode was.  `covered_cells` calls this same function, so extending it
+    extends the coverage rebuild for free.
+    """
+    if mode == BRANCH_STATE:
+        return statecal.state_branch_masks(frame, target_plane, usable)
     if mode in TWO_POPULATION_MODES:
         cleanable = np.asarray(frame.siblings, bool) & usable
         return {BRANCH_CLEANABLE: cleanable,
                 BRANCH_OTHER: usable & ~cleanable}
     return {BRANCH_ALL: usable}
+
+
+def _pseudo_arrays(pseudo: Any) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """`(rows, bits, weights)` as arrays, empty when there is no pseudo."""
+    if pseudo is None:
+        return (np.zeros(0, np.int64), np.zeros(0, np.float64),
+                np.zeros(0, np.float64))
+    try:
+        rows, bits, weights = pseudo
+    except (TypeError, ValueError) as error:
+        raise CalibrateError(
+            "calibrate: `pseudo` must be the (rows, bits, weights) triple "
+            "of `patch.pseudo_rows`") from error
+    rows = np.asarray(rows, np.int64).ravel()
+    bits = np.asarray(bits, np.float64).ravel()
+    weights = np.asarray(weights, np.float64).ravel()
+    if bits.size != rows.size or weights.size != rows.size:
+        raise CalibrateError(
+            f"calibrate: pseudo rows {rows.size}, bits {bits.size}, "
+            f"weights {weights.size}")
+    return rows, bits, weights
+
+
+def _pseudo_fit_rows(mask: np.ndarray, labels_all: np.ndarray,
+                     rows: np.ndarray, bits: np.ndarray, weights: np.ndarray,
+                     ) -> tuple[np.ndarray, np.ndarray, int]:
+    """The pseudo rows a branch's PAVA fit takes, replicated by weight.
+
+    Inside `mask` (the branch's own cells) and NOT a label (a label beats
+    a pseudo — the door drops those already, this is the second lock).
+    Each row is repeated ``round(weight)`` times because `_pava_nodes`
+    takes no sample weights.  Returns the repeated rows, their bits as
+    values, and the DISTINCT count for the detail.
+    """
+    if not rows.size:
+        return np.zeros(0, np.int64), np.zeros(0, np.float64), 0
+    keep = np.asarray(mask, bool)[rows] & ~np.asarray(labels_all, bool)[rows]
+    rows, bits, weights = rows[keep], bits[keep], weights[keep]
+    repeats = np.maximum(np.rint(weights).astype(np.int64), 0)
+    return (np.repeat(rows, repeats), np.repeat(bits, repeats),
+            int(rows.size))
 
 
 def calibrate(score: np.ndarray, frame: KnownFrame, target_plane: int,
@@ -494,19 +562,40 @@ def calibrate(score: np.ndarray, frame: KnownFrame, target_plane: int,
               local_context: Any = None,
               starved_fallback: bool = STARVED_FALLBACK,
               stream_id: str | None = None,
+              ctx_state: bool = False,
+              pseudo: Any = None,
               ) -> tuple[np.ndarray, dict]:
     """Presence scores -> calibrated LLR over the footprint, plus diag.
 
     `branches` is the unmix MODE (so the two-population rule of §4.7
-    fires for `subtract`/`global`), or the literal `"pooled"` to force one
-    map over everything.  The returned LLR is 0 wherever
-    no accepted branch covers the cell — the erasure spelling — and is
-    clipped at `ldpc.LLR_CLIP` everywhere else.
+    fires for `subtract`/`global`), the literal `"pooled"` to force one
+    map over everything, or `"state"` for C1's per-sibling-state maps.
+    The returned LLR is 0 wherever no accepted branch covers the cell —
+    the erasure spelling — and is clipped at `ldpc.LLR_CLIP` everywhere
+    else.
 
     `ctx_mode="page"` applies `page_context` — a correction fitted once
     per (lane, page, stream) by `arms.page_context`, DESIGN §4.7's own
     scope — instead of fitting one on this footprint's labels.
+
+    `ctx_state` (C2) adds a per-state 9-bin residual on top of whatever
+    the pooled context stage did, for the production-variable modes only.
+    It never changes `ctx_offsets` or `ctx_adopted`: those stay the
+    POOLED 9-vector and the pooled verdict, which is what
+    `combine.pooled_ctx_offsets` and the L3 rung consume.
+
+    `pseudo` (W8 B4) is the decoder's pseudo labels in FOOTPRINT rows,
+    ``(rows, bits, weights)`` from `patch.pseudo_rows` through the typed
+    door in `arms.evidence_for`.  They join the PAVA TRAINING SET of the
+    branch that holds them, each replicated ``round(weight)`` times
+    (`pava._pava_nodes` is unweighted), with the pseudo bit as the value.
+    Everything else stays on the halo labels alone: the floors, every
+    `n_labels*` count, the context fit, the held-out log losses and the
+    select-fold `label_*` arrays (a pseudo row is in-tile cargo, never a
+    known cell, so it can never be a label row).  `label_llr` is the
+    held-out VIEW of the refitted map and may move with it.
     """
+    pseudo_rows, pseudo_bits, pseudo_weights = _pseudo_arrays(pseudo)
     if ctx_mode not in CTX_MODES:
         raise CalibrateError(f"unknown ctx_mode {ctx_mode!r}")
     score = np.asarray(score, np.float64)
@@ -523,6 +612,11 @@ def calibrate(score: np.ndarray, frame: KnownFrame, target_plane: int,
     values = np.asarray(frame.bits[:, target_plane], np.float64)
     masks = ({BRANCH_ALL: usable} if branches == "pooled"
              else branch_masks(frame, target_plane, str(branches), usable))
+    #: RULING 11 (W8 B2): a per-state map is TRAINED on a mask that drops
+    #: the word sites, because a word site's target bit is a constant
+    #: within a sibling state; every other mode trains on what it scores.
+    fit_masks = (statecal.state_fit_masks(frame, target_plane, usable)
+                 if str(branches) == BRANCH_STATE else masks)
 
     llr = np.zeros(n, np.float64)
     covered = np.zeros(n, bool)
@@ -535,7 +629,7 @@ def calibrate(score: np.ndarray, frame: KnownFrame, target_plane: int,
             continue
         standard = np.zeros(n, np.float64)
         standard[rows] = _standardise(score[rows])
-        train = mask & labels_all & folds.fit
+        train = fit_masks.get(name, mask) & labels_all & folds.fit
         heldout = mask & labels_all & folds.search
         n_train_1 = int(values[train].sum())
         n_train_0 = int(np.count_nonzero(train) - n_train_1)
@@ -545,13 +639,19 @@ def calibrate(score: np.ndarray, frame: KnownFrame, target_plane: int,
             reason = "search_class_starved"
         elif n_heldout < pava.CAL_MIN_HELDOUT:
             reason = "heldout_starved"
+        p_rows, p_values, n_pseudo = _pseudo_fit_rows(
+            mask, labels_all, pseudo_rows, pseudo_bits, pseudo_weights)
         branch_detail[name] = {
             "n_cells": int(rows.size), "n_fit_0": n_train_0,
             "n_fit_1": n_train_1, "n_heldout": n_heldout,
-            "accepted": reason == "accepted", "reason": reason}
+            "n_pseudo_fit": n_pseudo,
+            "accepted": reason == "accepted", "reason": reason,
+            **statecal.fit_row_kinds(frame, train)}
         if reason != "accepted":
             continue
-        knots, probs = _pava_map(standard[train], values[train])
+        knots, probs = _pava_map(
+            np.concatenate((standard[train], standard[p_rows])),
+            np.concatenate((values[train], p_values)))
         llr[rows] = np.clip(
             pava.calibration_llr(standard[rows], knots, probs),
             -ldpc.LLR_CLIP, ldpc.LLR_CLIP)
@@ -587,14 +687,19 @@ def calibrate(score: np.ndarray, frame: KnownFrame, target_plane: int,
                 reason = "search_class_starved"
             elif n_heldout < pava.CAL_MIN_HELDOUT:
                 reason = "heldout_starved"
+            p_rows, p_values, n_pseudo = _pseudo_fit_rows(
+                usable, labels_all, pseudo_rows, pseudo_bits,
+                pseudo_weights)
             fallback_detail = {
                 "n_cells": int(np.count_nonzero(missing)),
                 "n_fit_0": n_train_0, "n_fit_1": n_train_1,
-                "n_heldout": n_heldout,
+                "n_heldout": n_heldout, "n_pseudo_fit": n_pseudo,
                 "accepted": reason == "accepted", "reason": reason}
             if reason == "accepted":
                 fill = np.flatnonzero(missing)
-                knots, probs = _pava_map(standard[train], values[train])
+                knots, probs = _pava_map(
+                    np.concatenate((standard[train], standard[p_rows])),
+                    np.concatenate((values[train], p_values)))
                 llr[fill] = np.clip(
                     pava.calibration_llr(standard[fill], knots, probs),
                     -ldpc.LLR_CLIP, ldpc.LLR_CLIP)
@@ -603,7 +708,8 @@ def calibrate(score: np.ndarray, frame: KnownFrame, target_plane: int,
     detail: dict[str, Any] = {"branches": branch_detail,
                               "branch_fallback": fallback_detail,
                               "n_observed": int(np.count_nonzero(observed)),
-                              "n_calibrated": int(np.count_nonzero(covered))}
+                              "n_calibrated": int(np.count_nonzero(covered)),
+                              "n_pseudo_rows": int(pseudo_rows.size)}
 
     # the context, on the cells a branch actually priced
     ctx_detail: dict[str, Any] = {"ctx_mode": ctx_mode, "n_ctx_eligible": 0,
@@ -630,6 +736,17 @@ def calibrate(score: np.ndarray, frame: KnownFrame, target_plane: int,
                                           folds, covered)
         ctx_detail.update(applied)
         ctx_detail["n_ctx_eligible"] = eligible
+        # C2 (W8 B2).  A per-state residual on top of the pooled
+        # correction, for production's variable only: `ctx-known` is a
+        # different variable and `none` has no bins.  `ctx_offsets` and
+        # `ctx_adopted` above are LEFT ALONE — they are the pooled
+        # 9-vector `combine.pooled_ctx_offsets` sums and L3 shifts.
+        if ctx_state and ctx_mode in ("production", CTX_PAGE, CTX_LOCAL):
+            llr, state_applied = statecal.apply_state_context(
+                llr, bins, statecal.sibling_state(frame, target_plane),
+                frame, target_plane, folds, covered)
+            ctx_detail.update(state_applied)
+    ctx_detail.setdefault("ctx_state_any_adopted", False)
     detail.update(ctx_detail)
 
     # blind label bookkeeping (DESIGN §4.9)
@@ -666,6 +783,13 @@ def calibrate(score: np.ndarray, frame: KnownFrame, target_plane: int,
     detail["label_values"] = values[rows].astype(np.uint8)
     detail["label_llr"] = llr[rows]
     detail["label_discriminating"] = discriminating[rows]
+    #: W8 B2 (D1): the SIBLING STATE of each select-fold label row, so
+    #: `combine`'s `platt-state` can weight per state without recomputing
+    #: a frame it does not have.  Lane-independent (the frame is), int8,
+    #: −1 where the siblings are unproven — one more small array beside
+    #: the four that already ride the row.
+    detail["label_state"] = statecal.sibling_state(frame,
+                                                   target_plane)[rows]
     llr.setflags(write=False)
     return llr, detail
 
@@ -779,14 +903,24 @@ def select_arm(candidates: Sequence[Evidence], folds: Folds,
                                        else winner_loss)
     #: DESIGN §4.8 wants a nested loss for the winner, "never the
     #: minimum".  `heldout_logloss_search` is exactly the minimum for an
-    #: arm that SEARCHED the search fold (offset, field+offset), so it is
-    #: refused there instead of being reported as if it were held out.
-    searched = str(winner.blind.get("register_arm", "")) in (
-        "offset", "field+offset")
+    #: arm that SEARCHED the search fold, so it is refused there instead
+    #: of being reported as if it were held out.  W8 B1 widened the list
+    #: from `offset`/`field+offset` to EVERY searching register arm (a
+    #: pre-existing gap the patch arms would otherwise inherit); the
+    #: review of 2026-09-06 widened it again to every arm that chose its
+    #: OWN KNOBS — `autoknobs.choose` walks the search fold too, so an
+    #: auto arm's search loss is a minimum over its candidate set exactly
+    #: as an offset grid's is over its poses.
+    searched_registration = str(winner.blind.get("register_arm", "")) in \
+        SEARCHED_REGISTER_ARMS
+    searched_knobs = bool(winner.blind.get("auto_choices"))
     detail["nested_cv_logloss"] = (
-        None if searched else winner.blind.get("heldout_logloss_search"))
+        None if (searched_registration or searched_knobs)
+        else winner.blind.get("heldout_logloss_search"))
     detail["nested_cv_refused"] = (
-        "winner_minimised_the_search_fold" if searched else None)
+        "winner_minimised_the_search_fold" if searched_registration else
+        "winner_chose_its_own_knobs_on_the_search_fold" if searched_knobs
+        else None)
     return winner, detail
 
 

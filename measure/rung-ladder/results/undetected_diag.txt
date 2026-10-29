@@ -1,0 +1,6 @@
+r0550 p=0.03 trial 154: wrong codeword at distance 6 (info part 2, parity 4), channel errors 130, errors on the diff support 3/6, info diff idx [1157, 1363], iters 10
+r0469 p=0.03 trial 8: wrong codeword at distance 16 (info part 3, parity 13), channel errors 123, errors on the diff support 8/16, info diff idx [760, 1289, 1305], iters 75
+r0313 p=0.105 trial 177: wrong codeword at distance 12 (info part 2, parity 10), channel errors 452, errors on the diff support 7/12, info diff idx [856, 1137], iters 32
+r0313-f50 p=0.105 trial 128: wrong codeword at distance 16 (info part 2, parity 14), channel errors 445, errors on the diff support 8/16, info diff idx [727, 896], iters 83
+r0391 p=0.125 trial 4: wrong codeword at distance 11 (info part 2, parity 9), channel errors 522, errors on the diff support 6/11, info diff idx [1346, 1576], iters 120
+r0250 p=0.16 trial 23: wrong codeword at distance 39 (info part 6, parity 33), channel errors 651, errors on the diff support 21/39, info diff idx [412, 570, 607, 667, 897, 1019], iters 108

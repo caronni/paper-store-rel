@@ -1,0 +1,1 @@
+{"k": 2240, "mode": "punct", "res": [{"p": 0.1, "bler_shorten120": 1.0, "bler_puncture120": 1.0}, {"p": 0.115, "bler_shorten120": 1.0, "bler_puncture120": 1.0}, {"p": 0.13, "bler_shorten120": 1.0, "bler_puncture120": 1.0}, {"p": 0.14, "bler_shorten120": 1.0, "bler_puncture120": 1.0}, {"p": 0.15, "bler_shorten120": 1.0, "bler_puncture120": 1.0}]}

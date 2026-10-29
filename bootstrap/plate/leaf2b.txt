@@ -1,0 +1,63 @@
+VOLUME {V}  R0 PLATE 3/3 (LEAF 2b)  COPY {C}  COUNT, R2, CARE
+COUNTING. dec = base 10, hex = base 16, bits = base 2, dots = how many
+ dec hex bits dots               dec hex bits dots
+  0   0 0000                     8   8 1000 oooooooo
+  1   1 0001 o                   9   9 1001 ooooooooo
+  2   2 0010 oo                 10   a 1010 oooooooooo
+  3   3 0011 ooo                11   b 1011 ooooooooooo
+  4   4 0100 oooo               12   c 1100 oooooooooooo
+  5   5 0101 ooooo              13   d 1101 ooooooooooooo
+  6   6 0110 oooooo             14   e 1110 oooooooooooooo
+  7   7 0111 ooooooo            15   f 1111 ooooooooooooooo
+42 = 4 tens and 2 = (oooooooooo x 4) + oo. Hex 2a = 2 x 16 + 10 = 42.
+LENGTH. The bar under this line is 2362 printer dots at 600 per inch
+= 99.991 mm. It defines the mm. Use ratios: paper grows and shrinks.
+
+THE COARSE PAGES (the next step). A grid of square modules, each 12 x
+12 printer dots = 0.508 mm; ink = 1. Every 17th row and column is a
+timing line of ink and paper in turn: the clock and the ink/paper
+reference. Between them sit blocks of 16 x 16 modules. Fifteen blocks,
+spread over the page, hold a target: rings of ink and paper, one
+module wide, thirteen across the middle, ink at both ends. The modules
+of such a block outside the rings, read row by row, high bit first,
+are the header: 2 bytes length of the data, 4 bytes CRC-32 of the
+data, 20 bits CRC-32 of those 6 bytes (its low 20 bits). Every other
+block is 32 bytes, read row by row, high bit first: 2 bytes chunk
+number n, 26 bytes = bytes 26n to 26n+25 of the data, 4 bytes CRC-32
+of the 6 header bytes then the first 28. Each chunk is printed 3 times
+at scattered places. Use a block only if its CRC is right; stop when
+the data's CRC is right. Photograph the page in pieces, close up: a
+piece that shows a target can be read once any piece gave the header.
+KEEP THIS BOOK. Dry, dark, cool. No tape, no glue. Copy the whole
+book, then check the copy: its 8 x 8 block must still read Hello 42.
+The book crosses the centuries as copies, not as one paper. A mirror
+image on a page is a ghost from the facing page: read the sharp
+original. Brown paper: look with light from the side, light from
+behind, or infrared; carbon ink stays black. A page has 15 ring
+targets; one in a picture is enough once the header is known.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

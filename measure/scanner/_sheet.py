@@ -30,7 +30,7 @@ Read-only on every capture: crops come off a memmap.
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 from types import TracebackType
 from typing import Any
@@ -61,6 +61,12 @@ class SheetSpec:
     @property
     def um_per_px(self) -> float:
         return UM_PER_INCH / self.scan_dpi
+
+    def under(self, root: Path) -> "SheetSpec":
+        """This spec with capture, report and manifest joined onto ``root``."""
+        return replace(self, capture=root / self.capture,
+                       report=root / self.report,
+                       manifest=root / self.manifest)
 
 
 class SheetMismatch(RuntimeError):

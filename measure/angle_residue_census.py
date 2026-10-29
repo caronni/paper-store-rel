@@ -1,12 +1,18 @@
 #!/usr/bin/env python
 """The two receivers' placement census, side by side.
 
-    PYTHONPATH=. env/bin/python -m measure.angle_residue_census
+    PYTHONPATH=src:. env/bin/python -m measure.angle_residue_census \\
+        --work build/angle-residue
+
+Historical record (holo2 vs holo3 angle residue); reads the run dirs
+``measure.angle_residue`` wrote into ``--work``.
 
 holo3's side is read from the run dir's own ``events.jsonl`` (the CLI
-writes it); holo2's from the ``census.json`` the wrapper in
-``measure.angle_residue_h2`` dumps.  Nothing is re-derived from a
-receiver's internals here — both sides are read off recorded artifacts.
+writes it); holo2's column re-reads a ``census.json`` recorded before its
+retirement — holo2, and the ``measure.angle_residue_h2`` wrapper that
+wrote those files, were deleted 2026-09-05 at a805888.  Nothing is
+re-derived from a receiver's internals here — both sides are read off
+recorded artifacts.
 
 The window key is level-aware on both sides, which is what the
 2026-08-31 angle post-mortem found matters: ``report.json``'s
@@ -19,19 +25,43 @@ import json
 from collections import Counter, defaultdict
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / "scratch" / "angle-residue"
 
 #: holo3 stage names by class, for the cost census.
 EXPENSIVE = ("wide", "cold_live", "cold_rest")
 
-#: ``holo3.plugins.place.STAGE_COST`` and its two rung terms, spelled
+#: ``holo.receiver.plugins.place.STAGE_COST`` and its two rung terms, spelled
 #: here so a JobDone's recorded ``cost`` can be inverted back to the
 #: stage that ran (the event does not carry the stage, and
-#: ``WindowScheduled`` is emitted only when (stage, cost) MOVES).
+#: ``WorkerSeated`` is emitted only when (stage, cost) MOVES).
 STAGE_COST = {"ring": 40, "word_centre": 60, "word_rest": 80,
               "wide": 120, "cold_live": 140, "cold_rest": 150}
 COLD_STAGES = ("cold_live", "cold_rest")
+
+
+#: The seat and retire events, in BOTH spellings.  `WorkerSeated` /
+#: `WorkerRetired` are generic over every row and carry the subject as
+#: a JSON list (2026-09-21); `WindowScheduled` / `WindowRetired` were
+#: place-only and carried the four window fields flat.  Archived
+#: journals hold the old spelling and so does the base leg of any
+#: base-vs-branch A/B, so a reader that matches one name silently
+#: reports zero windows on half its inputs.
+SEATED_TYPES = ("WorkerSeated", "WindowScheduled")
+RETIRED_TYPES = ("WorkerRetired", "WindowRetired")
+
+
+def _is_place(event: dict) -> bool:
+    """The old events were place's alone and carry no `plugin` field."""
+    return event.get("plugin", "place") == "place"
+
+
+def _place_window_key(event: dict) -> tuple:
+    """The window a seat/retire event names, in either spelling."""
+    subject = event.get("subject")
+    if subject is None:
+        return (event["capture"], int(event["level_index"]),
+                int(event["region_index"]), tuple(event["extent_cells"]))
+    return (subject[0], int(subject[1]), int(subject[2]),
+            tuple(subject[3]))
 
 
 def stage_for_cost(cost: int, lane: int, depth: int) -> str:
@@ -64,17 +94,15 @@ def holo3_census(run_dir: Path) -> dict:
     total_cpu = 0.0
     run_done = None
     engine_stat = None
-    #: subject -> the stage its most recent WindowScheduled announced,
+    #: subject -> the stage its most recent place WorkerSeated announced,
     #: which is the stage the next place JobDone for it ran.
     pending_stage: dict[tuple, str] = {}
     with events_path.open() as handle:
         for line in handle:
             event = json.loads(line)
             kind = event.get("type")
-            if kind == "WindowScheduled":
-                key = (event["capture"], event["level_index"],
-                       event["region_index"],
-                       tuple(event["extent_cells"]))
+            if kind in SEATED_TYPES and _is_place(event):
+                key = _place_window_key(event)
                 scheduled.setdefault(key, dict(event))
                 pending_stage[key] = event["stage"]
             elif kind == "WindowSettled":
@@ -89,10 +117,8 @@ def holo3_census(run_dir: Path) -> dict:
                        tuple(event["extent_cells"]))
                 if event.get("accepted", True):
                     placed.add(key)
-            elif kind == "WindowRetired":
-                key = (event["capture"], event["level_index"],
-                       event["region_index"],
-                       tuple(event["extent_cells"]))
+            elif kind in RETIRED_TYPES and _is_place(event):
+                key = _place_window_key(event)
                 retired[key] = event.get("cause", "?")
             elif kind == "JobDone":
                 total_cpu += float(event.get("cpu_s", 0.0))
@@ -264,11 +290,14 @@ def holo2_census(run_dir: Path) -> dict:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--out", type=Path,
-                        default=OUT / "census-summary.json")
+    parser.add_argument("--work", type=Path, required=True,
+                        help="the directory measure.angle_residue wrote")
+    parser.add_argument("--out", type=Path, default=None,
+                        help="default: <work>/census-summary.json")
     args = parser.parse_args(argv)
+    out = args.out or args.work / "census-summary.json"
     summary: dict = {}
-    for run_dir in sorted(OUT.glob("holo*-a*")):
+    for run_dir in sorted(args.work.glob("holo*-a*")):
         if not run_dir.is_dir():
             continue
         side = run_dir.name.split("-a")[0]
@@ -280,7 +309,7 @@ def main(argv: list[str] | None = None) -> int:
             meta.get("wall_seconds", 0.0), 1)
         census["returncode"] = meta.get("returncode")
         summary[run_dir.name] = census
-    args.out.write_text(json.dumps(summary, indent=2, sort_keys=True) + "\n")
+    out.write_text(json.dumps(summary, indent=2, sort_keys=True) + "\n")
     print(json.dumps(summary, indent=2, sort_keys=True))
     return 0
 
@@ -292,7 +321,7 @@ if __name__ == "__main__":
 # --------------------------------------------------------------------------
 # Two derived questions the raw census cannot answer, both read off the same
 # holo3 event file.  Run with:
-#     PYTHONPATH=. env/bin/python -c \
+#     PYTHONPATH=src:. env/bin/python -c \
 #       "from measure.angle_residue_census import *; reach_report(<run_dir>)"
 
 def _region_shapes(run_dir: Path) -> dict:
@@ -324,7 +353,7 @@ def reach_report(run_dir) -> dict:
     Also reports the PLACEMENT-COVERAGE gate's opportunity: unresolved
     windows whose extent another lane of the same capture already posed.
     """
-    from holo3.plugins.place import ring_neighbour_extents
+    from holo.receiver.plugins.place import ring_neighbour_extents
 
     run_dir = Path(run_dir)
     shapes = _region_shapes(run_dir)
@@ -336,14 +365,10 @@ def reach_report(run_dir) -> dict:
     for line in (run_dir / "events.jsonl").open():
         event = json.loads(line)
         kind = event.get("type")
-        if kind == "WindowScheduled":
-            sched.setdefault((event["capture"], event["level_index"],
-                              event["region_index"],
-                              tuple(event["extent_cells"])), 1)
-        elif kind == "WindowRetired":
-            retired.add((event["capture"], event["level_index"],
-                         event["region_index"],
-                         tuple(event["extent_cells"])))
+        if kind in SEATED_TYPES and _is_place(event):
+            sched.setdefault(_place_window_key(event), 1)
+        elif kind in RETIRED_TYPES and _is_place(event):
+            retired.add(_place_window_key(event))
         elif kind == "JobDone" and event.get("plugin") == "place":
             subject = event["subject"]
             cpu[(subject[0], subject[1], subject[2],

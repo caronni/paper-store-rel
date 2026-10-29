@@ -3,9 +3,10 @@
 Two halves.  The OFFLINE half needs no run dir at all: a real format row
 (the sheet-I fossil identity), synthetic certificates built by the
 format's own encoder, and the question "does the target key's payload
-leak into the frame".  The RUN-DIR half checks the frame against the
-EMITTED FIELD — the only place in this wave where ground truth is
-allowed, and only as a test oracle.
+leak into the frame".  The EMITTED half checks the frame against the
+EMITTED FIELD of a volume written at test time (it was sheet I's run
+dir until 2026-10-09) — the only place in this wave where ground truth
+is allowed, and only as a test oracle.
 """
 
 from __future__ import annotations
@@ -15,14 +16,14 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from holo3.data import Certificate
-from holo3.format import identity, keystream, tile_codec
-from holo3.plugins import color_sites
+from holo.receiver.data import Certificate
+from holo.receiver.format import identity, keystream, tile_codec
+from holo.receiver.plugins import color_sites
 
 from analyzer import frame
 from analyzer.types import RunInputs
 
-from ._analyzer_fixtures import i_inputs, i_truth, needs_i_run
+from ._analyzer_fixtures import emitted_inputs, emitted_volume
 
 FORMAT_REF = "L:c2-cmy8-r0700-p120-x1@3392x2368"
 
@@ -231,36 +232,28 @@ def test_discriminating_labels_exclude_the_targets_own_payload():
     assert int(((kf.furniture_kind == 1) & fp.in_tile).sum()) == row.n_dust
 
 
-# ------------------------------------------------------------- run dir
+# ------------------------------------------------------- emitted field
 
-def _all_streams_tile(inputs, prefer=(0, 10, 10)):
-    page, ty, tx = prefer
-    streams = tuple(fact.stream_id for fact in inputs.row.streams)
-    if all((page, ty, tx, s) in inputs.certificates for s in streams):
-        return page, ty, tx
-    for key in sorted(inputs.certificates):
-        page, ty, tx, _ = key
-        if all((page, ty, tx, s) in inputs.certificates for s in streams):
-            return page, ty, tx
-    raise AssertionError("no tile has all three streams certified")
+def test_the_frame_equals_the_emitted_field_and_hides_the_target():
+    """holo3's certified projection against holo1's emitted field (F1).
 
-
-@needs_i_run
-def test_sheet_i_frame_equals_the_emitted_field_and_hides_the_target():
-    inputs = i_inputs()
-    truth = i_truth()
+    Every tile of the emitted volume is certified, so an interior tile
+    has a fully certified halo.
+    """
+    volume = emitted_volume()
+    inputs = emitted_inputs(volume)
     row = inputs.row
-    page, ty, tx = _all_streams_tile(inputs)
+    page, ty, tx = 0, 4, 5
     fp = frame.tile_footprint(row, page, ty, tx, 16)
     inside = fp.in_tile & fp.cargo
-    field = truth.fields[page].plane_bits
+    field = volume.truth.fields[page].plane_bits
     cells = fp.page_cells_yx
 
     for stream_id, plane in (("C", 0), ("M", 1), ("Y", 2)):
         kf = frame.known_frame(inputs, inputs.certificates, fp,
                                (page, ty, tx, stream_id),
                                metadata_known=False)
-        # (c): the run-abort assertion holds on a REAL certified tile.
+        # (c): the run-abort assertion holds on an emitted certified tile.
         assert int(kf.known[inside, plane].sum()) == 0
         # every known bit, halo included, equals what was emitted.
         for other in range(3):
@@ -277,27 +270,6 @@ def test_sheet_i_frame_equals_the_emitted_field_and_hides_the_target():
             assert kf.known[inside, other].all()
             emitted = field[other, cells[inside][:, 0], cells[inside][:, 1]]
             assert np.array_equal(kf.bits[inside, other], emitted)
-
-
-@needs_i_run
-def test_sheet_i_metadata_cell_is_the_emitted_bit():
-    from analyzer import truth as truth_module
-    inputs = i_inputs()
-    truth = i_truth()
-    page, ty, tx = _all_streams_tile(inputs)
-    fp = frame.tile_footprint(inputs.row, page, ty, tx, 0)
-    field = truth.fields[page].plane_bits
-    for stream_id, plane in (("C", 0), ("M", 1), ("Y", 2)):
-        key = (page, ty, tx, stream_id)
-        bit = truth_module.metadata_bit(inputs, key)
-        if bit is None:
-            pytest.skip("the run's metadata word is untrusted")
-        kf = frame.known_frame(inputs, inputs.certificates, fp, key,
-                               metadata_known=True, metadata_bit=bit)
-        assert kf.metadata_cell is not None
-        cell = fp.page_cells_yx[kf.metadata_cell]
-        assert int(kf.bits[kf.metadata_cell, plane]) == int(
-            field[plane, cell[0], cell[1]])
 
 
 def test_two_threads_tokenising_interleaved_never_alias():

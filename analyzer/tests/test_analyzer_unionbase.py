@@ -18,7 +18,7 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from holo3 import data, snapshot
+from holo.receiver import data, snapshot
 
 from analyzer import unionbase as ub
 from analyzer.types import LedgerRow
@@ -88,6 +88,80 @@ def test_a_second_build_over_the_same_out_dir_replaces_the_links(tmp_path):
     record = ub.build(run, second, out)
     assert (out / snapshot.NAME).resolve() == second.resolve()
     assert record["n_facts"] == 2
+
+
+def test_a_snapshot_write_into_the_union_dir_leaves_the_base_untouched(
+        tmp_path, monkeypatch):
+    """holo3's own writer replaces the link, never writes through it.
+
+    `operator._write_snapshot` (atomic since 2026-09-04) moves the standing
+    `facts.npz` to `facts.npz.bak` and renames the new file into place:
+    on a union dir the LINK is what moves aside, the base file keeps its
+    bytes, and the new snapshot is a real file.
+    """
+    from holo.receiver import operator
+    run = _run_dir(tmp_path)
+    facts = _snapshot(tmp_path / "exported.npz", CAP_A, CAP_B)
+    before = facts.read_bytes()
+    out = tmp_path / "union"
+    record = ub.build(run, facts, out)
+    assert record["facts_link_lifetime"].startswith("until holo3")
+
+    fresh = tuple(snapshot.read(facts))[:1]
+    monkeypatch.setattr(snapshot, "collect", lambda store: fresh)
+    operator._write_snapshot(out / snapshot.NAME, store=object())
+
+    assert facts.read_bytes() == before
+    live = out / snapshot.NAME
+    assert live.is_file() and not live.is_symlink()
+    assert len(tuple(snapshot.read(live))) == 1
+    bak = out / (snapshot.NAME + ".bak")
+    assert bak.is_symlink() and bak.resolve() == facts.resolve()
+    assert not (out / (snapshot.NAME + ".tmp")).exists()
+
+
+def test_facts_that_are_the_out_dirs_own_snapshot_refuse(tmp_path):
+    """The natural workflow that ate its input (review F1, 2026-09-13).
+
+    Export a snapshot into a new dir, then make that dir a union base:
+    `--facts <new>/facts.npz --out <new>` passed every gate, and the last
+    link unlinked the destination — which was the source — and put a
+    self-referential symlink in its place.  The refusal comes before
+    `out_dir.mkdir`, so the dir does not even gain the first copy.
+    """
+    run = _run_dir(tmp_path)
+    out = tmp_path / "new-run"
+    out.mkdir()
+    facts = _snapshot(out / snapshot.NAME, CAP_A, CAP_B)
+    before = facts.read_bytes()
+
+    with pytest.raises(ub.UnionBaseError, match="would be deleted"):
+        ub.build(run, facts, out)
+
+    assert facts.is_file() and not facts.is_symlink()
+    assert facts.read_bytes() == before
+    assert sorted(path.name for path in out.iterdir()) == [snapshot.NAME]
+
+
+def test_a_symlinked_parent_does_not_hide_the_alias(tmp_path):
+    """Same file, two names: `--facts` reached through a linked parent.
+
+    A string compare of the two paths sees nothing here, which is why
+    the guard resolves the parents (and falls back to `samefile`).
+    """
+    run = _run_dir(tmp_path)
+    real = tmp_path / "real-union"
+    real.mkdir()
+    facts = _snapshot(real / snapshot.NAME, CAP_A)
+    alias = tmp_path / "alias"
+    alias.symlink_to(real, target_is_directory=True)
+    before = facts.read_bytes()
+
+    with pytest.raises(ub.UnionBaseError, match="would be deleted"):
+        ub.build(run, alias / snapshot.NAME, real)
+
+    assert facts.is_file() and not facts.is_symlink()
+    assert facts.read_bytes() == before
 
 
 def test_facts_naming_an_undeclared_capture_refuse(tmp_path):

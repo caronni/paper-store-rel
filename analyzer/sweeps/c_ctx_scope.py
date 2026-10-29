@@ -1,14 +1,20 @@
 """Page-scope vs per-footprint context offsets on sheet H's C plane.
 
 Production fits its 9-bin context correction once per REGION over every
-window of a lane-page (`holo3/plugins/color_region_ctx.py`); the analyzer
+window of a lane-page (`src/holo/receiver/plugins/color_region_ctx.py`); the analyzer
 fits it per FOOTPRINT (`analyzer.calibrate._apply_context`).  This
 measures the difference: one pooled fit per (lane, page) over the
 labelled cells of many tiles, evaluated on each tile's SELECT fold —
 the fold neither fit ever sees — and applied to the missed keys' cargo.
 
 Run:
-    PYTHONPATH=. env/bin/python -m analyzer.sweeps.c_ctx_scope
+    PYTHONPATH=src:. env/bin/python -m analyzer.sweeps.c_ctx_scope \
+        --run-dir RUN --gt-dir GEN --payload PAYLOAD \
+        --phase-a OUT/phase-A.json --out OUT
+
+Historical record (sheet H, 2026-09-03; the inputs are
+`c_parity_gap`'s, in the evidence archive; `--phase-a` is that sweep's
+phase-A output).
 
 2026-09-04 NOTE.  This sweep is the RECORD of a finished measurement.
 The ruling that took ground truth out of the run moved the metadata bit
@@ -21,17 +27,19 @@ argument to the driver.
 
 from __future__ import annotations
 
+import argparse
 import json
 import time
 from concurrent.futures import ThreadPoolExecutor
+from pathlib import Path
 from typing import Any
 
 import numpy as np
 
-from holo3.lib import pava
-from holo3.plugins.calibrate import (apply_context_offsets, context_decision,
+from holo.receiver.lib import pava
+from holo.receiver.plugins.calibrate import (apply_context_offsets, context_decision,
                                      site_weights)
-from holo3.plugins import color_sites
+from holo.receiver.plugins import color_sites
 
 from analyzer import arms as arms_mod
 from analyzer import calibrate as cal
@@ -44,7 +52,7 @@ from analyzer import ladder as ladder_mod
 from analyzer import sample as sample_mod
 from analyzer.types import Evidence, VERDICT_CERTIFIED, VERDICT_CERTIFIED_LIST
 
-from .c_parity_gap import OUT, SEED, load, write
+from .c_parity_gap import SEED, load, write
 
 HALO = 16
 N_POOL_TILES = 120
@@ -140,11 +148,19 @@ def loss_of(rec: dict, offsets: np.ndarray | None, fold_id: int = 2) -> float:
 
 
 def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--run-dir", type=Path, required=True)
+    parser.add_argument("--gt-dir", type=Path, required=True)
+    parser.add_argument("--payload", type=Path, required=True)
+    parser.add_argument("--phase-a", type=Path, required=True,
+                        help="c_parity_gap's phase-A.json")
+    parser.add_argument("--out", type=Path, required=True)
+    args = parser.parse_args()
     started = time.perf_counter()
-    run, truth, rows = load()
+    run, truth, rows = load(args.run_dir, args.gt_dir, args.payload)
     certs = dict(run.certificates)
     missed = [tuple(k) for k in json.loads(
-        (OUT / "phase-A.json").read_text())["missed"]]
+        args.phase_a.read_text())["missed"]]
     certified_c = [row for row in rows
                    if row.certified_by_production and row.stream_id == "C"]
     pool_rows = sorted(certified_c,
@@ -264,7 +280,7 @@ def main() -> int:
             "unsat": [int(r.unsat_at_exit) for r in results],
         }
     out["seconds"] = time.perf_counter() - started
-    write("phase-D.json", out)
+    write("phase-D.json", out, args.out)
     return 0
 
 

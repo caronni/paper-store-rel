@@ -1,17 +1,26 @@
 #!/usr/bin/env python
-"""Platen-angle placement residue: holo2 vs holo3, on identical material.
+"""Platen-angle placement residue on real K captures: holo3 (the holo2 arm
+went with holo2, 2026-09-05).
 
 Read-only on the repo tree.  Cuts one crop from a real K capture, makes
 N copies that differ ONLY in synthetic platen rotation, and hands the
 SAME tiff to both receivers.
 
-    PYTHONPATH=. env/bin/python -m measure.angle_residue cut
-    PYTHONPATH=. env/bin/python -m measure.angle_residue run --angle 0.00 --side holo3
-    PYTHONPATH=. env/bin/python -m measure.angle_residue census
+    PYTHONPATH=src:. env/bin/python -m measure.angle_residue cut \\
+        --evidence-root <evidence> --work build/angle-residue
+    PYTHONPATH=src:. env/bin/python -m measure.angle_residue run \\
+        --angle 0.00 --side holo3 --work build/angle-residue
+    PYTHONPATH=src:. env/bin/python -m measure.angle_residue_census \\
+        --work build/angle-residue
 
-THE MATERIAL.  ``scratch/e028/hp-canon-c2-ink-counting.tiff`` is the
-e029 HP K sheet, Canon 4800 dpi grey, format ``L:c2-r0700@3392x2368``,
-16 px/cell.  Its own platen angle is 0.061 deg (from the crop-parity
+Historical record (holo2 vs holo3 angle residue, 2026-08-31); the
+capture is in the evidence archive, joined onto ``--evidence-root``
+(``measure/_evidence.py``); every stage shares one required ``--work`` directory.
+
+THE MATERIAL.  ``paper-store-evidence-holo-2026-10/029-holo-v1-first-print/
+c2-r0700-ink/captures/c2-r0700-ink-canon-4800grey.tiff`` (published as
+``.tiff.jxl``; ``measure/_evidence.py``) is the e029 HP K sheet, Canon
+4800 dpi grey, format ``L:c2-r0700@3392x2368``, 16 px/cell.  Its own platen angle is 0.061 deg (from the crop-parity
 record's fitted cell->px affine), i.e. the straight end of the
 sheet-H angle ladder.  There is no ANGLED K capture on this machine,
 so the angle is synthesised.
@@ -34,9 +43,16 @@ from pathlib import Path
 
 import numpy as np
 
+from measure import _evidence
+
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / "scratch" / "angle-residue"
 CASES = ROOT / "measure" / "crop_parity" / "cases" / "e029" / "cases.json"
+#: The capture, relative to ``--evidence-root`` (the published archive
+#: root); its cell->px affine and capture id (= sha256) come from the
+#: committed e029 case record, which names it ``RECORDED_NAME``.
+MATERIAL = Path("paper-store-evidence-holo-2026-10/029-holo-v1-first-print/"
+                "c2-r0700-ink/captures/c2-r0700-ink-canon-4800grey.tiff")
+RECORDED_NAME = "hp-canon-c2-ink-counting.tiff"
 
 #: The cell box the crop covers, (cy0, cx0, cy1, cx1) in page cells.
 CELL_BOX = (1200, 700, 2200, 1700)
@@ -47,8 +63,13 @@ DPI = 4800.0
 ANGLES = (0.00, 0.40, 0.80)
 
 
-def _capture() -> dict:
-    return json.loads(CASES.read_text())["captures"][0]
+def _capture(evidence_root: Path) -> dict:
+    capture = json.loads(CASES.read_text())["captures"][0]
+    if Path(capture["path"]).name != RECORDED_NAME:
+        raise SystemExit(f"angle_residue: {CASES} names {capture['path']}, "
+                         f"not {RECORDED_NAME}")
+    _evidence.need(evidence_root / MATERIAL, tool="angle_residue")
+    return dict(capture, path=str(evidence_root / MATERIAL))
 
 
 def _px_box(affine: list[list[float]]) -> tuple[int, int, int, int]:
@@ -64,11 +85,11 @@ def _px_box(affine: list[list[float]]) -> tuple[int, int, int, int]:
             int(math.ceil(max(ys))), int(math.ceil(max(xs))))
 
 
-def cut(angles: tuple[float, ...]) -> None:
+def cut(angles: tuple[float, ...], evidence_root: Path, work: Path) -> None:
     import tifffile
     from scipy import ndimage
 
-    capture = _capture()
+    capture = _capture(evidence_root)
     y0, x0, y1, x1 = _px_box(capture["affine_cell_to_px"])
     src = tifffile.memmap(capture["path"], mode="r")
     sy0, sx0 = max(0, y0 - PAD_PX), max(0, x0 - PAD_PX)
@@ -85,7 +106,7 @@ def cut(angles: tuple[float, ...]) -> None:
     centre_out = np.array([(out_shape[0] - 1) / 2.0,
                            (out_shape[1] - 1) / 2.0])
     centre_in = centre_out + np.array([off_y, off_x])
-    OUT.mkdir(parents=True, exist_ok=True)
+    work.mkdir(parents=True, exist_ok=True)
     manifest = {"source": capture["path"], "cell_box": list(CELL_BOX),
                 "px_box": [y0, x0, y1, x1], "format": FORMAT_REF,
                 "dpi": DPI, "native_angle_deg": math.degrees(math.atan2(
@@ -104,7 +125,7 @@ def cut(angles: tuple[float, ...]) -> None:
             block, matrix, offset=offset, output_shape=out_shape,
             order=3, mode="nearest", prefilter=True, output=np.float32)
         image = np.clip(np.rint(warped), 0, 255).astype(np.uint8)
-        path = OUT / f"crop-a{angle:.2f}.tiff"
+        path = work / f"crop-a{angle:.2f}.tiff"
         tifffile.imwrite(str(path), image, photometric="minisblack")
         manifest["arms"].append(
             {"angle_deg": angle, "path": str(path),
@@ -112,35 +133,28 @@ def cut(angles: tuple[float, ...]) -> None:
         print(f"  wrote {path.name} angle {angle:+.2f} deg "
               f"mean {image.mean():.2f}")
         del warped, image
-    (OUT / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
+    (work / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
 
 
-def run(angle: float, side: str, workers: int, timeout: float) -> int:
-    manifest = json.loads((OUT / "manifest.json").read_text())
+def run(angle: float, side: str, workers: int, timeout: float,
+        work: Path) -> int:
+    manifest = json.loads((work / "manifest.json").read_text())
     arm = next(a for a in manifest["arms"]
                if abs(a["angle_deg"] - angle) < 1e-9)
     crop = Path(arm["path"])
-    run_dir = OUT / f"{side}-a{angle:.2f}"
+    run_dir = work / f"{side}-a{angle:.2f}"
     if run_dir.exists():
         import shutil
         shutil.rmtree(run_dir)
     run_dir.mkdir(parents=True)
-    if side == "holo3":
-        argv = [sys.executable, "-m", "holo3", "decode", str(crop),
-                "--dpi", str(DPI), "--format", FORMAT_REF,
-                "--out", str(run_dir / "payload.bin"), "--no-close",
-                "--workers", str(workers), "--run-dir", str(run_dir)]
-        env = dict(os.environ, PYTHONPATH=str(ROOT))
-    else:
-        argv = [sys.executable, "-m", "measure.angle_residue_h2",
-                "--census-out", str(run_dir / "census.json"), "--",
-                "--scan", str(crop), "--dpi", str(DPI),
-                "--format", FORMAT_REF,
-                "--state-dir", str(run_dir / "state"),
-                "--output", str(run_dir / "payload.bin"), "--no-close",
-                "--workers", str(workers), "--diag-port", "8061"]
-        env = dict(os.environ,
-                   PYTHONPATH=f"{ROOT / 'holo2' / 'src'}:{ROOT}")
+    assert side == "holo3", side
+    argv = [sys.executable, "-m", "holo.receiver", "decode", str(crop),
+            "--dpi", str(DPI), "--format", FORMAT_REF,
+            "--out", str(run_dir / "payload.bin"), "--no-close",
+            "--workers", str(workers), "--run-dir", str(run_dir)]
+    # holo3 is holo.receiver under src/ since the 2026-09-05 move
+    env = dict(os.environ,
+               PYTHONPATH=os.pathsep.join((str(ROOT / "src"), str(ROOT))))
     started = time.perf_counter()
     done = subprocess.run(argv, capture_output=True, text=True,
                           cwd=str(ROOT), env=env, timeout=timeout)
@@ -169,16 +183,24 @@ def main(argv: list[str] | None = None) -> int:
     sub = parser.add_subparsers(dest="command", required=True)
     cutp = sub.add_parser("cut")
     cutp.add_argument("--angles", type=float, nargs="+", default=list(ANGLES))
+    _evidence.add_argument(cutp)
+    cutp.add_argument("--work", type=Path, required=True,
+                      help="crops + manifest + run dirs, shared by "
+                           "every stage")
     runp = sub.add_parser("run")
     runp.add_argument("--angle", type=float, required=True)
-    runp.add_argument("--side", choices=("holo2", "holo3"), required=True)
+    runp.add_argument("--side", choices=("holo3",), default="holo3")
     runp.add_argument("--workers", type=int, default=1)
     runp.add_argument("--timeout", type=float, default=7200.0)
+    runp.add_argument("--work", type=Path, required=True,
+                      help="the directory `cut` wrote")
     args = parser.parse_args(argv)
     if args.command == "cut":
-        cut(tuple(args.angles))
+        cut(tuple(args.angles),
+            _evidence.resolve(args.evidence_root, tool="angle_residue"),
+            args.work)
         return 0
-    return run(args.angle, args.side, args.workers, args.timeout)
+    return run(args.angle, args.side, args.workers, args.timeout, args.work)
 
 
 if __name__ == "__main__":

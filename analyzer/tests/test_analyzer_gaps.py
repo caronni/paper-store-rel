@@ -106,19 +106,30 @@ def test_the_branches_knob_reaches_the_arm_and_defaults_to_pooled():
     class _Inputs:
         plane_fields: dict = {}
 
-    class _Lane:
-        capture_id = "cap"
-        level_index = 0
-
     key = (0, 34, 34, "C")
-    default = fp._knobs_for(_Inputs(), AnalyzerConfig(), key, _Lane(),
-                            None, None)
+    default = fp._knobs_for(_Inputs(), AnalyzerConfig(), key, None)
     assert "branches" not in default
     asked = fp._knobs_for(_Inputs(), AnalyzerConfig(knobs={"branches":
                                                            "pooled"}),
-                          key, _Lane(), None, None)
+                          key, None)
     assert asked["branches"] == "pooled"
-    # the arm's own default: absent or empty knob means DEFAULT_BRANCHES
-    for value in (None, "", "subtract"):
-        assert str(value or cal.DEFAULT_BRANCHES) == (
-            "subtract" if value == "subtract" else cal.DEFAULT_BRANCHES)
+
+
+def test_the_pass_s_worker_count_reaches_the_field2_fit():
+    """PAGE-FIELD-PLAN A2: `field2`'s lazy pooled fit threads per LANE,
+    and the first key that asks for a `field2` arm holds every other
+    worker behind it for minutes (Y, 22 lanes) while it runs serially.
+    The pass's own worker count is therefore the fit's, unless the knob
+    bag names one — the knobs are merged last, so an operator still
+    wins."""
+    class _Inputs:
+        plane_fields: dict = {}
+
+    key = (0, 34, 34, "C")
+    default = fp._knobs_for(_Inputs(), AnalyzerConfig(workers=8), key, None)
+    assert default["field2_fit_workers"] == 8
+    asked = fp._knobs_for(
+        _Inputs(), AnalyzerConfig(workers=8,
+                                  knobs={"field2_fit_workers": 2}),
+        key, None)
+    assert asked["field2_fit_workers"] == 2

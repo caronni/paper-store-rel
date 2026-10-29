@@ -4,8 +4,8 @@
 # DEFAULT) — nothing persists on the engine after the job.
 # SAFETY: interactive confirmation required; Claude Code must ask the user
 # first (.claude/rules/hardware.md). Same raw 9100 discipline as
-# print_plane.sh; PJL variable provenance: exp 005.0 recon
-# (experiments/005-density-ladder/build/pjl-recon-2026-07-05.txt).
+# print_plane.sh; PJL variable provenance: the exp 005.0 recon
+# (experiments/005-density-ladder.md).
 set -euo pipefail
 FILE="${1:?usage: print_density.sh <job.ps> <density 1-5> [RET=OFF|ECONOMODE=ON] [host]}"
 DENS="${2:?density 1-5 required}"

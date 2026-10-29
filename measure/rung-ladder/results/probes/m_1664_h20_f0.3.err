@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "scratch/rung-ladder-20260930/lowrate_measure.py", line 16, in <module>
+    code = ldpc.build_code(spec)
+  File "src/paperholo/ldpc.py", line 425, in build_code
+    raise RuntimeError(f"H construction failed for {spec.rate_id} "
+                       f"after {_MAX_RESTARTS} restarts")
+RuntimeError: H construction failed for x1664h20f0.3 after 64 restarts

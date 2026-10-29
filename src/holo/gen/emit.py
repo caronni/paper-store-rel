@@ -17,10 +17,12 @@ from pathlib import Path
 import numpy as np
 
 from ..core import fountain
+from ..devices.registry import Printer
 from ..format import envelope, streamset
 from ..format.descriptor import FormatSpec
 from ..format.profiles import Family
 from .color_compose import (
+    COLOR_FAMILIES,
     color_cells_to_dot_planes,
     compose_color_page_cells,
 )
@@ -31,6 +33,7 @@ from .ps import HW_DPI, PSDoc
 from .sheet import DEFAULT_ENGINE_DPI, DEFAULT_PAPER, SheetLayout, sheet_layout
 
 METADATA_VERSION = 0     # fountain-v2 payload interpretation
+COLOR_ROUTES = ("cmyk1", "rgb")
 
 
 @dataclass(frozen=True)
@@ -101,8 +104,8 @@ def _placement(spec: FormatSpec, paper: str | None,
         if paper is not None or engine_dpi is not None:
             raise ValueError(
                 f"{spec.spec_id}: paper/dpi selection is the v2 emission "
-                f"path; a v1 row derives its page from the printer "
-                f"registry (media x margin) at 600 dpi")
+                f"path; a v1 row (an L: fossil) carries its own page "
+                f"(A4 x margin) at 600 dpi")
         lay = spec.layout
         return _Placement(page_dots_xy=lay.page_dots_xy,
                           origin_dots_yx=lay.origin_dots_yx,
@@ -126,8 +129,58 @@ def default_out_dir(spec: FormatSpec, payload: bytes) -> Path:
     return Path("build") / f"holo-{spec.spec_id}-{sha12}"
 
 
+def color_route(spec: FormatSpec, printer: Printer | None) -> str:
+    """The route a colour row takes on this engine (``cmyk1`` unnamed).
+
+    An engine without a colour record (``default``) refuses every colour
+    family rather than emit ``cmyk1`` silently.  ``rgb`` paints one opaque
+    mask per toner, so it refuses any family whose alphabet has overlap
+    states: the GT would say CM where one toner printed.  An emission
+    fact, never identity (CMY-DESIGN §2.8).
+    """
+    if printer is None:
+        return "cmyk1"
+    route = printer.color_route
+    if route is None:
+        raise ValueError(
+            f"{printer.printer_id}: no colour record — it prints no "
+            f"{spec.codec_family.name} row; name an engine with a colour "
+            f"route, or none for the cmyk1 composite")
+    if route not in COLOR_ROUTES:
+        raise ValueError(
+            f"{printer.printer_id}: unknown colour route {route!r}; "
+            f"known: {COLOR_ROUTES}")
+    if route == "rgb" and spec.codec_family is not Family.CMY:
+        raise ValueError(
+            f"{printer.printer_id}: the rgb route prints single-toner "
+            f"cells only; {spec.codec_family.name} has overlap states")
+    if route == "rgb" and (printer.rgb_solid is None
+                           or len(printer.rgb_solid) != 3):
+        raise ValueError(
+            f"{printer.printer_id}: the rgb route needs three solid "
+            f"device-RGB values (C, M, Y)")
+    return route
+
+
+def _put_color_field(doc: PSDoc, dots: np.ndarray,
+                     origin_dots_yx: tuple[int, int],
+                     rgb_solid: tuple[tuple[int, int, int], ...] | None
+                     ) -> None:
+    """``cmyk1``: one composite DeviceCMYK image; ``rgb``: one imagemask
+    per C/M/Y plane in the engine's solid device-RGB value."""
+    oy, ox = origin_dots_yx
+    if rgb_solid is None:
+        doc.put_cmyk_bitmap(dots, x_dots=ox, y_dots=oy)
+        return
+    for plane, rgb in enumerate(rgb_solid):
+        doc.put_bitmap(dots[..., plane], x_dots=ox, y_dots=oy, rgb=rgb,
+                       filt="ASCII85")
+
+
 def emit_volume(spec: FormatSpec, payload: bytes, q: float,
-                out_dir: Path, *, profile=None,
+                out_dir: Path, *,
+                printer: Printer | None = None,
+                # retained for measure/evidence_regen until the owner's ruling (CMY-GENERATOR-PLAN W2b ii)
                 printer_id: str | None = None,
                 paper: str | None = None,
                 engine_dpi: int | None = None) -> EmittedVolume:
@@ -135,20 +188,31 @@ def emit_volume(spec: FormatSpec, payload: bytes, q: float,
     pageNNN.ps + pageNNN_gt.npy per page + manifest.json.
 
     ``paper``/``engine_dpi`` place a v2 field on real paper (defaults
-    A4-6mm at 600 dpi); a v1 row refuses them — its page comes from the
-    printer registry.
+    A4-6mm at 600 dpi); a v1 row refuses them — an ``L:`` fossil carries
+    its own page.
+
+    ``printer`` is the emission engine: its record picks the colour route
+    (:func:`color_route`) and its id is recorded; never a geometry.
+    ``printer_id`` only records a printer id beside the ``cmyk1`` default
+    (the evidence recipes' published manifests).
 
     Everything is written into a staging directory and published by one
     atomic rename — a crash leaves no partial volume, and an existing
     out_dir is refused (delete it deliberately or pick another; volumes
     are never overwritten)."""
+    if printer is not None:
+        if printer_id is not None:
+            raise ValueError(
+                "name the printer once: printer= (the emission engine) "
+                "or the legacy printer_id=")
+        printer_id = printer.printer_id
     if spec.codec_family is not Family.K:
         return _emit_color_volume(
             spec,
             payload,
             q,
             out_dir,
-            profile=profile,
+            printer=printer,
             printer_id=printer_id,
             paper=paper,
             engine_dpi=engine_dpi,
@@ -200,7 +264,7 @@ def emit_volume(spec: FormatSpec, payload: bytes, q: float,
     vol = EmittedVolume(plan=plan,
                         payload_sha256=hashlib.sha256(payload).hexdigest(),
                         pages=tuple(pages))
-    write_manifest(staging / "manifest.json", vol, profile=profile,
+    write_manifest(staging / "manifest.json", vol,
                    printer_id=printer_id, sheet=place.sheet)
     staging.rename(out_dir)
     return vol
@@ -212,14 +276,16 @@ def _emit_color_volume(
     q: float,
     out_dir: Path,
     *,
-    profile=None,
+    printer: Printer | None = None,
     printer_id: str | None = None,
     paper: str | None = None,
     engine_dpi: int | None = None,
 ) -> EmittedVolume:
-    """Emit one provisional CMY7/CMY8 volume as composite DeviceCMYK."""
-    if spec.codec_family not in (Family.CMY7, Family.CMY8):
+    """Emit one provisional CMY7/CMY8/CMY volume on the engine's route."""
+    if spec.codec_family not in COLOR_FAMILIES:
         raise ValueError(f"unsupported color codec {spec.codec_id!r}")
+    rgb_solid = (printer.rgb_solid
+                 if color_route(spec, printer) == "rgb" else None)
     place = _placement(spec, paper, engine_dpi)
     plan = plan_volume(spec, len(payload), q)
     if out_dir.exists():
@@ -313,9 +379,8 @@ def _emit_color_volume(
             title=f"holo {spec.spec_id} p{page:03d}",
             engine_dpi=place.engine_dpi,
         )
-        oy, ox = place.origin_dots_yx
         doc.begin_page()
-        doc.put_cmyk_bitmap(dots, x_dots=ox, y_dots=oy)
+        _put_color_field(doc, dots, place.origin_dots_yx, rgb_solid)
         doc.end_page()
         ps_bytes = doc.render().encode("ascii")
         ps_name = f"page{page:03d}.ps"
@@ -323,8 +388,8 @@ def _emit_color_volume(
         (staging / ps_name).write_bytes(ps_bytes)
 
         # Plane-major makes each separation's packed bytes contiguous and
-        # gives the sidecar unambiguous C/M/Y audit digests.  K remains
-        # implicit and exactly zero in the composite renderer.
+        # gives the sidecar unambiguous C/M/Y audit digests, on either
+        # route.  K remains implicit and exactly zero.
         packed_gt = np.packbits(
             np.moveaxis(dots, -1, 0), axis=2, bitorder="big")
         np.save(staging / gt_name, packed_gt)
@@ -351,9 +416,9 @@ def _emit_color_volume(
     write_manifest(
         staging / "manifest.json",
         vol,
-        profile=profile,
         printer_id=printer_id,
         sheet=place.sheet,
+        rgb_solid=rgb_solid,
     )
     staging.rename(out_dir)
     return vol

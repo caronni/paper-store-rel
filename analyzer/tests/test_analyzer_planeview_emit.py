@@ -13,7 +13,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from holo3.lib import spectral
+from holo.receiver.lib import spectral
 
 from analyzer.planeview import emit as emit_mod
 

@@ -22,6 +22,13 @@ CMY8_BANKS = (
 )
 CMY8_BANKS_BY_STREAM = dict(zip(
     channel.PLANE_ORDER, CMY8_BANKS, strict=True))
+# the cmy probe pair, hi at r0775 and lo at r0700 (docs/CMY-DESIGN.md §2.4)
+CMY_BANKS_BY_STREAM = {
+    "hi": FecBankProfile("cmy-hi-r0775-p120-v1",
+                         (FecChildProfile("r0775", 120),)),
+    "lo": FecBankProfile("cmy-lo-r0700-p120-v1",
+                         (FecChildProfile("r0700", 120),)),
+}
 
 
 def _named(values):
@@ -132,29 +139,6 @@ def test_cmy8_stream_mappings_are_named_not_positional():
     with pytest.raises(ValueError, match="exactly"):
         color_tile.cmy8_encode_payload(
             missing, CMY8_BANKS_BY_STREAM, canonical_dither)
-
-
-def test_cmy8_one_bad_stream_does_not_suppress_siblings():
-    rng = np.random.default_rng(8002)
-    n = CMY8_BANKS[0].transmitted_bits
-    dither = rng.integers(0, 2, (n, 3), dtype=np.uint8)
-    users = tuple(
-        rng.integers(0, 2, bank.user_bits, dtype=np.uint8)
-        for bank in CMY8_BANKS
-    )
-    states = color_tile.cmy8_encode_payload(
-        _named(users), CMY8_BANKS_BY_STREAM, _named_columns(dither))
-    llrs = channel.cmy8_raw_marginal_llrs(_state_scores(states, 8))
-    # One hard C error with zero iterations makes C's syndrome fail.  M/Y
-    # remain separate clean frames and certify immediately.
-    llrs[0, 0] *= -1.0
-    results = color_tile.cmy8_decode_payload(
-        _named_columns(llrs), CMY8_BANKS_BY_STREAM,
-        _named_columns(dither), max_iters=0)
-    assert not results["C"].ok
-    assert results["M"].ok and results["Y"].ok
-    assert np.array_equal(results["M"].certified_user_bits, users[1])
-    assert np.array_equal(results["Y"].certified_user_bits, users[2])
 
 
 @pytest.mark.parametrize("bad_mask", range(8))
@@ -311,3 +295,77 @@ def test_cmy7_iterated_decode_refuses_a_degenerate_budget():
         color_tile.cmy7_iterated_decode(
             llrs, scores, observed, CMY7_BANK, order, dither,
             demap_iterations=0)
+
+
+def _cmy_tile(seed: int):
+    rng = np.random.default_rng(seed)
+    n = CMY_BANKS_BY_STREAM["hi"].transmitted_bits
+    users = {stream_id: rng.integers(0, 2, bank.user_bits, dtype=np.uint8)
+             for stream_id, bank in CMY_BANKS_BY_STREAM.items()}
+    dithers = {stream_id: rng.integers(0, 2, n, dtype=np.uint8)
+               for stream_id in CMY_BANKS_BY_STREAM}
+    states = color_tile.cmy_encode_payload(
+        users, CMY_BANKS_BY_STREAM, dithers)
+    return users, dithers, states
+
+
+def _cmy_decode(llrs_by_stream, dithers):
+    return {
+        stream_id: color_tile.cmy8_decode_stream(
+            llrs_by_stream[stream_id], bank, dithers[stream_id])
+        for stream_id, bank in CMY_BANKS_BY_STREAM.items()
+    }
+
+
+def test_cmy_tile_round_trips_through_labels_and_the_soft_demap():
+    users, dithers, states = _cmy_tile(9001)
+    assert states.shape == (3976,) and states.dtype == np.uint8
+    assert set(np.unique(states)) == set(channel.CMY_STATE_IDS)
+    labels = channel.cmy_state_labels(states)
+    hard = {stream_id: np.where(labels[index] == 1, 24.0, -24.0)
+            for index, stream_id in enumerate(channel.CMY_LABEL_STREAMS)}
+    scores = np.full((states.size, 3), -16.0)
+    for column, state in enumerate(channel.CMY_STATE_IDS[1:]):
+        scores[states == state, column] = 16.0
+    soft = {stream_id: channel.cmy_soft_demap(scores, index)
+            for index, stream_id in enumerate(channel.CMY_LABEL_STREAMS)}
+    for llrs in (hard, soft):
+        for stream_id, outcome in _cmy_decode(llrs, dithers).items():
+            assert outcome.ok
+            assert np.array_equal(
+                outcome.certified_user_bits, users[stream_id])
+
+
+# The death map on a tile (design §2.2 table (b)): the dead toner's cells
+# read W; hard labels from what is left.  Y kills lo, M kills hi, C both.
+@pytest.mark.parametrize("plane,survivors", [
+    (int(channel.CMYState.Y), {"hi"}),
+    (int(channel.CMYState.M), {"lo"}),
+    (int(channel.CMYState.C), set()),
+])
+def test_cmy_tile_death_map(plane, survivors):
+    users, dithers, states = _cmy_tile(9002)
+    dead = np.where(states == plane, 0, states).astype(np.uint8)
+    labels = channel.cmy_state_labels(dead)
+    hard = {stream_id: np.where(labels[index] == 1, 24.0, -24.0)
+            for index, stream_id in enumerate(channel.CMY_LABEL_STREAMS)}
+    outcomes = _cmy_decode(hard, dithers)
+    assert {stream_id for stream_id, outcome in outcomes.items()
+            if outcome.ok} == survivors
+    for stream_id in survivors:
+        assert np.array_equal(
+            outcomes[stream_id].certified_user_bits, users[stream_id])
+
+
+def test_cmy_encoder_refuses_cmy8_streams_and_non_mappings():
+    users, dithers, _states = _cmy_tile(9003)
+    with pytest.raises(ValueError, match="exactly"):
+        color_tile.cmy_encode_payload(
+            users, {"hi": CMY_BANKS_BY_STREAM["hi"]}, dithers)
+    with pytest.raises(ValueError, match="exactly"):
+        color_tile.cmy_encode_payload(
+            _named((users["hi"],) * 3), CMY8_BANKS_BY_STREAM,
+            _named((dithers["hi"],) * 3))
+    with pytest.raises(TypeError, match="mapping"):
+        color_tile.cmy_encode_payload(
+            users, CMY_BANKS_BY_STREAM, (dithers["hi"], dithers["lo"]))

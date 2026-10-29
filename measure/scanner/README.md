@@ -28,8 +28,9 @@ Read-only, archived captures only. **No scan, no print, no hardware.**
 ## How to run
 
 ```
-cd <repo>          # or a plane-fields worktree
-PYTHONPATH=measure env/bin/python -m scanner.blue_mtf --all
+cd <repo>
+PYTHONPATH=measure env/bin/python -m scanner.blue_mtf --all \
+    --evidence-root <evidence> --out build/scanner
 ```
 
 `scanner` is the package and every module imports its siblings
@@ -46,18 +47,26 @@ relatively, so `-m scanner.<entry>` is the only supported invocation.
 | `--tone {srgb,gamma22,none}` | which capture transfer function to invert — **the robustness control**; writes to `blue-mtf-<tone>.json` |
 | `--segments N` | x segments per strip rule (default 8) |
 | `--verify-sha` | hash both inputs against the recorded values (the colour scan is 6.9 GB, ~40 s) |
-| `--out DIR` | default `scratch/plane-fields/p2/scanner/` |
+| `--evidence-root DIR` | the published evidence archive root the input paths below join (else `$PAPER_EVIDENCE_ROOT`; refused by name when neither is given; `--selftest` needs none) |
+| `--out DIR` | required: where the JSON and figure land |
 
-## Inputs (both read-only, both sha-pinned in `blue_mtf.py`)
+## Inputs (both read-only, both sha-pinned in `blue_mtf.py`, relative to `--evidence-root`; in the evidence archive)
 
 | file | sha256 | record |
 |---|---|---|
-| `scratch/e028/canon-4800-knife-edge-20260804-gray.tiff` | `58a3ceb1e52b…` | experiments/028 §028.4 — 9872×16320 **grey**, 4800 dpi, LZW |
-| `scratch/e028/e028-m281-20260804-color-01-canon-4800rgb.tiff` | `d0f12451dfc1…` | experiments/028 capture 028.1b — 56128×40832 **RGB**, 4800 dpi, uncompressed |
+| `paper-store-evidence-holo-2026-10/028-discovery-m281/knife-edge/captures/knife-edge-canon-4800grey.tiff` | `58a3ceb1e52b…` | experiments/028 §028.4 — 9872×16320 **grey**, 4800 dpi, LZW |
+| `paper-store-evidence-holo-2026-10/028-discovery-m281/discovery/captures/discovery-color-canon-4800rgb.tiff` | `d0f12451dfc1…` | experiments/028 capture 028.1b — 56128×40832 **RGB**, 4800 dpi, uncompressed |
+
+2026-10-09: inputs renamed to the published archive paths (the table above, and `ink_psf.py`'s
+`SHEETS`: the e031 pair under `paper-store-evidence-holo-2026-10/031-xerox-altalink-discovery/discovery/`
+`captures/`, `reports/production/`, `reports/w8/`, the e028 pair and both page plans under
+`paper-store-evidence-holo-2026-10/028-discovery-m281/discovery/` `captures/`, `reports/`, `jobs/`).
+An uncompressed capture is published as `.tiff.jxl` and rebuilt by the release's `tools/unpack.sh`
+(byte-identical, so the sha pins hold); both tools refuse by name when an input is absent.
 
 ## Outputs
 
-`scratch/plane-fields/p2/scanner/blue-mtf.json` (+ `blue-mtf.png`): inputs
+`<out>/blue-mtf.json` (+ `blue-mtf.png`): inputs
 and their hashes, the self-test table, every groove and every K target
 with its per-channel MTF50/MTF10/10-90 rise, the per-target
 differentials, and the per-family aggregate.
@@ -152,15 +161,16 @@ tie — same scanner, same 4800 dpi, the **same authored page** (identical
 coverage 0.0714 against 0.0110).
 
 ```
-cd <repo>          # or a plane-fields worktree
-PYTHONPATH=measure env/bin/python -m scanner.ink_psf --all
+cd <repo>
+PYTHONPATH=measure env/bin/python -m scanner.ink_psf --all \
+    --evidence-root <evidence> --out build/scanner/e031
 ```
 
 `--all` is both colour sheets plus the two B/W sheets (a K-only reference
-in luma); `--sheets`, `--arms`, `--tone`, `--verify-sha`, `--out` are as
+in luma); `--sheets`, `--arms`, `--tone`, `--verify-sha`, `--evidence-root`, `--out` are as
 in `blue_mtf`. One run is ~35 s and peaks around 1.5 GB, almost all of it
 the knife-edge anchor. Artefacts:
-`scratch/plane-fields/p2/scanner/e031/e031-ink-psf.{json,png}`.
+`<out>/e031-ink-psf.{json,png}`.
 
 ## No pinned pixels — targets come from the page plan
 

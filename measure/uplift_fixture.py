@@ -31,7 +31,7 @@ the 2x2 cell junction.  Every plane read at a quarter of its true
 contrast (isolated-plane read 31.5% cell error / contrast 0.073, against
 0.002% / 0.292 on centres).  Every number measured through this fixture
 before that date is a HANDICAPPED number; the arms' records carry their
-own corrections.  See ``holo3/tests/_h3_fixture_geometry.py`` for the
+own corrections.  See ``src/holo/receiver/tests/_h3_fixture_geometry.py`` for the
 mechanism, which that module states once for every fixture.
 
 THE HAND-BUILT POSE IS GONE 2026-08-31, same day, second commit.  The
@@ -41,6 +41,19 @@ fixtures on one day.  ``region_windows`` now states its geometry as a
 ``Placement`` and lets ``color_region.region_window`` — production —
 compose the pose, so this file no longer spells a half cell at all.
 Byte-identical to the corrected hand-built form, proved field by field.
+
+THE STARVED PLANE CAN NOW BE PRINTED OUT OF REGISTER 2026-09-12 (the
+lead's ruling; ``docs/PAGE-FIELD-DESIGN.md`` §7.1's A4b debt).  A4b is
+fitted BESIDE the registration arm, and this fixture used to inherit
+that second arm from the always-on {1, y} residual the design retired —
+so when that went, the arm's margin went to zero with it.
+``Channel.starved_shift_px`` lays the starved plane's ink a whole number
+of pixels along x (2 px = one printed dot = a third of a cell at c3) and
+``plane_fields`` publishes the same displacement as the page's standing
+field, which the instrument hands ``build_region_inputs`` the way
+``plugins/uplift.py`` hands production's.  A channel that prints in
+register leaves both off and is byte-identical to this file's earlier
+renders, proved plane by plane, so the A3 record above is untouched.
 """
 from __future__ import annotations
 
@@ -49,17 +62,22 @@ from pathlib import Path
 
 import numpy as np
 
-from holo3 import data
-from holo3.format import identity
-from holo3.lib.geometry import TILE_CELLS
-from holo3.plugins import color_region
-from holo3.tests import _h3_fixture_geometry as geo
+from holo.receiver import data
+from holo.receiver.format import identity
+from holo.receiver.lib.geometry import TILE_CELLS
+from holo.receiver.plugins import color_region
+from holo.receiver.tests import _h3_fixture_geometry as geo
 
 COLOR_FORMAT_REF = "c3-cmy8-r0550x0550x0547@10x10"
 
 PPC = 6
 MARGIN_PX = 24
 PAPER_LEVEL = 235.0
+
+#: The plane A4b starves, displaces and then conditions: Y, the third,
+#: which is sheet H's measured shape — C and M certify and become the
+#: authority, Y is the one left over.
+STARVED_PLANE = 2
 
 
 @dataclass(frozen=True)
@@ -92,6 +110,18 @@ class Channel:
         (1.00, 0.35, 0.15),
         (0.30, 1.00, 0.25),
         (0.20, 0.30, 1.00))
+    # The starved plane's PRINT REGISTRATION ERROR, in whole capture
+    # pixels along +x, which is the physical effect A4b is fitted beside.
+    # `build_region_inputs` only has a corrected arm to fit where the
+    # page carries a field, and a field only stands where a plane is
+    # really out of register: with no displacement anywhere the fixture
+    # poses A4b its question against a single-armed head, which is the
+    # state that read margin exactly zero (PAGE-FIELD-DESIGN §7.1).
+    # PPC px is one cell and one cell is `cell_dots` printed dots, so
+    # 2 px is a third of a cell = 1 dot at c3 — inside the 0.3-0.4 cell
+    # band, and a WHOLE pixel, so the render displaces the plane's ink
+    # without interpolating it.
+    starved_shift_px: int = 0
     # Seeded per-TILE spread on the starved plane's strength. A page at
     # one uniform tone puts every tile at the same point on the LDPC
     # waterfall, so the sim fails all-or-nothing and no residue can exist
@@ -110,6 +140,80 @@ def page_bits(gt_path: Path, row: object) -> np.ndarray:
     off = step // 2
     cells = planes[:, off::step, off::step][:, :cells_y, :cells_x]
     return np.ascontiguousarray(np.moveaxis(cells, 0, -1))
+
+
+def shifted_x(plane_px: np.ndarray, shift_px: int) -> np.ndarray:
+    """One plane's ink moved along +x, paper shifted in behind it.
+
+    `shift_px` is at least 1, which is the whole domain `render` calls
+    it over: at 0 the slice below is empty and at a negative shift this
+    would move the ink the other way while `plane_fields` still said
+    +x.  A probe that wants the other direction takes both signs the
+    way `_h3_sims.shift_plane_x` does, and says so in the field too.
+    """
+    out = np.zeros_like(plane_px)
+    out[:, shift_px:] = plane_px[:, :-shift_px]
+    return out
+
+
+def starved_shift_dots(row: object, channel: Channel) -> float:
+    """The starved plane's displacement in PRINTED DOTS along page x.
+
+    The render moves ink by whole PIXELS and the field speaks dots, so
+    this is the one conversion between them: PPC pixels are one cell and
+    one cell is `cell_dots` dots.  Exact at every rung the fixture can
+    carry, which is what lets the injected field below match the render
+    to the bit.
+    """
+    return (channel.starved_shift_px
+            * color_region.cell_dots_of(row) / PPC)
+
+
+def injected_field(plane: int, tiles_yx: tuple[int, int],
+                   delta_x_dots: float) -> data.PlaneField:
+    """One plane's field: a constant x displacement over the whole page.
+
+    Measured everywhere, so support is 1 and uncertainty 0 — this is a
+    displacement the fixture WROTE, not one anybody estimated.
+    """
+    delta_dots_xy = np.zeros((tiles_yx[0], tiles_yx[1], 2), np.float64)
+    delta_dots_xy[..., 0] = delta_x_dots
+    return data.PlaneField(
+        page=0, plane=plane, delta_dots_xy=delta_dots_xy,
+        support=np.ones(tiles_yx, np.float64),
+        uncertainty_dots=np.zeros(tiles_yx, np.float64),
+        n_observations=tiles_yx[0] * tiles_yx[1], n_captures=1, ordinal=1)
+
+
+def plane_fields(row: object, channel: Channel
+                 ) -> tuple[data.PlaneField, ...] | None:
+    """The page's standing per-plane fields, as production hands them.
+
+    THE INJECTED FIELD, NOT A SOLVED ONE, and deliberately: the
+    displacement is a constant this fixture wrote, so the exact field is
+    known and the arm under test stays A4b rather than the estimator,
+    which has its own bars on its own stimuli (PAGE-FIELD-DESIGN §6,
+    B1-B3).
+
+    ALL THREE PLANES OR NONE, because those are the only two shapes the
+    `fields` row can leave in the store: `plugins/fields.solve_job`
+    solves every plane and publishes the three together under one
+    revision, and `store.page_plane_fields` reads Nones only before a
+    page's first solve — which is what `None` here means, and where
+    every earlier run of this fixture measured.  C and M print in
+    register, so their injected fields say exactly that: zero delta,
+    which `page_map.plane_delta_dots` evaluates to a zero offset and
+    `color_region_anchor.features_at` then reads at the pose itself,
+    point for point.  Measured inert as well as argued — the ablation
+    reads off 50140 / a4b 50283 / margin +143 either way (2026-09-12).
+    """
+    if not channel.starved_shift_px:
+        return None
+    shift_dots = starved_shift_dots(row, channel)
+    return tuple(
+        injected_field(plane, row.tiles_yx,
+                       shift_dots if plane == STARVED_PLANE else 0.0)
+        for plane in range(3))
 
 
 def window_gains(channel: Channel) -> tuple[np.ndarray, np.ndarray]:
@@ -132,13 +236,25 @@ def render(bits: np.ndarray, channel: Channel,
         per_tile = 1.0 + rng.normal(
             0.0, channel.plane_jitter_sd,
             (channel.tiles_side, channel.tiles_side))
-        density[..., 2] *= np.repeat(
+        density[..., STARVED_PLANE] *= np.repeat(
             np.repeat(per_tile, TILE_CELLS, axis=0), TILE_CELLS, axis=1)
-    clean = 1.0 - density @ np.asarray(channel.mix, np.float64).T
     side = cells * PPC
     image = np.full((side + 2 * MARGIN_PX, side + 2 * MARGIN_PX, 3),
                     PAPER_LEVEL / 255.0, np.float64)
-    block = np.repeat(np.repeat(clean, PPC, axis=0), PPC, axis=1)
+    # The planes are laid down in PIXEL space and mixed there, so one of
+    # them can be printed out of register before the mix — which is what
+    # a printer's plane-to-plane error does and what a page field
+    # corrects. Ink pushed past the rendered area's right edge is lost;
+    # that edge is where this fixture stopped rendering a 10x10-tile
+    # page, not a paper edge, and the strip lost is `starved_shift_px`
+    # wide -- 2 px, a THIRD of a cell at the shipped shift (measured:
+    # one cell column is touched, nothing a cell wide is lost), the
+    # same strip for both arms.
+    dots = np.repeat(np.repeat(density, PPC, axis=0), PPC, axis=1)
+    if channel.starved_shift_px:
+        dots[..., STARVED_PLANE] = shifted_x(dots[..., STARVED_PLANE],
+                                             channel.starved_shift_px)
+    block = 1.0 - dots @ np.asarray(channel.mix, np.float64).T
     if gains is not None:
         span = cells // channel.windows_side
         for index in range(channel.windows_side * channel.windows_side):

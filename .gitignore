@@ -1,10 +1,10 @@
 __pycache__/
 *.pyc
 *.egg-info/
-env/
-.venv/
-dist/
-scans/
+/env/
+/.venv/
+/dist/
+/scans/
 *.tiff
 *.tif
 *.png
@@ -14,7 +14,7 @@ scans/
 experiments/*/build/
 # session junk drawer (never committed; durable artifacts get promoted into
 # experiments/ or src/ — see experiments/001-*/ for the pattern)
-scratch/
+/scratch/
 
 # macOS junk
 .DS_Store
@@ -24,5 +24,14 @@ scratch/
 /build/
 *.swp
 .fixture-cache/
-env314t/
 _distill/
+# git worktrees the desktop app / sessions create for branches (registered in
+# .git/worktrees; the checkouts themselves are never content of this repo)
+.claude/worktrees/
+
+# evidence archive output root (util/evidence_pack), never tracked
+/evidence/
+
+# bootstrap typed rung: every derived output of bootstrap/build.py
+bootstrap/build/
+bootstrap/r2reader/diet/v1/[rscd]*.py

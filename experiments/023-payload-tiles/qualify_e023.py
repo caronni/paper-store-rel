@@ -16,7 +16,9 @@ context-conditioned error breakdown (ink-neighbor count), unresolved-
 sliver census from the e022 audit, CRC attempt-budget ledger.
 
   env/bin/python experiments/023-payload-tiles/qualify_e023.py \
-      [--decimated PATH] [--native PATH] [--quick]
+      --e018-gt <018's build>/e018_gt \\
+      --decimated <022's build>/session_state.pkl \\
+      --native <022's build>/session_native.pkl [--quick]
 """
 from __future__ import annotations
 
@@ -35,9 +37,7 @@ sys.path.insert(0, str(ROOT / "src"))
 from paperholo import compose, ldpc, payloaddec  # noqa: E402
 from paperholo.formats import FORMAT_REGISTRY  # noqa: E402
 
-E018_GT = ROOT / "experiments/018-confetti-c3-play/build/e018_gt"
-DEC_STATE = ROOT / "experiments/022-pilot-tile-search/build/session_state.pkl"
-NAT_STATE = ROOT / "experiments/022-pilot-tile-search/build/session_native.pkl"
+E018_GT = Path()  # the frozen e018 render truth dir, set from --e018-gt
 REPORT: dict = {}
 
 
@@ -312,12 +312,18 @@ def run_footing(name: str, state_path: Path, gate_b_applies: bool,
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--decimated", type=Path, default=DEC_STATE)
-    parser.add_argument("--native", type=Path, default=NAT_STATE)
+    parser.add_argument("--e018-gt", type=Path, required=True)
+    parser.add_argument("--decimated", type=Path, required=True)
+    parser.add_argument("--native", type=Path,
+                        help="required unless --skip-native")
     parser.add_argument("--quick", action="store_true",
                         help="skip GT cell diagnostics + ablation")
     parser.add_argument("--skip-native", action="store_true")
     args = parser.parse_args()
+    if not args.skip_native and args.native is None:
+        parser.error("--native is required unless --skip-native")
+    global E018_GT
+    E018_GT = args.e018_gt
 
     REPORT["decimated"] = run_footing("decimated", args.decimated,
                                       gate_b_applies=True, quick=args.quick)

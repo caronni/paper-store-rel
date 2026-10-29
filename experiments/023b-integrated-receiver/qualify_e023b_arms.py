@@ -1,5 +1,9 @@
 #!/usr/bin/env python
-"""Frozen 2x2 qualification for E023b.1 detector/decoder arms.
+"""FROZEN 2026-09-05: imports the v1 receiver, deleted that day on the
+retirement branch; last runnable at the tag pre-v1-v2-deletion.  Kept as
+the e023b record, not maintained.
+
+Frozen 2x2 qualification for E023b.1 detector/decoder arms.
 
 This runner is intentionally separate from the production entry point.  It
 opens only the two byte-pinned E023b.0 rich states, replays their retained
@@ -39,7 +43,7 @@ from paperholo.formats import FORMAT_REGISTRY  # noqa: E402
 
 
 BUILD = HERE / "build"
-GT_PATH = ROOT / "experiments/018-confetti-c3-play/build/e018_gt/K__e018_field.npy"
+GT_PATH = Path()  # <018's build>/e018_gt/K__e018_field.npy, set from --e018-gt
 GT_SHA256 = "6c6f54b7a8dec9d5b5d4e75ce5a29af4323bb91da5eca50391cc5d5eebc5cc82"
 
 # Complete frozen artifact identities.  A prefix is not sufficient here:
@@ -1129,7 +1133,11 @@ def main() -> int:
                         default=FOOTINGS["native"]["path"])
     parser.add_argument("--out", type=Path,
                         default=BUILD / "qualify_arms_report.json")
+    parser.add_argument("--e018-gt", type=Path, required=True,
+                        help="the frozen e018 render truth dir (sha-pinned)")
     args = parser.parse_args()
+    global GT_PATH
+    GT_PATH = args.e018_gt / "K__e018_field.npy"
     selected = (("decimated",) if args.only == "decimated" else
                 ("native",) if args.only == "native" else
                 ("decimated", "native"))

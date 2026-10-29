@@ -1,0 +1,248 @@
+{
+ "key": "ppm",
+ "primary": "ppm25 (dec.py)",
+ "python": "3.13 system python3, nice -n 10, 4 shared CPUs",
+ "primed_means": "primer.txt bytes + the variant's own dec file text, in that order",
+ "variants": {
+  "ppm25": {
+   "file": "dec.py",
+   "count_lines": "lines=25 chars=920",
+   "unprimed": {
+    "T1": 3092,
+    "T2": 4989,
+    "T3": 7810,
+    "T4": 143879
+   },
+   "primed": {
+    "T1": 2896,
+    "T2": 4768,
+    "T3": 7574,
+    "T4": 143711
+   },
+   "roundtrip": {
+    "T1_unprimed": true,
+    "T1_primed": true,
+    "T2_unprimed": true,
+    "T2_primed": true,
+    "T3_unprimed": true,
+    "T3_primed": true,
+    "T4_unprimed": true,
+    "T4_primed": true
+   },
+   "decode_s": {
+    "T1": 0.13,
+    "T2": 0.19,
+    "T3": 0.27,
+    "T4": 6.6
+   },
+   "encode_s": {
+    "T1": 0.12,
+    "T2": 0.19,
+    "T3": 0.25,
+    "T4": 4.13
+   },
+   "kav_hex": "2581d198e5bbc35f205a659df3ecb359fe003830331bb8dd82d888",
+   "kav_len": 27
+  },
+  "ppm27_d32": {
+   "file": "dec32.py",
+   "count_lines": "lines=27 chars=1014",
+   "unprimed": {
+    "T1": 3088,
+    "T2": 4985,
+    "T3": 7806,
+    "T4": 143871
+   },
+   "primed": {
+    "T1": 2891,
+    "T2": 4762,
+    "T3": 7571,
+    "T4": 143699
+   },
+   "roundtrip": {
+    "T1_unprimed": true,
+    "T1_primed": true,
+    "T2_unprimed": true,
+    "T2_primed": true,
+    "T3_unprimed": true,
+    "T3_primed": true,
+    "T4_unprimed": true,
+    "T4_primed": true
+   },
+   "decode_s": {
+    "T1": 0.13,
+    "T2": 0.19,
+    "T3": 0.29,
+    "T4": 6.17
+   },
+   "encode_s": {
+    "T1": 0.12,
+    "T2": 0.17,
+    "T3": 0.25,
+    "T4": 4.05
+   },
+   "kav_hex": "25817606f1dc6824b88c3e8e59289654c2d69c1af0cb60",
+   "kav_len": 23
+  },
+  "ppm38plus": {
+   "file": "dec_plus.py",
+   "count_lines": "lines=38 chars=1447",
+   "unprimed": {
+    "T1": 3010,
+    "T2": 4849,
+    "T3": 7600,
+    "T4": 140858
+   },
+   "primed": {
+    "T1": 2817,
+    "T2": 4631,
+    "T3": 7401,
+    "T4": 140654
+   },
+   "roundtrip": {
+    "T1_unprimed": true,
+    "T1_primed": true,
+    "T2_unprimed": true,
+    "T2_primed": true,
+    "T3_unprimed": true,
+    "T3_primed": true,
+    "T4_unprimed": true,
+    "T4_primed": true
+   },
+   "decode_s": {
+    "T1": 0.22,
+    "T2": 0.32,
+    "T3": 0.46,
+    "T4": 8.79
+   },
+   "encode_s": {
+    "T1": 0.21,
+    "T2": 0.28,
+    "T3": 0.4,
+    "T4": 8.05
+   },
+   "kav_hex": "2581d2659c523b0325e614bc4eaacc06c8171323ba68422f6000",
+   "kav_len": 26
+  }
+ },
+ "order_tradeoff_primed_bytes_T1_T3": {
+  "base (27-line 32-bit build, same model as dec.py)": {
+   "K2": [
+    3237,
+    10761
+   ],
+   "K3": [
+    2956,
+    8445
+   ],
+   "K4": [
+    2895,
+    7827
+   ],
+   "K5": [
+    2888,
+    7640
+   ],
+   "K6": [
+    2892,
+    7572
+   ],
+   "K8": [
+    2897,
+    7603
+   ],
+   "K12": [
+    2934,
+    8037
+   ]
+  },
+  "plus (dec_plus.py)": {
+   "K3": [
+    2925,
+    8452
+   ],
+   "K4": [
+    2842,
+    7764
+   ],
+   "K5": [
+    2823,
+    7515
+   ],
+   "K6": [
+    2820,
+    7400
+   ],
+   "K8": [
+    2816,
+    7365
+   ]
+  },
+  "T4_primed_base": {
+   "K4": 159345,
+   "K5": 151254,
+   "K6": 147567,
+   "K8": 146870,
+   "K12": 151415,
+   "note": "these T4 rows were measured with the earlier PPMD escape (d), before the 2d-1 escape; K6 with 2d-1 = 143,711"
+  }
+ },
+ "ablations_primed_bytes": {
+  "note": "measured with the encoder switches in enc.py (32-bit coder), T1p/T3p/T2 unprimed",
+  "K3 PPMD full model": [
+   2940,
+   8461,
+   5167
+  ],
+  "K3 no update exclusion (saves 2 lines)": [
+   3065,
+   8857,
+   5395
+  ],
+  "K3 no symbol exclusion (saves 2 lines)": [
+   3167,
+   8971,
+   5540
+  ],
+  "K6 PPMD escape d": [
+   2893,
+   7762,
+   5052
+  ],
+  "K6 escape 2d-1 (shipped)": [
+   2897,
+   7567,
+   4985
+  ],
+  "K4 pure SEE (no prior), best bucket": [
+   2902,
+   7833,
+   5024
+  ],
+  "PPMD counts INC 3/4/6 or singleton escape": "all within +-1%, none better",
+  "rescale limit 2000/8000/60000/none": "within 0.3%"
+ },
+ "plus_vs_base_primed": {
+  "T1": [
+   2896,
+   2817
+  ],
+  "T2": [
+   4768,
+   4631
+  ],
+  "T3": [
+   7574,
+   7401
+  ],
+  "T4": [
+   143711,
+   140654
+  ],
+  "lines": [
+   25,
+   38
+  ]
+ },
+ "hashseed_check": "enc+dec of T2 identical sha under PYTHONHASHSEED 0, 1, 12345 (all three variants built from bytes/int-tuple keys)"
+}

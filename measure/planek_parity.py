@@ -1,14 +1,21 @@
 #!/usr/bin/env python
 """Parity: does the production row reproduce the experiment's ladder?
 
-    PYTHONPATH=. env/bin/python -m measure.planek_parity --marginal
-    PYTHONPATH=. env/bin/python -m measure.planek_parity --case H-d --all
+    PYTHONPATH=src:. env/bin/python -m measure.planek_parity --marginal \\
+        --evidence-root <evidence> --out build/planek
+    PYTHONPATH=src:. env/bin/python -m measure.planek_parity --case H-d \\
+        --all-captures --evidence-root <evidence> --out build/planek
+
+Historical record of the plane_k parity check (2026-08-31); inputs (the
+yask cases' captures, harvest and generation set) in the evidence archive.
+2026-10-09: the harvest's event log is not in the published archive, so
+this check refuses by name through ``measure/yask`` (its README's note).
 
 THE QUESTION, and it is the only one that matters about this row.
 `measure/yask` measured, on sheet H's own crops and against a
 seven-capture production harvest of the same sheet, an additive ladder
 ending in **32 yellow tiles the harvest did not have, zero wrong**.
-`holo3/plugins/plane_k` is that experiment as a scheduled row.  This
+`src/holo/receiver/plugins/plane_k` is that experiment as a scheduled row.  This
 instrument runs THE PRODUCTION ROW'S OWN ASSEMBLY over the experiment's
 own crops, with the experiment's own archived poses and the same
 production certificate baseline, and reports its adds beside the
@@ -60,9 +67,10 @@ from pathlib import Path
 
 import numpy as np
 
-from holo3.data import Placement
-from holo3.plugins import color_region, plane_k
+from holo.receiver.data import Placement
+from holo.receiver.plugins import color_region, plane_k
 
+from measure import _evidence
 from measure.yask import _cases, _paths, _read
 from measure.yask import harness as yask_harness
 
@@ -385,15 +393,22 @@ def render(reports: list[dict], which: str) -> list[str]:
                 lines.append(f"* {lane['capture']}: "
                              f"{lane.get('reason', 'no read')}")
                 continue
-            blind = [entry["shift_dots"] for entry in lane["offsets"]
-                     if entry["source"] == "blind"]
-            mean_shift = (0.0 if not blind
-                          else sum(blind) / float(len(blind)))
+            # The SEARCH spellings, from the row's own constants: W3
+            # replaced the single "blind" label with four of them and
+            # this filter kept the retired literal, so every lane line
+            # of every report printed +0.000 as a measurement (found
+            # 2026-09-08, W7).
+            searched = [entry["shift_dots"] for entry in lane["offsets"]
+                        if entry["source"] in (plane_k.SOURCE_SEARCH,
+                                               plane_k.SOURCE_FIELD_SEARCH)]
+            mean_shift = (0.0 if not searched
+                          else sum(searched) / float(len(searched)))
             lines.append(
                 f"* {lane['capture']} (level {lane['level_index']}): "
                 f"{lane['poses']} poses, {lane['windows']} calibrated "
                 f"windows, plane SNR {lane['mix']['plane_snr']}, "
-                f"mean blind offset {mean_shift:+.3f} dots")
+                f"{len(searched)} searched offsets averaging "
+                f"{mean_shift:+.3f} dots")
         lines.append("")
     return lines
 
@@ -408,9 +423,13 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--all-captures", action="store_true",
                         help="every capture of the sheet (the union arm; "
                              "minutes per case, not seconds)")
-    parser.add_argument("--out", type=Path, default=None)
+    _evidence.add_argument(parser)
+    parser.add_argument("--out", type=Path, required=True,
+                        help="directory the reports are written to")
     args = parser.parse_args(argv)
 
+    _paths.use_evidence_root(args.evidence_root)
+    _paths.evidence_root()
     _paths.install_src()
     wanted = list(MARGINAL_CASES) if args.marginal else list(args.case)
     if not wanted:
@@ -431,7 +450,7 @@ def main(argv: list[str] | None = None) -> int:
               f"wrong {decode['wrong']} ({report['wall_seconds']} s)",
               file=sys.stderr, flush=True)
 
-    out_dir = args.out or (_paths.WORKTREE / "scratch/planek/reports")
+    out_dir = args.out
     out_dir.mkdir(parents=True, exist_ok=True)
     stamp = "-".join(wanted)[:80] + f"--{which}"
     (out_dir / f"planek-parity-{stamp}.json").write_text(

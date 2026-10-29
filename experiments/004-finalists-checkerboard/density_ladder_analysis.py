@@ -15,6 +15,7 @@ Writes build/density_ladder_report.json.
 """
 from __future__ import annotations
 
+import argparse
 import json
 import sys
 import time
@@ -31,7 +32,7 @@ import analyze_modprobe as amp  # noqa: E402
 import cal_core as cc  # noqa: E402
 
 BUILD = _HERE / "build"
-SCANS_DIR = _HERE.parents[1] / "scans"
+SCANS_DIR = Path()  # the run's scans (evidence archive), set from --scan-dir
 SHEETS = {
     "D3_RETON": "finalists-1-col.png",     # 004.0 print = ladder midpoint
     "D1": "005.1.png",
@@ -161,4 +162,7 @@ def main() -> None:
 
 
 if __name__ == "__main__":
+    _ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    _ap.add_argument("--scan-dir", type=Path, required=True)
+    SCANS_DIR = _ap.parse_args().scan_dir
     main()

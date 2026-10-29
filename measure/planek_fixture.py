@@ -30,10 +30,10 @@ from pathlib import Path
 import numpy as np
 from scipy import ndimage
 
-from holo3 import data
-from holo3.lib.geometry import TILE_CELLS
-from holo3.plugins import color_region
-from holo3.tests import _h3_fixture_geometry as geo
+from holo.receiver import data
+from holo.receiver.lib.geometry import TILE_CELLS
+from holo.receiver.plugins import color_region
+from holo.receiver.tests import _h3_fixture_geometry as geo
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 

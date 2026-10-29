@@ -2,7 +2,7 @@
 
 Declared deviation (PLAN §6): this module re-frames what
 `tile_codec.decode_frame` assembles inline, calls the private
-`holo3.lib.ldpc._bp_loop`, and owns the analyzer's own damped / offset /
+`holo.receiver.lib.ldpc._bp_loop`, and owns the analyzer's own damped / offset /
 layered min-sum loop.  Everything else — the code, the dither, the
 transmitted positions, the CRC — is holo3's, called.
 
@@ -30,11 +30,11 @@ import hashlib
 
 import numpy as np
 
-from holo3.format import keystream, tile_codec
-from holo3.format.tile_codec import Bank
-from holo3.lib import ldpc
-from holo3.lib.ldpc import CODES, LLR_CLIP, LLR_KNOWN, Code
-from holo3.plugins.tiles import stream_fact
+from holo.receiver.format import keystream, tile_codec
+from holo.receiver.format.tile_codec import Bank
+from holo.receiver.lib import ldpc
+from holo.receiver.lib.ldpc import CODES, LLR_CLIP, LLR_KNOWN, Code
+from holo.receiver.plugins.tiles import stream_fact
 
 from .types import EXPOSURE_PER_CONSULT, Exposure, Key, Mother, BpOut
 
@@ -61,7 +61,8 @@ def dither_of(row, key: Key) -> np.ndarray:
     page, ty, tx, stream_id = key
     counter = row.tile_counter(page, ty, tx)
     n_tx = tile_codec.bank_transmitted_bits(bank_of(row, stream_id))
-    return keystream.cmy8_dither_bits(row.seed, stream_id, counter, n_tx)
+    return keystream.cmy8_dither_bits(
+        row.seed, stream_fact(row, stream_id).dither_aux, counter, n_tx)
 
 
 def to_mother(llr_sequential: np.ndarray, row, key: Key, *,
@@ -321,7 +322,10 @@ def gate(hard: np.ndarray, mother: Mother, bank: Bank, exposure: Exposure,
 
     A non-codeword never reaches the CRC.  Every CRC consultation costs
     2^-32; candidates are de-duplicated by codeword digest and the run
-    refuses a consult that would break the exposure bound.
+    refuses a consult that would break the exposure bound.  That whole
+    decision is ONE call (`Exposure.reserve`) so that two workers cannot
+    both pass the bound check before either pays; the CRC itself is
+    computed after it, outside the exposure's lock.
 
     `notes["consulted_new"]` is 1 when THIS call was the first consult of
     THIS codeword and 0 when the digest had already been paid for; it is
@@ -349,11 +353,10 @@ def gate(hard: np.ndarray, mother: Mother, bank: Bank, exposure: Exposure,
         reason = "shortening_violated"
     else:
         digest = codeword_digest(hard)
-        n_new = 0 if digest in exposure.consulted else 1
-        if exposure.would_exceed(n_new):
+        allowed, n_new = exposure.reserve(digest)
+        if not allowed:
             reason = "exposure_exceeded"
         else:
-            exposure.consulted.add(digest)
             frame = hard[:active]
             user = frame[:active - tile_codec.CRC_BITS]
             crc_ok = bool(np.array_equal(

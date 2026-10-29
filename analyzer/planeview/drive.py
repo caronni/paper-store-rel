@@ -1,13 +1,13 @@
 """`plane-view-decode`: drive the REAL receiver over the emitted planes.
 
 Nothing here re-implements a decode.  The seams go in (`patches.install`),
-`holo3.cli.main` is called in-process with an ordinary `decode` command
+`holo.receiver.cli.main` is called in-process with an ordinary `decode` command
 line, and holo3 does the rest: its own capture survey, scale-space
 placement, word matching, PAVA calibration, region context, refine,
 revisit, local context and the multi-capture union — the K pipeline, over
 captures that hold one colour plane.
 
-EXIT CODES.  `holo3.cli._decode` returns 2 for "NOT RECOVERED" and 0 only
+EXIT CODES.  `holo.receiver.cli._decode` returns 2 for "NOT RECOVERED" and 0 only
 when it published a verified payload.  A plane-view run never publishes
 one — `--no-close` is always passed — so **2 is this harness's expected
 success code** and is reported as such; 1 stays a real error (an
@@ -16,7 +16,7 @@ synthetic e2e: 49/49 certificates, exit 2.
 
 `--no-close` IS MANDATORY and is enforced here rather than left to the
 operator: the plane view's fountain ESI is `counter*3 + plane`
-(close.py:562), not the `counter` a one-stream unpooled row would use, so
+(close.py:187-193, `_symbol_index`), not the `counter` a one-stream unpooled row would use, so
 its own close would be nonsense.  It is NOT, however, sufficient on its
 own — the engine runs an incremental metadata gate whatever the close
 asks for, and `patches.py`'s seventh seam is what keeps that gate
@@ -35,7 +35,7 @@ from typing import Any, Sequence
 from .patches import install
 from .row import build_plane_row
 
-#: `holo3.cli._decode`'s "NOT RECOVERED" code — the expected outcome of
+#: `holo.receiver.cli._decode`'s "NOT RECOVERED" code — the expected outcome of
 #: every plane-view run, because the close is always deferred.
 EXPECTED_NO_CLOSE_CODE: int = 2
 
@@ -107,8 +107,8 @@ def run(source_ref: str, stream_id: str, scans: Sequence[Path],
         dpis: Sequence[float], *, out: Path, run_dir: Path,
         workers: int = 1, diag_port: int | None = None,
         extra: Sequence[str] = (), manifest: Path | None = None) -> int:
-    """Install the seams, call `holo3.cli.main`, restore, return its code."""
-    from holo3 import cli as h3_cli
+    """Install the seams, call `holo.receiver.cli.main`, restore, return its code."""
+    from holo.receiver import cli as h3_cli
 
     plane_row, source_row, report = build_plane_row(source_ref, stream_id)
     decode_plan = DecodePlan(

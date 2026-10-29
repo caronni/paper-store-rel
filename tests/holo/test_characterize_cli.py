@@ -32,6 +32,11 @@ def test_discover_help_is_current_only(
     assert "list-candidates" not in help_text
 
 
+# Not redundant with the help test above, and the 2026-09 suite audit
+# refuted exactly that reading (SUITE-AUDIT-2026-09 §A): "invoking a
+# retired verb is REFUSED (exit 2)" is strictly stronger than "the four
+# names are absent from help text", and a compatibility alias is a
+# regression the help test provably cannot see.
 @pytest.mark.parametrize(
     "obsolete",
     (
@@ -114,18 +119,6 @@ def test_calibrate_malformed_from_report_is_a_clean_user_error(
 
     assert stopped.value.code == 2
     assert "analysis report schema must be exactly" in capsys.readouterr().err
-
-
-def test_module_entry_point_uses_the_same_current_verbs(
-    capsys: pytest.CaptureFixture[str],
-) -> None:
-    with pytest.raises(SystemExit) as stopped:
-        characterize_cli.main(["--help"])
-
-    assert stopped.value.code == 0
-    assert "{emit,analyze,calibrate,combine,candidates}" in (
-        capsys.readouterr().out
-    )
 
 
 @pytest.mark.parametrize(

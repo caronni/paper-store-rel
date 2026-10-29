@@ -103,8 +103,8 @@ def test_the_plane_view_certifies_a_synthetic_page_byte_exactly(tmp_path):
 
     from holo.format.resolve import resolve_format_ref as holo_resolve
     from holo.gen.emit import emit_volume
-    from holo3 import snapshot
-    from holo3.format import identity
+    from holo.receiver import snapshot
+    from holo.receiver.format import identity
 
     from analyzer import truth as truth_mod
 

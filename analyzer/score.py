@@ -61,9 +61,10 @@ from . import mother as mother_mod
 from . import oracle as oracle_mod
 from . import sample as sample_mod
 from . import truth as truth_mod
-from .types import (LIST_RUNGS, VERDICT_CERTIFIED, VERDICT_CERTIFIED_LIST,
-                    VERDICT_FALSE_ACCEPT, VERDICT_UNSCOREABLE, VERDICT_WRONG,
-                    AnalyzerConfig, Key, Truth)
+from .types import (LIST_RUNGS, RESERVED_KNOBS, VERDICT_CERTIFIED,
+                    VERDICT_CERTIFIED_LIST, VERDICT_FALSE_ACCEPT,
+                    VERDICT_UNSCOREABLE, VERDICT_WRONG, AnalyzerConfig, Key,
+                    Truth)
 
 SCORE_ROWS = "score.jsonl"
 SCORE_REPORT = "score.md"
@@ -216,6 +217,16 @@ def evidence_for_row(inputs: Any, certs: Mapping[Key, Any], key: Key,
     from . import arms as arms_mod
     from . import fixedpoint as fp
 
+    # W8 ruling 8: every DERIVED knob is the driver's alone; a scoring
+    # config that names one would hand the recomputed evidence something
+    # no blind run could have had.  The list is `types.RESERVED_KNOBS`
+    # itself — the same names `cli.parse_knob` and `fixedpoint.blind_key`
+    # refuse — so the three doors cannot drift apart (review 2026-09-06).
+    for name in RESERVED_KNOBS:
+        if name in config.knobs:
+            raise ValueError(
+                f"score: knob {name!r} is reserved for the driver and may "
+                f"not reach the recomputed evidence")
     page, ty, tx, stream_id = key
     battery = config.battery_for(str(stream_id))
     if not battery:
@@ -237,7 +248,7 @@ def evidence_for_row(inputs: Any, certs: Mapping[Key, Any], key: Key,
         metadata_bit=bit)
     evidences = []
     for lane in lanes:
-        knobs = fp._knobs_for(inputs, config, key, lane, bit, None)
+        knobs = fp._knobs_for(inputs, config, key, bit)
         evidences.append(arms_mod.evidence_for(
             inputs, certs, key, lane, arm, halo_cells=halo, knobs=knobs))
     out: dict[str, Any] = {"arm": arm, "lanes": len(evidences)}
@@ -352,7 +363,7 @@ def score(ledger_paths: Sequence[Path | str], payload: Path | str,
     The ledgers are STREAMED (a sheet-H pass is gigabytes), so the peak
     memory is one raw row plus the scored rows, which carry summaries.
     """
-    from holo3.format import identity
+    from holo.receiver.format import identity
 
     config = AnalyzerConfig() if config is None else config
     headers = read_headers(ledger_paths)
@@ -384,7 +395,12 @@ def score(ledger_paths: Sequence[Path | str], payload: Path | str,
     seen: set[Key] = set()
     for name, _header in headers:
         n_rows = 0
-        for raw in ledger_mod.iter_rows(name):
+        # LAST ROW PER KEY (2026-09-13): a streamed ledger appends the
+        # re-attack of a key rather than replacing its row, so the row
+        # that describes a key is the last one the file carries — and a
+        # ledger whose pass was killed ends in a line that will not
+        # decode, which `iter_rows_latest` skips and counts.
+        for raw in ledger_mod.iter_rows_latest(name):
             n_rows += 1
             key = key_of(raw)
             if int(key[0]) >= pages:

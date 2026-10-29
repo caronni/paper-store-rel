@@ -26,7 +26,12 @@ COST.  The verification reads the snapshot once (6.5 GB on sheet I,
 about 12 GB on H) and drops it again, which is the price of not writing
 a pointer to rasters it does not match.  The facts file is SYMLINKED,
 not copied: deleting or rewriting `--facts` afterwards breaks every run
-dir built from it.
+dir built from it.  The link lasts until holo3's first snapshot write
+into the new dir (the `--snapshot-every` cadence, SIGUSR1, or finish):
+`operator._write_snapshot` renames the link aside as `facts.npz.bak` and
+puts a real `facts.npz` in its place, so the base file is never written
+through and the record's `facts_symlinked_as` describes the dir AS
+BUILT, not as it stands after that write.
 """
 
 from __future__ import annotations
@@ -36,7 +41,7 @@ import os
 from pathlib import Path
 from typing import Any, Sequence
 
-from holo3 import snapshot
+from holo.receiver import snapshot
 
 #: Copied verbatim from the base run dir (small; `argv` is optional).
 COPIED: tuple[str, ...] = ("report.json", "argv")
@@ -53,11 +58,20 @@ class UnionBaseError(RuntimeError):
 
 
 def declared_captures(run_dir: Path | str) -> tuple[str, ...]:
-    """The capture ids `report.json` declares, in its own order."""
+    """The capture ids `report.json` declares, in its own order.
+
+    A report without `capture_facts` is refused by name: it is a file
+    of some other shape standing where a finished run's report should
+    be, and a `KeyError` out of here reads as a bug in the reader.
+    """
     path = Path(run_dir) / "report.json"
     if not path.exists():
         raise UnionBaseError(f"{path} is absent — not a finished run dir")
     report = json.loads(path.read_text("utf-8"))
+    if "capture_facts" not in report:
+        raise UnionBaseError(
+            f"{path} declares no `capture_facts` — not a finished run's "
+            f"report")
     return tuple(str(fact["capture"]) for fact in report["capture_facts"])
 
 
@@ -79,6 +93,24 @@ def _link(target: Path, link: Path) -> None:
     os.symlink(os.path.abspath(target), link)
 
 
+def _same_file(source: Path, dest: Path) -> bool:
+    """Would writing `dest` write `source`?  Two ways it can be true.
+
+    The paths can NAME the same place — which a string compare misses
+    when a parent is a symlink, so the parents are resolved and the
+    names compared (the final component is NOT resolved: the thing
+    `_link` unlinks is whatever stands at that path, link or file).  Or
+    they can BE the same file through two names, which is `samefile`.
+    """
+    if (source.parent.resolve() / source.name
+            == dest.parent.resolve() / dest.name):
+        return True
+    try:
+        return os.path.samefile(source, dest)
+    except OSError:                     # dest absent, or a broken link
+        return False
+
+
 def build(run_dir: Path | str, facts_path: Path | str,
           out_dir: Path | str, *, verify_facts: bool = True) -> dict:
     """Build the union-base run dir; returns the record it writes."""
@@ -91,6 +123,15 @@ def build(run_dir: Path | str, facts_path: Path | str,
         raise UnionBaseError(
             f"--out {out_dir} is the base run dir; a union base is a NEW "
             f"dir, never an overwrite of the run it borrows from")
+    if _same_file(facts_path, out_dir / snapshot.NAME):
+        raise UnionBaseError(
+            f"--facts {facts_path} IS {out_dir / snapshot.NAME} — the "
+            f"snapshot this dir would carry.  The last link below unlinks "
+            f"that destination and points it at the source, which here is "
+            f"the same file: the input would be deleted and replaced by a "
+            f"link to itself.  Name a different --out (exporting a "
+            f"snapshot into a new dir and then making THAT dir a union "
+            f"base is the workflow this refuses).")
 
     captures = declared_captures(run_dir)
     missing_rasters = [name for name in captures
@@ -147,6 +188,7 @@ def build(run_dir: Path | str, facts_path: Path | str,
         "base_run_dir": str(run_dir),
         "facts": str(facts_path),
         "facts_symlinked_as": str(out_dir / snapshot.NAME),
+        "facts_link_lifetime": "until holo3's first snapshot write into this dir (then facts.npz.bak)",
         "out": str(out_dir),
         "copied": copied,
         "symlinked": linked,
@@ -177,6 +219,15 @@ def certified_in(ledger_paths: Sequence[Path | str]) -> set:
     what this function keeps is a few thousand 4-tuples.  Materialising
     the rows to select four fields out of each would cost tens of
     gigabytes of RSS for a set that fits in a megabyte.
+
+    EVERY row, not the last per key (`iter_rows`, not
+    `iter_rows_latest`), and the invariant that makes that right: a
+    streamed ledger appends a second row for a key a later generation
+    re-attacked, but `fixedpoint.run` never re-attacks a key it has
+    CERTIFIED (`pending` drops `certified` before every generation), so
+    no key can have a certified row followed by an open one.  A union
+    over all rows is therefore the union over the last ones, and this
+    reads the file once instead of twice.
     """
     from . import ledger as ledger_mod
     from .types import VERDICT_CERTIFIED, VERDICT_CERTIFIED_LIST

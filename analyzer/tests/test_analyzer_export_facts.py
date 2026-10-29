@@ -1,15 +1,11 @@
 """`analyzer.export_facts` — the ledger's certificates back into a snapshot.
 
-The synthetic half fabricates a three-fact snapshot and two ledgers and
-pins the contract: the snapshot's own facts come back in the same order,
-the analyzer's certificates are APPENDED after them, a key the snapshot
-already certifies is skipped, a duplicate across ledgers takes the first
+A fabricated three-fact snapshot and two ledgers pin the contract: the
+snapshot's own facts come back in the same order, the analyzer's
+certificates are APPENDED after them, a key the snapshot already
+certifies is skipped, a duplicate across ledgers takes the first
 ledger's bits, a DISAGREEMENT is fatal, and the list-rung toggle moves
 exactly the rows it says it does.
-
-The `@needs_i_run` half is the real one: sheet I's resume-3 snapshot
-(5,880 certificates) plus the analyzer's three, read back through
-`holo3.snapshot.read` at 5,883 with gate 1 green on the three added.
 """
 
 from __future__ import annotations
@@ -20,11 +16,10 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-from holo3 import data, snapshot
+from holo.receiver import data, snapshot
 
 from analyzer import export_facts as export_mod
 
-from ._analyzer_fixtures import I_GEN_DIR, I_PAYLOAD, I_RUN_DIR, needs_i_run
 
 SNAP_KEY = (0, 0, 0, "Y")
 BITS_A = np.array([1, 0, 1, 1, 0, 0, 1, 0], np.uint8)
@@ -309,6 +304,41 @@ def test_a_failing_consistency_hook_refuses_the_export(tmp_path,
     assert not (tmp_path / "new.npz").exists()
 
 
+def test_the_export_carries_the_page_fields_and_revisions_of_its_base(
+        tmp_path):
+    """AI6: an export preserves every fact family it was handed.
+
+    The analyzer's door back to the receiver is a CERTIFICATE door, and
+    it is additive at both ends: it appends certificates and it strips
+    nothing.  The measured reason is sheet J — an export that dropped
+    the field families cost the resumed receiver its evidence revisions
+    (9,118 -> 8,977 and 8,602 -> 8,276, `README.md` §2.1a) and made it
+    re-solve its field from nothing.  Pinned by COUNT and by digest, so
+    a family silently re-keyed fails here too.
+    """
+    field = data.PlaneField(
+        page=0, plane=1, delta_dots_xy=np.zeros((2, 2, 2), np.float64),
+        support=np.ones((2, 2), np.float64),
+        uncertainty_dots=np.full((2, 2), 0.25), n_observations=4,
+        n_captures=3, ordinal=41906)
+    revision = data.EvidenceRevision(capture_id="cap0", page=0,
+                                     revision=7964)
+    base = (field, revision) + _base_snapshot(tmp_path / "only.npz")
+    snapshot.write(tmp_path / "facts.npz", base)
+    want = export_mod.fact_digests(base)
+
+    first, second = _ledgers(tmp_path)
+    out = tmp_path / "new.npz"
+    export_mod.export(tmp_path / "facts.npz", [first, second], out)
+
+    back = snapshot.read(out)
+    names = [type(fact).__name__ for fact in back]
+    assert names.count("PlaneField") == 1
+    assert names.count("EvidenceRevision") == 1
+    assert export_mod.fact_digests(back[:len(base)]) == want
+    assert back[0].ordinal == 41906 and back[1].revision == 7964
+
+
 def test_source_spelling_survives_holo3s_own_fold(tmp_path):
     """The chosen `source` is never parsed on the resume path.
 
@@ -324,6 +354,230 @@ def test_source_spelling_survives_holo3s_own_fold(tmp_path):
         "analyzer/L2:damped@300"
     assert export_mod.source_for(None) == "analyzer"
 
+
+def test_the_archived_corpus_convert_recipe_self_checks(tmp_path):
+    """AB3's other half: strip + append leaves every other fact alone.
+
+    `measure/page_field/convert.py` is the door an archived pre-W2 spine
+    comes back through, and its own self-check is the whole assertion —
+    the product route end to end on a synthetic snapshot, the non-field
+    digests identical, and the three refusals (another seed, another
+    spine's census, an input that never lost its field).  Run here
+    because it is `analyzer.export_facts.fact_digests` that adjudicates
+    it, and this is that function's module.
+    """
+    from measure.page_field import convert
+
+    convert.self_check(tmp_path / "convert")
+    manifest = json.loads(
+        (tmp_path / "convert" / "out.npz.convert.json").read_text("utf-8"))
+    # F5's route key: the CONVERSION's route is its own field, beside the
+    # product's own `route` and never over it (all three manifests of
+    # record named the product's and called it the conversion's).
+    assert manifest["source"]["conversion_route"] == "fields-json"
+    assert manifest["source"]["route"] == "self-check"
+
+
+def test_a_pre_existing_convert_planes_dir_is_refused_not_deleted(tmp_path):
+    """F2: the solve's scratch dir is claimed, and only then removed.
+
+    `<out parent>/convert-planes` is a FIXED name and the solve route
+    `rmtree`s it on the way out, so a directory already standing there is
+    a prior or concurrent conversion's — the same rule `append` applies
+    to its output, one sentence in the same voice.
+    """
+    from measure.page_field import convert
+
+    work = tmp_path / "convert-planes"
+    work.mkdir()
+    (work / "cap0").mkdir()
+    (work / "cap0" / "l00-r.npy").write_bytes(b"a prior run's raster")
+    with pytest.raises(ValueError, match="never overwrites"):
+        convert.claim_work_dir(work)
+    assert (work / "cap0" / "l00-r.npy").read_bytes() \
+        == b"a prior run's raster"
+
+    fresh = convert.claim_work_dir(tmp_path / "elsewhere" / "convert-planes")
+    assert fresh.is_dir() and not any(fresh.iterdir())
+
+
+def test_the_solve_route_claims_its_work_dir_before_the_store_opens(
+        tmp_path, monkeypatch):
+    """The refusal lands before anything is read, and a dir this call
+    created is the only one it removes.
+
+    Every `estimate` piece is stubbed: the point is the ownership, not
+    the solve, and `from_solve` has no other automated coverage —
+    `self_check` drives the PRODUCT route alone.
+    """
+    from measure.page_field import convert
+    from measure.page_field.products import Declaration
+
+    calls: list[str] = []
+
+    class _Archive:
+        def source(self):
+            return {"route": "snapshot", "source": "stub"}
+
+    monkeypatch.setattr(convert.estimate_module, "run_dir_archive",
+                        lambda run_dir: _Archive())
+    def opened(declaration, work):
+        calls.append("open")
+        return "store"
+
+    monkeypatch.setattr(convert.estimate_module, "open_store", opened)
+    monkeypatch.setattr(convert.estimate_module, "fold_evidence",
+                        lambda store, facts: {"Placement": 1})
+    monkeypatch.setattr(convert.estimate_module, "collect_captures",
+                        lambda store, declaration, work: (1, 1, 0.0))
+    monkeypatch.setattr(convert.estimate_module, "solve_pages",
+                        lambda store: ((), 0.0))
+    monkeypatch.setattr(convert.snapshot, "collect", lambda store: ())
+
+    declaration = Declaration(scans=(), dpis=(), max_pages=None,
+                              format_ref=convert.SELF_FORMAT_REF)
+    standing = tmp_path / "convert-planes"
+    standing.mkdir()
+    (standing / "keep").write_bytes(b"not this invocation's")
+    with pytest.raises(ValueError, match="never overwrites"):
+        convert.from_solve(declaration, (), tmp_path / "facts.npz", standing)
+    assert calls == [], "the store opened over a dir it did not own"
+    assert (standing / "keep").exists()
+
+    _added, source = convert.from_solve(declaration, (),
+                                        tmp_path / "facts.npz",
+                                        tmp_path / "mine" / "convert-planes")
+    assert calls == ["open"]
+    assert not (tmp_path / "mine" / "convert-planes").exists()
+    assert source["conversion_route"] == "solve" and source["route"] \
+        == "snapshot"
+
+
+def test_the_product_route_gates_the_grid_the_ids_and_the_captures(tmp_path):
+    """F5: the census says how BIG the evidence was, these say whose.
+
+    Nothing downstream refuses a mis-shaped grid — `plane_field.evaluate`
+    clamps the tile coordinates it samples at — so the refusal has to be
+    here, beside the page/plane ids and the capture binding that makes an
+    appended `EvidenceRevision` this archive's.
+    """
+    from measure.page_field import convert
+
+    tiles_yx = convert.SELF_TILES_YX
+    good = {"pages": [{
+        "page": 0, "tiles_yx": list(tiles_yx),
+        "evidence_revision_by_capture": {"cap0": 7964},
+        "planes": [{"plane": 1,
+                    "delta_dots_xy": np.zeros(tiles_yx + (2,)).tolist(),
+                    "support": np.ones(tiles_yx).tolist(),
+                    "uncertainty_dots": np.full(tiles_yx, 0.3).tolist()}]}]}
+    archive = convert.Declared(captures=("cap0", "cap1"), pages=(0,))
+    convert.check_product_shape(good, convert.SELF_FORMAT_REF,
+                                tmp_path / "fields.json", archive)
+
+    def refuses(mutate, match, declared=None):
+        payload = json.loads(json.dumps(good))
+        mutate(payload["pages"][0])
+        with pytest.raises(ValueError, match=match):
+            convert.check_product_shape(
+                payload, convert.SELF_FORMAT_REF, tmp_path / "fields.json",
+                declared or convert.Declared(captures=("cap0",), pages=(0,)))
+
+    refuses(lambda page: page.update(page=999), "outside the")
+    refuses(lambda page: page.update(tiles_yx=[7, 7]), "tiles")
+    refuses(lambda page: page["planes"][0].update(plane=9), "is not one of")
+    refuses(lambda page: page["planes"][0].update(
+        delta_dots_xy=np.zeros((7, 7, 2)).tolist()), "delta_dots_xy is")
+    refuses(lambda page: page["planes"][0].update(
+        support=np.ones((7, 7)).tolist()), "support is")
+    refuses(lambda page: page.update(
+        evidence_revision_by_capture={"capX": 1}), "does not declare")
+
+    # M3: the format's page range is 133 for both sheets of record, so
+    # page 7 walked straight through it onto a one-page archive.  The
+    # run declares the range.
+    refuses(lambda page: page.update(page=7),
+            "not one of the pages this archive declares")
+    assert convert.check_product_shape(
+        json.loads(json.dumps(good).replace('"page": 0', '"page": 7')),
+        convert.SELF_FORMAT_REF, tmp_path / "fields.json",
+        convert.Declared(captures=("cap0",), pages=(0, 7))) is None
+
+    # M4: an empty map passed the capture gate by having nothing in it
+    refuses(lambda page: page.update(evidence_revision_by_capture={}),
+            "names no evidence revision")
+
+
+def test_the_captures_and_pages_come_from_the_report_then_the_journal(
+        tmp_path):
+    """`report.json` is the reader a converted mirror answers from; a dir
+    that has only its journal answers from the head `estimate` already
+    reads, and one with neither cannot bind a product at all.
+
+    The pages come back beside the captures (M3): the report lists the
+    ids, the journal's `RunOpen` gives the count, and both answer in
+    ids.
+    """
+    from measure.page_field import convert, extract
+
+    (tmp_path / "report.json").write_text(json.dumps(
+        {"capture_facts": [{"capture": "a"}, {"capture": "b"}],
+         "pages": [0]}), "utf-8")
+    assert convert.declared(tmp_path / "facts.npz") \
+        == (("a", "b"), (0,))
+
+    journal = tmp_path / "only-journal"
+    journal.mkdir()
+    extract.write_journal(journal / "events.jsonl", "c2-cmy8-r0547@53x37",
+                          ["cap0", "cap1"])
+    assert convert.declared(journal / "facts.npz") \
+        == (("cap0", "cap1"), (0,))
+
+    bare = tmp_path / "bare"
+    bare.mkdir()
+    with pytest.raises(ValueError, match="declares no captures"):
+        convert.declared(bare / "facts.npz")
+
+    headless = tmp_path / "no-pages"
+    headless.mkdir()
+    (headless / "report.json").write_text(json.dumps(
+        {"capture_facts": [{"capture": "a"}]}), "utf-8")
+    with pytest.raises(ValueError, match="declares no `pages`"):
+        convert.declared(headless / "facts.npz")
+
+    from analyzer import unionbase
+    shapeless = tmp_path / "no-captures"
+    shapeless.mkdir()
+    (shapeless / "report.json").write_text(json.dumps({"pages": [0]}), "utf-8")
+    with pytest.raises(unionbase.UnionBaseError,
+                       match="declares no `capture_facts`"):
+        convert.declared(shapeless / "facts.npz")
+
+
+def test_a_converted_snapshot_that_fails_its_read_back_is_not_left_behind(
+        tmp_path, monkeypatch):
+    """An output that fails its own verify is unlinked, manifest and all.
+
+    The recipe's operator renames the output into place afterwards; a
+    file that exists but never proved its non-field facts identical is
+    the one thing that must not be there to rename.
+    """
+    from measure.page_field import convert
+    convert.self_check(tmp_path / "work")
+    work = tmp_path / "work"
+    real = convert.fact_digests
+    calls = {"n": 0}
+
+    def forked(facts):
+        calls["n"] += 1
+        out = real(facts)
+        return out if calls["n"] == 1 else ["forked"] * len(out)
+    monkeypatch.setattr(convert, "fact_digests", forked)
+    with pytest.raises(ValueError, match="changed in the round trip"):
+        convert.append(work / "facts.npz", work / "broken.npz",
+                       convert.SELF_FORMAT_REF, product=work / "fields.json")
+    assert not (work / "broken.npz").exists()
+    assert not (work / ("broken.npz" + convert.MANIFEST_SUFFIX)).exists()
 
 def test_cli_export_facts(tmp_path, capsys):
     from analyzer import cli
@@ -349,38 +603,78 @@ def test_cli_export_facts(tmp_path, capsys):
 
 # ---------------------------------------------------------- the real run
 
-@needs_i_run
-def test_sheet_i_resume3_export_reaches_5883(tmp_path):
-    ledger = Path("scratch/analyzer/I-resume3/ledger.jsonl")
-    if not ledger.exists():                       # pragma: no cover
-        pytest.skip(f"{ledger} is absent")
-    out = tmp_path / "facts-with-analyzer.npz"
-    manifest = export_mod.export(
-        I_RUN_DIR / "facts.npz", [ledger], out,
-        gt_dir=I_GEN_DIR, payload=I_PAYLOAD)
-    counts = manifest["counts"]
-    print(f"\nsheet I export: {counts['snapshot_certificates']} + "
-          f"{counts['added']} = {counts['total_after_export']} "
-          f"certificates; by stream {counts['by_stream']}; "
-          f"by rung {counts['by_rung']}; gate 1 "
-          f"{manifest['gate_1']['checked']} checked, "
-          f"{manifest['gate_1']['mismatches']} mismatches; "
-          f"out {out.stat().st_size / 1e6:.1f} MB")
-    assert counts["snapshot_certificates"] == 5880
-    assert counts["added"] == 3
-    assert counts["total_after_export"] == 5883
-    assert counts["skipped_already_certified"] == 0
-    assert manifest["gate_1"]["checked"] == 3
-    assert manifest["gate_1"]["mismatches"] == 0
-    assert manifest["format_ref"] == "L:c2-cmy8-r0700-p120-x1@3392x2368"
 
-    back = snapshot.read(out)
-    certs = export_mod.snapshot_certificates(back)
-    assert len(certs) == 5883
-    assert manifest["verified"]["n_certificates"] == 5883
-    added = back[-3:]
-    assert [(fact.page, fact.ty, fact.tx, fact.stream_id) for fact in added] \
-        == [(0, 0, 0, "C"), (0, 36, 27, "Y"), (0, 36, 29, "Y")]
-    assert [fact.source for fact in added] == [
-        "analyzer/L2:damped@300", "analyzer/L0", "analyzer/L0"]
-    assert all(fact.user_bits.dtype == np.uint8 for fact in added)
+# ------------------------------ the recovery door (the memory wave, 2026-09-13)
+
+def test_a_killed_passs_mint_file_is_an_export_input(tmp_path):
+    """Item 2: `export-facts --ledger mints.jsonl` recovers EXACTLY the
+    certificates a killed pass had won.
+
+    A row is final only when its whole generation folds, so a pass that
+    dies inside generation 0 has no rows at all — the mint file is the
+    one that carries its certificates, and it is shaped so this tool
+    needs no special case for it.
+    """
+    from analyzer import ledger as ledger_mod
+
+    _base_snapshot(tmp_path / "facts.npz")
+    writer = ledger_mod.LedgerWriter(
+        tmp_path / "ledger.jsonl",
+        {"format_ref": "L:c2-cmy8-r0700-p120-x1@3392x2368",
+         "run_dir": "/tmp/fake", "seed": 3})
+    for key, bits in (((0, 1, 1, "C"), BITS_A), ((0, 3, 3, "Y"), BITS_C)):
+        writer.mint({"page": key[0], "ty": key[1], "tx": key[2],
+                     "stream_id": key[3], "verdict": "certified",
+                     "certifying_rung": "L0", "certifying_rule": "sum",
+                     "generation": 0,
+                     "rungs": {"user_bits": np.asarray(bits, np.uint8)}})
+    writer.close()                      # killed: no footer, no rows
+
+    # the partial LEDGER recovers nothing, and refuses nothing either
+    empty = export_mod.export(tmp_path / "facts.npz",
+                              [tmp_path / "ledger.jsonl"],
+                              tmp_path / "none.npz", dry_run=True)
+    assert empty["counts"]["added"] == 0
+    assert empty["ledgers"][0]["partial"] is True
+
+    manifest = export_mod.export(tmp_path / "facts.npz",
+                                 [writer.mints_path], tmp_path / "new.npz")
+    assert manifest["counts"]["added"] == 2
+    assert manifest["added_keys"] == [[0, 1, 1, "C"], [0, 3, 3, "Y"]]
+    added = snapshot.read(tmp_path / "new.npz")[3:]
+    assert [fact.source for fact in added] == ["analyzer/L0", "analyzer/L0"]
+    assert np.array_equal(added[0].user_bits, BITS_A)
+    assert manifest["ledgers"][0]["n_rows"] == 2
+    assert manifest["ledgers"][0]["partial"] is True
+    assert manifest["format_ref_from"] == "ledger header"
+
+
+def test_a_truncated_ledger_exports_the_rows_it_has_and_says_so(tmp_path):
+    """A `kill -9` cuts the line it was writing; the rest is good."""
+    _base_snapshot(tmp_path / "facts.npz")
+    path = _write_ledger(tmp_path / "a.jsonl", [
+        _row((0, 1, 1, "C"), "certified", "L0", 0, BITS_A),
+        _row((0, 3, 3, "Y"), "certified", "L2:damped@300", 1, BITS_C)])
+    path.write_text(path.read_text("utf-8")[:-30], "utf-8")
+
+    manifest = export_mod.export(tmp_path / "facts.npz", [path],
+                                 tmp_path / "new.npz")
+    assert manifest["counts"]["added"] == 1
+    assert manifest["added_keys"] == [[0, 1, 1, "C"]]
+    assert manifest["ledgers"][0]["truncated_lines"] == 1
+    assert manifest["ledgers"][0]["n_rows"] == 1
+
+
+def test_a_re_attacked_key_exports_its_LAST_row(tmp_path):
+    """A streamed ledger appends the re-attack; the export takes the
+    last row, the way every reader does."""
+    _base_snapshot(tmp_path / "facts.npz")
+    path = _write_ledger(tmp_path / "a.jsonl", [
+        _row((0, 1, 1, "C"), "open", None, 0, BITS_A),
+        _row((0, 1, 1, "C"), "certified", "L2:damped@300", 1, BITS_B)])
+    manifest = export_mod.export(tmp_path / "facts.npz", [path],
+                                 tmp_path / "new.npz", dry_run=True)
+    assert manifest["counts"]["added"] == 1
+    assert manifest["counts"]["skipped_other_verdict"] == 0
+    assert manifest["added_detail"]["0,1,1,C"]["rung"] == "L2:damped@300"
+    assert manifest["ledgers"][0]["n_rows_superseded"] == 1

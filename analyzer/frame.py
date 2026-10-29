@@ -53,11 +53,13 @@ from typing import Any, Iterator, Mapping
 
 import numpy as np
 
-from holo3.format import identity, keystream, tile_codec
-from holo3.plugins import color_model, color_sites
+from holo.receiver.format import identity, keystream, tile_codec
+from holo.receiver.plugins import color_model, color_sites
+from holo.receiver.plugins.tiles import stream_fact
 
 from .residue import discriminating_mask
-from .types import (Key, KnownFrame, PLANE_OF, RunInputs, TileFootprint)
+from .types import (Key, KnownFrame, PLANE_OF, RunInputs, STREAMS,
+                    TileFootprint)
 
 #: `pilots.TILE_CELLS`, restated (inputs.py does the same).
 TILE_CELLS = 64
@@ -77,6 +79,66 @@ def geometry_of(row: Any) -> Any:
         hit = identity.build_site_geometry(row)
         _GEOMETRY_MEMO[row_id] = hit
     return hit
+
+
+class HaloError(ValueError):
+    """A `--halo-cells` value this module will not turn into a halo."""
+
+
+def parse_halo_cells(value: Any) -> dict[str, int]:
+    """`--halo-cells`: a bare width, or a PER-PLANE one (2026-09-07).
+
+    `48` keeps today's meaning — every plane — and `C=48,M=48,Y=32` names
+    them.  The named spelling must name ALL THREE: a partial one would
+    take the rest from whatever the profile happened to say, and the run
+    set this repair exists for is exactly the case a reader must be able
+    to diff.  X1's `wide-halo` profile is C 48 / M 48 / Y 32 while
+    `--halo-cells 48` sets 48/48/48 — inert on a C-only target list (the
+    halo is looked up per stream) but NOT inert for a Y-plane or
+    mixed-stream re-run, which is what HALO-CHANNEL-2026-09-07 §1 records
+    and §4.5 repairs.
+
+    The parser lives here because `frame` already owns what a halo IS
+    (`tile_footprint`); `types` is at its line cap and cannot import
+    this module anyway.
+    """
+    if isinstance(value, Mapping):
+        given = {str(k).strip().upper(): int(v) for k, v in value.items()}
+    else:
+        text = str(value).strip()
+        if not text:
+            raise HaloError("--halo-cells is empty")
+        if "=" not in text:
+            try:
+                width = int(text)
+            except ValueError as error:
+                raise HaloError(
+                    f"--halo-cells {text!r} is neither a width nor a "
+                    f"per-plane spelling like C=48,M=48,Y=32") from error
+            given = {name: width for name in STREAMS}
+        else:
+            given = {}
+            for item in text.split(","):
+                name, separator, width = item.partition("=")
+                if not separator:
+                    raise HaloError(
+                        f"--halo-cells {item!r} wants PLANE=WIDTH")
+                try:
+                    given[name.strip().upper()] = int(width)
+                except ValueError as error:
+                    raise HaloError(
+                        f"--halo-cells {item!r} has no width") from error
+    unknown = sorted(set(given) - set(STREAMS))
+    if unknown:
+        raise HaloError(f"--halo-cells names {unknown}, not one of "
+                        f"{list(STREAMS)}")
+    missing = [name for name in STREAMS if name not in given]
+    if missing:
+        raise HaloError(f"--halo-cells must name every plane; {missing} "
+                        f"missing (a bare width sets all three)")
+    if any(width < 0 for width in given.values()):
+        raise HaloError("--halo-cells must not be negative")
+    return {name: int(given[name]) for name in STREAMS}
 
 
 # ------------------------------------------------------------ footprint
@@ -291,7 +353,8 @@ def metadata_cell_of(row: Any, geometry: Any, key: Key
     j = int(positions[0])
     flat_cell = int(np.asarray(geometry.payload_flat, np.int64)[j])
     dither = keystream.cmy8_dither_bits(
-        row.seed, str(stream_id), counter, row.payload_cells)
+        row.seed, stream_fact(row, str(stream_id)).dither_aux, counter,
+        row.payload_cells)
     return flat_cell, int(dither[0]), j
 
 

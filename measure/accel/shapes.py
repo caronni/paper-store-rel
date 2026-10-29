@@ -24,11 +24,11 @@ from pathlib import Path
 
 import numpy as np
 
-from holo3 import cli
-from holo3.format import tile_codec
-from holo3.lib import ldpc, pava
-from holo3.plugins import cold, color_model
-from holo3.tests import _h3_sims
+from holo.receiver import cli
+from holo.receiver.format import tile_codec
+from holo.receiver.lib import ldpc, pava
+from holo.receiver.plugins import cold, color_model
+from holo.receiver.tests import _h3_sims
 
 CAPTURES = ("color", "k")
 

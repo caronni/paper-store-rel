@@ -1,0 +1,105 @@
+# Archived verbatim from tests/holo/test_receive_bch_quarantine.py at f006abc
+# (branch receiver-retirement). GATE-E-BRIEF.md decision 4: this one test
+# is the sole discovery case in an otherwise receiver-general quarantine
+# module, so it moves here as a snippet, not by relocating the whole file
+# (which stays with the other quarantine tests and is deleted in Phase 4
+# along with the rest of the v1-only suite).
+#
+# Not a runnable file on its own. The three definitions below are verbatim
+# and in file order:
+#   _durable_pose                                       lines 270-283
+#   _state_with_conflict (calls _durable_pose)          lines 286-309
+#   test_discovery_load_rejects_derived_bch_nonconflict  lines 421-458
+# The test also needs, from the rest of test_receive_bch_quarantine.py's
+# module-level imports: `replace` (dataclasses), `np` (numpy), `pytest`,
+# `make_spec` (holo.devices.profiles), `scale_plan` (holo.receive.cascade),
+# `BarrierDelta`, `CaptureFacts`, `LevelRecord`, `SessionIndex`,
+# `SessionState`, `append_level_barrier`, `validate_session`
+# (holo.receive.session), `AddressArtifact`, `BchConflictRecord`,
+# `CaptureInput`, `PoseRecord`, `SupportRun`, `SurveyArtifact`,
+# `SurveyRegionRecord` (holo.receive.types), and, for the target test
+# itself, `DiscoveryReceiveRequest` (holo.receive.discovery),
+# `DiscoverySurvey`, `load_discovery`, `save_discovery`
+# (holo.receive.discovery_state), plus a module-qualified
+# `import holo.receive.discovery as discovery` (done inline in the test).
+
+def _durable_pose(
+    patch_id: int = 0,
+    *,
+    placement_outcome: str = "accepted",
+    page: int = 0,
+    lane_id: str = "native",
+) -> PoseRecord:
+    return PoseRecord(
+        "pose-0", "a" * 64, lane_id, "region-0",
+        patch_id, placement_outcome, page, (0, 0),
+        (4.0, 0.0, 1.5, 0.0, 4.0, 1.5), 0, 1.0,
+        0, (0, 0), (64, 64), 0,
+        (0.0, 0.0), (4.0, 0.0, 0.0, 4.0), (0.0, 0.0), 4.0, 0.0,
+        100, 1.0, (4.0, 4.0), 0.0)
+
+
+def _state_with_conflict() -> SessionState:
+    spec = make_spec("c3-r0550")
+    source_sha = "a" * 64
+    plan = scale_plan(400.0, spec.cell_dots)
+    lane = plan[0]
+    region = SurveyRegionRecord(
+        "region-0", source_sha, lane.lane_id, (0, 0), (256, 256),
+        1, (1, 1), (SupportRun(0, 1),), 1.0, 1.0)
+    survey = SurveyArtifact("survey-0", (region.region_id,))
+    pose = _durable_pose(lane_id=lane.lane_id)
+    conflict = BchConflictRecord(
+        0, (0, 0), 1, 0, 0, (0,))
+    address = AddressArtifact(
+        "address-0", survey.survey_id, (pose.pose_id,),
+        bch_conflicts=(conflict,))
+    level = LevelRecord(survey, address)
+    facts = CaptureFacts(
+        source_sha, 400.0,
+        "float32", (256, 256), 1)
+    state = SessionState.create(
+        spec.spec_id, "qualification/bch-quarantine-v1", (0,))
+    return append_level_barrier(
+        state, SessionIndex(state), facts, plan, level,
+        BarrierDelta(regions=(region,), poses=(pose,)))
+
+
+def test_discovery_load_rejects_derived_bch_nonconflict(tmp_path) -> None:
+    """A lean conflict record is rebound to its format on discovery load."""
+    import holo.receive.discovery as discovery
+
+    spec = make_spec("c3-r0550")
+    state = _state_with_conflict()
+    level = state.captures[0].levels[0]
+    assert level.address is not None
+    conflict, = level.address.bch_conflicts
+    address = replace(
+        level.address,
+        bch_conflicts=(replace(conflict, decoded_counter=0),),
+    )
+    capture = replace(
+        state.captures[0],
+        levels=(replace(level, address=address),),
+    )
+    corrupted_branch = replace(
+        state,
+        captures=(capture,),
+    )
+    with pytest.raises(ValueError, match="matches the format"):
+        validate_session(corrupted_branch)
+
+    seed = CaptureInput(np.zeros((1, 1), np.uint8), 600.0)
+    root, _pipelines = discovery._new_state(DiscoveryReceiveRequest(
+        (seed,), candidate_row_ids=(spec.spec_id,)))
+    corrupted = replace(
+        root,
+        branches=(corrupted_branch,),
+        surveys=(DiscoverySurvey(CaptureFacts(
+            "a" * 64, 400.0, "float32", (256, 256), 1), 3),),
+    )
+    path = tmp_path / "corrupt-discovery.json"
+    save_discovery(path, corrupted, validate=False)
+
+    with pytest.raises(ValueError, match="matches the format"):
+        load_discovery(path)

@@ -1,0 +1,334 @@
+{
+ "key": "cm2",
+ "baselines": {
+  "T1": {
+   "xz": 3336,
+   "bzip2": 3380
+  },
+  "T2": {
+   "xz": 5412,
+   "brotli": 4895,
+   "ppmd": 4667,
+   "lpaq1": 4666
+  },
+  "T3": {
+   "xz": 8544,
+   "bzip2": 8464
+  },
+  "T4": {
+   "xz": 145264,
+   "bzip2": 142758,
+   "ppmd": 122234,
+   "lpaq1": 110661
+  }
+ },
+ "size_note": "sizes are len(src) passed to decode(); n is passed out of band per the contract (the CLI container adds a 4-byte n header)",
+ "variants": [
+  {
+   "name": "cm2-o12 (recommended, 25 lines)",
+   "file": "<tmp>",
+   "count_lines": "lines=25 chars=1010",
+   "kav_hex": "8fa930ac238dfe22189944d48f83d7",
+   "kav_len": 15,
+   "unprimed": {
+    "T1": 2884,
+    "T2": 4676,
+    "T3": 7257,
+    "T4": 119866
+   },
+   "primed": {
+    "T1": 2633,
+    "T2": 4372,
+    "T3": 6914,
+    "T4": 119211
+   },
+   "roundtrip_ok": true,
+   "runs": [
+    {
+     "maxrss_MB": 56,
+     "dec": "dec.py",
+     "fx": "T1_8k.py",
+     "primed": 0,
+     "size": 2884,
+     "ok": true,
+     "enc_s": 0.52,
+     "dec_s": 0.56
+    },
+    {
+     "maxrss_MB": 103,
+     "dec": "dec.py",
+     "fx": "T1_8k.py",
+     "primed": 1,
+     "size": 2633,
+     "ok": true,
+     "enc_s": 1.08,
+     "dec_s": 1.17
+    },
+    {
+     "maxrss_MB": 91,
+     "dec": "dec.py",
+     "fx": "T2_16k.py",
+     "primed": 0,
+     "size": 4676,
+     "ok": true,
+     "enc_s": 1.22,
+     "dec_s": 1.18
+    },
+    {
+     "maxrss_MB": 118,
+     "dec": "dec.py",
+     "fx": "T2_16k.py",
+     "primed": 1,
+     "size": 4372,
+     "ok": true,
+     "enc_s": 1.73,
+     "dec_s": 2.02
+    },
+    {
+     "maxrss_MB": 115,
+     "dec": "dec.py",
+     "fx": "T3_32k.txt",
+     "primed": 0,
+     "size": 7257,
+     "ok": true,
+     "enc_s": 2.55,
+     "dec_s": 2.54
+    },
+    {
+     "maxrss_MB": 181,
+     "dec": "dec.py",
+     "fx": "T3_32k.txt",
+     "primed": 1,
+     "size": 6914,
+     "ok": true,
+     "enc_s": 5.01,
+     "dec_s": 3.61
+    },
+    {
+     "maxrss_MB": 1230,
+     "dec": "dec.py",
+     "fx": "T4_805k.txt",
+     "primed": 0,
+     "size": 119866,
+     "ok": true,
+     "enc_s": 70.49,
+     "dec_s": 64.85
+    },
+    {
+     "maxrss_MB": 1250,
+     "dec": "dec.py",
+     "fx": "T4_805k.txt",
+     "primed": 1,
+     "size": 119211,
+     "ok": true,
+     "enc_s": 69.66,
+     "dec_s": 62.15
+    }
+   ]
+  },
+  {
+   "name": "cm2-o2 (same code, orders 0-2 only)",
+   "file": "<tmp>",
+   "count_lines": "lines=25 chars=993",
+   "kav_hex": "8fa930ac238dfe22189944d48f83d7",
+   "kav_len": 15,
+   "unprimed": {
+    "T1": 3282,
+    "T2": 5899,
+    "T3": 10271,
+    "T4": 220970
+   },
+   "primed": {
+    "T1": 3117,
+    "T2": 5727,
+    "T3": 10137,
+    "T4": 220954
+   },
+   "roundtrip_ok": true,
+   "runs": [
+    {
+     "maxrss_MB": 14,
+     "dec": "dec_o2.py",
+     "fx": "T1_8k.py",
+     "primed": 0,
+     "size": 3282,
+     "ok": true,
+     "enc_s": 0.2,
+     "dec_s": 0.21
+    },
+    {
+     "maxrss_MB": 15,
+     "dec": "dec_o2.py",
+     "fx": "T1_8k.py",
+     "primed": 1,
+     "size": 3117,
+     "ok": true,
+     "enc_s": 0.51,
+     "dec_s": 0.51
+    },
+    {
+     "maxrss_MB": 13,
+     "dec": "dec_o2.py",
+     "fx": "T2_16k.py",
+     "primed": 0,
+     "size": 5899,
+     "ok": true,
+     "enc_s": 0.59,
+     "dec_s": 0.58
+    },
+    {
+     "maxrss_MB": 15,
+     "dec": "dec_o2.py",
+     "fx": "T2_16k.py",
+     "primed": 1,
+     "size": 5727,
+     "ok": true,
+     "enc_s": 0.66,
+     "dec_s": 0.7
+    },
+    {
+     "maxrss_MB": 15,
+     "dec": "dec_o2.py",
+     "fx": "T3_32k.txt",
+     "primed": 0,
+     "size": 10271,
+     "ok": true,
+     "enc_s": 1.05,
+     "dec_s": 0.99
+    },
+    {
+     "maxrss_MB": 16,
+     "dec": "dec_o2.py",
+     "fx": "T3_32k.txt",
+     "primed": 1,
+     "size": 10137,
+     "ok": true,
+     "enc_s": 1.97,
+     "dec_s": 1.76
+    },
+    {
+     "maxrss_MB": 23,
+     "dec": "dec_o2.py",
+     "fx": "T4_805k.txt",
+     "primed": 0,
+     "size": 220970,
+     "ok": true,
+     "enc_s": 25.74,
+     "dec_s": 26.5
+    },
+    {
+     "maxrss_MB": 24,
+     "dec": "dec_o2.py",
+     "fx": "T4_805k.txt",
+     "primed": 1,
+     "size": 220954,
+     "ok": true,
+     "enc_s": 23.29,
+     "dec_s": 28.39
+    }
+   ]
+  },
+  {
+   "name": "cm2-o12+word+match (+9 lines)",
+   "file": "<tmp>",
+   "count_lines": "lines=34 chars=1465",
+   "kav_hex": "8fa930ac23879eb08baddbcf41f66d",
+   "kav_len": 15,
+   "unprimed": {
+    "T1": 2860,
+    "T2": 4633,
+    "T3": 7160,
+    "T4": 116359
+   },
+   "primed": {
+    "T1": 2612,
+    "T2": 4328,
+    "T3": 6794,
+    "T4": 115669
+   },
+   "roundtrip_ok": true,
+   "runs": [
+    {
+     "maxrss_MB": 58,
+     "dec": "dec_plus.py",
+     "fx": "T1_8k.py",
+     "primed": 0,
+     "size": 2860,
+     "ok": true,
+     "enc_s": 0.74,
+     "dec_s": 0.8
+    },
+    {
+     "maxrss_MB": 107,
+     "dec": "dec_plus.py",
+     "fx": "T1_8k.py",
+     "primed": 1,
+     "size": 2612,
+     "ok": true,
+     "enc_s": 1.43,
+     "dec_s": 1.41
+    },
+    {
+     "maxrss_MB": 94,
+     "dec": "dec_plus.py",
+     "fx": "T2_16k.py",
+     "primed": 0,
+     "size": 4633,
+     "ok": true,
+     "enc_s": 1.43,
+     "dec_s": 1.3
+    },
+    {
+     "maxrss_MB": 123,
+     "dec": "dec_plus.py",
+     "fx": "T2_16k.py",
+     "primed": 1,
+     "size": 4328,
+     "ok": true,
+     "enc_s": 2.05,
+     "dec_s": 2.28
+    },
+    {
+     "maxrss_MB": 121,
+     "dec": "dec_plus.py",
+     "fx": "T3_32k.txt",
+     "primed": 0,
+     "size": 7160,
+     "ok": true,
+     "enc_s": 2.71,
+     "dec_s": 2.93
+    },
+    {
+     "maxrss_MB": 189,
+     "dec": "dec_plus.py",
+     "fx": "T3_32k.txt",
+     "primed": 1,
+     "size": 6794,
+     "ok": true,
+     "enc_s": 5.74,
+     "dec_s": 5.1
+    },
+    {
+     "maxrss_MB": 1271,
+     "dec": "dec_plus.py",
+     "fx": "T4_805k.txt",
+     "primed": 0,
+     "size": 116359,
+     "ok": true,
+     "enc_s": 81.88,
+     "dec_s": 76.4
+    },
+    {
+     "maxrss_MB": 1293,
+     "dec": "dec_plus.py",
+     "fx": "T4_805k.txt",
+     "primed": 1,
+     "size": 115669,
+     "ok": true,
+     "enc_s": 81.21,
+     "dec_s": 74.21
+    }
+   ]
+  }
+ ]
+}

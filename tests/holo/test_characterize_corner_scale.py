@@ -67,23 +67,32 @@ def _detect(page: np.ndarray) -> dict[int, dict]:
     return {int(r["satellites"]): r for r in rows}
 
 
-def test_all_four_corners_on_a_clean_page() -> None:
-    found = _detect(_page())
+# Two detections for the whole module (2026-09-20): three laws read the
+# clean page and two read the clipped one, and nothing mutates the rows.
+@pytest.fixture(scope="module")
+def clean() -> dict[int, dict]:
+    return _detect(_page())
+
+
+@pytest.fixture(scope="module")
+def cut() -> dict[int, dict]:
+    return _detect(_page(truncate_fraction=0.62))
+
+
+def test_all_four_corners_on_a_clean_page(clean) -> None:
+    found = clean
     assert sorted(found) == [1, 2, 3, 4]
     for satellites, row in found.items():
         assert row["crossness"] == pytest.approx(1.0, abs=0.05), satellites
 
 
-def test_truncated_arm_still_identifies_its_corner() -> None:
+def test_truncated_arm_still_identifies_its_corner(clean, cut) -> None:
     """The W8a regression: a clipped arm must not move the satellite search.
 
     Seeded per-axis from the bounding box this fails outright — the corner
     is not returned at all, because zero satellites match and the candidate
     is discarded before it can compete.
     """
-    clean = _detect(_page())
-    cut = _detect(_page(truncate_fraction=0.62))
-
     assert sorted(cut) == [1, 2, 3, 4], (
         f"truncated arm lost corner(s); got {sorted(cut)}"
     )
@@ -98,10 +107,8 @@ def test_truncated_arm_still_identifies_its_corner() -> None:
     assert cut[1]["x_thumb"] == pytest.approx(clean[1]["x_thumb"], abs=1.0)
 
 
-def test_untruncated_corners_are_unaffected_by_the_clip() -> None:
+def test_untruncated_corners_are_unaffected_by_the_clip(clean, cut) -> None:
     """Corners 2-4 must be bit-identical whether or not corner 1 is clipped."""
-    clean = _detect(_page())
-    cut = _detect(_page(truncate_fraction=0.62))
     for satellites in (2, 3, 4):
         a, b = clean[satellites], cut[satellites]
         assert a["y_thumb"] == b["y_thumb"]

@@ -7,8 +7,8 @@ Both polarities x several orientations x a width ladder, so a max-dpi scan revea
   * how does that differ by orientation (fast-scan vs process vs diagonal)?
   * at what line width do both polarities stabilise? -> min reliable cell feature.
 
-Emits scratch/linetest.ps (raw, 600 dpi) + scratch/linetest_manifest.json +
-scratch/linetest_gt/*.npy ground truth. Print raw:
+Emits build/linetest.ps (raw, 600 dpi) + build/linetest_manifest.json +
+build/linetest_gt/*.npy ground truth. Print raw:
     ../../scripts/print_plane.sh build/linetest.ps   (JetDirect 9100)
 """
 from __future__ import annotations

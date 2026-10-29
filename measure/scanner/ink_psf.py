@@ -52,10 +52,13 @@ Three arms, all read-only on archived captures, no hardware:
 
 Run (read-only, no scan, no print):
 
-    cd <repo>          # or a plane-fields worktree
-    PYTHONPATH=measure env/bin/python -m scanner.ink_psf --all
+    cd <repo>
+    PYTHONPATH=measure env/bin/python -m scanner.ink_psf --all \\
+        --evidence-root <evidence> --out build/scanner/e031
 
-Outputs land in ``scratch/plane-fields/p2/scanner/e031/``.
+Historical record of E6 (2026-08); the e028/e031 captures, reports and
+plans (``SHEETS`` paths, relative to ``--evidence-root``, sha256-pinned) are
+in the evidence archive.  Outputs land in ``--out``.
 """
 from __future__ import annotations
 
@@ -68,6 +71,8 @@ from typing import Any, Iterable, Sequence
 
 import numpy as np
 
+import _evidence
+
 from . import _edge
 from ._crosses import (CHANNEL_INDEX, INK_CHANNEL, PLANES, _stroke,
                        registration_arm)
@@ -75,10 +80,12 @@ from ._edge import analyze_edge, compare_channels
 from ._sheet import Sheet, SheetSpec
 from .blue_mtf import KNIFE, LUMA_601, _mean_se, measure_knife, sha256_of
 
-SCANS = Path("scratch")
-OUT_DIR = SCANS / "plane-fields" / "p2" / "scanner" / "e031"
-
-E028_PLAN = SCANS / "e028" / "discovery-m281-0804-r1"
+#: Every path below is RELATIVE to ``--evidence-root``, the published
+#: archive root (``measure/_evidence.py``).
+E028 = Path("paper-store-evidence-holo-2026-10/028-discovery-m281/discovery")
+E031 = Path("paper-store-evidence-holo-2026-10/031-xerox-altalink-discovery/"
+            "discovery")
+E028_PLAN = E028 / "jobs"
 COLOR_PLAN = E028_PLAN / (
     "hcal-discovery-color-copy0000-default-6995a5d0b5b0218d.manifest.json")
 BW_PLAN = E028_PLAN / (
@@ -91,41 +98,40 @@ SHEETS: dict[str, SheetSpec] = {
     "e031-color": SheetSpec(
         key="e031-color", engine="xerox-altalink-c8245",
         engine_label="Xerox AltaLink C8245",
-        capture=SCANS / "in" / "xerox-canon-cal-color.tiff",
+        capture=E031 / "captures" / "discovery-color-canon-4800rgb.tiff",
         sha256="e468bd26f991484e9ddfa114cb01febc1eea9619fa86ac9"
                "29ef493698de564c0",
-        report=SCANS / "e031" / "reports"
+        report=E031 / "reports" / "production"
         / "hcal-report-discovery-color-copy0000-82abef068de7c651.json",
         manifest=COLOR_PLAN,
         record="experiments/031-xerox-altalink-discovery.md"),
     "e028-color": SheetSpec(
         key="e028-color", engine="hp-m281",
         engine_label="HP CLJ Pro M281fdw",
-        capture=SCANS / "e028"
-        / "e028-m281-20260804-color-01-canon-4800rgb.tiff",
+        capture=E028 / "captures" / "discovery-color-canon-4800rgb.tiff",
         sha256="d0f12451dfc16d06ce904a2bad324e7d1f2b30d6096d5581"
                "68d1064bdc7aeb8d",
-        report=SCANS / "e028" / "reports-v4"
+        report=E028 / "reports"
         / "hcal-report-discovery-color-copy0000-3c1efcc081ee8108.json",
         manifest=COLOR_PLAN,
         record="experiments/028-discovery-m281.md capture 028.1b"),
     "e031-bw": SheetSpec(
         key="e031-bw", engine="xerox-altalink-c8245",
         engine_label="Xerox AltaLink C8245",
-        capture=SCANS / "in" / "xerox-canon-cal-bw.tiff",
+        capture=E031 / "captures" / "discovery-bw-canon-4800grey.tiff",
         sha256="65e8bf50d93d82ecd5ddaebf6aae5b5a8af0b2dd354b3071"
                "a6adf4e3dbc4ad42",
-        report=SCANS / "e031" / "reports-w8"
+        report=E031 / "reports" / "w8"
         / "hcal-report-discovery-bw-copy0000-c4fd8826a63743f7.json",
         manifest=BW_PLAN, channels=("luma",),
         record="experiments/031-xerox-altalink-discovery.md 031.1"),
     "e028-bw": SheetSpec(
         key="e028-bw", engine="hp-m281",
         engine_label="HP CLJ Pro M281fdw",
-        capture=SCANS / "e028" / "e028-m281-20260804-bw-01-canon-4800gray.tiff",
+        capture=E028 / "captures" / "discovery-bw-canon-4800grey.tiff",
         sha256="15d8716c9ad10c986f938b52befe37387773635"
                "89a44ab03e2749bc5052c847e",
-        report=SCANS / "e028" / "reports-v4"
+        report=E028 / "reports"
         / "hcal-report-discovery-bw-copy0000-76d0b6b1161c234e.json",
         manifest=BW_PLAN, channels=("luma",),
         record="experiments/028-discovery-m281.md"),
@@ -759,7 +765,8 @@ def main(argv: list[str] | None = None) -> int:
                              "robustness control for every channel ratio")
     parser.add_argument("--verify-sha", action="store_true",
                         help="hash every input (the colour scans are 6.9 GB)")
-    parser.add_argument("--out", type=Path, default=OUT_DIR)
+    _evidence.add_argument(parser)
+    parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--no-figure", action="store_true")
     arguments = parser.parse_args(argv)
     keys = (list(COLOR_SHEETS) + list(BW_SHEETS) if arguments.all
@@ -770,6 +777,12 @@ def main(argv: list[str] | None = None) -> int:
         parser.error(f"unknown sheet(s) {unknown}; have {sorted(SHEETS)}")
     arguments.out.mkdir(parents=True, exist_ok=True)
     _edge.TONE_MODE = arguments.tone
+    root = _evidence.resolve(arguments.evidence_root, tool="ink_psf")
+    specs = {key: SHEETS[key].under(root) for key in keys}
+    _evidence.need(root / KNIFE["path"],
+                   *(path for key in keys for path in (
+                       specs[key].capture, specs[key].report,
+                       specs[key].manifest)), tool="ink_psf")
 
     report: dict[str, Any] = {
         "instrument": "measure/scanner/ink_psf.py",
@@ -779,15 +792,15 @@ def main(argv: list[str] | None = None) -> int:
         "scanner": "Canon LiDE 400 (CIS), 4800 dpi, one scanner of record",
         "generated_unix": time.time(),
         "tone_curve": arguments.tone,
-        "knife_anchor_input": {"path": str(KNIFE["path"]),
+        "knife_anchor_input": {"path": str(root / KNIFE["path"]),
                                "sha256": KNIFE["sha256"],
                                "record": KNIFE["record"]},
         "sheets": {},
     }
     if arguments.verify_sha:
-        checks = {"knife": (KNIFE["path"], KNIFE["sha256"])}
+        checks = {"knife": (root / KNIFE["path"], KNIFE["sha256"])}
         for key in keys:
-            checks[key] = (SHEETS[key].capture, SHEETS[key].sha256)
+            checks[key] = (specs[key].capture, specs[key].sha256)
         report["sha_verification"] = {}
         for name, (path, expected) in checks.items():
             measured = sha256_of(path) if path.exists() else None
@@ -797,7 +810,7 @@ def main(argv: list[str] | None = None) -> int:
             print(f"  sha {name:12s} {'OK' if measured == expected else 'MISMATCH'}")
 
     print("[knife] glass-level luma anchor (shared: one scanner)")
-    knife = measure_knife(float(KNIFE["dpi"]), verbose=False)
+    knife = measure_knife(float(KNIFE["dpi"]), root, verbose=False)
     report["knife"] = knife
     narrowest = knife["narrowest"]
     print(f"  narrowest groove: FWHM {narrowest['fwhm_um']:.1f} um  "
@@ -806,7 +819,7 @@ def main(argv: list[str] | None = None) -> int:
           f"(028.4 record: ~17 lp/mm)")
 
     arms = [name.strip() for name in arguments.arms.split(",") if name.strip()]
-    sheets, sigmas = measure_all([SHEETS[key] for key in keys], knife,
+    sheets, sigmas = measure_all([specs[key] for key in keys], knife,
                                  arguments.segments, arms)
     report["sheets"] = sheets
     report["scanner_sigma_um"] = sigmas

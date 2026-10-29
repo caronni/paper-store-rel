@@ -1,0 +1,319 @@
+[confirm] 136 codes to measure (0 done) from ['overnight-A', 'overnight-AF', 'overnight-B1', 'overnight-B2'] -> scratch/rung-ladder-20260930/search/overnight-CONF
+[decoder] fastdecode.selfcheck(r0406) = True (0.9 s)
+[decoder] using fast (requested fast)
+[     30s] confirm 0/136 | decodes 16500 (547/s) queue 81229 errors 0
+[     60s] confirm 0/136 | decodes 33950 (564/s) queue 80980 errors 0
+[     90s] confirm 0/136 | decodes 50750 (563/s) queue 80644 errors 0
+[    120s] confirm 0/136 | decodes 66900 (556/s) queue 80421 errors 0
+[    150s] confirm 0/136 | decodes 83400 (555/s) queue 80091 errors 0
+[    181s] confirm 0/136 | decodes 98200 (544/s) queue 79895 errors 0
+[    211s] confirm 0/136 | decodes 116450 (552/s) queue 79530 errors 0
+[    218s] confirm 1/136 k1664-B1-16x6.9x3.3x17-bal-g24-d1-s1 es1 -3.063 p1 0.1106 und 4
+[    241s] confirm 1/136 | decodes 133700 (555/s) queue 79185 errors 0
+[    271s] confirm 1/136 | decodes 152150 (562/s) queue 78916 errors 0
+[    301s] confirm 1/136 | decodes 171450 (569/s) queue 78530 errors 0
+[    331s] confirm 1/136 | decodes 189300 (572/s) queue 78273 errors 0
+[    361s] confirm 1/136 | decodes 207100 (573/s) queue 77917 errors 0
+[    391s] confirm 1/136 | decodes 225300 (576/s) queue 77653 errors 0
+[    421s] confirm 1/136 | decodes 242150 (575/s) queue 77416 errors 0
+[    451s] confirm 1/136 | decodes 256300 (568/s) queue 77133 errors 0
+[    481s] confirm 1/136 | decodes 269750 (560/s) queue 76864 errors 0
+[    511s] confirm 1/136 | decodes 291350 (570/s) queue 76632 errors 0
+[    526s] confirm 2/136 k1664-h8-f0.5-l3-bal-g24-d1+ara-p0.25h-s0 es1 -3.061 p1 0.1148 und 1
+[    541s] confirm 2/136 | decodes 310150 (573/s) queue 76256 errors 0
+[    572s] confirm 2/136 | decodes 329800 (577/s) queue 75863 errors 0
+[    602s] confirm 2/136 | decodes 349400 (581/s) queue 75671 errors 0
+[    632s] confirm 2/136 | decodes 373350 (591/s) queue 75392 errors 0
+[    655s] confirm 3/136 k1664-h8-f0.5-l3-bal-g24-d1+ara-p0.25h-s5 es1 -3.060 p1 0.1140 und 6
+[    662s] confirm 3/136 | decodes 393650 (595/s) queue 74986 errors 0
+[    692s] confirm 3/136 | decodes 412400 (596/s) queue 74611 errors 0
+[    722s] confirm 3/136 | decodes 428150 (593/s) queue 74396 errors 0
+[    752s] confirm 3/136 | decodes 447750 (595/s) queue 74004 errors 0
+[    757s] confirm 4/136 k1664-h8-f0.5-l3-bal-g24-d1+ara-p0.3125h-s5 es1 -3.054 p1 0.1149 und 0
+[    782s] confirm 4/136 | decodes 473650 (606/s) queue 73486 errors 0
+[    812s] confirm 4/136 | decodes 490300 (604/s) queue 73253 errors 0
+[    842s] confirm 4/136 | decodes 506350 (601/s) queue 72932 errors 0
+[    872s] confirm 4/136 | decodes 521000 (597/s) queue 72739 errors 0
+[    902s] confirm 4/136 | decodes 536600 (595/s) queue 72427 errors 0
+[    933s] confirm 4/136 | decodes 550600 (590/s) queue 72247 errors 0
+[    963s] confirm 4/136 | decodes 566050 (588/s) queue 71938 errors 0
+[    971s] confirm 5/136 k1280-B1-16x7.7x1.3x12-bal-g24-d1-s1 es1 -4.375 p1 0.1449 und 4
+[    993s] confirm 5/136 | decodes 579300 (583/s) queue 71673 errors 0
+[   1023s] confirm 5/136 | decodes 593700 (580/s) queue 71385 errors 0
+[   1053s] confirm 5/136 | decodes 608250 (578/s) queue 71194 errors 0
+[   1083s] confirm 5/136 | decodes 624450 (576/s) queue 70870 errors 0
+[   1094s] confirm 6/136 k1280-B1-14x2.13x5.3x13-bal-g24-d1-s3 es1 -4.381 p1 0.1454 und 2
+[   1113s] confirm 6/136 | decodes 639750 (575/s) queue 70564 errors 0
+[   1143s] confirm 6/136 | decodes 657000 (575/s) queue 70219 errors 0
+[   1149s] confirm 7/136 k1280-B1-14x2.13x5.3x13-bal-g24-d1-s7 es1 -4.364 p1 0.1447 und 4
+[   1173s] confirm 7/136 | decodes 678200 (578/s) queue 69795 errors 0
+[   1203s] confirm 7/136 | decodes 696400 (579/s) queue 69531 errors 0
+[   1234s] confirm 7/136 | decodes 713550 (578/s) queue 69188 errors 0
+[   1264s] confirm 7/136 | decodes 729800 (578/s) queue 68963 errors 0
+[   1294s] confirm 7/136 | decodes 747300 (578/s) queue 68613 errors 0
+[   1300s] confirm 8/136 k1280-h10-f0.5-l3-bal-g24-d1+ara-p0.3125h-s5 es1 -4.370 p1 0.1502 und 8
+[   1324s] confirm 8/136 | decodes 763000 (576/s) queue 68299 errors 0
+[   1350s] confirm 9/136 k1280-h10-f0.5-l3-bal-g24-d1+ara-p0.25h-s3 es1 -4.371 p1 0.1493 und 3
+[   1354s] confirm 9/136 | decodes 781650 (577/s) queue 67926 errors 0
+[   1384s] confirm 9/136 | decodes 796550 (576/s) queue 67628 errors 0
+[   1414s] confirm 9/136 | decodes 812150 (574/s) queue 67416 errors 0
+[   1444s] confirm 9/136 | decodes 830600 (575/s) queue 67047 errors 0
+[   1460s] confirm 10/136 k1280-B1-14x2.13x5.3x13-bal-g24-d1-s6 es1 -4.355 p1 0.1460 und 1
+[   1474s] confirm 10/136 | decodes 847250 (575/s) queue 66714 errors 0
+[   1504s] confirm 10/136 | decodes 863300 (574/s) queue 66393 errors 0
+[   1534s] confirm 10/136 | decodes 883800 (576/s) queue 66083 errors 0
+[   1558s] confirm 11/136 k1280-h16-f0.3-l4-bal-g24-d1-s17 es1 -4.300 p1 0.1479 und 0
+[   1564s] confirm 11/136 | decodes 903950 (578/s) queue 65680 errors 0
+[   1594s] confirm 11/136 | decodes 925600 (581/s) queue 65247 errors 0
+[   1624s] confirm 11/136 | decodes 949000 (584/s) queue 64879 errors 0
+[   1654s] confirm 11/136 | decodes 968500 (585/s) queue 64589 errors 0
+[   1684s] confirm 11/136 | decodes 987700 (586/s) queue 64205 errors 0
+[   1714s] confirm 11/136 | decodes 1008200 (588/s) queue 63895 errors 0
+[   1733s] confirm 12/136 k1600-h8-f0.5-l3-bal-g24-d1+ara-p0.25h-s7 es1 -3.306 p1 0.1192 und 5
+[   1745s] confirm 12/136 | decodes 1025700 (588/s) queue 63545 errors 0
+[   1775s] confirm 12/136 | decodes 1044050 (588/s) queue 63178 errors 0
+[   1805s] confirm 12/136 | decodes 1059450 (587/s) queue 62970 errors 0
+[   1835s] confirm 12/136 | decodes 1082450 (590/s) queue 62710 errors 0
+[   1865s] confirm 12/136 | decodes 1099550 (590/s) queue 62368 errors 0
+[   1895s] confirm 12/136 | decodes 1114600 (588/s) queue 62167 errors 0
+[   1926s] confirm 12/136 | decodes 1133550 (589/s) queue 61788 errors 0
+[   1938s] confirm 13/136 k1600-B1-14x8.4x1.3x16-bal-g24-d1-s6 es1 -3.283 p1 0.1168 und 5
+[   1956s] confirm 13/136 | decodes 1149650 (588/s) queue 61466 errors 0
+[   1986s] confirm 13/136 | decodes 1167150 (588/s) queue 61116 errors 0
+[   1992s] confirm 14/136 k1600-B1-15x8.4x1.3x16-bal-g24-d1-s11 es1 -3.262 p1 0.1160 und 3
+[   2016s] confirm 14/136 | decodes 1179900 (585/s) queue 60861 errors 0
+[   2046s] confirm 14/136 | decodes 1194650 (584/s) queue 60566 errors 0
+[   2076s] confirm 14/136 | decodes 1207500 (582/s) queue 60409 errors 0
+[   2106s] confirm 14/136 | decodes 1224900 (582/s) queue 60061 errors 0
+[   2136s] confirm 14/136 | decodes 1244300 (582/s) queue 59873 errors 0
+[   2166s] confirm 14/136 | decodes 1263650 (583/s) queue 59586 errors 0
+[   2196s] confirm 14/136 | decodes 1282200 (584/s) queue 59215 errors 0
+[   2211s] confirm 15/136 k1600-B1-14x8.4x1.3x16-bal-g24-d1-s1 es1 -3.273 p1 0.1162 und 5
+[   2226s] confirm 15/136 | decodes 1301350 (584/s) queue 58832 errors 0
+[   2257s] confirm 15/136 | decodes 1325000 (587/s) queue 58459 errors 0
+[   2287s] confirm 15/136 | decodes 1341350 (587/s) queue 58132 errors 0
+[   2307s] confirm 16/136 k1600-h10-f0.5-l3-bal-g24-d1+ara-p0.1875h-s2 es1 -3.193 p1 0.1204 und 0
+[   2317s] confirm 16/136 | decodes 1357250 (586/s) queue 57814 errors 0
+[   2347s] confirm 16/136 | decodes 1376450 (586/s) queue 57430 errors 0
+[   2354s] confirm 17/136 k1600-h12-f0.4-l3-bal-g24-d1-s14 es1 -3.194 p1 0.1188 und 0
+[   2377s] confirm 17/136 | decodes 1404400 (591/s) queue 56871 errors 0
+[   2407s] confirm 17/136 | decodes 1426350 (593/s) queue 56632 errors 0
+[   2437s] confirm 17/136 | decodes 1445150 (593/s) queue 56356 errors 0
+[   2467s] confirm 17/136 | decodes 1461800 (592/s) queue 56023 errors 0
+[   2497s] confirm 17/136 | decodes 1477500 (592/s) queue 55809 errors 0
+[   2528s] confirm 17/136 | decodes 1495200 (592/s) queue 55455 errors 0
+[   2558s] confirm 17/136 | decodes 1509800 (590/s) queue 55263 errors 0
+[   2588s] confirm 17/136 | decodes 1528750 (591/s) queue 54884 errors 0
+[   2618s] confirm 17/136 | decodes 1544300 (590/s) queue 54773 errors 0
+[   2648s] confirm 17/136 | decodes 1560750 (589/s) queue 54544 errors 0
+[   2678s] confirm 17/136 | decodes 1576900 (589/s) queue 54221 errors 0
+[   2708s] confirm 17/136 | decodes 1592600 (588/s) queue 54007 errors 0
+[   2738s] confirm 17/136 | decodes 1610500 (588/s) queue 53649 errors 0
+[   2768s] confirm 17/136 | decodes 1626500 (588/s) queue 53429 errors 0
+[   2798s] confirm 17/136 | decodes 1644350 (588/s) queue 53072 errors 0
+[   2828s] confirm 17/136 | decodes 1660450 (587/s) queue 52850 errors 0
+[   2858s] confirm 17/136 | decodes 1678750 (587/s) queue 52484 errors 0
+[   2889s] confirm 17/136 | decodes 1693450 (586/s) queue 52290 errors 0
+[   2919s] confirm 17/136 | decodes 1708450 (585/s) queue 51990 errors 0
+[   2949s] confirm 17/136 | decodes 1726200 (585/s) queue 51735 errors 0
+[   2972s] confirm 18/136 k1216-h12-f0.3-l4-bal-g24-d1+ara-p0.3125h-s4 es1 -4.633 p1 0.1554 und 0
+[   2979s] confirm 18/136 | decodes 1743150 (585/s) queue 51396 errors 0
+[   3009s] confirm 18/136 | decodes 1758250 (584/s) queue 51094 errors 0
+[   3033s] confirm 19/136 k1216-h8-f0.5-l3-bal-g24-d1+ara-p0.5h-s1 es1 -4.660 p1 0.1546 und 5
+[   3039s] confirm 19/136 | decodes 1773300 (584/s) queue 50793 errors 0
+[   3069s] confirm 19/136 | decodes 1792150 (584/s) queue 50416 errors 0
+[   3083s] confirm 20/136 k1216-h12-f0.3-l4-bal-g24-d1+ara-p0.3125h-s7 es1 -4.631 p1 0.1552 und 0
+[   3099s] confirm 20/136 | decodes 1808600 (584/s) queue 50087 errors 0
+[   3129s] confirm 20/136 | decodes 1825750 (583/s) queue 49744 errors 0
+[   3138s] confirm 21/136 k1216-h12-f0.3-l4-bal-g24-d1+ara-p0.375h-s5 es1 -4.630 p1 0.1554 und 0
+[   3159s] confirm 21/136 | decodes 1845750 (584/s) queue 49344 errors 0
+[   3190s] confirm 21/136 | decodes 1862000 (584/s) queue 49119 errors 0
+[   3220s] confirm 21/136 | decodes 1880350 (584/s) queue 48752 errors 0
+[   3239s] confirm 22/136 k1216-h12-f0.3-l4-bal-g24-d1+ara-p0.375h-s4 es1 -4.635 p1 0.1558 und 0
+[   3250s] confirm 22/136 | decodes 1897600 (584/s) queue 48407 errors 0
+[   3280s] confirm 22/136 | decodes 1918800 (585/s) queue 47983 errors 0
+[   3311s] confirm 22/136 | decodes 1950050 (589/s) queue 47558 errors 0
+[   3342s] confirm 22/136 | decodes 1974100 (591/s) queue 47077 errors 0
+[   3349s] confirm 23/136 k2240-h14-f0.3-l3-bal-g24-d1-s1 es1 -1.302 p1 0.0665 und 14
+[   3372s] confirm 23/136 | decodes 2004500 (595/s) queue 46469 errors 0
+[   3377s] confirm 24/136 k2240-h12-f0.3-l3-uni-g24-d1-s0 es1 -1.276 p1 0.0674 und 0
+[   3402s] confirm 24/136 | decodes 2041250 (600/s) queue 45834 errors 0
+[   3432s] confirm 24/136 | decodes 2074100 (604/s) queue 45277 errors 0
+[   3456s] confirm 25/136 k2240-h10-f0.4-l3-bal-g24-d1-s2 es1 -1.176 p1 0.0708 und 3
+[   3462s] confirm 25/136 | decodes 2102900 (607/s) queue 44701 errors 0
+[   3492s] confirm 25/136 | decodes 2121900 (608/s) queue 44321 errors 0
+[   3510s] confirm 26/136 k2240-h12-f0.4-l3-uni-g24-d1-s2 es1 -1.166 p1 0.0690 und 9
+[   3522s] confirm 26/136 | decodes 2136850 (607/s) queue 44022 errors 0
+[   3552s] confirm 26/136 | decodes 2155550 (607/s) queue 43648 errors 0
+[   3562s] confirm 27/136 k2240-h12-f0.4-l3-uni-g24-d1-s3 es1 -1.114 p1 0.0705 und 16
+[   3582s] confirm 27/136 | decodes 2172550 (606/s) queue 43308 errors 0
+[   3612s] confirm 27/136 | decodes 2187650 (606/s) queue 43006 errors 0
+[   3619s] confirm 28/136 k2240-h12-f0.4-l3-bal-g24-d1-s3 es1 -1.094 p1 0.0713 und 6
+[   3642s] confirm 28/136 | decodes 2210200 (607/s) queue 42555 errors 0
+[   3672s] confirm 28/136 | decodes 2235250 (609/s) queue 42154 errors 0
+[   3683s] confirm 29/136 base-r0547 es1 -1.223 p1 0.0652 und 0
+[   3702s] confirm 29/136 | decodes 2283900 (617/s) queue 41381 errors 0
+[   3732s] confirm 29/136 | decodes 2312100 (619/s) queue 40917 errors 0
+[   3753s] confirm 30/136 k2560-h10-f0.3-l3-bal-g24-d1-s3 es1 -0.364 p1 0.0498 und 9
+[   3762s] confirm 30/136 | decodes 2345100 (623/s) queue 40257 errors 0
+[   3791s] confirm 31/136 k2560-h12-f0.3-l3-bal-g24-d1-s1 es1 -0.354 p1 0.0514 und 8
+[   3792s] confirm 31/136 | decodes 2370900 (625/s) queue 39741 errors 0
+[   3823s] confirm 31/136 | decodes 2399950 (628/s) queue 39160 errors 0
+[   3853s] confirm 31/136 | decodes 2435800 (632/s) queue 38643 errors 0
+[   3878s] confirm 32/136 k2560-h12-f0.3-l3-bal-g24-d1-s2 es1 -0.360 p1 0.0501 und 41
+[   3883s] confirm 32/136 | decodes 2463150 (634/s) queue 38096 errors 0
+[   3911s] confirm 33/136 k2560-h12-f0.3-l3-bal-g24-d1-s0 es1 -0.350 p1 0.0508 und 6
+[   3913s] confirm 33/136 | decodes 2492050 (637/s) queue 37518 errors 0
+[   3931s] confirm 34/136 k2560-h10-f0.3-l3-bal-g24-d1-s1 es1 -0.356 p1 0.0504 und 7
+[   3943s] confirm 34/136 | decodes 2528450 (641/s) queue 36790 errors 0
+[   3973s] confirm 34/136 | decodes 2551950 (642/s) queue 36420 errors 0
+[   4003s] confirm 34/136 | decodes 2575000 (643/s) queue 35959 errors 0
+[   4033s] confirm 34/136 | decodes 2600150 (645/s) queue 35556 errors 0
+[   4043s] confirm 35/136 k2560-h12-f0.3-l3-uni-g24-d1-s3 es1 -0.338 p1 0.0503 und 6
+[   4063s] confirm 35/136 | decodes 2625300 (646/s) queue 35053 errors 0
+[   4083s] confirm 36/136 k2560-h10-f0.4-l3-uni-g24-d1-s3 es1 -0.261 p1 0.0518 und 7
+[   4093s] confirm 36/136 | decodes 2653050 (648/s) queue 34498 errors 0
+[   4106s] confirm 37/136 base-r0625 es1 -0.340 p1 0.0489 und 30
+[   4123s] confirm 37/136 | decodes 2692650 (653/s) queue 33706 errors 0
+[   4153s] confirm 37/136 | decodes 2729200 (657/s) queue 33175 errors 0
+[   4154s] confirm 38/136 k2880-h10-f0.3-l3-uni-g24-d1-s1 es1 0.600 p1 0.0334 und 9
+[   4167s] confirm 39/136 k2880-h10-f0.2-l3-bal-g24-d1-s0 es1 0.620 p1 0.0312 und 6
+[   4182s] confirm 40/136 k2880-h10-f0.2-l3-bal-g24-d1-s2 es1 0.608 p1 0.0311 und 4
+[   4183s] confirm 40/136 | decodes 2790700 (667/s) queue 31945 errors 0
+[   4198s] confirm 41/136 k2880-h8-f0.3-l3-uni-g24-d1-s0 es1 0.610 p1 0.0327 und 5
+[   4213s] confirm 42/136 k2880-h8-f0.3-l3-uni-g24-d1-s1 es1 0.603 p1 0.0327 und 12
+[   4213s] confirm 42/136 | decodes 2850250 (677/s) queue 30754 errors 0
+[   4234s] confirm 43/136 k2880-h10-f0.3-l3-bal-g24-d1-s3 es1 0.604 p1 0.0350 und 8
+[   4243s] confirm 43/136 | decodes 2898750 (683/s) queue 29784 errors 0
+[   4248s] confirm 44/136 k2880-h8-f0.3-l3-bal-g24-d1-s0 es1 0.627 p1 0.0336 und 6
+[   4267s] confirm 45/136 k2880-h10-f0.3-l3-bal-g24-d1-s0 es1 0.601 p1 0.0350 und 4
+[   4273s] confirm 45/136 | decodes 2948100 (690/s) queue 28797 errors 0
+[   4284s] confirm 46/136 k2880-h8-f0.4-l3-uni-g24-d1-s0 es1 0.675 p1 0.0348 und 0
+[   4303s] confirm 46/136 | decodes 2999550 (697/s) queue 27768 errors 0
+[   4304s] confirm 47/136 k2880-h8-f0.4-l3-bal-g24-d1-s0 es1 0.677 p1 0.0347 und 0
+[   4317s] confirm 48/136 k2880-h6-f0.4-l3-uni-g24-d1-s3 es1 0.661 p1 0.0327 und 0
+[   4333s] confirm 48/136 | decodes 3042800 (702/s) queue 26903 errors 0
+[   4359s] confirm 49/136 k2880-h10-f0.4-l3-bal-g24-d1-s0 es1 0.746 p1 0.0358 und 4
+[   4363s] confirm 49/136 | decodes 3063100 (702/s) queue 26497 errors 0
+[   4391s] confirm 50/136 k2880-h10-f0.4-l3-uni-g24-d1-s1 es1 0.720 p1 0.0352 und 7
+[   4393s] confirm 50/136 | decodes 3091300 (704/s) queue 25933 errors 0
+[   4423s] confirm 50/136 | decodes 3117500 (705/s) queue 25409 errors 0
+[   4445s] confirm 51/136 base-r0700 es1 0.600 p1 0.0346 und 0
+[   4453s] confirm 51/136 | decodes 3164300 (711/s) queue 24573 errors 0
+[   4478s] confirm 52/136 k3200-h9-f0.3-l3-bal-g24-d1-s1 es1 1.605 p1 0.0211 und 5
+[   4483s] confirm 52/136 | decodes 3219600 (718/s) queue 23567 errors 0
+[   4492s] confirm 53/136 k3200-h8-f0.3-l3-uni-g24-d1-s0 es1 1.607 p1 0.0206 und 9
+[   4512s] confirm 54/136 k3200-h10-f0.3-l3-bal-g24-d1-s0 es1 1.618 p1 0.0212 und 3
+[   4513s] confirm 54/136 | decodes 3271800 (725/s) queue 22523 errors 0
+[   4526s] confirm 55/136 k3200-h9-f0.3-l3-bal-g24-d1-s3 es1 1.613 p1 0.0208 und 4
+[   4540s] confirm 56/136 k3200-h8-f0.3-l3-uni-g24-d1-s1 es1 1.632 p1 0.0204 und 1
+[   4543s] confirm 56/136 | decodes 3336400 (734/s) queue 21231 errors 0
+[   4568s] confirm 57/136 k3200-h9-f0.3-l3-bal-g24-d1-s2 es1 1.614 p1 0.0209 und 11
+[   4573s] confirm 57/136 | decodes 3404950 (745/s) queue 19960 errors 0
+[   4579s] confirm 58/136 k3200-h7-f0.3-l3-uni-g24-d1-s2 es1 1.628 p1 0.0196 und 12
+[   4601s] confirm 59/136 k3200-h10-f0.3-l3-bal-g24-d1-s1 es1 1.607 p1 0.0209 und 10
+[   4603s] confirm 59/136 | decodes 3454550 (750/s) queue 18968 errors 0
+[   4615s] confirm 60/136 k3200-h8-f0.3-l3-bal-g24-d1-s1 es1 1.621 p1 0.0204 und 1
+[   4628s] confirm 61/136 k3200-h8-f0.4-l3-uni-g24-d1-s3 es1 1.692 p1 0.0218 und 0
+[   4633s] confirm 61/136 | decodes 3514050 (758/s) queue 17778 errors 0
+[   4654s] confirm 62/136 k3200-h9-f0.4-l3-bal-g24-d1-s0 es1 1.719 p1 0.0218 und 13
+[   4663s] confirm 62/136 | decodes 3558200 (763/s) queue 16895 errors 0
+[   4672s] confirm 63/136 k3200-h8-f0.4-l3-bal-g24-d1-s0 es1 1.688 p1 0.0218 und 8
+[   4691s] confirm 64/136 k3520-h6-f0.4-l3-uni-g24-d1-s2 es1 2.818 p1 0.0098 und 0
+[   4693s] confirm 64/136 | decodes 3639400 (775/s) queue 15371 errors 0
+[   4699s] confirm 65/136 k3520-h6-f0.4-l3-bal-g24-d1-s2 es1 2.836 p1 0.0096 und 0
+[   4707s] confirm 66/136 k3520-h6-f0.4-l3-bal-g24-d1-s3 es1 2.831 p1 0.0097 und 0
+[   4718s] confirm 67/136 k3520-h6-f0.5-l3-bal-g24-d1-s0 es1 2.865 p1 0.0101 und 8
+[   4723s] confirm 67/136 | decodes 3741450 (792/s) queue 13330 errors 0
+[   4726s] confirm 68/136 k3520-h5-f0.5-l3-uni-g24-d1-s1 es1 2.848 p1 0.0094 und 0
+[   4753s] confirm 68/136 | decodes 3888250 (818/s) queue 10894 errors 0
+[   4783s] confirm 68/136 | decodes 3996850 (836/s) queue 9222 errors 0
+[   4804s] confirm 69/136 base-r0850 es1 2.816 p1 0.0089 und 5
+[   4810s] confirm 70/136 k1664-h14-f0.3-l3-bal-g24-d1-s16 es1 -3.058 p1 0.1088 und 2
+[   4814s] confirm 70/136 | decodes 4087700 (849/s) queue 7705 errors 0
+[   4817s] confirm 71/136 k1664-h8-f0.5-l3-bal-g24-d1+ara-p0.3125h-s0 es1 -3.063 p1 0.1153 und 0
+[   4824s] confirm 72/136 k1664-B1-16x7.8x2.3x17-bal-g24-d1-s9 es1 -3.094 p1 0.1113 und 0
+[   4830s] confirm 73/136 k1664-h12-f0.4-l3-bal-g24-d1-s17 es1 -3.037 p1 0.1122 und 12
+[   4836s] confirm 74/136 k1664-h12-f0.4-l3-bal-g24-d1-s18 es1 -3.023 p1 0.1124 und 0
+[   4843s] confirm 75/136 k1664-B1-14x7.7x2.3x17-bal-g24-d1-s1 es1 -3.077 p1 0.1102 und 15
+[   4844s] confirm 75/136 | decodes 4110650 (849/s) queue 7246 errors 0
+[   4849s] confirm 76/136 k1664-B1-14x7.7x2.3x17-bal-g24-d1-s7 es1 -3.060 p1 0.1089 und 7
+[   4866s] confirm 77/136 k1664-B1-16x8.9x1.3x17-bal-g24-d1-s2 es1 -3.010 p1 0.1116 und 2
+[   4874s] confirm 77/136 | decodes 4132200 (848/s) queue 6815 errors 0
+[   4877s] confirm 78/136 k1664-B1-12x8.4x1.3x17-bal-g24-d1-s10 es1 -3.032 p1 0.1079 und 0
+[   4887s] confirm 79/136 k1664-h14-f0.3-l3-bal-g24-d1-s20 es1 -3.040 p1 0.1088 und 14
+[   4894s] confirm 80/136 k1664-B1-16x6.9x3.3x17-bal-g24-d1-s0 es1 -3.064 p1 0.1106 und 9
+[   4898s] confirm 81/136 base-r0406 es1 -2.778 p1 0.1018 und 11
+[   4904s] confirm 81/136 | decodes 4157900 (848/s) queue 6301 errors 0
+[   4917s] confirm 82/136 k1280-h8-f0.5-l3-bal-g24-d1+ara-p0.5h-s7 es1 -4.357 p1 0.1472 und 4
+[   4932s] confirm 83/136 k1280-B1-16x5.4x15-bal-g24-d1-s4 es1 -4.331 p1 0.1474 und 0
+[   4934s] confirm 83/136 | decodes 4175800 (846/s) queue 6143 errors 0
+[   4941s] confirm 84/136 k1280-B1-14x2.13x5.3x13-bal-g24-d1-s8 es1 -4.348 p1 0.1434 und 21
+[   4961s] confirm 85/136 k1280-h16-f0.4-l3-bal-g24-d1-s3 es1 -4.322 p1 0.1464 und 4
+[   4964s] confirm 85/136 | decodes 4193850 (845/s) queue 5882 errors 0
+[   4965s] confirm 86/136 k1280-h16-f0.3-l4-bal-g24-d1-s7 es1 -4.282 p1 0.1478 und 0
+[   4985s] confirm 87/136 k1600-B1-14x8.4x1.3x16-bal-g24-d1-s9 es1 -3.253 p1 0.1169 und 4
+[   4994s] confirm 87/136 | decodes 4216100 (844/s) queue 5637 errors 0
+[   5006s] confirm 88/136 k1600-B1-16x7.7x2.3x16-bal-g24-d1-s7 es1 -3.250 p1 0.1159 und 0
+[   5024s] confirm 88/136 | decodes 4234250 (843/s) queue 5574 errors 0
+[   5040s] confirm 89/136 k1600-h10-f0.4-l3-bal-g24-d1-s14 es1 -3.225 p1 0.1168 und 5
+[   5051s] confirm 90/136 k1600-h16-f0.2-l4-bal-g24-d1-s13 es1 -3.212 p1 0.1175 und 0
+[   5054s] confirm 90/136 | decodes 4263300 (844/s) queue 5293 errors 0
+[   5056s] confirm 91/136 base-r0391 es1 -3.000 p1 0.1084 und 23
+[   5084s] confirm 91/136 | decodes 4281950 (842/s) queue 5120 errors 0
+[   5098s] confirm 92/136 k1216-h8-f0.5-l3-bal-g24-d1+ara-p0.3125h-s7 es1 -4.612 p1 0.1524 und 0
+[   5106s] confirm 93/136 k1216-h12-f0.3-l4-bal-g24-d1+ara-p0.375h-s0 es1 -4.641 p1 0.1557 und 0
+[   5113s] confirm 94/136 k1216-h12-f0.3-l4-bal-g24-d1+ara-p0.3125h-s2 es1 -4.633 p1 0.1551 und 6
+[   5114s] confirm 94/136 | decodes 4301150 (841/s) queue 4836 errors 0
+[   5120s] confirm 95/136 k1216-h12-f0.3-l4-bal-g24-d1+ara-p0.375h-s2 es1 -4.622 p1 0.1557 und 3
+[   5127s] confirm 96/136 k1216-h12-f0.3-l4-bal-g24-d1+ara-p0.3125h-s0 es1 -4.634 p1 0.1560 und 0
+[   5136s] confirm 97/136 k1216-h12-f0.4-l3-bal-g24-d1-s2 es1 -4.568 p1 0.1527 und 0
+[   5141s] confirm 98/136 k1216-B1-16x5.4x14-bal-g24-d1-s9 es1 -4.561 p1 0.1542 und 0
+[   5145s] confirm 98/136 | decodes 4322900 (840/s) queue 4401 errors 0
+[   5147s] confirm 99/136 base-r0297 es1 -4.137 p1 0.1369 und 3
+[   5151s] confirm 100/136 k2240-h12-f0.3-l3-bal-g24-d1-s2 es1 -1.294 p1 0.0688 und 4
+[   5156s] confirm 101/136 k2240-h12-f0.3-l3-bal-g24-d1-s1 es1 -1.324 p1 0.0690 und 0
+[   5161s] confirm 102/136 k2240-h12-f0.3-l3-uni-g24-d1-s2 es1 -1.254 p1 0.0658 und 18
+[   5175s] confirm 102/136 | decodes 4357100 (842/s) queue 4017 errors 0
+[   5177s] confirm 103/136 k2560-h12-f0.3-l3-uni-g24-d1-s0 es1 -0.347 p1 0.0506 und 0
+[   5181s] confirm 104/136 k2560-h12-f0.3-l3-bal-g24-d1-s3 es1 -0.343 p1 0.0515 und 10
+[   5184s] confirm 105/136 k2560-h10-f0.3-l3-uni-g24-d1-s2 es1 -0.345 p1 0.0489 und 6
+[   5187s] confirm 106/136 k2560-h12-f0.3-l3-uni-g24-d1-s1 es1 -0.360 p1 0.0484 und 0
+[   5200s] confirm 107/136 k2880-h10-f0.3-l3-bal-g24-d1-s2 es1 0.611 p1 0.0350 und 0
+[   5205s] confirm 107/136 | decodes 4394800 (844/s) queue 3363 errors 0
+[   5205s] confirm 108/136 k2880-h10-f0.4-l3-bal-g24-d1-s1 es1 0.747 p1 0.0356 und 2
+[   5207s] confirm 109/136 k3200-h9-f0.3-l3-bal-g24-d1-s0 es1 1.604 p1 0.0212 und 4
+[   5213s] confirm 110/136 k3520-h6-f0.4-l3-uni-g24-d1-s1 es1 2.831 p1 0.0098 und 7
+[   5227s] confirm 111/136 k3520-h6-f0.4-l3-bal-g24-d1-s1 es1 2.825 p1 0.0098 und 9
+[   5229s] confirm 112/136 k3520-h5-f0.6-l3-uni-g24-d1-s0 es1 2.876 p1 0.0096 und 1
+[   5235s] confirm 112/136 | decodes 4477850 (855/s) queue 2602 errors 0
+[   5239s] confirm 113/136 k1280-B1-14x2.13x5.3x13-bal-g24-d1-s5 es1 -4.372 p1 0.1465 und 8
+[   5246s] confirm 114/136 k1280-h16-f0.4-l3-bal-g24-d1-s15 es1 -4.290 p1 0.1446 und 0
+[   5255s] confirm 115/136 k1280-B1-16x7.7x1.3x12-bal-g24-d1-s7 es1 -4.372 p1 0.1432 und 12
+[   5262s] confirm 116/136 base-r0313 es1 -3.864 p1 0.1275 und 55
+[   5265s] confirm 116/136 | decodes 4497200 (854/s) queue 2215 errors 0
+[   5269s] confirm 117/136 k1600-h8-f0.5-l3-bal-g24-d1+ara-p0.3125h-s0 es1 -3.295 p1 0.1206 und 4
+[   5292s] confirm 118/136 k1600-B1-16x8.14x1.3x16-bal-g24-d1-s9 es1 -3.195 p1 0.1184 und 0
+[   5295s] confirm 118/136 | decodes 4516500 (853/s) queue 1929 errors 0
+[   5315s] confirm 119/136 k1600-h16-f0.2-l4-bal-g24-d1-s1 es1 -3.187 p1 0.1174 und 0
+[   5325s] confirm 119/136 | decodes 4536300 (852/s) queue 1733 errors 0
+[   5330s] confirm 120/136 k1216-h12-f0.3-l4-bal-g24-d1+ara-p0.3125h-s3 es1 -4.645 p1 0.1559 und 0
+[   5338s] confirm 121/136 k1216-h12-f0.3-l4-bal-g24-d1+ara-p0.375h-s1 es1 -4.647 p1 0.1558 und 0
+[   5346s] confirm 122/136 k2240-h12-f0.4-l3-uni-g24-d1-s1 es1 -1.121 p1 0.0696 und 25
+[   5354s] confirm 123/136 k2560-h10-f0.4-l3-uni-g24-d1-s1 es1 -0.244 p1 0.0519 und 3
+[   5355s] confirm 123/136 | decodes 4570100 (853/s) queue 1257 errors 0
+[   5357s] confirm 124/136 base-r0775 es1 1.596 p1 0.0197 und 6
+[   5360s] confirm 125/136 k3520-h5-f0.6-l3-bal-g24-d1-s1 es1 2.875 p1 0.0096 und 2
+[   5361s] confirm 126/136 k3520-h6-f0.4-l3-bal-g24-d1-s0 es1 2.829 p1 0.0098 und 9
+[   5363s] confirm 127/136 k3520-h5-f0.6-l3-bal-g24-d1-s2 es1 2.868 p1 0.0095 und 4
+[   5367s] confirm 128/136 k3520-h6-f0.5-l3-bal-g24-d1-s1 es1 2.858 p1 0.0101 und 0
+[   5375s] confirm 129/136 k1600-h14-f0.3-l3-bal-g24-d1-s10 es1 -3.247 p1 0.1129 und 14
+[   5383s] confirm 130/136 k1600-h14-f0.4-l3-bal-g24-d1-s4 es1 -3.140 p1 0.1177 und 6
+[   5385s] confirm 130/136 | decodes 4621500 (858/s) queue 529 errors 0
+[   5390s] confirm 131/136 k1216-h12-f0.3-l4-bal-g24-d1+ara-p0.3125h-s5 es1 -4.614 p1 0.1555 und 0
+[   5395s] confirm 132/136 k3520-h6-f0.3-l3-bal-g24-d1-s1 es1 2.828 p1 0.0090 und 13
+[   5397s] confirm 133/136 k3520-h6-f0.4-l3-uni-g24-d1-s3 es1 2.821 p1 0.0097 und 16
+[   5398s] confirm 134/136 k3520-h5-f0.4-l3-uni-g24-d1-s1 es1 2.855 p1 0.0091 und 4
+[   5401s] confirm 135/136 base-r0550 es1 -1.161 p1 — und 123
+[   5403s] confirm 136/136 k3200-h8-f0.3-l3-bal-g24-d1-s3 es1 1.622 p1 0.0205 und 22
+finished; errors 0; -> scratch/rung-ladder-20260930/search/overnight-CONF/TABLES-confirm.md

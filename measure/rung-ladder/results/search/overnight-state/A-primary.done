@@ -1,0 +1,1 @@
+env/bin/python scratch/rung-ladder-20260930/search/recipe_search.py --overnight --frozen-rungs off --seeds 24 --finalists 24 --n-fine 8 --out scratch/rung-ladder-20260930/search/overnight-A --workers 14 --decoder fast

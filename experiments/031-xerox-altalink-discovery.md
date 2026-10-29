@@ -681,3 +681,8 @@ diagnostics `diag_corners.py`, `diag_gates.py`, `diag_ink.py`,
 `diag_thumbdpi.py`, `diag_mic.py`, `diag_morph.py`, `harness_bw_recover.py`,
 plus figures `e031-summary.png`, `e031-pitch-ladder.png`,
 `e031-single-dot.png`, `e031-single-dot-raw.png`, `mic-blue-deficit.png`.
+(2026-10-09: `diag_mic.py`, `diag_mic2.py`, `diag_morph.py`, `diag_strokes.py`,
+`diag_strokes2.py`, `fig_morph.py`, `fig_morph_raw.py` moved to
+`experiments/031-xerox-altalink-discovery/`; `diag_corners.py`, `diag_gates.py`,
+`diag_ink.py`, `diag_rootcause.py`, `diag_thumbdpi.py`, `harness_bw_recover.py`
+retired 2026-10-09, their result stands above.)

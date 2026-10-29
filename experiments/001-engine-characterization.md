@@ -253,3 +253,15 @@ Scratch sheets only; fiducials and test patterns are allowed here.
   step-tracking remains necessary — every flatbed scan carries fresh steps —
   but the steps belong in the SCANNER model of ChannelParams. See
   experiments/002-calibration-page.md Addendum 002.0b.
+
+## Addendum 2026-10-11 — the first print and test_pattern.ps
+
+An unlogged early print, possibly the first, was `probe.ps`, a ~300-dpi probe sent on
+2026-07-03 and deleted on 2026-07-04; the file exists nowhere and nothing of it is in
+the evidence archive. `test_pattern.ps` (2026-07-03) is the owner's own fixed-up copy
+of a pasted PostScript grid sample whose source is unstated (the sample that gave the
+`/HWResolution` idea); it was never recorded as printed. It is published in the
+evidence archive's paperholo-era release as
+`001-engine-characterization/test-pattern/jobs/test_pattern.ps` (982 B, sha256
+`5eabb5e359eaf09ccd47634c5d2230bd0f525dcbd185ef2f63d74f432a626be7`, class
+job-unprinted). (evidence line, docs/EVIDENCE-ARCHIVE-2026-10-08.md §8a)

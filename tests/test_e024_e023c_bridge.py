@@ -1,6 +1,7 @@
 """Contracts for exporting production E023c lanes into independent E024 runs."""
 from __future__ import annotations
 
+import copy
 import hashlib
 import json
 import sys
@@ -43,19 +44,26 @@ class _CascadeFixture:
         self.validated = True
 
 
-def _receiver_lanes(tmp_path: Path):
-    descriptor, upstream, image, _user, framed = session_test._fixture(
-        tmp_path)
-    coarse = receiver.ReceiverSession.create(descriptor, (0,), 1600.0)
-    coarse, _ = receiver.apply_scan(
-        coarse, session_test._record(
-            descriptor, upstream.scans[0], image))
+_LANES: dict = {}
 
-    native = coarse.fork()
-    native.envelope = replace(native.envelope, dpi=4800.0)
-    native.scans = [replace(scan, dpi=4800.0) for scan in native.scans]
-    native.validate_invariants()
-    return descriptor, framed, coarse, native
+
+def _receiver_lanes(tmp_path: Path):
+    # 2026-09-05: every caller wants the SAME coarse acquisition (~2.7 s);
+    # build it once per module and hand out deep copies (~3 ms).
+    if "lanes" not in _LANES:
+        descriptor, upstream, image, _user, framed = session_test._fixture(
+            tmp_path)
+        coarse = receiver.ReceiverSession.create(descriptor, (0,), 1600.0)
+        coarse, _ = receiver.apply_scan(
+            coarse, session_test._record(
+                descriptor, upstream.scans[0], image))
+
+        native = coarse.fork()
+        native.envelope = replace(native.envelope, dpi=4800.0)
+        native.scans = [replace(scan, dpi=4800.0) for scan in native.scans]
+        native.validate_invariants()
+        _LANES["lanes"] = (descriptor, framed, coarse, native)
+    return copy.deepcopy(_LANES["lanes"])
 
 
 def _cascade(coarse, native) -> _CascadeFixture:

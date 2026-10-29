@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 """Roll several case reports into one verdict table.
 
-    PYTHONPATH=. <python> -m measure.local_ab.summarize \\
-        scratch/local-ab/reports/*.json
+    PYTHONPATH=src:. <python> -m measure.local_ab.summarize \\
+        build/local-ab/reports/*.json
 
 Reads the JSON each battery writes and prints the union-vs-per-origin
 table across every case, plus the pooled zero-wrong audit. Sim reports

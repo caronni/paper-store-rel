@@ -9,10 +9,10 @@ opposite: it MIRRORS the failed attempt's origin, so a scan-origin retry
 re-attempts one capture alone.
 
 This package measures which is right, on multi-capture material, without
-changing anything in ``holo3/``.
+changing anything in ``src/holo/receiver/``.
 
-    PYTHONPATH=. <python> -m measure.local_ab.cases   --case I-tl
-    PYTHONPATH=. <python> -m measure.local_ab.harness --case I-tl
+    PYTHONPATH=src:. <python> -m measure.local_ab.cases   --case I-tl
+    PYTHONPATH=src:. <python> -m measure.local_ab.harness --case I-tl
 
 See ``README.md`` beside this file.
 """

@@ -7,7 +7,7 @@ FEC bank ids) follow the v2 grammar mechanically; the frozen v1
 singletons keep their frozen names inside ``profiles.py`` and are not
 reachable from here.
 
-Numerical law shared by K and CMY8 (all LDPC mothers are n=4096):
+Numerical law shared by K, CMY8 and CMY (all LDPC mothers are n=4096):
 shortening equals the site count p, so transmitted bits = 4096 − p =
 payload cells per stream, and user bits = k_bits(rung) − p − CRC32.
 
@@ -21,6 +21,7 @@ Gen-v1 constraints stated where the frozen algebra imposes them:
   it (docs/CMY8-COLUMN-GROUPS.md, ruling 2026-09-04: gen-v1 semantics;
   equal-width triplets are the one-group case, bit-identical to the
   frozen pool).
+- cmy: any rung pair (hi, lo), pooled exactly as cmy8 (docs/CMY-DESIGN.md).
 """
 from __future__ import annotations
 
@@ -170,7 +171,54 @@ def cmy8_codec(rungs: tuple[str, str, str], p: int = 120,
     return profile
 
 
+@lru_cache(maxsize=None)
+def cmy_codec(rungs: tuple[str, str], p: int = 120) -> CodecProfile:
+    """CMY family: two label-bit streams over the {W, C, M, Y} alphabet.
+
+    ``rungs`` is the (r_hi, r_lo) pair in stream order; an uneven pair
+    pools through column groups as an uneven cmy8 triplet does.  A cell's
+    two dithered bits pick its state through the frozen label table
+    (``channel.cmy_label_states``); word '1' prints C, word '0' the site's
+    keyed W or Y, the dust follows the per-tile balance law
+    (``pilots.color_word_states`` / ``dust_state_values``).
+    """
+    if len(rungs) != 2:
+        raise ValueError("cmy takes a (r_hi, r_lo) rung pair")
+    for rung in rungs:
+        _require_rung(rung)
+    _require_sites(p, Family.CMY)
+    if p == WORD_SITES:
+        raise ValueError(
+            "cmy needs at least one dust site (p > 100): word '1' is C "
+            "and word '0' W or Y, so M appears only in dust and p100 "
+            "leaves the M plane no anchor")
+    token = rung_token(rungs)
+    streams = tuple(
+        StreamProfile(stream_id, _bank(f"cmy-{stream_id}-{rung}-p{p}-v1",
+                                       (rung, p)), None)
+        for stream_id, rung in zip(channel.CMY_LABEL_STREAMS, rungs))
+    profile = CodecProfile(
+        codec_id=f"cmy-{token}-p{p}-v1",
+        state_names=("W", "C", "M", "Y"),
+        word_states=(int(channel.CMYState.W), int(channel.CMYState.C)),
+        n_sites=p,
+        n_dust=p - WORD_SITES,
+        evidence_values_per_cell=3,
+        bits_per_mapper_unit=2,
+        cells_per_mapper_unit=1,
+        streams=streams,
+        family=Family.CMY,
+        dust_base_cycle=(),
+    )
+    for stream in profile.streams:
+        if stream.fec.transmitted_bits != profile.payload_cells:
+            raise AssertionError(
+                f"{profile.codec_id}: stream transmitted-cell mismatch")
+    return profile
+
+
 __all__ = [
+    "cmy_codec",
     "cmy7_codec",
     "cmy8_codec",
     "k_codec",

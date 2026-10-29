@@ -12,11 +12,15 @@ Runs under pytest, or standalone: python tests/test_e004.py
 """
 from __future__ import annotations
 
+import contextlib
+import pytest
+import hashlib
 import json
 import os
 import subprocess
 import sys
 import tempfile
+import time
 from pathlib import Path
 
 import numpy as np
@@ -27,10 +31,27 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 HERE = Path(__file__).resolve().parent
 EXP = HERE.parent / "experiments" / "004-finalists-checkerboard"
 BUILD = EXP / "build"
+
+# 2026-09-06: every test here reads a build that a test regenerates in place.
+# One xdist worker per build directory (pyproject: --dist loadgroup).
+pytestmark = pytest.mark.xdist_group("build-004")
 MM_DOT = 600.0 / 25.4
 
 Image.MAX_IMAGE_PIXELS = None
 _cache: dict = {}
+
+# 2026-09-05: the frozen stimulus shas.  The determinism test used to run
+# gen_e004.py TWICE (~4.3 s each) and compare the two runs, which pins only
+# run-to-run agreement inside one process; one run compared against these
+# literals pins the stimulus across time, which is what the sha gate asks for.
+# Regenerated and verified 2026-09-05; e004.ps also equals the manifest's own
+# ps_sha256, so the two literals cross-check each other.
+SHA256 = {
+    "e004.ps":
+        "c5c35d94c0940b82a612dc48c7721130240709cce094a3438fce790d08f9ca68",
+    "e004_manifest.json":
+        "ade87708bf3def753bbe2c18affc3e05b9fdc553b2cf3ec8b685f952994c60dc",
+}
 
 
 def _run_gen() -> None:
@@ -38,11 +59,52 @@ def _run_gen() -> None:
                    capture_output=True)
 
 
+def _sha256(name: str) -> str:
+    return hashlib.sha256((BUILD / name).read_bytes()).hexdigest()
+
+
+@contextlib.contextmanager
+def _gen_lock(timeout: float = 600.0):
+    """gen_e004.py writes into a fixed build/ directory and takes no output
+    argument, so concurrent xdist workers must not generate into it at once."""
+    BUILD.mkdir(parents=True, exist_ok=True)
+    path = BUILD / ".gen.lock"
+    deadline = time.time() + timeout
+    while True:
+        try:
+            fd = os.open(path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+            break
+        except FileExistsError:
+            if time.time() > deadline:
+                raise RuntimeError(f"stale generator lock: {path}")
+            time.sleep(0.05)
+    try:
+        yield
+    finally:
+        os.close(fd)
+        path.unlink(missing_ok=True)
+
+
+def _ensure_build() -> None:
+    """Own the build every other test reads (2026-09-05): they used to read a
+    BUILD that only the determinism test created, which is an ordering hazard
+    on a clean tree and under -n 8.  Generates only on a sha miss."""
+    if _cache.get("build_ok"):
+        return
+    with _gen_lock():
+        if any(not (BUILD / name).exists() or _sha256(name) != sha
+               for name, sha in SHA256.items()):
+            _run_gen()
+    _cache["build_ok"] = True
+
+
 def _manifest() -> dict:
+    _ensure_build()
     return json.loads((BUILD / "e004_manifest.json").read_text())
 
 
 def _render_gray(dpi: int) -> np.ndarray:
+    _ensure_build()
     key = ("gray", dpi)
     if key not in _cache:
         with tempfile.TemporaryDirectory() as td:
@@ -57,6 +119,7 @@ def _render_gray(dpi: int) -> np.ndarray:
 
 def _render_tiffsep(dpi: int = 600) -> dict[str, np.ndarray]:
     """Boolean ink maps per plane (tiffsep polarity: ink = 0/dark)."""
+    _ensure_build()
     key = ("sep", dpi)
     if key not in _cache:
         with tempfile.TemporaryDirectory() as td:
@@ -85,12 +148,11 @@ def _tile_rect(mf: dict, tile: dict) -> tuple[int, int, int, int]:
 
 
 def test_determinism_byte_identical() -> None:
-    _run_gen()
-    ps1 = (BUILD / "e004.ps").read_bytes()
-    mf1 = (BUILD / "e004_manifest.json").read_bytes()
-    _run_gen()
-    assert (BUILD / "e004.ps").read_bytes() == ps1
-    assert (BUILD / "e004_manifest.json").read_bytes() == mf1
+    with _gen_lock():
+        _run_gen()
+        for name, sha in SHA256.items():
+            assert _sha256(name) == sha, name
+    _cache["build_ok"] = True
 
 
 def test_geometry_balance_and_emission_separation() -> None:

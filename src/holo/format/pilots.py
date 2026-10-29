@@ -39,8 +39,8 @@ from __future__ import annotations
 
 import numpy as np
 
-from ..core import bch, keystream
-from .profiles import CodecProfile
+from ..core import bch, channel, keystream
+from .profiles import CodecProfile, Family
 
 TILE_CELLS = 64
 N_QUOTA = 10                       # 10x10 quota grid -> 100 sites
@@ -186,21 +186,66 @@ def word_values(row_seed: bytes, counters, plane: int = PLANE_K
     return out
 
 
-def color_word_states(row_seed: bytes, counters) -> np.ndarray:
-    """Binary BCH word rendered as canonical W/state-0 or CM/state-3."""
+def color_word_states(row_seed: bytes, counters,
+                      codec: CodecProfile) -> np.ndarray:
+    """The binary BCH word rendered in the codec's two word states.
+
+    cmy8/cmy7 print W for '0' and CM for '1'.  cmy prints C for '1' and,
+    for '0', W or the Y its site's domain-9 key selects
+    (``keystream.color_word_zero_mask``).
+    """
     values = word_values(row_seed, counters, PLANE_K)
-    return (values * np.uint8(3)).astype(np.uint8, copy=False)
+    zero, one = codec.word_states
+    states = np.where(values == 1, one, zero).astype(np.uint8)
+    if codec.family is Family.CMY:
+        for i, c in enumerate(np.asarray(counters, dtype=np.int64).ravel()):
+            yellow = keystream.color_word_zero_mask(
+                row_seed, int(c), codec.n_dust)
+            states[i, (values[i] == 0) & yellow] = channel.CMYState.Y
+    return states
 
 
 def decode_color_word(states100: np.ndarray, row_seed: bytes,
+                      codec: CodecProfile,
                       erasure_idx: np.ndarray | None = None) -> int | None:
-    """Decode a hard W/CM color word; any other state is refused."""
+    """Decode a hard color word on its '1' state; a state outside the
+    word's lawful set (the two word states, and Y for cmy) is refused."""
     states = np.asarray(states100)
-    if states.shape != (N_WORD_SITES,) or not np.isin(states, (0, 3)).all():
+    zero, one = codec.word_states
+    lawful = (zero, one, channel.CMYState.Y) if codec.family is Family.CMY \
+        else (zero, one)
+    if states.shape != (N_WORD_SITES,) or not np.isin(states, lawful).all():
         return None
     return decode_word(
-        (states == 3).astype(np.uint8), row_seed, PLANE_K,
+        (states == one).astype(np.uint8), row_seed, PLANE_K,
         erasure_idx=erasure_idx)
+
+
+def _cycle_dust(cycle: np.ndarray, n_dust: int, counter: int) -> np.ndarray:
+    full, extras = divmod(n_dust, cycle.size)
+    base = np.tile(cycle, full)
+    if extras:
+        base = np.concatenate((
+            base,
+            cycle[[(extras * counter + j) % cycle.size
+                   for j in range(extras)]],
+        ))
+    return base
+
+
+_BALANCE_ORDER = (channel.CMYState.M, channel.CMYState.Y,
+                  channel.CMYState.W, channel.CMYState.C)
+
+
+def _balance_dust(word_states: np.ndarray, n_dust: int) -> np.ndarray:
+    totals = [int(np.count_nonzero(word_states == state))
+              for state in _BALANCE_ORDER]
+    fill = np.empty(n_dust, dtype=np.uint8)
+    for i in range(n_dust):
+        lowest = totals.index(min(totals))
+        fill[i] = _BALANCE_ORDER[lowest]
+        totals[lowest] += 1
+    return fill
 
 
 def dust_state_values(row_seed: bytes, counters,
@@ -218,10 +263,15 @@ def dust_state_values(row_seed: bytes, counters,
     bit-exactly: CMY7 (cycle 5, dust 20) is four full cycles with no
     extras; CMY8 (cycle 6, dust 20) is three full cycles plus the two
     extras ``(2c) % 6, (2c + 1) % 6``.
+
+    cmy's source vector is the BALANCE law instead: from the tile's own
+    word supply (its C, W and Y counts; M none), each dust site in turn
+    goes to the state with the lowest running total, ties M, Y, W, C.
     """
     cycle = np.asarray(codec.dust_base_cycle, dtype=np.uint8)
     n_dust = codec.n_dust
-    if cycle.size == 0 or n_dust == 0:
+    balance = codec.family is Family.CMY
+    if n_dust == 0 or (cycle.size == 0 and not balance):
         raise ValueError(f"{codec.codec_id}: codec has no color dust schedule")
 
     counters = np.asarray(counters, dtype=np.int64).ravel()
@@ -229,17 +279,12 @@ def dust_state_values(row_seed: bytes, counters,
             int(counters.min()) < 0
             or int(counters.max()) >= (1 << COUNTER_BITS)):
         raise ValueError("color dust tile counter out of range")
-    full, extras = divmod(n_dust, cycle.size)
+    words = color_word_states(row_seed, counters, codec) if balance else None
     out = np.empty((counters.size, n_dust), dtype=np.uint8)
     for i, counter in enumerate(counters):
         c = int(counter)
-        base = np.tile(cycle, full)
-        if extras:
-            base = np.concatenate((
-                base,
-                cycle[[(extras * c + j) % cycle.size
-                       for j in range(extras)]],
-            ))
+        base = (_balance_dust(words[i], n_dust) if balance
+                else _cycle_dust(cycle, n_dust, c))
         permutation = keystream.color_dust_permutation(row_seed, c, n_dust)
         out[i] = base[permutation]
     return out

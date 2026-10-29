@@ -362,3 +362,21 @@ placer-measured mismatch (test_placed_fragment_quality_plumbing).
 | 014.4 | 2026-07-09 | PRE-REGISTERED (designed, not run): sub-grain failure attribution at 6/8 mm — genie-geometry + oracle-margin arms on scan C; gates the PILOTS-DESIGN §15 / F13 build | protocol above | zero print |
 | 014.4 | 2026-07-10 | RAN: blind=full-tile-visible=genie at all 15 windows ⇒ WORD INCOMPLETENESS, geometry exonerated; oracle separation ≥0.20 everywhere; pre-registered decoy bar >0.35 impossible by construction (codeword distance spectrum min 32/100, measured) — gate re-formed floor-aware; F13 GREEN | probe_0144.py + _posthoc + _dmin | zero print |
 | 014.5 | 2026-07-10 | erasure rung MEASURED (ctx q=0.80/0.85 → 96/99%, 0 wrong-addr in 9,120); F13 placer BUILT+MEASURED (gated floor 5mm, isolated end-to-end 6mm+ 5/5 incl. OWN lattice lock — §15.5 item 2 resolved); gate constants FROZEN on scan-B fresh windows 6/6 | probe_0145.py; paperholo.place; bch.decode_erasures; suite +6 | zero print |
+
+## Addendum 2026-10-11 — print and scan dates
+
+From the genesis and office-machine reads of 2026-10-10 (evidence line,
+docs/EVIDENCE-ARCHIVE-2026-10-08.md §8a). e014 was in the SECOND office
+bundle of 2026-07-08, rebuilt with e014 at 15:56:44 CEST by the files' dates
+on machine 1 (the office machine's copy carries 16:50) — tarball
+`a07479ba8bcd586cc440f259fb67f37c5cce9ff72b607beaff7d8323fad91a07`, the one
+the 014.0 row cites — so the sheet was sent after the rebuild (not before
+16:50 on 2026-07-08). It came home on 2026-07-09 and was scanned on
+2026-07-09 between 18:40 and 18:49 UTC (20:40 to 20:49 CEST, the capture
+file's creation and modification times on machine 1; the genesis read gave
+18:42Z); the 014.1 run row above dates that scan 2026-07-08, which is wrong
+(the row stays as written). The send route is as unconfirmed as e012's (its
+addendum of the same date): the operator's recollection (2026-10-10, a
+recollection, not a record) is that office printing very likely went through
+`lpr -o raw`, not the bundle script. The sheet's Canon scans are published
+under 014 in the paperholo-era release of the evidence archive.

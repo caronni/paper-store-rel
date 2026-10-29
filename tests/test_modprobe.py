@@ -19,6 +19,7 @@ content stays on the clean path is decided on the printed sheet):
 from __future__ import annotations
 
 import hashlib
+import pytest
 import json
 import shutil
 import subprocess
@@ -33,6 +34,12 @@ from paperholo.pilots import pilot_sites
 ROOT = Path(__file__).resolve().parents[1]
 EXP = ROOT / "experiments" / "003-modulation-probes"
 BUILD = EXP / "build"
+
+# 2026-09-06: every test here reads a build that a test regenerates in place;
+# test_calpage.py, test_composite_probe.py, test_overlap2.py write the same
+# directory.  One xdist worker per build directory (pyproject: --dist
+# loadgroup).
+pytestmark = pytest.mark.xdist_group("build-002-003-probes")
 EXP001 = ROOT / "experiments" / "001-engine-characterization"
 EXP002 = ROOT / "experiments" / "002-calibration-page"
 

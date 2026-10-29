@@ -1,0 +1,8 @@
+cm2 refute (2026-10-18). Harness h.py loads ../enc.py|../enc_plus.py and ../dec*.py by path only (python3 -I, nice 10).
+Primer = stage0/primer.txt bytes + the whole dec file's bytes (as the contract words it).
+All 24 claimed sizes (3 variants x T1-T4 x primed/unprimed) reproduce to the byte; every round trip byte-exact.
+KAV 8fa930ac238dfe22189944d48f83d7 (15 B) dec.py and dec_o2.py; 8fa930ac23879eb08baddbcf41f66d dec_plus.py; same under seeds 0/777/4242.
+PYTHONHASHSEED 0 vs 4242: compressed bytes and outputs identical on T1-T3 (all variants, both priming) and T4 primed dec.py.
+Edge cases (empty, 1 byte, runs, random, alternating, skewed) round-trip for dec.py and dec_plus.py; random 6000 B expands to 6480 B (+8%).
+Caveat: priming uses the docstring + harness (~860 B outside the counted region). Core-only primer: T1 2662 / T2 4406 / T3 6951 (vs 2633 / 4372 / 6914).
+Spec gaps: Python parallel assignment, list aliasing through setdefault, the exact primer bytes, n carried out of band, D tied to the order tuple.

@@ -23,6 +23,19 @@ Rungs built here:
                  refit inside the tile — there are no labels there.
   L7a `erase`    down-weight / erase the lanes' disagreeing cells.
   L7b `runs`     blind contiguous-run erasure of low-|posterior| positions.
+  L7c `state`    BUILT W8 (2026-09-06): erase the least confident cells of
+                 one SIBLING STATE — the format's own statement about
+                 which cells are hard, not a decoder's.  Its own rung
+                 name: NOT in `DEFAULT_RUNGS` and NOT under the `L7`
+                 alias, so no existing profile changes behaviour.
+  L3f `feedback` BUILT W8 B4 (2026-09-06), in `refit.py`: the decoder's
+                 confident extrinsic bits become typed pseudo labels, the
+                 rule's lanes are RECOMPUTED with them behind the `refit`
+                 closure the driver binds, recombined under the round-0
+                 label view, and BP runs again.  Dispatched from here,
+                 never in `DEFAULT_RUNGS` or an alias.  L2 variants may
+                 also carry a `temperature` (T1): the channel is scaled
+                 before BP and the label says so (`L2:damped@300@t0.8`).
   L4  `flip`     BUILT W4 (2026-09-03): bit-flip hypotheses on the variables
                  incident to the unsatisfied checks, singles then pairs,
                  each followed by a short BP and the gate.  Sheet H's unsat
@@ -43,12 +56,12 @@ from dataclasses import replace as dc_replace
 
 import numpy as np
 
-from holo3.format import keystream, tile_codec
-from holo3.format.identity import build_site_geometry
-from holo3.lib.ldpc import CODES, LLR_CLIP
-from holo3.plugins.calibrate import N_CONTEXT_BINS, apply_context_offsets
-from holo3.plugins.color_region_ctx import context_neighbour_counts
-from holo3.plugins.tiles import stream_fact
+from holo.receiver.format import keystream, tile_codec
+from holo.receiver.format.identity import build_site_geometry
+from holo.receiver.lib.ldpc import CODES, LLR_CLIP
+from holo.receiver.plugins.calibrate import N_CONTEXT_BINS, apply_context_offsets
+from holo.receiver.plugins.color_region_ctx import context_neighbour_counts
+from holo.receiver.plugins.tiles import stream_fact
 
 from . import mother as mother_mod
 from .types import (
@@ -73,8 +86,8 @@ DEFAULT_RUNGS: tuple[str, ...] = ("L0", "L1", "L2", "L4", "L3", "L7a",
 # Measured elsewhere as the only decoder changes with value at n = 4096 near
 # threshold (DESIGN §6 L2).  Each entry becomes its own RungResult.
 # Pinned 2026-09-03 from analyzer/sweeps/l2_variants.py (synthetic bi-AWGN,
-# r0850 + r0700, 20 seeds/cell, 69 variants; scratch/analyzer/sweeps/): the
-# greedy union cascade over all cells is damped@300 lam=0.5 (71/200) then
+# r0850 + r0700, 20 seeds/cell, 69 variants): the greedy union cascade over
+# all cells is damped@300 lam=0.5 (71/200) then
 # layered@300 lam=0.7 (72/200); production minsum-then-sp@150 alone is 69/200.
 # Gains are at the waterfall edge only (r0850 3.5%: 5/20 vs 3/20; r0700 7%:
 # 20/20 vs 19/20); everything else in the sweep ties or loses.
@@ -323,7 +336,28 @@ def _rung_ctx_iterate(llr_seq: np.ndarray, row, key: Key, bank,
 
     The offsets never change across rounds; only the bins move.  Aborts
     when mean |LLR| grows without reducing the unsatisfied-check count.
+
+    RULING 10 (W8 B2): the APPLY mode is exact for a POOLED correction
+    only.  It removes ONE 9-vector at the channel's bins and re-applies
+    the same vector at the extrinsic's bins; if a contributing lane
+    adopted a per-state residual (C2, `statecal.apply_state_context`),
+    the correction sitting in the combined LLR is not one vector any
+    more and the shift would remove a correction the cell never had.
+    The rung refuses such a row rather than shifting the wrong thing.
+
+    RULING 10 REACHES D1 TOO (review 2026-09-06).  `platt-state` weights
+    the LANES per sibling state — a state-s cell is ``w_s @ stack`` while
+    `combine.pooled_ctx_offsets` pooled the offsets under the POOLED
+    coefficients — so the vector this rung would remove is not the vector
+    those cells carry either.  `state_weighted` is that case and it is
+    refused with its own reason, so the ledger can tell the two apart.
     """
+    if bool(knobs.get("ctx_state_adopted", False)):
+        return [_result("L3", VERDICT_REFUSED,
+                        detail={"reason": "state_context_adopted"})]
+    if bool(knobs.get("state_weighted", False)):
+        return [_result("L3", VERDICT_REFUSED,
+                        detail={"reason": "state_weighted_combination"})]
     spec = knobs.get("ctx_offsets")
     if spec is None:
         return [_result("L3", VERDICT_REFUSED,
@@ -392,7 +426,7 @@ def _rung_erase_disagree(llr_seq: np.ndarray, row, key: Key, bank,
     `knobs['disagree']` is either the sequential indices, or a
     (indices, agreement) pair; the least-agreeing come first and the count is
     capped at n - k - margin so the frame cannot fall below the code's own
-    slack.  Production's below-floor refusal (`tiles._attempt_cmy8`:
+    slack.  Production's below-floor refusal (`tiles._attempt_stream`:
     supported < bank_active_bits) is reproduced as an explicit outcome.
     """
     spec = knobs.get("disagree")
@@ -429,6 +463,84 @@ def _rung_erase_disagree(llr_seq: np.ndarray, row, key: Key, bank,
                                   metadata_bit=metadata_bit)
     result, _out = _decode_and_gate(
         mother, bank, exposure, "L7a",
+        iters=int(knobs.get("iters", PROD_RETRY_ITERS)),
+        mode="minsum-then-sp", extra=detail,
+        keep_hard=bool(knobs.get("keep_hard", False)))
+    return result
+
+
+def _rung_erase_state(llr_seq: np.ndarray, row, key: Key, bank,
+                      exposure: Exposure, knobs: dict, metadata_bit
+                      ) -> RungResult:
+    """L7c: erase the least confident cells of ONE sibling state (W8 C3).
+
+    L7a erases where the LANES disagree and L7b where a RUN of positions
+    is unreliable; this one erases where the FORMAT says the cell is hard
+    — the cells whose two sibling planes are both inked, which on sheet H
+    are read 2-4x worse than any other cell of the plane and whose LLRs
+    the same measurement found OVER-confident (|L| 2-4 claims 5.8% error
+    and measures 15.7%).  An over-confident wrong cell is exactly what BP
+    cannot recover from, and an erasure is the one move that costs the
+    code slack instead of trust.
+
+    `knobs['sibling_state']` is the per-position state vector the driver
+    built once for the key (`statecal.sequential_state`) — from the
+    FRAME, never from a decoder output, so this rung reads no decision of
+    its own.  Positions of `erase_state` (3 by default: both siblings
+    inked) with |L| below `erase_tau` are erased least-confident first,
+    capped at `n - k - margin` exactly as L7a, and production's
+    below-floor refusal is reproduced.
+    """
+    spec = knobs.get("sibling_state")
+    if spec is None:
+        return _result("L7c", VERDICT_REFUSED,
+                       detail={"reason": "no_sibling_state"})
+    state = np.asarray(spec, np.int8).ravel()
+    if state.size != llr_seq.size:
+        return _result("L7c", VERDICT_REFUSED,
+                       detail={"reason": "malformed_sibling_state",
+                               "n_state": int(state.size),
+                               "n_positions": int(llr_seq.size)})
+    erase_state = int(knobs.get("erase_state", 3))
+    tau = float(knobs.get("erase_tau", 2.0))
+    in_state = state == erase_state
+    magnitude = np.abs(np.asarray(llr_seq, np.float64))
+    # A zero LLR is already the erasure spelling; erasing it again buys
+    # nothing and would re-charge L1's own codeword.
+    index = np.flatnonzero(in_state & (magnitude < tau)
+                           & (np.asarray(llr_seq, np.float64) != 0.0))
+    if index.size == 0:
+        return _result("L7c", VERDICT_REFUSED,
+                       detail={"reason": "no_state_cells",
+                               "n_state_cells": int(np.count_nonzero(
+                                   in_state)),
+                               "erase_state": erase_state,
+                               "erase_tau": tau})
+    active = tile_codec.bank_active_bits(bank)
+    margin = int(knobs.get("margin", 0))
+    cap = max(llr_seq.size - active - margin, 0)
+    order = np.argsort(magnitude[index], kind="stable")[:cap]
+    chosen = index[order]
+    if chosen.size == 0:
+        # The margin ate the whole slack.  Decoding an unmodified channel
+        # here would re-charge L1's own codeword for nothing.
+        return _result("L7c", VERDICT_REFUSED,
+                       detail={"reason": "cap_exhausted", "cap": int(cap),
+                               "n_below_tau": int(index.size)})
+    factor = float(knobs.get("erase_factor", 0.0))
+    candidate = _erase(llr_seq, chosen, factor)
+    support = _support(candidate)
+    detail = {"n_state_cells": int(np.count_nonzero(in_state)),
+              "n_below_tau": int(index.size), "n_erased": int(chosen.size),
+              "cap": int(cap), "erase_state": erase_state,
+              "erase_tau": tau, "erase_factor": factor,
+              "bank_active_bits": int(active), "n_observed": int(support)}
+    if support < active:
+        return _result("L7c", VERDICT_BELOW_FLOOR, detail=detail)
+    mother = mother_mod.to_mother(candidate, row, key,
+                                  metadata_bit=metadata_bit)
+    result, _out = _decode_and_gate(
+        mother, bank, exposure, "L7c",
         iters=int(knobs.get("iters", PROD_RETRY_ITERS)),
         mode="minsum-then-sp", extra=detail,
         keep_hard=bool(knobs.get("keep_hard", False)))
@@ -695,22 +807,36 @@ def _run_rungs(llr_seq: np.ndarray, row, key: Key, *, rungs, knobs,
                 states.append((name, out, mother))
             batch = [result]
         elif name == "L2":
-            mother = mother_mod.to_mother(llr_seq, row, key,
+            shared = mother_mod.to_mother(llr_seq, row, key,
                                           metadata_bit=metadata_bit)
             batch = []
             for variant in knobs.get("L2", DEFAULT_L2_VARIANTS):
                 spec = dict(variant)
                 mode = spec.pop("mode", "minsum-then-sp")
                 iters = int(spec.pop("iters", PROD_RETRY_ITERS))
+                # T1 (W8 B4): a variant may scale the channel before BP —
+                # multi-lane sums on a print-frozen channel are
+                # over-confident.  At 1.0 the shared mother is used
+                # verbatim and the variant's label and detail are exactly
+                # what they were.
+                temperature = float(spec.pop("temperature", 1.0))
+                label = f"L2:{mode}@{iters}"
+                mother = shared
+                if temperature != 1.0:
+                    label += f"@t{temperature:g}"
+                    spec["temperature"] = temperature
+                    mother = mother_mod.to_mother(
+                        np.asarray(llr_seq, np.float64) * temperature, row,
+                        key, metadata_bit=metadata_bit)
                 result, out = _decode_and_gate(
-                    mother, bank, exposure, f"L2:{mode}@{iters}",
+                    mother, bank, exposure, label,
                     iters=iters, mode=mode, extra=spec,
                     lam=spec.get("lam"), beta=spec.get("beta"),
                     alpha=float(spec.get("alpha", BP_ALPHA)),
                     keep_hard=keep_hard)
                 posterior_seq = mother_mod.to_sequential(out.posterior,
                                                          mother)
-                states.append((f"L2:{mode}@{iters}", out, mother))
+                states.append((label, out, mother))
                 batch.append(result)
                 if result.verdict == VERDICT_CERTIFIED:
                     break
@@ -732,6 +858,18 @@ def _run_rungs(llr_seq: np.ndarray, row, key: Key, *, rungs, knobs,
         elif name == "L7b":
             batch = [_rung_erase_runs(llr_seq, row, key, bank, exposure,
                                       knobs, metadata_bit, posterior_seq)]
+        elif name == "L7c":
+            batch = [_rung_erase_state(llr_seq, row, key, bank, exposure,
+                                       knobs, metadata_bit)]
+        elif name == "L3f":
+            # W8 B4 (ruling 3): the decoder-feedback rung lives in
+            # `refit.py`; the import is function-local because `refit`
+            # imports this module's helpers the same way.  Its own name:
+            # NOT in `DEFAULT_RUNGS`, NOT under any alias.
+            from . import refit as refit_mod
+            batch = refit_mod.rung_feedback(llr_seq, row, key, bank,
+                                            exposure, knobs, metadata_bit,
+                                            states)
         else:
             raise ValueError(f"ladder: unknown rung {name!r}")
         results.extend(batch)

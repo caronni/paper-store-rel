@@ -1,0 +1,200 @@
+{
+  "kind": "original-display-camera-runs",
+  "rows": [
+    {
+      "input": "photo-2026-09-08-a.jpg",
+      "image_sha256": "efafb566ce3dc69a0c12fd8f1680334bcad02c425d142825e25d8c8efd951b7d",
+      "status": "certified",
+      "format": "1i40-k-r0547-p103@1x1",
+      "payload_sha256": "53b36d69b0619f1b3e7c81c760e3b65ea872047977b7e13f58e921ab01d7ba59",
+      "payload_bytes": 263,
+      "metadata_bit": 0,
+      "postdecode_hard_cell_errors": 0,
+      "elapsed_seconds": 1.530774625018239,
+      "options": {
+        "max_side": 1800,
+        "pose_radius": 3.0,
+        "max_candidates": 3,
+        "max_known_errors": 20,
+        "flatten_lighting": false,
+        "radial_k1": 0.0
+      },
+      "pose": {
+        "quad": [
+          [
+            527.0665511825574,
+            625.1633399172775
+          ],
+          [
+            1041.421548390808,
+            634.1783778300446
+          ],
+          [
+            1014.2559484220318,
+            1135.414632031741
+          ],
+          [
+            523.0406555656424,
+            1123.0911893291302
+          ]
+        ],
+        "loss": 0.0005086017148941676,
+        "errors": 0,
+        "rotation": 0,
+        "mirrored": false,
+        "candidate": 1
+      },
+      "aperture": 0.2,
+      "attempts": [
+        {
+          "page": 0,
+          "ty": 0,
+          "tx": 0,
+          "stream_id": "main",
+          "stage": "scan",
+          "outcome": "certified",
+          "n_informative": 3993,
+          "n_iters": 0,
+          "syndrome_ok": true,
+          "crc_ok": true,
+          "components": [
+            [
+              "efafb566ce3dc69a0c12fd8f1680334bcad02c425d142825e25d8c8efd951b7d",
+              0
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "input": "photo-2026-09-08-b.jpg",
+      "image_sha256": "6b8ee79a04d90bd4763062714c28c3fa2cea377ad0b2a11cdfbfa323d7d2c4c0",
+      "status": "certified",
+      "format": "1i40-k-r0547-p103@1x1",
+      "payload_sha256": "53b36d69b0619f1b3e7c81c760e3b65ea872047977b7e13f58e921ab01d7ba59",
+      "payload_bytes": 263,
+      "metadata_bit": 0,
+      "postdecode_hard_cell_errors": 0,
+      "elapsed_seconds": 1.7993481669691391,
+      "options": {
+        "max_side": 1800,
+        "pose_radius": 3.0,
+        "max_candidates": 3,
+        "max_known_errors": 20,
+        "flatten_lighting": false,
+        "radial_k1": 0.0
+      },
+      "pose": {
+        "quad": [
+          [
+            341.28634994033166,
+            415.0221336154595
+          ],
+          [
+            848.5237985665615,
+            428.9690288654173
+          ],
+          [
+            804.5139869144657,
+            857.1460458175991
+          ],
+          [
+            385.9439719834936,
+            856.6215223672566
+          ]
+        ],
+        "loss": 0.004028630351045746,
+        "errors": 0,
+        "rotation": 0,
+        "mirrored": false,
+        "candidate": 1
+      },
+      "aperture": 0.2,
+      "attempts": [
+        {
+          "page": 0,
+          "ty": 0,
+          "tx": 0,
+          "stream_id": "main",
+          "stage": "scan",
+          "outcome": "certified",
+          "n_informative": 3993,
+          "n_iters": 0,
+          "syndrome_ok": true,
+          "crc_ok": true,
+          "components": [
+            [
+              "6b8ee79a04d90bd4763062714c28c3fa2cea377ad0b2a11cdfbfa323d7d2c4c0",
+              0
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "input": "photo-2026-09-08-c.jpg",
+      "image_sha256": "1eddbfa7a6f8b0fd65e2be655eca8aa550054d32a4323ecf5294d783e8563a5e",
+      "status": "certified",
+      "format": "1i40-k-r0547-p103@1x1",
+      "payload_sha256": "53b36d69b0619f1b3e7c81c760e3b65ea872047977b7e13f58e921ab01d7ba59",
+      "payload_bytes": 263,
+      "metadata_bit": 0,
+      "postdecode_hard_cell_errors": 53,
+      "elapsed_seconds": 1.8071200829581358,
+      "options": {
+        "max_side": 1800,
+        "pose_radius": 3.0,
+        "max_candidates": 3,
+        "max_known_errors": 20,
+        "flatten_lighting": false,
+        "radial_k1": 0.0
+      },
+      "pose": {
+        "quad": [
+          [
+            339.775027154085,
+            809.2726550042634
+          ],
+          [
+            494.89725462954675,
+            809.3514297497807
+          ],
+          [
+            495.78634513612866,
+            963.1464492595123
+          ],
+          [
+            341.8317706545811,
+            963.1568991678972
+          ]
+        ],
+        "loss": 0.021744321389172313,
+        "errors": 1,
+        "rotation": 0,
+        "mirrored": false,
+        "candidate": 1
+      },
+      "aperture": 0.2,
+      "attempts": [
+        {
+          "page": 0,
+          "ty": 0,
+          "tx": 0,
+          "stream_id": "main",
+          "stage": "scan",
+          "outcome": "certified",
+          "n_informative": 3993,
+          "n_iters": 1,
+          "syndrome_ok": true,
+          "crc_ok": true,
+          "components": [
+            [
+              "1eddbfa7a6f8b0fd65e2be655eca8aa550054d32a4323ecf5294d783e8563a5e",
+              0
+            ]
+          ]
+        }
+      ]
+    }
+  ]
+}

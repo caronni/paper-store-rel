@@ -13,10 +13,9 @@ from fractions import Fraction
 import numpy as np
 import pytest
 
-from holo3.lib import ldpc
+from holo.receiver.lib import ldpc
 
 from analyzer import combine as comb
-from analyzer.calibrate import SELECT_MIN_MINORITY
 from analyzer.types import Evidence
 
 KEY = (0, 5, 6, "Y")
@@ -140,7 +139,6 @@ def test_platt_refuses_when_no_label_discriminates():
 def test_platt_down_weights_a_useless_lane_above_the_floor():
     lanes, _rows, _values = _labelled_lanes(600, 5, (4.0, 0.0))
     result = comb.combine(lanes, "platt")
-    assert len(lanes) > SELECT_MIN_MINORITY // SELECT_MIN_MINORITY
     weights = np.asarray(result.coefficients)
     assert np.all(weights >= 0.0), "beta must be non-negative"
     assert weights[0] > weights[1] * 3.0, weights

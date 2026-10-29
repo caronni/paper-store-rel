@@ -12,8 +12,9 @@ from analyzer import residue
 from analyzer.types import (BAND_DEAD, BAND_LIVE, BAND_MARGINAL,
                             BAND_UNCLASSIFIED)
 
-from ._analyzer_fixtures import (i_census, i_inputs, j_inputs, needs_i_run,
-                                 needs_j_run)
+from ._analyzer_fixtures import (FRAGMENT_TX, RESIDUE_WITHHELD,
+                                 fossil_i_inputs, fragment_run, needs_sim,
+                                 residue_census, residue_run)
 
 
 # ------------------------------------------------------------- synthetic
@@ -95,7 +96,7 @@ def test_band_runs_are_maximal():
 
 def test_discriminating_mask_follows_the_corrected_label_arithmetic():
     """Word states 0 and 3 discriminate nothing; dust states do (DESIGN §1)."""
-    from holo3.format import tile_codec
+    from holo.receiver.format import tile_codec
     states = np.array([0, 3, 1, 2, 4, 5, 6, 7], np.uint8)
     bits = tile_codec.states_to_planes(states).reshape(1, -1, 3)
     known = np.ones_like(bits, bool)
@@ -138,44 +139,96 @@ def test_target_specs_select_from_the_residue():
         residue.target_rows(rows, "nonsense")
 
 
-# ------------------------------------------------------------ sheet I
+def test_target_conjunction_grammar():
+    """W8 B5: atoms joined by `+`, ANDed over the residue.
 
-@needs_i_run
-def test_i_census_finds_exactly_three_covered_residue_rows():
-    run = i_inputs()
-    rows = i_census()
-    assert len(rows) == 53 * 37 * 3 == 5883
-    assert sum(row.covered for row in rows) == 5883
-    assert sum(row.certified_by_production for row in rows) == 5880
+    The population every per-sibling-state mechanism needs — the open C
+    rows of the dead band whose M and Y are both certified — had no
+    grammar before this and had to be written out as a list file.
+    """
+    from analyzer.types import LedgerRow
+
+    def row(tx, stream, band, siblings):
+        return LedgerRow(
+            page=0, ty=0, tx=tx, stream_id=stream, esi=0, covered=True,
+            certified_by_production=False, source=None, band=band,
+            band_any=band, neighbours_certified=0,
+            siblings_certified=siblings, known_cells_in_halo=0,
+            n_discriminating_labels=0, production_attempts={},
+            metadata_known=True)
+
+    rows = [row(0, "C", BAND_DEAD, ("M", "Y")),      # the C-dead-sibs row
+            row(1, "C", BAND_DEAD, ("M",)),          # dead, Y still open
+            row(2, "C", BAND_LIVE, ("M", "Y")),
+            row(3, "Y", BAND_DEAD, ("C", "M"))]
+    assert [r.tx for r in residue.target_rows(rows, "band:dead+stream:C")] \
+        == [0, 1]
+    assert [r.tx for r in residue.target_rows(rows, "stream:C+band:dead")] \
+        == [0, 1], "order does not matter"
+    assert [r.tx for r in
+            residue.target_rows(rows, "stream:C+siblings:M,Y")] == [0, 2]
+    assert [r.tx for r in
+            residue.target_rows(rows, "stream:C+siblings:Y,M")] == [0, 2]
+    assert [r.tx for r in
+            residue.target_rows(rows,
+                                "band:dead+stream:C+siblings:M,Y")] == [0]
+    assert [r.tx for r in residue.target_rows(rows, "stream:C+siblings:M")] \
+        == [1], "siblings is the SET, not a membership test"
+    for bad in ("band:dead+nonsense", "nonsense+band:dead", "band", "+"):
+        with pytest.raises(ValueError):
+            residue.target_rows(rows, bad)
+
+
+# ------------------------------------------- a withheld residue (TIER S)
+# The receiver's colour sim decoded into a run dir, `RESIDUE_WITHHELD`'s
+# certificates taken out of its snapshot (2026-10-09).  Sheet I's 22-key
+# residue is a record (PAGE-FIELD-PLAN A1b).
+
+@needs_sim
+def test_the_census_finds_the_covered_residue_rows():
+    run = residue_run()
+    rows = residue_census()
+    assert len(rows) == 10 * 10 * 3 == 300
+    assert sum(row.covered for row in rows) == 300
+    assert sum(row.certified_by_production for row in rows) == (
+        300 - len(RESIDUE_WITHHELD))
     residue_rows = residue.residue_rows(rows)
-    assert len(residue_rows) == 3
-    assert {(r.ty, r.tx, r.stream_id) for r in residue_rows} == {
-        (0, 0, "C"), (36, 27, "Y"), (36, 29, "Y")}
+    assert {row.key for row in residue_rows} == set(RESIDUE_WITHHELD)
     assert all(row.verdict == "open" for row in rows), "no unscoreable row"
     assert all(row.metadata_known for row in rows)
     keys = [(r.page, r.ty, r.tx, r.stream_id) for r in rows]
     assert keys == sorted(keys), "order is pinned (page, ty, tx, stream)"
-    assert all(row.esi == run.esi(row.key) for row in rows[:200])
+    assert all(row.esi == run.esi(row.key) for row in rows)
 
 
-@needs_i_run
-def test_i_census_columns_are_the_ones_design_section_3_names():
-    rows = {row.key: row for row in i_census()}
-    target = rows[(0, 36, 27, "Y")]
-    assert target.band == BAND_LIVE and target.band_any == BAND_LIVE
+@needs_sim
+def test_the_census_columns_are_the_ones_design_section_3_names():
+    run = residue_run()
+    rows = {row.key: row for row in residue_census()}
+    target = rows[(0, 2, 5, "Y")]
+    # Ten covered tiles per column, under MIN_COVERED_PER_COLUMN: a
+    # ten-tile page classifies no band (the band grammar is pinned on
+    # hand-built rows above).
+    assert residue.MIN_COVERED_PER_COLUMN > 10
+    assert target.band == BAND_UNCLASSIFIED
+    assert target.band_any == BAND_UNCLASSIFIED
     assert target.neighbours_certified == 8
     assert target.siblings_certified == ("C", "M")
-    # Y halo is 32 cells; the target tile's own payload never counts.
-    assert target.known_cells_in_halo == 128 * 128 - 3976
+    # Y halo is 32 cells; the target tile's payload is the one unknown
+    # (the row's own count, which is sheet I's 3,976 too).
+    n_payload = int(np.count_nonzero(residue.payload_cell_mask(run)))
+    assert target.known_cells_in_halo == 128 * 128 - n_payload
     assert target.n_discriminating_labels > 40, "the §4.8 selection floor"
     corner = rows[(0, 0, 0, "C")]
-    assert corner.neighbours_certified == 3, "a page corner has 3 neighbours"
+    # A page corner has 3 neighbours; (0, 0, 1, C) is withheld too.
+    assert corner.neighbours_certified == 2
     assert corner.known_cells_in_halo < target.known_cells_in_halo
 
 
-@needs_i_run
 def test_i_own_payload_never_labels_itself():
-    run = i_inputs()
+    """Sheet I's identity, every tile-stream certified (F3): (26, 18)'s
+    whole Y halo is known, so the counts are the format's own."""
+    run = fossil_i_inputs()
     known, disc = residue.halo_label_counts(run, 0, 26, 18, "Y")
     bits, mask = residue._projection_page(run, 0)
     own = residue._own_payload_counts(run, 0, 26, 18, "Y")
@@ -188,38 +241,39 @@ def test_i_own_payload_never_labels_itself():
                                          18 * 64 - 32:19 * 64 + 32], "Y")))
 
 
-@needs_i_run
-def test_i_census_carries_the_report_rank_without_recomputing_it():
+@needs_sim
+def test_the_census_carries_the_report_rank_without_recomputing_it():
     """DESIGN §3: the row names both ranks; only the cross-check costs."""
-    rows = i_census()
-    assert all(row.rank_report == 5277 for row in rows[:10])
+    rows = residue_census()
+    assert all(row.rank_report == 78 for row in rows[:10])
     assert all(row.rank_recomputed is None for row in rows[:10])
 
 
-@needs_i_run
 def test_i_rank_report_equals_the_recomputed_rank():
-    check = residue.rank_check(i_inputs())
+    check = residue.rank_check(fossil_i_inputs())
     assert check["rank_report"] == 5277
     assert check["rank_recomputed"] == 5277
     assert check["agree"] is True
 
 
-# ------------------------------------------------------------ sheet J
+# ----------------------------------------------- a fragment (TIER S)
 
-@needs_j_run
-def test_j_census_excludes_uncovered_tiles_from_the_targets():
-    run = j_inputs()
+@needs_sim
+def test_the_census_excludes_uncovered_tiles_from_the_targets():
+    """Sheet J's uncovered path on one page: the sim run with only the
+    placements left of tile column `FRAGMENT_TX`, and only the
+    certificates on the tiles they cover."""
+    run = fragment_run()
     rows = residue.census(run)
-    assert len(rows) == 2 * 53 * 37 * 3
+    assert len(rows) == 10 * 10 * 3
     covered = [row for row in rows if row.covered]
     uncovered = [row for row in rows if not row.covered]
     assert covered and uncovered
+    assert all(row.tx < FRAGMENT_TX for row in covered)
     assert all(row.verdict == "uncovered" for row in uncovered)
     assert all(row.known_cells_in_halo == 0 for row in uncovered)
     targets = residue.residue_rows(rows)
-    assert targets, "a fragment sheet still has covered residue"
     assert all(row.covered for row in targets)
-    assert {row.page for row in rows} == {0, 1}
     per_page = {
         page: int((inputs_module.page_tile_coverage(run, page) > 0).sum())
         for page in run.live_pages}

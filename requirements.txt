@@ -1,7 +1,7 @@
 # The ONE virtualenv for this repo: `env/`, built on the FREE-THREADED
 # CPython 3.14 (`python3.14t`, homebrew `python-freethreading`). holo3's
 # worker pool is the reason — jobs are pure functions over immutable
-# inputs, so the GIL is the ceiling, not the design (holo3/API.md).
+# inputs, so the GIL is the ceiling, not the design (src/holo/receiver/docs/API.md).
 #
 #   rm -rf env && python3.14t -m venv env && env/bin/pip install -r requirements.txt
 #
@@ -26,12 +26,16 @@ imagecodecs>=2026.8
 
 # Test suite
 pytest>=9
-# holo2/measure/verdicts + pyproject's dev extra
+# parallel test lanes (pytest -n 8) + pyproject's dev extra
 pytest-xdist>=3
+# coverage measurement (no wired consumer yet; kept for later — carried
+# over from the retired env314t on the 2026-09-16 venv unification)
+coverage>=7
 # Static undefined-name gate (tests/holo/test_trust_boundaries.py,
 # holo3 merge gate C-13)
 pyflakes>=3
-# Strict-typing gate (holo2/tests/test_typing.py); skips if absent
+# Strict-typing gate — holo2/tests/test_typing.py, deleted 2026-09-05 at
+# a805888 with holo2; no consumer in the tree today (kept pending a ruling)
 mypy>=2.3
 
 # Note: ghostscript (brew install ghostscript) is a system dependency used only to

@@ -2,21 +2,27 @@
 
 The synthetic half checks the bookkeeping (exact intervals, a
 deterministic stratified draw, the empty-withhold refusal, the wall
-clock kept out of the permutation comparison).  The sheet-I half runs
-the controls themselves at reduced n, so the numbers here are a
-regression pin rather than the campaign's own measurement.
+clock kept out of the permutation comparison).  The other half runs
+the controls themselves at reduced n on the receiver's colour sim
+decoded into a run dir (TIER S), so the numbers here are a regression
+pin rather than the campaign's own measurement; sheet I's are records
+(PAGE-FIELD-PLAN A1b).
 """
 
 from __future__ import annotations
 
 import json
+from dataclasses import replace as dc_replace
 
 import pytest
 
 from analyzer import controls
+from analyzer import inputs as inputs_mod
+from analyzer import residue as residue_mod
 from analyzer.types import AnalyzerConfig, LedgerRow
 
-from ._analyzer_fixtures import i_census, i_inputs, needs_i_run
+from ._analyzer_fixtures import (RESIDUE_WITHHELD, needs_sim, noisy_run_dir,
+                                 sim_census, sim_run)
 
 
 def _row(ty: int, tx: int, stream: str, band: str) -> LedgerRow:
@@ -97,6 +103,23 @@ def test_withheld_keys_reads_a_key_file(tmp_path):
         (0, 1, 2, "Y"),)
 
 
+def test_withheld_keys_selects_by_certificate_source():
+    from types import SimpleNamespace
+
+    class _Inputs:
+        run_dir = "/nonexistent"
+        certificates = {
+            (0, 1, 2, "Y"): SimpleNamespace(source="tiles/swim150"),
+            (0, 3, 4, "C"): SimpleNamespace(source="tiles/scan"),
+            (0, 0, 5, "M"): SimpleNamespace(source="tiles/swim150"),
+            (0, 7, 1, "M"): SimpleNamespace(source="tiles/scan")}
+
+    assert controls.withheld_keys(_Inputs(), sources=("tiles/swim150",)) == (
+        (0, 0, 5, "M"), (0, 1, 2, "Y"))
+    assert controls.withheld_keys(_Inputs(), sources=("tiles/scan",)) == (
+        (0, 3, 4, "C"), (0, 7, 1, "M"))
+
+
 def test_withheld_keys_refuses_a_key_that_is_not_a_certificate(tmp_path):
     class _Inputs:
         run_dir = "/nonexistent"
@@ -115,6 +138,90 @@ def test_field_arms_are_refused_under_withholding():
     refused = AnalyzerConfig(refused_arms=controls.FIELD_ARMS)
     for arm in controls.FIELD_ARMS:
         assert arm not in refused.battery_for("C")
+
+
+def test_the_field_source_table_is_total_over_the_register_arms(monkeypatch):
+    """PAGE-FIELD-PLAN A6: the classification must FAIL CLOSED.
+
+    A table that merely listed the field arms would admit in silence any
+    arm nobody classified — the review added a register arm `prior` and
+    the controls never noticed.  So the table is TOTAL over
+    `REGISTER_ARMS`, checked at import by `arms._check_field_source`,
+    and this walks it without leaning on any naming convention: every
+    register arm has a class, the classes are the three there are, and
+    the table names nothing that is not a register arm.
+    """
+    from analyzer import arms as arms_mod
+
+    assert set(arms_mod.FIELD_SOURCE) == set(arms_mod.REGISTER_ARMS)
+    assert set(arms_mod.FIELD_SOURCE.values()) <= {"certified", "furniture",
+                                                   "none"}
+    # an arm registered without a class is an ERROR, not an admission:
+    # the import-time check is driven here both ways round
+    unclassified = {name: source
+                    for name, source in arms_mod.FIELD_SOURCE.items()
+                    if name != "field2"}
+    monkeypatch.setattr(arms_mod, "FIELD_SOURCE", unclassified)
+    with pytest.raises(arms_mod.ArmError, match="unclassified"):
+        arms_mod._check_field_source()
+    monkeypatch.setattr(arms_mod, "FIELD_SOURCE",
+                        {**unclassified, "field2": "furniture",
+                         "prior": "none"})
+    with pytest.raises(arms_mod.ArmError, match="not a register arm"):
+        arms_mod._check_field_source()
+
+
+def test_the_refused_set_asks_the_table_what_each_arm_reads():
+    """The certificate-fed arms are refused and the furniture ones are
+    not — decided by `FIELD_SOURCE`, never by the spelling of a name.
+
+    The production `field` family is certificate-fed BY CONSTRUCTION
+    (the receiver's blind tier is retired, so every page field is solved
+    from certified templates plus furniture); `field2` is fitted from
+    furniture alone and stays ADMITTED — it is the blind cross-check,
+    and refusing it would withhold nothing.
+    """
+    from analyzer import arms as arms_mod
+
+    refused_tails = {arms_mod.parse_arm(arm)[1] for arm in controls.FIELD_ARMS}
+    for tail, source in arms_mod.FIELD_SOURCE.items():
+        if source == "certified":
+            assert tail in refused_tails, tail
+        else:
+            assert tail not in refused_tails, tail
+    # the pooled `field2` arms a battery actually names are admitted
+    from analyzer.types import PROFILES, with_profile
+    config = with_profile(AnalyzerConfig(refused_arms=controls.FIELD_ARMS),
+                          "everything")
+    named = [arm for arm in PROFILES["everything"]["arms"] if "field2" in arm]
+    assert named
+    for arm in named:
+        assert arm in config.battery_for("C")
+    # and the spelling is the battery's own: mode + register arm
+    assert controls.FIELD_ARMS == ("subtract+field", "subtract+field+offset")
+
+
+def test_an_operator_battery_is_walked_too_not_only_the_known_rosters():
+    """`analyzer controls --arms …` names a roster the code never saw.
+
+    `FIELD_ARMS` covers `DEFAULT_ARMS` and the profiles; a run's own
+    `--arms` is where a certificate-fed arm would actually run, so the
+    control walks `config.arms` and `config.reroll_only_arms` at call
+    time.  `head+field+offset` is in no roster in the code and must
+    still be refused (the review ran it through and it survived).
+    """
+    config = AnalyzerConfig(arms=("head+field+offset", "subtract+offset"),
+                            reroll_only_arms=("head+field",))
+    refused = controls._refused_under_withholding(config)
+    assert "head+field+offset" in refused and "head+field" in refused
+    assert set(controls.FIELD_ARMS) <= set(refused)
+    assert "subtract+offset" not in refused
+    local = dc_replace(config, refused_arms=refused)
+    assert local.battery_for("C") == ("subtract+offset",)
+    # a furniture arm an operator names is still admitted
+    admitted = controls._refused_under_withholding(
+        AnalyzerConfig(arms=("head+field2+offset", "subtract+offset")))
+    assert "head+field2+offset" not in admitted
 
 
 # -------------------------------------------- the stratified holdout (W3)
@@ -164,28 +271,18 @@ def test_holdout_selection_ignores_uncertified_rows():
 
 # ------------------------------------------------------- the wall clock
 
-def test_the_oracle_permutation_control_is_gone():
-    """2026-09-04: a run has no truth to permute.
+# ------------------------------------------------ the legs, on the sim
 
-    The control compared two runs of the battery, one against a truth
-    table rotated across addresses, and asserted every non-oracle column
-    was byte-identical.  With truth out of the run that claim is
-    structural — there is nothing to permute — so the control and its
-    helpers left, and what remains testable moved to the scorer.
+@needs_sim
+def test_the_parity_sample_re_derives_with_the_default_arm():
+    """Q1.3 (lite): the acceptance gate, at n=12 per stream.
+
+    Twelve, not three: three tiles cannot measure a 0.80 rate (sheet I
+    read C 12/12, M 12/12, Y 11/12 at this n, the record).
     """
-    for name in ("oracle_permutation", "permuted_truth", "_strip_oracle",
-                 "_drop_wall_clock"):
-        assert not hasattr(controls, name), name
-
-
-# -------------------------------------------------------- sheet-I legs
-
-@needs_i_run
-def test_sheet_i_parity_sample_re_derives_with_the_default_arm():
-    """Q1.3 (lite): the acceptance gate, at n=3 per stream."""
-    run, rows = i_inputs(), i_census()
+    run, rows = sim_run(), sim_census()
     out = controls.parity_sample(run, rows,
-                                 AnalyzerConfig(workers=4), n_per_stream=3)
+                                 AnalyzerConfig(workers=4), n_per_stream=12)
     print("\nQ1.3-lite parity:")
     for name, body in out["configurations"].items():
         rates = {stream: f"{cell['re_derived']}/{cell['n']}"
@@ -200,11 +297,16 @@ def test_sheet_i_parity_sample_re_derives_with_the_default_arm():
     assert out["passes"] is True
 
 
-@needs_i_run
-def test_sheet_i_null_arm_certifies_nothing():
-    """Q1.4 (lite): the pixels of a tile 8 columns away, this address."""
-    run, rows = i_inputs(), i_census()
-    certified = [row for row in rows if row.certified_by_production]
+@needs_sim
+def test_the_null_arm_certifies_nothing():
+    """Q1.4 (lite): the pixels of a tile 8 columns away, this address.
+
+    On a ten-tile page only columns 0, 1, 8 and 9 have a donor at the
+    production shift, so the keys are drawn there."""
+    run, rows = sim_run(), sim_census()
+    certified = [row for row in rows if row.certified_by_production
+                 and controls._donor(run, row.key,
+                                     controls.NULL_SHIFT_TILES) is not None]
     keys = [row.key for row in
             controls.stratified_sample(certified, 1, seed=20260903)][:2]
     out = controls.null_arm(run, keys, AnalyzerConfig(workers=4))
@@ -220,25 +322,60 @@ def test_sheet_i_null_arm_certifies_nothing():
     assert out["power_denominator"] == len(keys)
 
 
-@needs_i_run
-def test_sheet_i_frame_null_certifies_nothing():
-    run, rows = i_inputs(), i_census()
-    certified = [row for row in rows if row.certified_by_production]
-    keys = [row.key for row in
-            controls.stratified_sample(certified, 1, seed=7)][:1]
-    out = controls.frame_null(run, keys, AnalyzerConfig(workers=4))
-    print(f"\nQ1.4-lite frame null: {out['n_certificates']} certificate(s) "
-          f"in {out['n_trials']} trials, power {out['power_denominator']}")
-    assert out["n_certificates"] == 0
-    assert out["power_denominator"] == len(keys)
+#: The frame null's keys on the NOISY derivative: one per plane, each
+#: certified on `sum`/L0 when withheld with the true frame.
+FRAME_NULL_KEYS: tuple[tuple[int, int, int, str], ...] = (
+    (0, 5, 5, "C"), (0, 6, 2, "M"), (0, 7, 7, "Y"))
 
 
-@needs_i_run
-def test_sheet_i_positive_control_on_the_run_mints():
-    """Q1.5: the 14 keys this run minted, withheld and won back."""
-    run, rows = i_inputs(), i_census()
-    withheld = controls.withheld_keys(run, run_mints=True)
-    assert len(withheld) == 14
+@needs_sim
+def test_the_frame_null_certifies_nothing_where_the_true_frame_reads():
+    """Right pixels, right address, another tile's certified frame.
+
+    On the noiseless sim the pixels alone carry the bits and the frame
+    null certifies through a corrupted frame (9 of `RESIDUE_WITHHELD`'s
+    12, measured 2026-10-09), so the control has no power there.  On the
+    NOISY derivative (`NOISE_SIGMA_GREY`, the curve in the fixtures) the
+    certified frame is what the read stands on: the frame null mints 0
+    while the positive control, same pixels, same keys, same battery,
+    wins every key back.  Sheet I's frame null (0) is the record.
+    """
+    from holo.receiver.tests._h3_support import assert_measured
+    run = inputs_mod.load_run(noisy_run_dir())
+    config = AnalyzerConfig(workers=4, rules=("sum",), rungs=("L0",))
+    out = controls.frame_null(run, FRAME_NULL_KEYS, config)
+    print(f"\nframe null on the noisy sim: {out['n_certificates']} "
+          f"certificate(s) in {out['n_trials']} trials, power "
+          f"{out['power_denominator']}")
+    assert out["n_certificates"] == 0, out["trials"]
+    assert out["passes"] is True
+    assert_measured("frame-null power on the noisy sim",
+                    out["power_denominator"], len(FRAME_NULL_KEYS))
+    positive = controls.positive_control(
+        run, FRAME_NULL_KEYS, config,
+        census_rows=residue_mod.census(run))
+    assert positive["n_disagreeing_with_production"] == 0
+    assert_measured("positive control on the noisy sim",
+                    positive["n_recovered"], len(FRAME_NULL_KEYS))
+
+
+@needs_sim
+def test_the_positive_control_wins_back_a_withheld_handful(tmp_path):
+    """Q1.5: certificates this run won, withheld and won back.
+
+    The sim run is from scratch, so its mints are all 300 certificates
+    and withholding them is a decode, not a test; the withhold set is
+    `RESIDUE_WITHHELD` from a key file.  Sheet I's nine `tiles/swim150`
+    keys are the record (PAGE-FIELD-PLAN A1b).
+    """
+    run, rows = sim_run(), sim_census()
+    assert len(controls.withheld_keys(run, run_mints=True)) == len(
+        run.certificates)
+    keys_file = tmp_path / "withhold.json"
+    keys_file.write_text(json.dumps([list(key) for key in RESIDUE_WITHHELD]),
+                         "utf-8")
+    withheld = controls.withheld_keys(run, keys_file=keys_file)
+    assert withheld == tuple(sorted(RESIDUE_WITHHELD))
     out = controls.positive_control(run, withheld,
                                     AnalyzerConfig(workers=4),
                                     census_rows=rows)

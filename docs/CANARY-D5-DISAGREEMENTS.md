@@ -20,6 +20,23 @@ the only later src change while this investigation ran is `a814539`
 (diag viewer/seed — strictly-downstream observation, §10.1; line pins
 below are current at `a814539`).
 
+(2026-10-11: the corpus bytes were not kept — 19 GB of seeded simulation
+output, by the evidence line's ruling. They are the output of
+`scripts/run_c2_cmy7_hp_canon_chain.sh` as committed at 5c469945
+(2026-07-29): a zero-filled payload of the capacity size, `holo.cli
+generate` (coding c2-cmy7-p120-v0, printer hp-m281, source fraction
+0.7), ghostscript at 600 dpi, `holo.qualification.color_distort
+--profile nominal --seed 20260729 --output-dpi 4800`,
+`holo.qualification.scrap_scan --pages 2 --scraps 20 --seed 20260730`.
+These generation steps are unchanged through HEAD, and the
+holo.qualification modules they call are also still in the tree; later
+commits changed only the script's default run directory and its last
+step, the v1 receiver's decode that wrote `receive.json` (that receiver
+left the tree on 2026-09-05; from b167b9f the script decodes with
+holo3), so a recreation of that decode runs on a checkout of that era;
+byte-identity across ghostscript and numpy versions is not promised
+(evidence line, docs/EVIDENCE-ARCHIVE-2026-10-08.md §12).)
+
 ## 1. Verdict up front
 
 The counter is **working as coded and the committed evidence is safe**,

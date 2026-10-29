@@ -11,7 +11,8 @@ own pitch measure -> own lattice lock -> ctx bits -> place (no enclosing
 geometry — the §15.5 item-2 unknown); (4) FRESH-WINDOW gate validation on
 scan B (§15.4 iii — constants 0.15/0.20 were set on scan C).
 
-Run from repo root: env/bin/python experiments/014-c2-print/probe_0145.py
+Run from repo root: env/bin/python experiments/014-c2-print/probe_0145.py \\
+    --scan-dir <evidence>/scans
 """
 import sys
 import time
@@ -44,8 +45,11 @@ payload_gt = rng(SEED, b"e014/payload").integers(
 cp = compose.compose_page(payload_gt, spec, SEED, page=0)
 GT, PM = cp.cell_values, cp.pilot_mask
 
-SCAN_C = ROOT / "scans/xerox-e014-A-canon-4800gray-C-flattened.tiff"
-SCAN_B = ROOT / "scans/xerox-e014-A-canon-4800gray-B-displaced.tiff"
+if "--scan-dir" not in sys.argv[:-1]:
+    sys.exit(__doc__)
+SCAN_DIR = Path(sys.argv[sys.argv.index("--scan-dir") + 1])  # evidence archive
+SCAN_C = SCAN_DIR / "xerox-e014-A-canon-4800gray-C-flattened.tiff"
+SCAN_B = SCAN_DIR / "xerox-e014-A-canon-4800gray-B-displaced.tiff"
 CANDS = [(0.3, fx) for fx in (0.2, 0.35, 0.5, 0.65, 0.8)]
 QS = (0.70, 0.75, 0.80, 0.85, 0.90, 0.95)
 

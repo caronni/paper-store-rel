@@ -16,9 +16,9 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from holo3.format import close as h3_close
-from holo3.format import identity, keystream, metadata, pilots, tile_codec
-from holo3.plugins import calibrate, color_model, tiles, words
+from holo.receiver.format import close as h3_close
+from holo.receiver.format import identity, keystream, metadata, pilots, tile_codec
+from holo.receiver.plugins import calibrate, color_model, tiles, words
 
 from analyzer.planeview import patches as patches_mod
 from analyzer.planeview import row as row_mod
@@ -305,8 +305,7 @@ def _printed_truth(frame, geometry) -> np.ndarray:
     field[word_cells[:, 0], word_cells[:, 1]] = word
     dust_cells = np.asarray(geometry.extra_cells_yx, np.int64)
     states = pilots.dust_state_values(
-        frame.row.seed, (counter,), frame.row.dust_base_cycle,
-        frame.row.n_dust)[0]
+        frame.row.seed, (counter,), frame.row)[0]
     field[dust_cells[:, 0], dust_cells[:, 1]] = (
         tile_codec.states_to_planes(states)[:, 0])
     return field
@@ -326,7 +325,7 @@ def test_the_printed_field_is_the_cmy8_field_not_the_k_reencode(rows,
 
 def test_refines_own_binding_is_patched_too(rows, installed):
     """`refine` imported the name at module load; tiles alone is inert."""
-    from holo3.plugins import refine as h3_refine
+    from holo.receiver.plugins import refine as h3_refine
 
     plane, _source = rows
     frame = _synthetic.build_frame(REF, KEY, seed=11)

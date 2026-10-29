@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 """Qualification battery for E022 v2 pilot-field placement.
 
-  env/bin/python experiments/022-pilot-tile-search/qualify_e022.py
+  env/bin/python experiments/022-pilot-tile-search/qualify_e022.py \\
+      --scan-root <evidence>   # holds e018/*.tiff
   env/bin/python experiments/022-pilot-tile-search/qualify_e022.py --skip-real
 
 Q1  exact-field straddles over a FOUR-page legal set + adversarial nulls
@@ -519,15 +520,15 @@ def _real_row(path: Path, dpi: float, *, tag: str,
     }
 
 
-def q6_real_scans(skip_native: bool) -> bool:
+def q6_real_scans(scan_root: Path, skip_native: bool) -> bool:
     rows = []
     checks = [
-        ("dec1", ROOT / "scratch/e018/decimated-1_1600.tiff", 1600.0, 17),
-        ("dec3", ROOT / "scratch/e018/decimated-3_1600.tiff", 1600.0, 8),
+        ("dec1", scan_root / "e018/decimated-1_1600.tiff", 1600.0, 17),
+        ("dec3", scan_root / "e018/decimated-3_1600.tiff", 1600.0, 8),
     ]
     if not skip_native:
         checks.append(("nat1",
-                       ROOT / "scratch/e018/hp-e018-canon-4800-confetti-1.tiff",
+                       scan_root / "e018/hp-e018-canon-4800-confetti-1.tiff",
                        4800.0, 17))
     ok = True
     for tag, path, dpi, expected_regions in checks:
@@ -563,7 +564,12 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--skip-real", action="store_true")
     parser.add_argument("--skip-native", action="store_true")
+    parser.add_argument("--scan-root", type=Path,
+                        help="evidence dir holding e018/; required unless "
+                             "--skip-real")
     args = parser.parse_args()
+    if not args.skip_real and args.scan_root is None:
+        parser.error("--scan-root is required unless --skip-real")
 
     checks = [
         q1_exact_field_and_nulls(),
@@ -573,7 +579,7 @@ def main() -> int:
         q5_step_and_fold(),
     ]
     if not args.skip_real:
-        checks.append(q6_real_scans(args.skip_native))
+        checks.append(q6_real_scans(args.scan_root, args.skip_native))
     ok = all(checks)
     REPORT["overall_ok"] = ok
     out = HERE / "build" / "qualify_report.json"

@@ -7,6 +7,7 @@ is a printed-format fork.
 from __future__ import annotations
 
 import hashlib
+import os
 
 import pytest
 
@@ -169,6 +170,13 @@ def test_fossil_c4_emission_golden() -> None:
     assert digest == GOLDEN_C4_CELLS_PAGE0, "c4 printed-format fork"
 
 
+# A fork guard at printed size — two whole 3392x2368 emissions, 8 s of
+# the default lane for a law no commit moves without also moving the
+# seed goldens above, which stay fast (2026-09-20).
+@pytest.mark.skipif(
+    os.environ.get("HOLO_RUN_SLOW_TESTS") != "1",
+    reason="set HOLO_RUN_SLOW_TESTS=1 for the printed-size emission goldens",
+)
 @pytest.mark.parametrize("spec_id", sorted(GOLDEN_X1_EMIT))
 def test_fossil_x1_emission_goldens(spec_id, tmp_path) -> None:
     from holo.gen.emit import emit_volume
@@ -179,3 +187,59 @@ def test_fossil_x1_emission_goldens(spec_id, tmp_path) -> None:
     page = volume.pages[0]
     assert page.ps_sha256 == ps_sha, f"{spec_id}: PS fork"
     assert page.gt_sha256 == gt_sha, f"{spec_id}: GT fork"
+
+
+# e029's printed page — c2-r0700 at q 0.7, 465,580 counting bytes, the
+# hp-m281-ink row's 4.5 mm page (= fossil c2-r0700@3392x2368) — reached
+# two ways since R21 (2026-10-12, cmy generator W2b): `generate --format
+# L:<id>`, the one legacy door, and the evidence recipes' `--coding
+# c2-r0700 --printer hp-m281-ink` (measure/evidence_regen), retained until
+# the owner's ruling (CMY-GENERATOR-PLAN W2b ii).  Through L: the PS and
+# GT are pinned and the manifest is NOT: it records the fossil's 4.0 mm
+# and no printer where the published one records 4.5 and hp-m281-ink.
+# Through the recipes' door all three are the published bytes.
+E029_PAYLOAD = bytes(i & 0xFF for i in range(465_580))
+E029_PS_SHA256 = (
+    "063f3bba429ee45074a8a76c442b84a3023417effcc3d055522cffd54dcb216d")
+E029_GT_SHA256 = (       # the packed dots, as the manifest records them
+    "3e48560378b5613ec58a7948934512091ba9baff878393f1543a09e4751cb2f8")
+E029_MANIFEST_SHA256 = (
+    "317260895c9d14fac7bfe9e749b2eee7a9166c0180ad068d95911eef35423deb")
+
+
+def _generate_e029(tmp_path, *selector: str) -> tuple[dict, str]:
+    import json
+    from holo import cli
+    payload = tmp_path / "payload-counting.bin"
+    payload.write_bytes(E029_PAYLOAD)
+    out = tmp_path / "v"
+    assert cli.main(["generate", str(payload), *selector,
+                     "--source-fraction", "0.7", "-o", str(out)]) == 0
+    manifest = (out / "manifest.json").read_bytes()
+    page = json.loads(manifest)["pages"][0]
+    assert hashlib.sha256((out / "page000.ps").read_bytes()).hexdigest() \
+        == page["ps_sha256"]
+    return page, hashlib.sha256(manifest).hexdigest()
+
+
+def test_e029_page_through_the_fossil_door(tmp_path) -> None:
+    page, _ = _generate_e029(tmp_path, "--format", "L:c2-r0700@3392x2368")
+    assert (page["ps_sha256"], page["gt_sha256"]) == \
+        (E029_PS_SHA256, E029_GT_SHA256)
+
+
+def test_e029_page_through_the_recipes_coding_door(tmp_path) -> None:
+    page, manifest_sha = _generate_e029(
+        tmp_path, "--coding", "c2-r0700", "--printer", "hp-m281-ink")
+    assert (page["ps_sha256"], page["gt_sha256"], manifest_sha) == \
+        (E029_PS_SHA256, E029_GT_SHA256, E029_MANIFEST_SHA256)
+
+
+def test_the_recipes_coding_door_opens_onto_fossils_only(tmp_path) -> None:
+    from holo import cli
+    payload = tmp_path / "p.bin"
+    payload.write_bytes(b"x")
+    with pytest.raises(SystemExit, match="c2-r0550@3392x2368 is not a "
+                                         "fossil"):
+        cli.main(["generate", str(payload), "--coding", "c2-r0550",
+                  "--printer", "hp-m281-ink", "--source-fraction", "0.5"])

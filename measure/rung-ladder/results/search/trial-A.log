@@ -1,0 +1,16 @@
+baseline k=1664 (r0406) edge-identical to harness data: True
+baseline k=1280 (r0313) edge-identical to harness data: True
+mode trial: 146 configs over k=(1664, 1280), workers 13, out scratch/rung-ladder-20260930/search/trial-A (verify 0.0 s)
+[     30s] s0 39/146 s1 34/39 s2walk 0/0 s2fine 0/0 s2side 0/0 | stages {1664: 'screen0/1', 1280: 'screen0/1'} | decodes 14050 (463/s) queue 100 errors 0
+[     61s] s0 68/146 s1 59/67 s2walk 0/0 s2fine 0/0 s2side 0/0 | stages {1664: 'screen0/1', 1280: 'screen0/1'} | decodes 23950 (395/s) queue 97 errors 0
+[     91s] s0 96/146 s1 79/95 s2walk 0/7 s2fine 0/0 s2side 0/0 | stages {1664: 'walk', 1280: 'screen0/1'} | decodes 33150 (366/s) queue 189 errors 0
+[    121s] s0 96/146 s1 94/95 s2walk 7/7 s2fine 1/5 s2side 0/7 | stages {1664: 'final', 1280: 'screen0/1'} | decodes 48850 (405/s) queue 295 errors 0
+[    149s] k=1664 DONE
+[    151s] s0 123/146 s1 97/122 s2walk 7/7 s2fine 5/5 s2side 7/7 | stages {1664: 'done', 1280: 'screen0/1'} | decodes 64050 (425/s) queue 180 errors 0
+[    181s] s0 146/146 s1 132/145 s2walk 7/7 s2fine 5/5 s2side 7/7 | stages {1664: 'done', 1280: 'screen0/1'} | decodes 78200 (432/s) queue 58 errors 0
+[    211s] s0 146/146 s1 145/145 s2walk 7/15 s2fine 5/5 s2side 7/7 | stages {1664: 'done', 1280: 'walk'} | decodes 89150 (423/s) queue 1 errors 0
+[    241s] s0 146/146 s1 145/145 s2walk 15/15 s2fine 8/10 s2side 7/14 | stages {1664: 'done', 1280: 'final'} | decodes 101250 (420/s) queue 141 errors 0
+[    264s] k=1280 DONE
+[    264s] s0 146/146 s1 145/145 s2walk 15/15 s2fine 10/10 s2side 14/14 | stages {1664: 'done', 1280: 'done'} | decodes 110200 (418/s) queue 0 errors 0
+wall 264 s; stopped=False
+finished; summary -> scratch/rung-ladder-20260930/search/trial-A/TABLES-search.md

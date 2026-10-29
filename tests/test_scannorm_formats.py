@@ -35,10 +35,14 @@ def _page(encoding_id: str) -> tuple[compose.ComposeSpec,
                                      compose.ComposedPage]:
     key = f"page-{encoding_id}"
     if key not in _cache:
+        # 2026-09-05: 120x120 = 2x2 pilot-v3 tiles, the floor that still
+        # confirms a y-neighbour.  c3's no-dpi arm burns 1 hypothesis
+        # instead of 2; c2's eviction pressure is identical (6 rejections
+        # before the hit).
         spec = compose.ComposeSpec(layout_version=3,
                                    encoding_id=encoding_id,
                                    pilot=PilotLayout(version=3),
-                                   page_cells_yx=(240, 240))
+                                   page_cells_yx=(120, 120))
         payload = rng(SEED, f"payload-{encoding_id}".encode()).integers(
             0, 2, compose.payload_capacity(spec), dtype=np.uint8)
         _cache[key] = (spec, compose.compose_page(payload, spec, SEED))
@@ -58,9 +62,9 @@ def _emul(refl: np.ndarray, num: int, den: int) -> np.ndarray:
 
 
 def _candidates() -> list[formats.FormatDescriptor]:
-    """Registry rows reshaped to the 240-cell test pages."""
+    """Registry rows reshaped to the 120-cell test pages."""
     return [formats.FormatDescriptor(f.format_id, SEED, f.layout_version,
-                                     f.encoding_id, (240, 240), f.plane,
+                                     f.encoding_id, (120, 120), f.plane,
                                      dust=f.dust)
             for f in formats.FORMAT_REGISTRY]
 
@@ -137,7 +141,7 @@ def test_blind_format_identification_c3_and_c2() -> None:
         cands_nodpi = [formats.FormatDescriptor(
             f.format_id,
             SEED if f.format_id == fid else b"other/" + f.format_id.encode(),
-            f.layout_version, f.encoding_id, (240, 240), f.plane,
+            f.layout_version, f.encoding_id, (120, 120), f.plane,
             dust=f.dust)
             for f in formats.FORMAT_REGISTRY]
         r = formats.acquire_scan(_emul(refl, 4, 1), candidates=cands_nodpi)

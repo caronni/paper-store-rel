@@ -397,3 +397,8 @@ the volume, and it is not cross-print or cross-scanner generalization.
 factorial.  That experiment remains useful causal history (772 certificates
 from four full lanes on six paired captures), but it is not the production
 cascade, its state schema, or its current qualification anchor.
+
+## Addendum 2026-10-09 — capture hash
+
+`scratch/e023c/e023c-hp-canon-4800-grey-c2-confetti-b-3rd.tiff` (2,291,818,718 B, mtime 2026-07-17 20:14), sha256
+from the raw-hash pass of 2026-10-09 (sha256 over the retained evidence): `d23adc17cd998e74fc36c84289e56defd0697904bb44b96022fc956ead8dd00c`.

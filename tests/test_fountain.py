@@ -30,6 +30,7 @@ import sys
 import time
 
 import numpy as np
+import pytest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
@@ -357,6 +358,12 @@ def test_data_len_roundtrip_odd_sizes() -> None:
     print("  odd sizes 1/100/5227 bytes exact; overflow + bad specs raise")
 
 
+# 2026-09-05: 800 seeded GE solves at K=512 = 8.8 s, the module's whole
+# cost. Slow-gated, not shrunk: the pinned counts (59/155/195/200 of 200)
+# are that trial count's own measurement.
+@pytest.mark.skipif(
+    os.environ.get("HOLO_RUN_SLOW_TESTS") != "1",
+    reason="set HOLO_RUN_SLOW_TESTS=1 for the K=512 overhead curve")
 def test_overhead_curve_k512() -> None:
     """Random-erasure overhead at K = 512 (one block): receive K+delta
     symbols drawn uniformly from a 2048-symbol pool (source + repair mix);

@@ -1,0 +1,47 @@
+# Archived verbatim from src/holo/receive: src/holo/cli.py at f006abc
+# (branch receiver-retirement, the pre-Phase-4 tree). Not a runnable file --
+# a documentation snippet of cmd_decode's discovery branch, kept for a later
+# port. See README.md in this directory for the full entry-point account.
+#
+# Both blocks below sit inside cmd_decode(args); `discovery_mode` (computed
+# a few lines above the first block, unquoted here) is
+#     args.coding is None and args.format_ref is None
+#     and established_magic != STATE_MAGIC
+# i.e. this branch fires exactly when the operator gave neither --coding
+# nor --format and the state file (if any) is not already an exact-row
+# session. The forwarder that replaced this branch in Phase 4.1 refuses
+# that case instead of routing to discovery.
+
+# --- src/holo/cli.py:455-478 (builds the DiscoveryReceiveRequest) ---
+    if discovery_mode:
+        candidate_row_ids = None
+        if args.printer is not None:
+            candidate_row_ids = tuple(sorted({
+                make_spec(
+                    FORMAT_ROWS[row_id].coding.coding_id,
+                    args.printer,
+                ).spec_id
+                for row_id in DEFAULT_DISCOVERY_ROW_IDS
+            }))
+            unavailable = set(candidate_row_ids) - set(FORMAT_ROWS)
+            if unavailable:
+                raise SystemExit(
+                    "selected printer has no registered receive rows: "
+                    + ", ".join(sorted(unavailable)))
+        discovery_request = DiscoveryReceiveRequest(
+            captures,
+            state_path=state_path,
+            candidate_row_ids=candidate_row_ids,
+            page_hypotheses=page_hypotheses,
+            defer_fountain_close=args.complete,
+            run_mopup=args.mopup,
+            run_refine=args.refine,
+        )
+
+# --- src/holo/cli.py:632-637 (calls run_discovery_receive) ---
+            if discovery_mode:
+                assert discovery_request is not None
+                res = run_discovery_receive(
+                    discovery_request,
+                    observer_factory=observer_factory,
+                )

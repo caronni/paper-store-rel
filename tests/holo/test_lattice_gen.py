@@ -21,11 +21,14 @@ import numpy as np
 import pytest
 
 from holo import cli
+from holo.format.fossils import resolve_fossil_spec
 from holo.format.lattice import parse_format_id
 from holo.format.layout import MEDIA_MM, derive_field
 from holo.format.layout import page_dots_xy as frozen_page_dots_xy
+from holo.format.profiles import Family
 from holo.gen import sheet as sheet_mod
 from holo.gen.emit import emit_volume
+from holo.gen.plan import max_payload_bytes, plan_volume
 from holo.gen.ps import PSDoc
 from holo.gen.sheet import (
     PAPER_PROFILES,
@@ -47,16 +50,14 @@ FIT_TABLE = [
 
 
 @pytest.mark.parametrize("paper,pitch,tiles_yx", FIT_TABLE)
-def test_fit_table(paper: str, pitch: str, tiles_yx: tuple[int, int]) -> None:
-    assert fit(paper, pitch) == tiles_yx
-
-
-@pytest.mark.parametrize("paper,pitch,tiles_yx", FIT_TABLE)
 def test_fit_matrix_lands_where_the_v1_derivation_lands(
     paper: str, pitch: str, tiles_yx: tuple[int, int],
 ) -> None:
     """The demotion is arithmetic-preserving: placing the fitted matrix
     reproduces derive_field's page, field, origin and borders exactly."""
+    # What fit() itself answers, folded in 2026-09-20 from test_fit_table,
+    # which was this same table read one line shorter.
+    assert fit(paper, pitch) == tiles_yx, "fit() must land on the table row"
     profile = PAPER_PROFILES[paper]
     cell_dots = dots_per_cell(pitch, 600)
     legacy = derive_field(media_mm=profile.media_mm,
@@ -117,9 +118,8 @@ def test_sheet_refuses_a_field_larger_than_the_paper() -> None:
 
 
 def test_sheet_layout_refuses_v1_specs() -> None:
-    from holo.devices.profiles import make_spec
     with pytest.raises(ValueError):
-        sheet_layout(make_spec("c3-r0550"), "A4-6mm")
+        sheet_layout(resolve_fossil_spec("c3-r0550@2240x1536"), "A4-6mm")
 
 
 def test_paper_profiles_are_the_documented_bundles() -> None:
@@ -131,8 +131,6 @@ def test_paper_profiles_are_the_documented_bundles() -> None:
         "A3-6mm": ("a3", 6.0),
         "A3-4mm": ("a3", 4.0),
     }
-    assert "unprinted" in PAPER_PROFILES["A3-6mm"].note
-    assert "e033" in PAPER_PROFILES["A4-4mm"].note
 
 
 # -- emission ------------------------------------------------------------
@@ -205,8 +203,7 @@ def test_v2_emit_honors_the_paper_and_engine_grid(tmp_path: Path) -> None:
 
 
 def test_v1_row_refuses_paper_and_dpi(tmp_path: Path) -> None:
-    from holo.devices.profiles import make_spec
-    spec = make_spec("c3-r0550")
+    spec = resolve_fossil_spec("c3-r0550@2240x1536")
     with pytest.raises(ValueError) as exc:
         emit_volume(spec, b"legacy", 0.5, tmp_path / "v", paper="A4-4mm")
     assert "v2" in str(exc.value)
@@ -245,6 +242,89 @@ def test_v2_colour_emit_smoke(tmp_path: Path, format_id: str) -> None:
     assert manifest["codec"]["codec_id"] == spec.codec_id
 
 
+# -- the furniture density axis: capacity and generate agree ------------
+#
+# ``p`` — the site cells a tile spends on furniture — is part of every
+# identity the lattice mints, and ``capacity`` has always priced any
+# lawful one.  ``generate`` could not emit them: the colour composer's
+# furniture derivation hardcoded 20 dust, so a cmy8 row at p != 120 was
+# priced and then refused at emission with a shape mismatch between the
+# codec's ``4096 - p`` states and 3,976 offered cells.  K was never
+# affected (its filler count already came from the row), which is what
+# made the disagreement a FAMILY asymmetry rather than a missing feature
+# — the two doors of one generator answering differently about the same
+# identity.  One row per family per sampled p, priced and then emitted at
+# exactly the price.
+P_AXIS_EMISSION_ROWS = (
+    "c3-k-r0550-p100@10x10",                  # the printed K density
+    "c3-k-r0550-p150@10x10",
+    "c3-k-r0550-p300@10x10",
+    "c2-cmy8-r0550-p101@10x10",               # one dust cell per tile
+    "c2-cmy8-r0550@10x10",                    # p120, the printed density
+    "c2-cmy8-r0550-p172@10x10",
+    "c2-cmy8-r0550-p300@10x10",
+    "c2-cmy8-r0700x0700x0547-p300@10x10",     # uneven triplet x p300
+    "c2-cmy-r0700-p101@10x10",                # cmy: M in one dust cell
+    "c2-cmy-r0700@10x10",
+    "c3-cmy-r0850@10x10",
+    "c2-cmy-r0700-p300@10x10",
+    "c2-cmy-r0775x0700@10x10",                # the uneven probe pair
+    "c2-cmy-r0775x0700-p300@10x10",
+)
+
+
+@pytest.mark.parametrize("format_id", P_AXIS_EMISSION_ROWS)
+def test_capacity_and_generate_agree_at_every_lawful_furniture_density(
+    tmp_path: Path, format_id: str,
+) -> None:
+    """What ``capacity`` prices, ``generate`` emits — for every family.
+
+    The payload is exactly ``max_payload_bytes(spec, q, 1)``, so this
+    also pins the price as the real one-page ceiling and not an
+    optimistic estimate: one byte of the planner's arithmetic wrong in
+    either direction and the volume comes back on two pages.
+    """
+    spec = parse_format_id(format_id)
+    assert spec.payload_cells == 4096 - spec.n_sites
+    assert spec.n_sites == 100 + spec.n_filler
+    cap = max_payload_bytes(spec, 0.5, 1)
+    assert cap > 0
+
+    vol = emit_volume(spec, bytes(i % 251 for i in range(cap)), 0.5,
+                      tmp_path / "v", paper="A4-4mm")
+    assert vol.plan.n_pages == 1
+    assert len(vol.pages) == 1
+    page = vol.pages[0]
+    assert page.ps_path.read_text(encoding="ascii").strip().endswith("%%EOF")
+    packed = np.load(page.gt_path)
+    if spec.codec_family is Family.K:
+        assert packed.ndim == 2
+    else:
+        assert packed.ndim == 3 and packed.shape[0] == 3
+
+
+# The receiver's p300 volume e2e
+# (src/holo/receiver/tests/test_h3_e2e_p_axis.py) renders THIS row at
+# THIS dial and payload size.  The sizing is a claim about the planner,
+# so it is pinned here, where the planner lives: that module may not
+# import src/holo at all (the receiver import firewall,
+# test_h3_hygiene.py), and a stimulus sized at its one-page ceiling
+# would report a planner error as a second page and a confusing sha
+# mismatch rather than as a failed assertion.
+P_AXIS_E2E_ROW = "c2-cmy8-r0550-p300@10x10"
+P_AXIS_E2E_SOURCE_FRACTION = 0.35
+P_AXIS_E2E_PAYLOAD_BYTES = 12_000
+
+
+def test_the_p300_e2e_payload_sits_under_its_one_page_ceiling() -> None:
+    spec = parse_format_id(P_AXIS_E2E_ROW)
+    ceiling = max_payload_bytes(spec, P_AXIS_E2E_SOURCE_FRACTION, 1)
+    assert ceiling == 20_702
+    assert P_AXIS_E2E_PAYLOAD_BYTES < 0.75 * ceiling
+    assert plan_volume(spec, P_AXIS_E2E_PAYLOAD_BYTES,
+                       P_AXIS_E2E_SOURCE_FRACTION).n_pages == 1
+
+
 # -- the PostScript engine-grid seam -------------------------------------
 def test_psdoc_engine_dpi_scales_points_and_requests_the_grid() -> None:
     bits = np.ones((8, 8), dtype=np.uint8)
@@ -274,6 +354,7 @@ def test_cli_fit_prints_matrix_and_skeleton_ids(capsys) -> None:
     assert "c2-k-<rung>@53x37" in out          # canonical pitch token
     assert "c2-cmy7@53x37" in out
     assert "c2-cmy8-<rung>@53x37" in out
+    assert "c2-cmy-<rung>@53x37" in out        # design §6: cmy's skeleton
     assert "r0700" in out                      # the ladder, no invented rung
 
 
@@ -293,6 +374,14 @@ def test_cli_generate_on_a_format_id(tmp_path: Path, capsys) -> None:
     assert manifest["format_id"] == parse_format_id(V2_GOLDEN_ID).spec_id
     assert manifest["paper"] == "A4-4mm"
     assert manifest["printer_id"] is None
+    # R21 (2026-10-12): --printer default is a lawful engine for K, and
+    # the manifest records it; it carries no colour record.
+    assert cli.main(["generate", "--format", V2_GOLDEN_ID,
+                     "--source-fraction", "0.5", "--printer", "default",
+                     str(payload), "-o", str(tmp_path / "named")]) == 0
+    assert "engine default" in capsys.readouterr().out
+    named = json.loads((tmp_path / "named" / "manifest.json").read_text())
+    assert named["printer_id"] == "default"
 
 
 def test_cli_capacity_on_a_format_id(capsys) -> None:
@@ -309,24 +398,53 @@ def test_cli_capacity_on_a_format_id(capsys) -> None:
 
 
 def test_cli_selector_exclusions(tmp_path: Path) -> None:
+    payload = tmp_path / "p.bin"
+    payload.write_bytes(b"x")
+    # 2026-10-12 (cmy generator W2b, CMY-DESIGN R21): --coding survives on
+    # `generate` alone, as the evidence recipes' door, and still refuses
+    # beside --format; on `capacity` it is no option at all.
     with pytest.raises(SystemExit):        # --format is the whole identity
+        cli.main(["generate", "--format", "c3-k-r0550@10x10",
+                  "--coding", "c3-r0550", "--source-fraction", "0.5",
+                  str(payload)])
+    with pytest.raises(SystemExit):
+        cli.main(["capacity", "--coding", "c3-r0550",
+                  "--source-fraction", "0.5"])
+    # 2026-10-11 (cmy generator W2a, CMY-DESIGN R21): --printer beside
+    # --format names the EMISSION engine, never a geometry — lawful for a
+    # registry id; what refuses now is an engine the registry lacks.
+    with pytest.raises(SystemExit, match="unknown emission engine"):
         cli.main(["capacity", "--format", "c3-k-r0550@10x10",
-                  "--coding", "c3-r0550", "--source-fraction", "0.5"])
-    with pytest.raises(SystemExit):        # printers left the v2 path
-        cli.main(["capacity", "--format", "c3-k-r0550@10x10",
-                  "--printer", "default", "--source-fraction", "0.5"])
-    with pytest.raises(SystemExit):        # dial parity with --coding
+                  "--printer", "no-such-engine", "--source-fraction", "0.5"])
+    with pytest.raises(SystemExit):        # dial parity, v2 and fossil
         cli.main(["capacity", "--format", "c3-k-r0550@10x10"])
-    with pytest.raises(SystemExit):        # paper is a v2 control
-        cli.main(["capacity", "--profile", "resilient", "--paper", "A4-4mm"])
-    with pytest.raises(SystemExit):        # legacy spelling -> fossil hint
+    with pytest.raises(SystemExit):
+        cli.main(["capacity", "--format", "L:c3-r0550@2240x1536"])
+    # 2026-10-12 (W2b, R21): `--profile resilient --paper A4-4mm` -> the
+    # profile flag is gone; paper stays a v2 control, a fossil refuses it.
+    with pytest.raises(SystemExit):
+        cli.main(["capacity", "--profile", "resilient",
+                  "--source-fraction", "0.5"])
+    with pytest.raises(SystemExit, match="carries its own page"):
+        cli.main(["capacity", "--format", "L:c3-r0550@2240x1536",
+                  "--source-fraction", "0.5", "--paper", "A4-4mm"])
+    # a bare legacy id refuses with the L: spelling it wants
+    with pytest.raises(SystemExit, match="L:c3-r0550@2240x1536"):
         cli.main(["capacity", "--format", "c3-r0550@2240x1536",
+                  "--source-fraction", "0.5"])
+    with pytest.raises(SystemExit, match="unknown fossil"):
+        cli.main(["capacity", "--format", "L:c3-r0550@9x9",
                   "--source-fraction", "0.5"])
 
 
 def test_cli_legacy_paths_still_resolve(capsys) -> None:
-    assert cli.main(["capacity", "--profile", "resilient",
-                     "--payload-bytes", "100000"]) == 0
+    # 2026-10-12 (W2b, R21): `capacity --profile resilient` -> its row's
+    # L: fossil; no printer is named unless --printer says so.
+    head = ["capacity", "--format", "L:c3-r0550@2240x1536",
+            "--source-fraction", "0.5", "--payload-bytes", "100000"]
+    assert cli.main(head) == 0
     out = capsys.readouterr().out
-    assert "printer: default" in out
+    assert "printer" not in out
     assert "net_area_basis: media" in out
+    assert cli.main([*head, "--printer", "default"]) == 0
+    assert "printer: default" in capsys.readouterr().out

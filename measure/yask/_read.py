@@ -114,7 +114,7 @@ def poses_overlapping(poses: list[Pose],
 
 
 def region_pitch_px(poses: list[Pose]) -> float:
-    from holo3.plugins import calibrate
+    from holo.receiver.plugins import calibrate
 
     return calibrate.region_pitch_px([pose.pitch_px for pose in poses])
 
@@ -129,7 +129,7 @@ def placement_of(pose: Pose, patch_ordinal: int):
     raster refuse the window, so the difference can only cost coverage,
     never invent it.
     """
-    from holo3.data import Placement
+    from holo.receiver.data import Placement
 
     height, width = pose.shape_yx_cells
     grid_y, grid_x = np.meshgrid(np.arange(height, dtype=np.int64),
@@ -153,7 +153,7 @@ def placement_of(pose: Pose, patch_ordinal: int):
 def shift_offsets_px(native_affine: tuple[float, ...], frame: Fraction,
                      shift_dots: float, cell_dots: int) -> np.ndarray | None:
     """A constant sampling offset of ``shift_dots`` along page +x."""
-    from holo3.lib.geometry import compose_from_native
+    from holo.receiver.lib.geometry import compose_from_native
 
     if shift_dots == 0.0:
         return None
@@ -167,7 +167,7 @@ def sample_channels(planes, points_yx: np.ndarray,
                     raster_shape_yx: tuple[int, int],
                     pitch_px: float) -> np.ndarray:
     """(N, 3) aperture-filtered channel means, holo3's own sampler."""
-    from holo3.plugins import calibrate
+    from holo.receiver.plugins import calibrate
 
     return np.stack([
         calibrate.sampled_window_means((planes[channel],), points_yx,
@@ -195,9 +195,9 @@ def window_truth(row, geometry, page: int, page_cells_yx: np.ndarray,
     certified siblings play — regressors for the mixing fit, and labels
     for the calibration — can be ablated independently.
     """
-    from holo3.plugins.color_model import reference_states
-    from holo3.plugins.color_sites import certified_projection
-    from holo3.format.tile_codec import states_to_planes
+    from holo.receiver.plugins.color_model import reference_states
+    from holo.receiver.plugins.color_sites import certified_projection
+    from holo.receiver.format.tile_codec import states_to_planes
 
     cells = np.asarray(page_cells_yx, np.int64)
     states, _kinds = reference_states(row, geometry, page, cells)
@@ -276,8 +276,8 @@ def read_windows(planes, poses: list[Pose], row, geometry, frame: Fraction,
     certified regressors — the ablation that says which of the two jobs
     a certified neighbour is doing.
     """
-    from holo3.plugins import calibrate
-    from holo3.plugins.color_sites import cargo_row_indices
+    from holo.receiver.plugins import calibrate
+    from holo.receiver.plugins.color_sites import cargo_row_indices
 
     raster_shape = (int(planes[0].shape[0]), int(planes[0].shape[1]))
     memo: dict = {}
@@ -321,7 +321,7 @@ def window_heldout_logloss(read: WindowRead, unmix, mode: str,
     held-out score, and blind: the labels are the format's own dust
     states and whatever certified neighbours reach the window.
     """
-    from holo3.plugins import calibrate
+    from holo.receiver.plugins import calibrate
     from . import _spectral
 
     score_y = _spectral.y_score(unmix, read.values, read.bits,
@@ -378,7 +378,7 @@ def read_windows_best_shift(planes, poses: list[Pose], row, geometry,
 def calibrate_reads(reads: list[WindowRead], unmix, mode: str,
                     siblings: str = "certified"):
     """holo3's PAVA fit per window, then its region context over them."""
-    from holo3.plugins import calibrate
+    from holo.receiver.plugins import calibrate
     from . import _spectral
 
     rows = []
@@ -444,7 +444,7 @@ def evidence_llr(evidence, prior_correction: bool) -> np.ndarray:
 
 def tile_candidates(reads: list[WindowRead], geometry, page: int, ty: int,
                     tx: int, prior_correction: bool = False):
-    from holo3.plugins.color_sites import cargo_row_indices
+    from holo.receiver.plugins.color_sites import cargo_row_indices
 
     y0, x0 = ty * TILE, tx * TILE
     candidates = []
@@ -509,7 +509,7 @@ def attempt_y_tile(lanes: list[Lane], row, geometry, page: int, ty: int,
     equal-weight LLR addition the receiver already performs, on
     de-correlated per-capture context (the F1 o F6 law).
     """
-    from holo3.plugins import tiles
+    from holo.receiver.plugins import tiles
 
     source_ty, source_tx = misaddress if misaddress is not None else (ty, tx)
     cuts = []

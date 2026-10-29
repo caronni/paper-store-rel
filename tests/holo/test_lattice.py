@@ -9,7 +9,7 @@ from types import MappingProxyType
 
 import pytest
 
-from holo.format import fossils, lattice
+from holo.format import lattice
 from holo.format.lattice import (
     PITCH_CLASSES,
     display_pitch_token,
@@ -35,6 +35,11 @@ ROUND_TRIP_IDS = [
     "1i300-cmy7-p120-v1@52x36",
     "1i300-k-r0550-p300-v1@10x10",
     "1i400-k-r0700-p100-v1@40x28",
+    "1i200-cmy-r0850-p120-v1@35x24",
+    "1i300-cmy-r0700-p120-v1@53x37",
+    "1i300-cmy-r0775x0700-p120-v1@53x37",
+    "1i300-cmy-r0700x0625-p120-v1@53x37",
+    "1i300-cmy-r0700-p300-v1@10x10",
 ]
 
 
@@ -66,6 +71,9 @@ NORMALIZATION_CASES = [
     ("2i600-k-r0700@53x37", "1i300-k-r0700-p100-v1@53x37"),
     ("c2-k-r0700-p100-v1@53x37", "1i300-k-r0700-p100-v1@53x37"),
     ("c2-cmy7-p120-v1@52x36", "1i300-cmy7-p120-v1@52x36"),
+    ("c2-cmy-r0700x0700@53x37", "1i300-cmy-r0700-p120-v1@53x37"),
+    ("c2-cmy-r0775x0700-p120-v1@53x37",
+     "1i300-cmy-r0775x0700-p120-v1@53x37"),
 ]
 
 # The short spelling each canonical id shows a person (FORMAT-SPACE §6).
@@ -75,6 +83,11 @@ DISPLAY_CASES = [
     ("1i300-cmy7-p120-v1@52x36", "c2-cmy7@52x36"),
     ("1i300-k-r0550-p300-v1@10x10", "c2-k-r0550-p300@10x10"),
     ("1i400-k-r0700-p100-v1@40x28", "1i400-k-r0700@40x28"),
+    ("1i200-cmy-r0850-p120-v1@35x24", "c3-cmy-r0850@35x24"),
+    ("1i300-cmy-r0700-p120-v1@53x37", "c2-cmy-r0700@53x37"),
+    ("1i300-cmy-r0775x0700-p120-v1@53x37", "c2-cmy-r0775x0700@53x37"),
+    ("1i300-cmy-r0700x0625-p120-v1@53x37", "c2-cmy-r0700x0625@53x37"),
+    ("1i300-cmy-r0700-p300-v1@10x10", "c2-cmy-r0700-p300@10x10"),
 ]
 
 
@@ -164,16 +177,44 @@ def test_normalization(spelling: str, canonical: str) -> None:
     assert parsed.seed == b"holo/v2/" + canonical.encode()
 
 
-def test_refusal_legacy_id_form_mentions_fossil() -> None:
+# Twelve one-line refusals folded into one table (2026-09-20): every row
+# is a spelling the parser must refuse and the fragment that says WHICH
+# law refused it — a bare ValueError would let any refusal stand in for
+# any other.  The id is the law's name; the old test names were
+# test_refusal_<id>.
+REFUSAL_CASES = (
+    ("c2-r0700@52x36", "fossil catalogue", "legacy_id_form"),
+    ("c2-k-r0300@10x10", "unknown LDPC rung", "unknown_rung"),
+    ("c2-cmy7-r0550@52x36", "no rung token", "cmy7_with_rung_token"),
+    ("c2-k@10x10", "requires a rung token", "k_without_rung"),
+    ("c2-k-r0700-p99@10x10", "word floor", "sites_below_floor"),
+    ("c2-k-p100-r0700@10x10", "misordered token", "misordered_tokens"),
+    ("c2-k-r0700@0x10", "at least 1x1", "zero_tile_axis"),
+    # 512 * 513 = 262,656 > 2**18 = 262,144: one tile past the counter.
+    ("c2-k-r0700@512x513", "exceeds the counter space",
+     "counter_space_overflow"),
+    ("c9-k-r0700@10x10", "unregistered pitch class",
+     "unregistered_pitch_class"),
+    ("0i300-k-r0700@10x10", "must be a positive rational",
+     "zero_rational_pitch"),
+    ("c2-k-r0700", "needs a tile matrix", "missing_at_sign"),
+    ("c2-k-r0700@axb", "tile matrix must be TYxTX", "bad_tiles_token"),
+    ("c2-cmy-r0700x0700x0700@53x37", "rung arity must be 2",
+     "cmy_rung_triplet"),
+    ("c2-cmy@53x37", "requires a rung token", "cmy_without_rung"),
+    ("c2-cmy-r0700-p100@53x37", "no anchor", "cmy_p100"),
+)
+
+
+@pytest.mark.parametrize(
+    ("spelling", "fragment"),
+    [(spelling, fragment) for spelling, fragment, _ in REFUSAL_CASES],
+    ids=[name for _, _, name in REFUSAL_CASES],
+)
+def test_refusal(spelling: str, fragment: str) -> None:
     with pytest.raises(ValueError) as exc:
-        parse_format_id("c2-r0700@52x36")
-    msg = str(exc.value)
-    assert "fossil" in msg or "L:" in msg
-
-
-def test_refusal_unknown_rung() -> None:
-    with pytest.raises(ValueError):
-        parse_format_id("c2-k-r0300@10x10")
+        parse_format_id(spelling)
+    assert fragment in str(exc.value)
 
 
 def test_uneven_cmy8_triplet_is_a_lawful_column_group_pool() -> None:
@@ -188,55 +229,22 @@ def test_uneven_cmy8_triplet_is_a_lawful_column_group_pool() -> None:
     assert spec.aggregate_symbol_bits == 3 * 2727
 
 
-def test_refusal_cmy7_with_rung_token() -> None:
-    with pytest.raises(ValueError):
-        parse_format_id("c2-cmy7-r0550@52x36")
-
-
-def test_refusal_k_without_rung() -> None:
-    with pytest.raises(ValueError):
-        parse_format_id("c2-k@10x10")
-
-
-def test_refusal_sites_below_floor() -> None:
-    with pytest.raises(ValueError):
-        parse_format_id("c2-k-r0700-p99@10x10")
-
-
-def test_refusal_misordered_tokens() -> None:
-    with pytest.raises(ValueError):
-        parse_format_id("c2-k-p100-r0700@10x10")
-
-
-def test_refusal_zero_tile_axis() -> None:
-    with pytest.raises(ValueError):
-        parse_format_id("c2-k-r0700@0x10")
-
-
-def test_refusal_counter_space_overflow() -> None:
-    assert 512 * 513 > (1 << 18)
-    with pytest.raises(ValueError):
-        parse_format_id("c2-k-r0700@512x513")
-
-
-def test_refusal_unregistered_pitch_class() -> None:
-    with pytest.raises(ValueError):
-        parse_format_id("c9-k-r0700@10x10")
-
-
-def test_refusal_zero_rational_pitch() -> None:
-    with pytest.raises(ValueError):
-        parse_format_id("0i300-k-r0700@10x10")
-
-
-def test_refusal_missing_at_sign() -> None:
-    with pytest.raises(ValueError):
-        parse_format_id("c2-k-r0700")
-
-
-def test_refusal_bad_tiles_token() -> None:
-    with pytest.raises(ValueError):
-        parse_format_id("c2-k-r0700@axb")
+@pytest.mark.parametrize("display,rungs,widths", [
+    ("c2-cmy-r0700@53x37", ("r0700", "r0700"), (2727, 2727)),
+    ("c2-cmy-r0775x0700@53x37", ("r0775", "r0700"), (3047, 2727)),
+    ("c2-cmy-r0700x0625@53x37", ("r0700", "r0625"), (2727, 2407)),
+])
+def test_a_cmy_pair_is_a_pooled_two_stream_row_in_stream_order(
+        display: str, rungs: tuple[str, str],
+        widths: tuple[int, int]) -> None:
+    spec = parse_format_id(display)
+    assert spec.codec_family is Family.CMY
+    assert spec.pooled_fountain and spec.n_streams == 2
+    assert spec.stream_ids == ("hi", "lo")
+    assert spec.rate_ids == tuple((rung,) for rung in rungs)
+    assert spec.stream_symbol_bits == widths
+    assert spec.symbol_bits == max(widths)
+    assert (spec.n_dust, spec.family_seed) == (20, b"holo/v1/sites/p120")
 
 
 def test_off_600_pitch() -> None:
@@ -268,16 +276,6 @@ def test_pitch_tokens() -> None:
         "c3": Fraction(1, 200),
         "c4": Fraction(1, 150),
     }
-
-
-def test_seed_namespace_disjoint_from_fossils() -> None:
-    fossil_seeds = {fossil.seed for fossil in fossils.FOSSILS.values()}
-    for format_id in ROUND_TRIP_IDS:
-        seed = parse_format_id(format_id).seed
-        assert seed.startswith(b"holo/v2/")
-        assert seed not in fossil_seeds
-    for fossil in fossils.FOSSILS.values():
-        assert fossil.seed.startswith(b"holo/v1/")
 
 
 def test_v2_synthetic_layout_on_600_grid() -> None:

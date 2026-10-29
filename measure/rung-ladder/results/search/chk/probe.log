@@ -1,0 +1,8 @@
+3520 6 0.3 balanced ok restart 0 {'col_exhausted': 0, 'deg1_check': 0, 'info_free_block_row': 0} 0.0s
+3520 6 0.3 uniform ok restart 0 {'col_exhausted': 0, 'deg1_check': 0, 'info_free_block_row': 0} 0.1s
+3520 4 0.3 balanced ok restart 0 {'col_exhausted': 0, 'deg1_check': 0, 'info_free_block_row': 0} 0.0s
+3200 8 0.3 balanced ok restart 0 {'col_exhausted': 0, 'deg1_check': 0, 'info_free_block_row': 0} 0.0s
+2880 10 0.3 balanced ok restart 0 {'col_exhausted': 0, 'deg1_check': 0, 'info_free_block_row': 0} 0.1s
+2880 16 0.5 balanced build_timeout {'reasons': {'col_exhausted': 10, 'deg1_check': 0, 'info_free_block_row': 0}, 'restarts_tried': 10, 'seconds': 31.260839083988685} 31.3s
+2240 10 0.3 balanced ok restart 0 {'col_exhausted': 0, 'deg1_check': 0, 'info_free_block_row': 0} 0.0s
+2560 14 0.5 uniform build_timeout {'reasons': {'col_exhausted': 90, 'deg1_check': 0, 'info_free_block_row': 0}, 'restarts_tried': 90, 'seconds': 30.113390457991045} 30.1s

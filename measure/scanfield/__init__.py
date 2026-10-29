@@ -5,11 +5,12 @@ One instrument, ``channel_ca``, answering one question with a number:
 
     across the platen, how far apart do R, G and B put the same physical
     mark, in 600-dpi printed dots, and does that reach the field
-    service's 0.25-dot publish floor (``holo3/plugins/fields.py``
+    service's 0.25-dot publish floor (``src/holo/receiver/plugins/fields.py``
     ``MIN_DELTA_DOTS``) anywhere a payload region sits?
 
-    cd <repo>          # or any worktree
-    PYTHONPATH=measure env/bin/python -m scanfield.channel_ca --all
+    cd <repo>
+    PYTHONPATH=measure env/bin/python -m scanfield.channel_ca --all \\
+        --evidence-root <evidence> --out build/scanfield
 
 ``measure/scanner`` is the neighbour and the dependency: its
 slanted-edge engine (``scanner/_edge``) and its manifest-driven target
@@ -37,6 +38,7 @@ ruling 2026-08-21 — instrument code lives in neither ``tests/`` nor
 ``-m scanfield.<entry>`` is the only supported invocation.  Nothing here
 imports ``holo``, ``holo2`` or ``holo3``: numpy + tifffile.
 
-Read-only on every capture — no scan, no print, no decode.  Artefacts
-land in ``scratch/scanfield/``.
+Read-only on every capture — no scan, no print, no decode.  Historical
+record; the captures are in the evidence archive (``--evidence-root``,
+``measure/_evidence.py``).  Artefacts land in the required ``--out``.
 """

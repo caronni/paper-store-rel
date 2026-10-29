@@ -1,4 +1,4 @@
-"""Pure provisional CMY7/CMY8 mapper contracts and numerical oracles."""
+"""Pure provisional CMY7/CMY8/CMY mapper contracts and numerical oracles."""
 from __future__ import annotations
 
 import hashlib
@@ -15,6 +15,13 @@ from holo.core import channel
 CMY7_CODEBOOK_SHA256 = (
     "c39e6cc5fd9d4637202aedf2e40db4ad"
     "0487ee3acf493700cea1d175a4dcd229"
+)
+
+# sha256 of the cmy label table, uint8[4] indexed (hi << 1) | lo
+# (docs/CMY-DESIGN.md §2.2, R2: W, Y, M, C — cyan is white's antipode).
+CMY_LABEL_TABLE_SHA256 = (
+    "dcf29880873abedf02bc6f9116b47f40"
+    "72b57b4bad145dd8ccfea94696e4325f"
 )
 
 
@@ -323,3 +330,93 @@ def test_prior_shape_and_finiteness_are_refused():
     bad[0, 0] = np.inf
     with pytest.raises(ValueError, match="only finite"):
         channel.cmy7_soft_demap(rel, bad)
+
+
+def test_cmy_label_table_digest_and_exhaustive_inverse():
+    table = np.asarray(channel.CMY_LABEL_TO_STATE, dtype=np.uint8)
+    assert hashlib.sha256(table.tobytes()).hexdigest() == \
+        CMY_LABEL_TABLE_SHA256
+    assert channel.CMY_STATE_IDS == tuple(sorted(table.tolist()))
+    assert channel.CMY_LABEL_STREAMS == ("hi", "lo")
+    hi, lo = np.divmod(np.arange(4, dtype=np.uint8), 2)
+    states = channel.cmy_label_states(hi, lo)
+    assert np.array_equal(states, table)
+    back = channel.cmy_state_labels(states)
+    assert np.array_equal(back[0], hi) and np.array_equal(back[1], lo)
+    planes = channel.states_to_planes(states)
+    assert np.array_equal(hi, planes[:, 0] | planes[:, 1])   # C or M
+    assert np.array_equal(lo, planes[:, 0] | planes[:, 2])   # C or Y
+    grid = channel.cmy_label_states(hi.reshape(2, 2), lo.reshape(2, 2))
+    assert grid.shape == (2, 2) and grid.dtype == np.uint8
+    with pytest.raises(ValueError, match="share a shape"):
+        channel.cmy_label_states(hi, lo[:3])
+    with pytest.raises(ValueError, match="0/1"):
+        channel.cmy_label_states(hi + 1, lo)
+
+
+# A dead toner merges its state into W (design §2.2 table (b)): a dead Y
+# moves lo alone, on the Y cells; a dead M moves hi alone, on the M cells;
+# a dead C moves both, on the C cells.
+@pytest.mark.parametrize("plane,moved", [
+    (int(channel.CMYState.Y), (False, True)),
+    (int(channel.CMYState.M), (True, False)),
+    (int(channel.CMYState.C), (True, True)),
+])
+def test_cmy_death_map_moves_the_streams_the_design_names(plane, moved):
+    states = np.asarray(channel.CMY_STATE_IDS * 3, dtype=np.uint8)
+    dead = np.where(states == plane, 0, states).astype(np.uint8)
+    before, after = (channel.cmy_state_labels(states),
+                     channel.cmy_state_labels(dead))
+    for stream in range(2):
+        flipped = before[stream] != after[stream]
+        assert np.array_equal(
+            flipped, (states == plane) if moved[stream]
+            else np.zeros_like(flipped))
+
+
+def _cmy_bit(state: int, stream: int) -> int:
+    hi, lo = channel.cmy_state_labels(np.asarray([state], dtype=np.uint8))
+    return int((hi, lo)[stream][0])
+
+
+def _cmy_llr(score: dict[int, float], states, stream: int) -> float:
+    ones = [score[s] for s in states if _cmy_bit(s, stream)]
+    zeros = [score[s] for s in states if not _cmy_bit(s, stream)]
+    return _logsumexp(np.asarray(ones)) - _logsumexp(np.asarray(zeros))
+
+
+def test_cmy_soft_demap_matches_brute_force_over_the_four_states():
+    rng = np.random.default_rng(0xC4)
+    rel = rng.normal(0.0, 5.0, size=(11, 3))
+    sibling = rng.integers(0, 2, size=11, dtype=np.uint8)
+    ids = channel.CMY_STATE_IDS
+    for stream in range(2):
+        marginal = channel.cmy_soft_demap(rel, stream)
+        conditional = channel.cmy_soft_demap(rel, stream, sibling)
+        assert marginal.shape == conditional.shape == (11,)
+        for cell in range(11):
+            score = dict(zip(ids, np.concatenate(([0.0], rel[cell]))))
+            given = [s for s in ids
+                     if _cmy_bit(s, 1 - stream) == sibling[cell]]
+            assert marginal[cell] == pytest.approx(
+                _cmy_llr(score, ids, stream), abs=1e-12)
+            assert conditional[cell] == pytest.approx(
+                _cmy_llr(score, given, stream), abs=1e-12)
+
+
+def test_cmy_soft_demap_signs_clear_states_and_refuses_bad_inputs():
+    for state in channel.CMY_STATE_IDS:
+        rel = np.full(3, -30.0)
+        if state:
+            rel[channel.CMY_STATE_IDS.index(state) - 1] = 30.0
+        for stream in range(2):
+            assert (channel.cmy_soft_demap(rel, stream) > 0) == \
+                bool(_cmy_bit(state, stream))
+    rel = np.zeros((4, 3))
+    for stream in (2, -1, True):
+        with pytest.raises(ValueError, match="0 \\(hi\\) or 1 \\(lo\\)"):
+            channel.cmy_soft_demap(rel, stream)
+    with pytest.raises(ValueError, match="sibling_label_bits must have"):
+        channel.cmy_soft_demap(rel, 0, np.zeros(3, dtype=np.uint8))
+    with pytest.raises(ValueError, match="trailing shape"):
+        channel.cmy_soft_demap(np.zeros((4, 7)), 0)

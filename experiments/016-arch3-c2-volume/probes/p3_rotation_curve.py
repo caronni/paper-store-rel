@@ -9,7 +9,7 @@ vs (b) intrinsic counter-rotation RESAMPLE loss — the headroom question for
 rotation-free detection (016.4 next-levers list).
 
 PRE-REGISTERED DESIGN (2026-07-10):
-  - Source: scratch/e016c2hp-canon4800gray.tiff (Canon 4800 dpi grey scan
+  - Source: e016c2hp-canon4800gray.tiff (Canon 4800 dpi grey scan
     of the e016 M281 print; run-table sha 593742f6..., verified at runtime).
   - N=12 axis-aligned 12 mm squares at seeded-random positions inside the
     printed field, avoiding the outer 10 mm rim. PAIRED: the SAME 12
@@ -55,7 +55,8 @@ changing the measurement design):
      path always de-rotates); only leg B at angle 0 is rotate-free.
 
 Runs from the repo root:  env/bin/python \
-    experiments/016-arch3-c2-volume/probes/p3_rotation_curve.py
+    experiments/016-arch3-c2-volume/probes/p3_rotation_curve.py \
+    --scan-dir <evidence dir holding e016c2hp-canon4800gray.tiff>
 Output: experiments/016-arch3-c2-volume/build/p3_rotation_curve.json
 Determinism: all randomness via modulation.rng(gen_e016.SEED,
 b"e016/p3-rotcurve/v1"); scipy/numpy paths are deterministic.
@@ -81,7 +82,10 @@ from paperholo import fountain, place, scannorm, segment  # noqa: E402
 from paperholo.compose import compose_page                # noqa: E402
 from paperholo.modulation import rng                      # noqa: E402
 
-SCAN_REL = "scratch/e016c2hp-canon4800gray.tiff"
+SCAN_REL = "e016c2hp-canon4800gray.tiff"
+if "--scan-dir" not in sys.argv[:-1]:
+    sys.exit(__doc__)
+SCAN_DIR = Path(sys.argv[sys.argv.index("--scan-dir") + 1])  # evidence archive
 SCAN_SHA = "593742f68ee81f4004c551c0128990ab278f41030e6ad26f10b19e8656ad96e4"
 OUT_JSON = (ROOT / "experiments/016-arch3-c2-volume/build/"
             "p3_rotation_curve.json")
@@ -213,7 +217,7 @@ def piece_bits(img: np.ndarray, mask: np.ndarray
 
 def main() -> int:
     t_start = time.time()
-    src = ROOT / SCAN_REL
+    src = SCAN_DIR / SCAN_REL
     sha = hashlib.sha256(src.read_bytes()).hexdigest()
     if sha != SCAN_SHA:
         raise SystemExit(f"source scan sha mismatch: {sha} != {SCAN_SHA}")

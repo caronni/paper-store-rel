@@ -16,7 +16,7 @@ still renders. Renderers are importable (the --diag live viewer reuses
 them). PIL/numpy only — no matplotlib in env.
 
   env/bin/python draw_decode_map.py --state build/session.pkl \
-      --scan scan_1600.tiff --dpi 1600 --out scratch/e018_map.png
+      --scan scan_1600.tiff --dpi 1600 --out build/e018_map.png
 """
 from __future__ import annotations
 
@@ -364,7 +364,7 @@ def main() -> int:
                          "(for panel A; re-segmented at --dpi)")
     ap.add_argument("--dpi", type=float, default=1600.0)
     ap.add_argument("--out", type=Path,
-                    default=ROOT / "scratch/e018_decode_map.png")
+                    default=ROOT / "experiments/018-confetti-c3-play/build/e018_decode_map.png")
     ap.add_argument("--title", default="e018 decode map")
     args = ap.parse_args()
     pds, done = pickle.loads(args.state.read_bytes())

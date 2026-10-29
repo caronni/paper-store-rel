@@ -19,8 +19,17 @@ and in nothing else, so the delta against ``off`` is the arm's.
 
 Usage:
 
-    PYTHONPATH=. env/bin/python measure/uplift_existence.py \
-        <page000_gt.npy> [gain_sd] [absorption] [noise_sd] [y_scale]
+    PYTHONPATH=src:. env/bin/python measure/uplift_existence.py \
+        <page000_gt.npy> [gain_sd] [absorption] [noise_sd] [y_scale] \
+        [starved_shift_px] [plane_jitter_sd] [crosstalk]
+
+THE OTHER ABLATION is `starved_shift_px`: at 0 the page is in register,
+hands no field, and A4b is fitted against a single-armed head; at 2 the
+starved plane is printed a third of a cell out of register and the
+page's own field is handed to `build_region_inputs` the way
+`plugins/uplift.py` hands production's, so the corrected arm exists for
+the reason the design says it should.  Everything else is identical, so
+the margin the report prints is the arm's.
 """
 from __future__ import annotations
 
@@ -31,10 +40,10 @@ from pathlib import Path
 
 import numpy as np
 
-from holo3.lib.geometry import TILE_CELLS
+from holo.receiver.lib.geometry import TILE_CELLS
 from dataclasses import replace as dc_replace  # noqa: E402
 
-from holo3.plugins import (
+from holo.receiver.plugins import (
     color_arms,
     color_conditioning as conditioning,
     color_model,
@@ -192,9 +201,37 @@ def attempt_residue(row, geometry, order_of, transient, targets, stage):
     return certified
 
 
-def run_tier(row, geometry, windows, planes, frontier, targets, arm):
+def starved_cells_correct(tier, bits) -> tuple[int, int]:
+    """How much of the starved plane a tier reads right, and out of how
+    much, AT THE DECODER'S INPUT.
+
+    A4b's claim is about the evidence and not only about certificates:
+    the conditioned marginal must read more of the starved plane's cells
+    right than the unconditioned one.  Both tiers are read over the rows
+    the arm actually hands the decoder (`uplift._transient_rows`), so
+    the difference between two tiers is the arm's.
+    """
+    _gained, _verdict, inputs, stack = tier
+    total = 0
+    correct = 0
+    for _ordinal, cells, values, _loss in uplift._transient_rows(inputs,
+                                                                 stack):
+        truth = bits[cells[:, 0], cells[:, 1], fixture.STARVED_PLANE]
+        total += truth.size
+        correct += int(((values[:, fixture.STARVED_PLANE] > 0.0)
+                        .astype(np.uint8) == truth).sum())
+    return correct, total
+
+
+def run_tier(row, geometry, windows, planes, frontier, targets, arm,
+             plane_fields):
+    #: The page field is an INPUT of the tier, never defaulted: a scan
+    #: that displaces the starved plane without handing the field measures
+    #: ink with no correction available, both arms reading the plane at
+    #: the pose (33359/65536 cells each, margin +0, measured 2026-09-12).
     inputs = color_region.build_region_inputs(
-        row, geometry, windows, (), planes, frontier, "cap", 0)
+        row, geometry, windows, (), planes, frontier, "cap", 0,
+        plane_fields=plane_fields)
     verdict = None
     if arm == ARM_OFF:
         stack = color_region_head.fit_region_stack(
@@ -230,14 +267,20 @@ def main() -> int:
     if len(sys.argv) > 5:
         channel = replace(
             channel, plane_scale=(1.0, 1.0, float(sys.argv[5])))
+    # The shift sits next to the starvation it belongs with, and the two
+    # shapes the record already rejected — the per-tile jitter and a
+    # uniform crosstalk — moved one slot out behind it.
     if len(sys.argv) > 6:
-        channel = replace(channel, plane_jitter_sd=float(sys.argv[6]))
+        channel = replace(channel, starved_shift_px=int(sys.argv[6]))
     if len(sys.argv) > 7:
-        channel = replace(channel, mix=crosstalk_mix(float(sys.argv[7])))
+        channel = replace(channel, plane_jitter_sd=float(sys.argv[7]))
+    if len(sys.argv) > 8:
+        channel = replace(channel, mix=crosstalk_mix(float(sys.argv[8])))
     row, geometry = fixture.format_row_and_geometry()
     bits = fixture.page_bits(gt_path, row)
     gains, offsets = fixture.window_gains(channel)
     image = fixture.render(bits, channel, gains, offsets)
+    fields = fixture.plane_fields(row, channel)
     windows = fixture.region_windows(row, channel)
     all_streams = tuple(stream.stream_id for stream in row.streams)
     every_tile = tuple(
@@ -247,7 +290,8 @@ def main() -> int:
     with tempfile.TemporaryDirectory() as tmp:
         planes = fixture.plane_rasters(image, Path(tmp))
         frontier, _v, _i, _s = run_tier(
-            row, geometry, windows, planes, {}, every_tile, ARM_OFF)
+            row, geometry, windows, planes, {}, every_tile, ARM_OFF,
+            fields)
         residue = tuple(
             entry for entry in (
                 (ty, tx, tuple(name for name in all_streams
@@ -257,7 +301,7 @@ def main() -> int:
         tiers = {}
         for arm in TIERS:
             tiers[arm] = run_tier(row, geometry, windows, planes,
-                                  dict(frontier), residue, arm)
+                                  dict(frontier), residue, arm, fields)
     everything = dict(frontier)
     for arm in TIERS:
         everything.update(tiers[arm][0])
@@ -282,6 +326,16 @@ def main() -> int:
     print(f"channel gain_sd={channel.gain_sd} offset_sd={channel.offset_sd} "
           f"absorption={channel.absorption} noise_sd={channel.noise_sd} "
           f"plane_scale={channel.plane_scale}")
+    # WHETHER THE ARM EXISTS AND WHETHER IT WON are two questions, and
+    # A4b's state depends on the second: the conditioning strata are
+    # fitted on the features the registration arm selected.
+    corrected = tiers[ARM_OFF][2].corrected is not None
+    print(f"starved plane {fixture.STARVED_PLANE} shift "
+          f"{channel.starved_shift_px} px = "
+          f"{fixture.starved_shift_dots(row, channel):.4f} dots; "
+          f"page field {'handed' if fields is not None else 'none'}, "
+          f"corrected arm {'present' if corrected else 'absent'}, "
+          f"adopted {tiers[ARM_OFF][3].adopted}")
     print(f"tiles {channel.tiles_side}x{channel.tiles_side} "
           f"windows {channel.windows_side}x{channel.windows_side} "
           f"streams/tile {n_streams} cells/tile {TILE_CELLS}x{TILE_CELLS}")
@@ -292,6 +346,11 @@ def main() -> int:
         gained = len(tiers[arm][0])
         delta = "" if arm == ARM_OFF else f"   arm delta {gained - base:+d}"
         print(f"  tier {arm:<4} gained    {gained}/{offered}{delta}")
+    off_correct, off_total = starved_cells_correct(tiers[ARM_OFF], bits)
+    on_correct, on_total = starved_cells_correct(
+        tiers[color_arms.UPLIFT_ARM_A4B], bits)
+    print(f"starved cells right    off {off_correct}/{off_total}  "
+          f"a4b {on_correct}/{on_total}  margin {on_correct - off_correct:+d}")
     print(f"A3 maps accepted/refused {accepted}/{refused}")
     print(f"fitted gain spread      {gain_spread:.4f}  "
           f"(paper 0.016-0.086, uplift lane 0.0601)")

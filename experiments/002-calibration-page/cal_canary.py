@@ -723,10 +723,9 @@ if __name__ == "__main__":
     import argparse
 
     ap = argparse.ArgumentParser(description="canary family smoke run")
-    ap.add_argument("scan_bw", nargs="?",
-                    default=str(_HERE.parent.parent / "scans" / "test-scan-calpage-bw.png"))
-    ap.add_argument("scan_color", nargs="?",
-                    default=str(_HERE.parent.parent / "scans" / "test-scan-calpage-color.png"))
+    # the run's scans: scans/test-scan-calpage-{bw,color}.png
+    ap.add_argument("scan_bw")
+    ap.add_argument("scan_color")
     ap.add_argument("--out", default=str(cc.BUILD / "cal_canary_report.json"))
     args = ap.parse_args()
 

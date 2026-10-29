@@ -296,7 +296,8 @@ to 581,074 phase hypotheses; a window currently spends 16,384.
   construction), `bch_min_mask_fraction` deleted, global errors-first
   ordering; word gate identity
   `holo-v1/e022-single-word-multi-slot-union-bound`
-  (`tests/holo/test_word_route_widening.py`).
+  (`src/holo/receiver/tests/test_h3_word_route_widening.py`, in the
+  receiver's tree since 2026-09-20).
 - §3.4 remains parked (user ruling).
 - SYNTHETIC A/B COMPLETE (2026-07-31, c2-cmy7 hp/canon chain, byte-identical
   inputs): yield exactly invariant (604 certificates, same tiles, same

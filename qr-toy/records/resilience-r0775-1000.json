@@ -1,0 +1,394 @@
+{
+  "rate": "r0775",
+  "sites": 100,
+  "seed": 20260909,
+  "trials_per_point": 1000,
+  "bp_max_iters_per_algorithm": 60,
+  "alpha": 0.8,
+  "scope": "Correct acquisition; IID data-cell channel; no pilot/acquisition failures. Actual receiver LDPC+CRC. QR is bounded-distance RS calculation, not a QR decoder run.",
+  "full_object_model": "Ten independent LDPC tiles all succeed; conservative sufficient condition for K=8 plus two-symbol reserve. Fountain itself not simulated.",
+  "repository": "<repo>",
+  "rows": [
+    {
+      "channel": "bit_flips",
+      "p": 0.005,
+      "successes": 1000,
+      "trials": 1000,
+      "wrong_certificates": 0,
+      "mean_iterations": 3.047,
+      "mean_observed_error_or_erasure_fraction": 0.004967717717717718,
+      "tile_success": 1.0,
+      "tile_wilson95": [
+        0.996173241514445,
+        1.0
+      ],
+      "ten_tile_all_success_estimate": 1.0,
+      "ten_tile_all_success_interval": [
+        0.9623847188722985,
+        1.0
+      ],
+      "qr_whole_rs_success": 0.9934426005536716
+    },
+    {
+      "channel": "bit_flips",
+      "p": 0.01,
+      "successes": 999,
+      "trials": 1000,
+      "wrong_certificates": 0,
+      "mean_iterations": 5.448,
+      "mean_observed_error_or_erasure_fraction": 0.010072572572572573,
+      "tile_success": 0.999,
+      "tile_wilson95": [
+        0.9943574414020421,
+        0.9998234536293739
+      ],
+      "ten_tile_all_success_estimate": 0.9900448802097482,
+      "ten_tile_all_success_interval": [
+        0.9449857984489383,
+        0.9982359382215619
+      ],
+      "qr_whole_rs_success": 0.054540897737923526
+    },
+    {
+      "channel": "bit_flips",
+      "p": 0.015,
+      "successes": 999,
+      "trials": 1000,
+      "wrong_certificates": 0,
+      "mean_iterations": 8.52,
+      "mean_observed_error_or_erasure_fraction": 0.015042792792792792,
+      "tile_success": 0.999,
+      "tile_wilson95": [
+        0.9943574414020421,
+        0.9998234536293739
+      ],
+      "ten_tile_all_success_estimate": 0.9900448802097482,
+      "ten_tile_all_success_interval": [
+        0.9449857984489383,
+        0.9982359382215619
+      ],
+      "qr_whole_rs_success": 1.7832157742175525e-11
+    },
+    {
+      "channel": "bit_flips",
+      "p": 0.02,
+      "successes": 994,
+      "trials": 1000,
+      "wrong_certificates": 0,
+      "mean_iterations": 15.268,
+      "mean_observed_error_or_erasure_fraction": 0.01999074074074074,
+      "tile_success": 0.994,
+      "tile_wilson95": [
+        0.9869718317581478,
+        0.9972473308581237
+      ],
+      "ten_tile_all_success_estimate": 0.9415943502102122,
+      "ten_tile_all_success_interval": [
+        0.8770969090563023,
+        0.9728117911328077
+      ],
+      "qr_whole_rs_success": 1.322018304327833e-31
+    },
+    {
+      "channel": "bit_flips",
+      "p": 0.025,
+      "successes": 844,
+      "trials": 1000,
+      "wrong_certificates": 0,
+      "mean_iterations": 44.03,
+      "mean_observed_error_or_erasure_fraction": 0.025167917917917917,
+      "tile_success": 0.844,
+      "tile_wilson95": [
+        0.8201985055513945,
+        0.8651686846105435
+      ],
+      "ten_tile_all_success_estimate": 0.18341061463680788,
+      "ten_tile_all_success_interval": [
+        0.13778112814997928,
+        0.23496756408842212
+      ],
+      "qr_whole_rs_success": 6.832045217712452e-60
+    },
+    {
+      "channel": "bit_flips",
+      "p": 0.03,
+      "successes": 284,
+      "trials": 1000,
+      "wrong_certificates": 0,
+      "mean_iterations": 103.456,
+      "mean_observed_error_or_erasure_fraction": 0.03009259259259259,
+      "tile_success": 0.284,
+      "tile_wilson95": [
+        0.2569190250903582,
+        0.3127341345754016
+      ],
+      "ten_tile_all_success_estimate": 3.413370261743734e-06,
+      "ten_tile_all_success_interval": [
+        1.253033417972655e-06,
+        8.94855405369707e-06
+      ],
+      "qr_whole_rs_success": 4.7067624819191583e-94
+    },
+    {
+      "channel": "gaussian_soft",
+      "p": 0.01,
+      "successes": 1000,
+      "trials": 1000,
+      "wrong_certificates": 0,
+      "mean_iterations": 2.211,
+      "mean_observed_error_or_erasure_fraction": 0.010014264264264263,
+      "tile_success": 1.0,
+      "tile_wilson95": [
+        0.996173241514445,
+        1.0
+      ],
+      "ten_tile_all_success_estimate": 1.0,
+      "ten_tile_all_success_interval": [
+        0.9623847188722985,
+        1.0
+      ],
+      "qr_whole_rs_success": 0.054540897737923526
+    },
+    {
+      "channel": "gaussian_soft",
+      "p": 0.02,
+      "successes": 1000,
+      "trials": 1000,
+      "wrong_certificates": 0,
+      "mean_iterations": 3.529,
+      "mean_observed_error_or_erasure_fraction": 0.020064314314314314,
+      "tile_success": 1.0,
+      "tile_wilson95": [
+        0.996173241514445,
+        1.0
+      ],
+      "ten_tile_all_success_estimate": 1.0,
+      "ten_tile_all_success_interval": [
+        0.9623847188722985,
+        1.0
+      ],
+      "qr_whole_rs_success": 1.322018304327833e-31
+    },
+    {
+      "channel": "gaussian_soft",
+      "p": 0.03,
+      "successes": 1000,
+      "trials": 1000,
+      "wrong_certificates": 0,
+      "mean_iterations": 5.429,
+      "mean_observed_error_or_erasure_fraction": 0.029828328328328328,
+      "tile_success": 1.0,
+      "tile_wilson95": [
+        0.996173241514445,
+        1.0
+      ],
+      "ten_tile_all_success_estimate": 1.0,
+      "ten_tile_all_success_interval": [
+        0.9623847188722985,
+        1.0
+      ],
+      "qr_whole_rs_success": 4.7067624819191583e-94
+    },
+    {
+      "channel": "gaussian_soft",
+      "p": 0.04,
+      "successes": 1000,
+      "trials": 1000,
+      "wrong_certificates": 0,
+      "mean_iterations": 9.421,
+      "mean_observed_error_or_erasure_fraction": 0.03992642642642643,
+      "tile_success": 1.0,
+      "tile_wilson95": [
+        0.996173241514445,
+        1.0
+      ],
+      "ten_tile_all_success_estimate": 1.0,
+      "ten_tile_all_success_interval": [
+        0.9623847188722985,
+        1.0
+      ],
+      "qr_whole_rs_success": 1.859063427581359e-174
+    },
+    {
+      "channel": "gaussian_soft",
+      "p": 0.05,
+      "successes": 867,
+      "trials": 1000,
+      "wrong_certificates": 0,
+      "mean_iterations": 49.028,
+      "mean_observed_error_or_erasure_fraction": 0.04988663663663664,
+      "tile_success": 0.867,
+      "tile_wilson95": [
+        0.8445423199288764,
+        0.8866488393427261
+      ],
+      "ten_tile_all_success_estimate": 0.23998880033113248,
+      "ten_tile_all_success_interval": [
+        0.18459254989712467,
+        0.300273149330055
+      ],
+      "qr_whole_rs_success": 8.357029548591007e-266
+    },
+    {
+      "channel": "gaussian_soft",
+      "p": 0.06,
+      "successes": 35,
+      "trials": 1000,
+      "wrong_certificates": 0,
+      "mean_iterations": 118.864,
+      "mean_observed_error_or_erasure_fraction": 0.05999524524524524,
+      "tile_success": 0.035,
+      "tile_wilson95": [
+        0.02527226301711295,
+        0.04828662237445333
+      ],
+      "ten_tile_all_success_estimate": 2.7585473535156276e-15,
+      "ten_tile_all_success_interval": [
+        1.0627749948957859e-16,
+        6.890778305928481e-14
+      ],
+      "qr_whole_rs_success": 0.0
+    },
+    {
+      "channel": "known_cell_erasures",
+      "p": 0.01,
+      "successes": 1000,
+      "trials": 1000,
+      "wrong_certificates": 0,
+      "mean_iterations": 1.128,
+      "mean_observed_error_or_erasure_fraction": 0.009974224224224225,
+      "tile_success": 1.0,
+      "tile_wilson95": [
+        0.996173241514445,
+        1.0
+      ],
+      "ten_tile_all_success_estimate": 1.0,
+      "ten_tile_all_success_interval": [
+        0.9623847188722985,
+        1.0
+      ],
+      "qr_whole_rs_success": 0.9999919638453784
+    },
+    {
+      "channel": "known_cell_erasures",
+      "p": 0.02,
+      "successes": 1000,
+      "trials": 1000,
+      "wrong_certificates": 0,
+      "mean_iterations": 1.705,
+      "mean_observed_error_or_erasure_fraction": 0.020105105105105107,
+      "tile_success": 1.0,
+      "tile_wilson95": [
+        0.996173241514445,
+        1.0
+      ],
+      "ten_tile_all_success_estimate": 1.0,
+      "ten_tile_all_success_interval": [
+        0.9623847188722985,
+        1.0
+      ],
+      "qr_whole_rs_success": 0.45758476252920677
+    },
+    {
+      "channel": "known_cell_erasures",
+      "p": 0.05,
+      "successes": 1000,
+      "trials": 1000,
+      "wrong_certificates": 0,
+      "mean_iterations": 2.512,
+      "mean_observed_error_or_erasure_fraction": 0.049883633633633635,
+      "tile_success": 1.0,
+      "tile_wilson95": [
+        0.996173241514445,
+        1.0
+      ],
+      "ten_tile_all_success_estimate": 1.0,
+      "ten_tile_all_success_interval": [
+        0.9623847188722985,
+        1.0
+      ],
+      "qr_whole_rs_success": 1.0212897238249263e-91
+    },
+    {
+      "channel": "known_cell_erasures",
+      "p": 0.1,
+      "successes": 1000,
+      "trials": 1000,
+      "wrong_certificates": 0,
+      "mean_iterations": 4.389,
+      "mean_observed_error_or_erasure_fraction": 0.09986561561561562,
+      "tile_success": 1.0,
+      "tile_wilson95": [
+        0.996173241514445,
+        1.0
+      ],
+      "ten_tile_all_success_estimate": 1.0,
+      "ten_tile_all_success_interval": [
+        0.9623847188722985,
+        1.0
+      ],
+      "qr_whole_rs_success": 0.0
+    },
+    {
+      "channel": "known_cell_erasures",
+      "p": 0.15,
+      "successes": 1000,
+      "trials": 1000,
+      "wrong_certificates": 0,
+      "mean_iterations": 8.226,
+      "mean_observed_error_or_erasure_fraction": 0.14961561561561562,
+      "tile_success": 1.0,
+      "tile_wilson95": [
+        0.996173241514445,
+        1.0
+      ],
+      "ten_tile_all_success_estimate": 1.0,
+      "ten_tile_all_success_interval": [
+        0.9623847188722985,
+        1.0
+      ],
+      "qr_whole_rs_success": 0.0
+    },
+    {
+      "channel": "known_cell_erasures",
+      "p": 0.18,
+      "successes": 948,
+      "trials": 1000,
+      "wrong_certificates": 0,
+      "mean_iterations": 22.615,
+      "mean_observed_error_or_erasure_fraction": 0.17994694694694693,
+      "tile_success": 0.948,
+      "tile_wilson95": [
+        0.93244426068072,
+        0.9601269637162226
+      ],
+      "ten_tile_all_success_estimate": 0.5862506987813941,
+      "ten_tile_all_success_interval": [
+        0.49685401263064255,
+        0.6657124263623285
+      ],
+      "qr_whole_rs_success": 0.0
+    },
+    {
+      "channel": "known_cell_erasures",
+      "p": 0.2,
+      "successes": 127,
+      "trials": 1000,
+      "wrong_certificates": 0,
+      "mean_iterations": 108.722,
+      "mean_observed_error_or_erasure_fraction": 0.2001554054054054,
+      "tile_success": 0.127,
+      "tile_wilson95": [
+        0.10778000925843848,
+        0.14907475257178568
+      ],
+      "ten_tile_all_success_estimate": 1.0915338530733937e-09,
+      "ten_tile_all_success_interval": [
+        2.1153496631188597e-10,
+        5.4205202592531404e-09
+      ],
+      "qr_whole_rs_success": 0.0
+    }
+  ],
+  "elapsed_seconds": 103.2974457499804
+}

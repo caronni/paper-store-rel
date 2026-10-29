@@ -1,0 +1,64 @@
+{
+ "coder": "cm2 v2 (rANS), typed/cm2_enc.py + typed/cm2_dec.py",
+ "orders": [
+  0,
+  1,
+  2,
+  3,
+  4,
+  6,
+  8,
+  12,
+  16
+ ],
+ "vectors": [
+  {
+   "name": "empty message, empty primer",
+   "primer": "",
+   "data": "",
+   "n": 0,
+   "x": "0",
+   "x bits": 0
+  },
+  {
+   "name": "one byte, empty primer",
+   "primer": "",
+   "data": "41",
+   "n": 1,
+   "x": "82",
+   "x bits": 8
+  },
+  {
+   "name": "a line, empty primer",
+   "primer": "",
+   "data": "68656c6c6f2c2066696e6465720a",
+   "n": 14,
+   "x": "1c711f804313081edc4248a16",
+   "x bits": 97
+  },
+  {
+   "name": "the same line, primed",
+   "primer": "68656c6c6f2c20",
+   "data": "68656c6c6f2c2066696e6465720a",
+   "n": 14,
+   "x": "ca426a051cd9b2",
+   "x bits": 56
+  },
+  {
+   "name": "zero bytes (orders share counters)",
+   "primer": "",
+   "data": "00000000000000000000000000000000000000000000000000000000000000000000000000000000",
+   "n": 40,
+   "x": "0",
+   "x bits": 0
+  },
+  {
+   "name": "a 3-times repeated text, primed by its first line",
+   "primer": "646566206b286e2c74293a0a20666f72206320696e20743a6e3d286e2b63292a313030303030330a",
+   "data": "646566206b286e2c74293a0a20666f72206320696e20743a6e3d286e2b63292a313030303030330a2072657475726e27272e6a6f696e28715b6e3e3e732633315d666f72207320696e2831352c31302c352c3029290a646566206b286e2c74293a0a20666f72206320696e20743a6e3d286e2b63292a313030303030330a2072657475726e27272e6a6f696e28715b6e3e3e732633315d666f72207320696e2831352c31302c352c3029290a646566206b286e2c74293a0a20666f72206320696e20743a6e3d286e2b63292a313030303030330a2072657475726e27272e6a6f696e28715b6e3e3e732633315d666f72207320696e2831352c31302c352c3029290a",
+   "n": 258,
+   "x": "212e74c49dd3f8972b5f14d8f3b0a2967f44396f44948214935dffb08551814482366f8198ae",
+   "x bits": 302
+  }
+ ]
+}

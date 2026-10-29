@@ -11,8 +11,8 @@ sees the identical 20 LLR vectors, so a certify-count difference is the
 decoder, never the draw.
 
 Run:
-    cd <repo> && PYTHONPATH=. env/bin/python \
-        -m analyzer.sweeps.l2_variants
+    PYTHONPATH=src:. env/bin/python -m analyzer.sweeps.l2_variants \
+        --out build/analyzer/l2-variants
 """
 
 from __future__ import annotations
@@ -53,10 +53,6 @@ ITERS = (100, 300)
 # The production reference: `tile_codec.decode_frame`'s schedule at its own
 # iteration count.
 BASELINE = ("minsum-then-sp", 1.0, 0.0, 150)
-
-OUT_DIR = pathlib.Path(__file__).resolve().parents[2] / \
-    "scratch" / "analyzer" / "sweeps"
-
 
 def variants() -> list[tuple[str, float, float, int]]:
     """(mode, lam, beta, iters), de-duplicated by what the code actually reads.
@@ -277,13 +273,15 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--seeds", type=int, default=20)
     ap.add_argument("--workers", type=int, default=8)
+    ap.add_argument("--out", type=pathlib.Path, required=True)
     args = ap.parse_args()
     result = sweep(args.seeds, args.workers)
-    OUT_DIR.mkdir(parents=True, exist_ok=True)
-    (OUT_DIR / "l2_variants.json").write_text(json.dumps(result, indent=1))
-    (OUT_DIR / "l2_variants.md").write_text(markdown(result))
-    print(f"\nwrote {OUT_DIR / 'l2_variants.json'} and "
-          f"{OUT_DIR / 'l2_variants.md'}")
+    out_dir = args.out
+    out_dir.mkdir(parents=True, exist_ok=True)
+    (out_dir / "l2_variants.json").write_text(json.dumps(result, indent=1))
+    (out_dir / "l2_variants.md").write_text(markdown(result))
+    print(f"\nwrote {out_dir / 'l2_variants.json'} and "
+          f"{out_dir / 'l2_variants.md'}")
     print("\ntop variants by total certified (of "
           f"{10 * args.seeds} decodes over all cells):")
     for key, total, sec in totals(result)[:12]:

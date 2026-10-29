@@ -37,7 +37,9 @@ is the normative reference-as-code, golden-vector pinned):
     8 block assignment   aux=0      major=page   u=local tile v=0
                          (one 64-bit big-endian sort key, bytes 0..7)
     9 color dust order   aux=0      major=tile   u=base ordinal v=0
-                         (one 64-bit big-endian sort key, bytes 0..7)
+                         (one 64-bit big-endian sort key, bytes 0..7;
+                         cmy word '0' sites at u = n_dust + site,
+                         Y iff the key's MSB)
    10 CMY7 interleave    aux=0      major=tile   u=code-bit idx v=0
                          (one 64-bit big-endian sort key, bytes 0..7)
    11 CMY7 dither        aux=0      major=tile   u=wire-bit idx v=0
@@ -122,6 +124,7 @@ COLOR_STREAM_AUX = MappingProxyType({
 
 _KDF_PREFIX = b"holo/v1|"
 _CHUNK_BLOCKS = 1 << 20   # 16 MiB of counters per AES call
+_WORD_SITES = 100
 
 
 def kdf(seed: bytes) -> bytes:
@@ -285,6 +288,22 @@ def color_dust_permutation(seed: bytes, tile_counter: int,
     """Row/address-keyed order for the color dust multiset."""
     return _item_permutation(
         seed, DOMAIN_COLOR_DUST_ORDER, tile_counter, size)
+
+
+def color_word_zero_mask(seed: bytes, tile_counter: int,
+                         n_dust: int) -> np.ndarray:
+    """The cmy word '0' state per word site 0..99: True = Y, False = W.
+
+    Domain 9 past the tile's dust draw: site ``i`` reads the key at
+    ``u = n_dust + i``, and its MSB (``bits``) chooses Y.
+    """
+    if not isinstance(n_dust, int) or isinstance(n_dust, bool):
+        raise TypeError("n_dust must be an integer")
+    if n_dust < 0:
+        raise ValueError("n_dust must be >= 0")
+    sites = n_dust + np.arange(_WORD_SITES, dtype=np.int64)
+    return bits(seed, DOMAIN_COLOR_DUST_ORDER, 0, tile_counter,
+                sites, 0).astype(bool)
 
 
 def cmy7_interleave_permutation(seed: bytes, tile_counter: int,

@@ -1,3 +1,16 @@
+> **2026-09-08 — SUPERSEDED BY docs/PAGE-FIELD-DESIGN.md.** The per-plane
+> registration field is now one object per (page, plane) — the design of
+> record is `docs/PAGE-FIELD-DESIGN.md` and it is BUILT in the receiver
+> on branch `page-field-receiver` (commits `4d89686f` (W1) through the W9 landing of 2026-09-12 — `4d89686f^..page-field-receiver`, W1–W9 — merged to main 2026-09-12).
+> That design supersedes this document's §3 (representation, hierarchy)
+> and §6.5 (scope items), and with them the `--refine`/`--plane-fields`
+> dials, the publish floors and the per-lane key this document is written
+> around. Everything MEASURED here stays as the record — the V0 pass, the
+> W6 sheet-I qualification, the band-3 misfit, the amplitude numbers —
+> and the instruments it names (`measure/h3_plane_fields.py`,
+> `h3_field_units.py`, `h3_field_bandwidth.py`, `h3_swim.py`) were
+> retired at W6 with the fitter and the dial they drove.
+
 > **2026-08-22 — SYNTHESIS + STAGING LIVES IN docs/INDEPENDENT-PLANES.md.**
 > That document records the 2026-08-21/22 measurement campaign (swim
 > pilot, supervised affine ceiling, dead-vs-GT figure, adversarial
@@ -8,7 +21,11 @@
 > §6.4 comb (V1) is DEMOTED from critical path; the §6.5.4b shrinkage
 > target is CONFIRMED (review) and queued P1; the field's next form is a
 > sheet-level service (INDEPENDENT-PLANES §4.A), not a payload-lane arm.
-> Instruments: measure/plane_fields/ (placement ruling 2026-08-21).
+> Instruments: measure/plane_fields/ (placement ruling 2026-08-21; the
+> package was deleted 2026-09-05 at 284ae3e with the v1 receiver it
+> drove — `git show b167b9f:measure/plane_fields/…` reaches it, and its
+> results are kept in §6.3/§6.4 below and in docs/COMPOSITE-POSE-DESIGN.md
+> and docs/INDEPENDENT-PLANES.md).
 
 # PLANE-FIELDS — per-plane registration for CMY8: comb-phase acquisition, tile-space pooling
 
@@ -39,8 +56,15 @@ Everything proposed is **receiver-axis only**. No format change; the
 W/CM word law, site placement, dust law and keystream are untouched.
 **Build target: src/holo** (the existing cascade + mop-up/refine lane
 machinery and the e024 feedback pattern carry the R/F rounds today);
-holo2 is the eventual home once its colour homework lands — the design
-keeps the pull-model shape so that port stays natural.
+holo2 (retired 2026-09-05, a805888) is the eventual home once its
+colour homework lands — the design keeps the pull-model shape so that
+port stays natural. (2026-09-05: the v1 receiver, `src/holo/receive`,
+was retired at `284ae3e`, and the line's live home is holo3 —
+`src/holo/receiver/plugins/fields.py` fits the per-plane field, `field_tiers.py`
+holds its evidence tiers, `swim.py` is the per-plane local-affine
+rescue, over `src/holo/receiver/lib/plane_field.py` and `src/holo/receiver/lib/local_affine.py`.
+Read every present tense below as of its own date; §6.6 is the one
+section already written against holo3.)
 
 ---
 
@@ -114,8 +138,9 @@ residual by the existing refine machinery where evidence is dense,
 downstream of the field, and fed back. Parametric structure (harmonics, the roller story, C−M
 constants) is demoted to three subordinate roles: smoothing/
 extrapolation prior into evidence-poor zones, compression for the
-engine library, and diagnosis. This is also the holo2-compatible
-shape: a field of annotations serving lookups — hints, never facts.
+engine library, and diagnosis. This is also the holo2-compatible shape
+(holo2 retired 2026-09-05, a805888): a field of annotations serving
+lookups — hints, never facts.
 
 **Plane-generic ruling (v0.4): the field machinery is built generic
 over planes, and K is its n_planes = 1 instance.** One field store,
@@ -168,7 +193,7 @@ new architecture):**
 - **The instant trigger**: certification event → field-update wake →
   retry wakes for windows whose field lookup changed — the pull
   model's one-bit-wake / fire-time-consult shape, kept so the eventual
-  holo2 port is natural.
+  holo2 port is natural (holo2 retired 2026-09-05, a805888).
 - **Certificates are always taken** (user ruling, 2026-08-19): a
   certified payload is the holy grail — it solves the actual retrieval
   problem AND is the strongest field evidence. The false-accept
@@ -285,7 +310,7 @@ cmy7 has one stream but three planes).
    space with per-sample precision, relative to the committed
    plane-common pose. TRANSIENT: rebuilt from the certificate/pose
    ledger at load — no state-schema change, ever; a hint store by
-   construction (holo2-port-trivial).
+   construction (holo2-port-trivial; holo2 retired 2026-09-05, a805888).
 2. Certified-tile registration probes (tier i) — per certificate,
    re-encode the tile's exact printed cells (the divergence-audit GT
    machinery), small per-plane NCC around the committed pose →
@@ -297,7 +322,8 @@ cmy7 has one stream but three planes).
    + gradient) + uncertainty.
 4. Field-corrected readout + retry lane — sampling composes committed
    pose ∘ per-plane delta; batch F↔R alternation via the mop-up/refine
-   lane pattern (event-driven only in holo2 later); dial-conditional
+   lane pattern (event-driven only in holo2 later — holo2 retired
+   2026-09-05, a805888); dial-conditional
    per plane per block (the hp c3-cmy8 harm measurement); coherence
    failure → erasure dialing.
 
@@ -327,7 +353,9 @@ per-channel addressing; tier (iii) comb behind V1.
   sheet fields they cannot see, and it validates the machinery before
   colour complexity enters.
 
-**Build order, gated:**
+**Build order, gated:** (executed on branch `plane-fields` into the v1
+receiver, retired 2026-09-05 at `284ae3e`; holo3 carries the built
+result — see the build-target note above and §6.6.)
 
 - **P0 = V0 (zero receiver code)**: a standalone script builds the
   field from sheet I's EXISTING 5,297 certificates + committed poses
@@ -398,8 +426,9 @@ All of V0–V4 run on archived captures — no hardware.
    boundaries where phase coherence breaks define the region graph.
 6. **Scanner CA**: measurable once per scanner in platen space
    (odd-symmetric R−G field, ±4 px at 2400 on the Canon) and applied
-   to every capture — a one-time calibration artifact that today's
-   receiver never uses. Where does it live (devices registry as
+   to every capture — a one-time calibration artifact that the
+   receiver of the day never used (the v1 receiver, retired
+   2026-09-05 at `284ae3e`). Where does it live (devices registry as
    measured data) and what qualifies it?
 7. **Scheduling/cost**: which lanes compute phase fields (survey-level
    coarse lanes are nearly free; fine-lane refinement on demand), and
@@ -410,8 +439,9 @@ All of V0–V4 run on archived captures — no hardware.
 8. **Interplay with existing machinery**: done-geometry (certified
    tiles project to capture space — the certificate-level analogue of
    this line's field-level pooling); e024 certified feedback; the
-   holo2 pull scheduler (fields are hints/annotations, never facts —
-   fits the pull model); discovery integration explicitly deferred
+   holo2 pull scheduler (holo2 retired 2026-09-05, a805888; fields are
+   hints/annotations, never facts — fits the pull model); discovery
+   integration explicitly deferred
    (FORMAT-SPACE §13) — per-channel addressing changes null budgets
    and waits for that line.
 9. **RESOLVED (user ruling): certified payload is always taken.**
@@ -425,6 +455,17 @@ All of V0–V4 run on archived captures — no hardware.
     the fossil sunset and the corpus re-decode sweep.
 
 ## 6. The W6 verdict and after
+
+2026-09-05: the receiver this workplan was written against and built
+into — the v1 receiver, `src/holo/receive` — was deleted at `284ae3e`,
+together with its tests under `tests/holo` and the `measure/plane_fields`
+instruments. Every module named below reads at
+`git show b167b9f:src/holo/receive/<file>`; holo3's counterparts are
+`plugins/fields.py`, `plugins/field_tiers.py`, `plugins/swim.py`,
+`lib/plane_field.py` and `lib/local_affine.py`, its rows and prices are
+in `src/holo/receiver/docs/SCHEDULE.md`, and the mechanism-by-mechanism map from v1 to
+holo3 is `src/holo/receiver/docs/retirement_docs-2026-09/HOLO1-MAP.md`. The measurements
+and verdicts below stand exactly as measured.
 
 ### 6.4 W6 verdict (2026-08-21, sheet I, three 2400 captures, dial ON)
 
@@ -486,7 +527,10 @@ branch via --format L: + --refine).
    (dial-on certificate set ⊇ dial-off set on sheet I), after which
    the flag becomes the off-switch. Until then --refine is REQUIRED
    for any field activity on the stock CLI, and the diag band appears
-   only when uF fires at the tail.
+   only when uF fires at the tail. (That CLI was the v1 receiver's,
+   retired 2026-09-05 at `284ae3e`; in holo3 the field is the standing
+   `fields` row behind the same `--plane-fields` dial, still default
+   off, with `tiles.swim` as its rescue — `src/holo/receiver/docs/SCHEDULE.md`.)
 2. **The swim rescue tier (R0.5)** (beat 14): per-window/per-scrap
    plane swimming for acquisition failures the field cannot reach
    (C–M desync breaking luma addressing on small scraps; cold start).
@@ -657,13 +701,14 @@ branch via --format L: + --refine).
    local-linear; (b) addressing rescue: R3 per-channel words,
    swim-C/M, phase-informed dispatch. Plus the orthogonal hygiene
    items: per-block adoption, cross-capture pooling, CA calibration,
-   the K instance, the engine library, holo2. The merge-time items
-   are DONE: RECEIVE-DESIGN §9b (v0.57) and the CLAUDE.md bullet.
+   the K instance, the engine library, holo2 (retired 2026-09-05,
+   a805888). The merge-time items are DONE: RECEIVE-DESIGN §9b (v0.57)
+   and the CLAUDE.md bullet.
 
 ### 6.6 The swim's band and ceiling (2026-09-03/04, measured)
 
 Recorded from the re-key repair and its review
-(holo3/conversion_docs/MEASUREMENTS-2026-09-03.md).  The swim is
+(src/holo/receiver/docs/conversion_docs/MEASUREMENTS-2026-09-03.md).  The swim is
 per-plane: for each plane separately, per window, a local affine
 searched within `translation_bound_dots` = one printed cell (3.0 dots at
 c3) of the field's hint, while the field publishes a per-plane delta
@@ -689,7 +734,7 @@ not per-certificate attribution.  The amplitude is a float (per-row
 shifts stay whole dots; peak 4 at 4.5 under banker's rounding); the
 earlier "whole dots by construction, no third amplitude" was wrong and
 is corrected in the modules.  Exhausting the band is an instrument run
-(`measure/h3_swim.py run --amplitude-dots`), not a lane's job.
+(`measure/h3_swim.py decode --amplitude-dots …`), not a lane's job.
 
 ## 7. Provenance
 

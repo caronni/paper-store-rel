@@ -10,6 +10,7 @@ and restored after, and that a run without a sink is untouched.
 from __future__ import annotations
 
 import os
+import re
 import signal
 import time
 from dataclasses import dataclass, field
@@ -164,13 +165,19 @@ def test_the_driver_reports_each_generation_through_the_sink(monkeypatch):
     assert ledger.header["n_certified"] == 2
     assert ledger.header["generations_run"] == 2
     heads = [line.split(",")[0] for line in seen if not line.startswith("  ")]
-    assert heads == [
+    #: the last head carries the pass's WALL TIME, which is not a
+    #: property of the driver: it read `0:00:00` on a fast machine and
+    #: `0:00:01` on a slow one, so the lane was red at random (review
+    #: 2026-09-06).  Pin the sentence and let the clock say what it says.
+    elapsed = heads[-1].partition(" in ")[2]
+    assert re.fullmatch(r"\d+:\d\d:\d\d; writing the ledger", elapsed), \
+        heads[-1]
+    assert heads[:-1] + [heads[-1].partition(" in ")[0]] == [
         "generation 0: 3 pending (0 re-attacks)",
         "generation 0 done: +1 certificates (total 1)",
         "generation 1: 1 pending (0 re-attacks)",
         "generation 1 done: +1 certificates (total 2)",
-        "pass done: 2 certificates over 2 generation(s) in 0:00:00; "
-        "writing the ledger",
+        "pass done: 2 certificates over 2 generation(s)",
     ]
     ticks = [line for line in seen if line.startswith("  ")]
     assert len(ticks) == 4                        # every key, both generations

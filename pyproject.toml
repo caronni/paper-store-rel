@@ -26,5 +26,15 @@ where = ["src"]
 include = ["paperholo*"]
 
 [tool.pytest.ini_options]
-testpaths = ["tests", "holo2/tests"]
-pythonpath = ["src", "holo2/src"]
+# --dist loadgroup: xdist_group marks (tests/ modules that regenerate a shared
+# experiment build in place) run on one worker; every other test takes its
+# MODULE as its group (repo-root conftest.py), so session fixtures are built
+# once per module, not once per worker.
+# -n 8 is the default everywhere; -n 0 runs serially for debugging/pdb. The
+# paperholo lane (tests/, changed or run rarely per Germano's 2026-09-06
+# ruling) is not in testpaths below and is explicit:
+# `env/bin/python -m pytest tests --ignore=tests/holo -q`.
+# 2026-09-06: paperholo dropped from testpaths, -n 8 added as the default.
+addopts = "-n 8 --dist loadgroup"
+testpaths = ["tests/holo", "analyzer/tests", "util/tests"]
+pythonpath = ["src"]

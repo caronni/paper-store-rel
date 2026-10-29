@@ -33,14 +33,19 @@ Bars asserted (PILOTS-DESIGN §15.7 build spec + fixture bars):
   (e) round 2 certifies nothing new (fixed point within the <= 3 cap);
   plus the R3 idempotence control: repass on a fully-certified state
   is a no-op (no observation churn, no refits).
+
+The degradation fixture is SLOW-LANE (2026-09-05): standalone runs need
+HOLO_RUN_SLOW_TESTS=1 env/bin/python tests/test_repass.py
 """
 import importlib.util
+import os
 import pickle
 import sys
 import tempfile
 from pathlib import Path
 
 import numpy as np
+import pytest
 from scipy import ndimage
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -171,6 +176,10 @@ def _fixture():
     """Build once: rendered canvas -> PNG on disk (repass reads glass
     images by path) -> driver decode state (pickled so each test gets
     its own copy) -> GT audit arrays."""
+    # 2026-09-05: slow lane — 7.4 s fixture + 32.5 s of repass rounds.
+    if os.environ.get("HOLO_RUN_SLOW_TESTS") != "1":
+        pytest.skip("set HOLO_RUN_SLOW_TESTS=1 for the e018 repass "
+                    "degradation fixture")
     if not _CACHE:
         gen = np.random.default_rng(RNG_SEED)
         canvas = sa._canvas([_render_band_piece(gen)])
@@ -251,12 +260,27 @@ def test_repass_converts_failed_band_fixture():
     _audit_zero_wrong(pds, gt)
 
 
-def test_repass_noop_on_fully_certified_state():
+def test_repass_noop_on_fully_certified_state(tmp_path):
     """R3 idempotence control: zero pending tiles -> repass touches
-    nothing (no supersede, no refit, no new observations)."""
-    png, pds, _gt = _fixture()
+    nothing (no supersede, no refit, no new observations). Synthetic
+    state — the branch is the pending-empty early return, so the 7.4 s
+    degradation fixture buys it nothing.
+    2026-09-05: no fixture — the no-op branch is pending-empty, not
+    degradation-dependent."""
+    from PIL import Image
+    img = np.full((1200, 1200), 20.0, np.float32)
+    img[200:1000, 200:1000] = np.random.default_rng(0).normal(
+        200, 20, (800, 800))
+    png = tmp_path / IMG_NAME
+    Image.fromarray(np.clip(img, 0, 255).astype(np.uint8)).save(png)
+    pds = tilemap.PageDecodeState(sd.spec, sd.SEED, page=0)
     for st in pds.tiles.values():
         st.status = "certified"        # force the fully-certified state
+    pds.scans[f"{IMG_NAME}/p0"] = tilemap.ScanObservation(
+        scan_id=f"{IMG_NAME}/p0",
+        payload_cell_index=np.arange(10, dtype=np.int64),
+        payload_llr=np.linspace(-3.0, 3.0, 10), tile_words={(0, 0): 2},
+        n_windows=4, meta={"placement_source": "pilot_words"})
     scan_ids = set(pds.scans)
     status_before = {t: st.status for t, st in pds.tiles.items()}
     stats = rp.repass_round(pds, set(), [png], DPI, 1, ERODE, POLICY)
@@ -272,5 +296,6 @@ def test_repass_noop_on_fully_certified_state():
 if __name__ == "__main__":
     test_repass_converts_failed_band_fixture()
     print("PASS repass conversion bars (a)-(e)")
-    test_repass_noop_on_fully_certified_state()
+    with tempfile.TemporaryDirectory() as _d:
+        test_repass_noop_on_fully_certified_state(Path(_d))
     print("PASS repass no-op control")

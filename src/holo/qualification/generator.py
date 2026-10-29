@@ -12,7 +12,7 @@ from dataclasses import dataclass
 import numpy as np
 
 from ..core import fountain
-from ..devices.profiles import make_spec
+from ..format.fossils import resolve_fossil_spec
 from ..gen import compose, emit, plan
 
 
@@ -22,6 +22,13 @@ class GeneratorCase:
     digest: str
 
 
+# Each coding's page is its 6 mm A4 fossil (R21: ``L:`` is the one legacy
+# door; the same object the retired printer derivation built).
+_FOSSIL_IDS = {
+    "c3-r0550": "c3-r0550@2240x1536",
+    "c2-r0700": "c2-r0700@3328x2304",
+    "c2-r0550": "c2-r0550@3328x2304",
+}
 _GOLDENS = {
     "c3-r0550": "9513732c2f72ede3d7e60b40b0fb1a57a931de5e1ff40fabb76cda86d7c630e1",
     "c2-r0700": "9231bbe836d07062fd1d3a2a645f22aac1929e3c6cf04ebd21e57a0f0c5f5397",
@@ -30,7 +37,7 @@ _GOLDENS = {
 
 
 def _page_digest(coding_id: str, payload: bytes, q: float) -> str:
-    spec = make_spec(coding_id)
+    spec = resolve_fossil_spec(_FOSSIL_IDS[coding_id])
     volume = plan.plan_volume(spec, len(payload), q)
     source = emit.source_packed_for(payload, volume)
     code = fountain.VolumeCode(

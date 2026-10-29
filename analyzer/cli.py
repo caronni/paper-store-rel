@@ -13,8 +13,8 @@
     report   re-render the Markdown summary of an existing ledger
     score    OFFLINE: ledger(s) + a payload -> score.jsonl + score.md
 
-Every subcommand writes into `--out` (default `scratch/analyzer/<name>`)
-and prints the numbers it measured; nothing is hidden in a file only.
+Every subcommand writes into `--out` (required) and prints the numbers
+it measured; nothing is hidden in a file only.
 
 NO RUN COMMAND TAKES A PAYLOAD (RULED 2026-09-04).  `--gt-dir` and
 `--payload` live on ONE door, `score`, and it is the only one that
@@ -35,24 +35,75 @@ import numpy as np
 
 from . import close as close_mod
 from . import controls as controls_mod
+from .calibrate import CTX_MODES
 from . import export_facts as export_mod
+from . import frame as frame_mod
 from . import fixedpoint as fp
 from . import inputs as inputs_mod
 from . import ledger as ledger_mod
 from . import mirror as mirror_mod
 from . import planeview
 from . import residue as residue_mod
+from . import stopdoor as doors_mod
 from . import unionbase as unionbase_mod
 from .types import (with_profile, VERDICT_CERTIFIED, VERDICT_CERTIFIED_LIST, AnalyzerConfig, DEFAULT_ARMS,
-                    DEFAULT_LADDER_RUNGS, DEFAULT_RULES)
+                    DEFAULT_LADDER_RUNGS, DEFAULT_RULES, KNOWN_RUNGS,
+                    PROFILES, RESERVED_KNOBS)
 
 EXIT_WRONG = 2
+
+#: The cap `--fixed-point` runs to convergence under, which is the
+#: library's own default and not a second number kept here (R1,
+#: 2026-09-06).
+DEFAULT_MAX_GENERATIONS: int = AnalyzerConfig.max_generations
+
+#: Knob names the CLI REFUSES (W8 B1, APPROACHES §4.0 ruling 8): each is
+#: derived inside `blind_key` and assigned there unconditionally, so a
+#: value from the command line would be a lie about where it came from.
+#: ONE tuple, `types.RESERVED_KNOBS`, re-exported here (the review of
+#: 2026-09-06: two copies is two ways for the parse-time refusal and
+#: `blind_key`'s own to drift apart).
+__all_reserved__ = RESERVED_KNOBS
+
+
+class KnobError(ValueError):
+    """A `--knob` the CLI will not pass on."""
 
 
 def _list(value: str | None, fallback: Sequence[str]) -> tuple[str, ...]:
     if not value:
         return tuple(fallback)
     return tuple(name.strip() for name in value.split(",") if name.strip())
+
+
+def parse_knob(item: str) -> tuple[str, Any]:
+    """``KEY=VALUE`` -> ``(key, value)``; VALUE is JSON when it parses.
+
+    `branches=state` is the string `"state"`, `ctx_state=true` is `True`,
+    `patch_shrinkage=0.01` is a float, `L2=[{"mode": ...}]` is a list.  A
+    reserved name is refused with a message, never silently dropped.
+    """
+    name, separator, raw = str(item).partition("=")
+    name = name.strip()
+    if not separator or not name:
+        raise KnobError(f"--knob wants KEY=VALUE, got {item!r}")
+    if name in RESERVED_KNOBS:
+        raise KnobError(
+            f"knob {name!r} is reserved: it is derived inside blind_key and "
+            f"assigned there (reserved: {', '.join(RESERVED_KNOBS)})")
+    try:
+        value: Any = json.loads(raw)
+    except json.JSONDecodeError:
+        value = raw
+    return name, value
+
+
+def parse_knobs(items: Sequence[str] | None) -> dict[str, Any]:
+    out: dict[str, Any] = {}
+    for item in items or ():
+        name, value = parse_knob(item)
+        out[name] = value
+    return out
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -64,9 +115,8 @@ def build_parser() -> argparse.ArgumentParser:
     def common(name: str, help_text: str) -> argparse.ArgumentParser:
         item = sub.add_parser(name, help=help_text)
         item.add_argument("--run-dir", required=True, type=Path)
-        item.add_argument("--out", type=Path,
-                          help="artefact directory "
-                               "(default scratch/analyzer/<run name>)")
+        item.add_argument("--out", required=True, type=Path,
+                          help="artefact directory")
         item.add_argument(
             "--format-ref", dest="format_ref", default=None,
             help="replace the format id the run's RunOpen declares (a "
@@ -77,12 +127,50 @@ def build_parser() -> argparse.ArgumentParser:
         item.add_argument("--cover-fraction", type=float, default=0.9)
         item.add_argument("--profile", default=None,
                           help="a named measured configuration from "
-                               "types.PROFILES (e.g. everything, wide-halo, "
-                               "battery); applied after the other flags")
-        item.add_argument("--halo-cells", type=int, default=None,
-                          help="override the per-stream halo (32 Y / 16 C,M)")
+                               "types.PROFILES (e.g. everything, patch, "
+                               "everything+patch, pure); it supplies what "
+                               "the operator did not say — an explicit "
+                               "--arms/--rules/--rungs/--halo-cells/"
+                               "--ctx-mode/--no-reroll/--reroll-only-arms "
+                               "WINS over it (W8 B5)")
+        item.add_argument("--halo-cells", default=None,
+                          metavar="WIDTH|C=..,M=..,Y=..",
+                          help="override the per-stream halo (production "
+                               "is 16 C, 16 M, 32 Y).  A bare width sets "
+                               "all three; the per-plane spelling "
+                               "C=48,M=48,Y=32 names them and must name "
+                               "every one (2026-09-07: `--halo-cells 48` "
+                               "is 48/48/48, which is NOT the wide-halo "
+                               "profile's 48/48/32)")
+        item.add_argument("--ctx-mode", dest="ctx_mode", default=None,
+                          choices=CTX_MODES,
+                          help="the calibration's context stage "
+                               "(default production); `none` is the control, "
+                               "`local5` the 5x5-neighbourhood fit for "
+                               "label-starved bands")
+        item.add_argument("--no-reroll", dest="no_reroll",
+                          action="store_true",
+                          help="turn the re-roll across the unselected arms "
+                               "OFF (it is ON by default and minted ~240 of "
+                               "sheet H's 508 certificates)")
+        item.add_argument(
+            "--reroll-only-arms", dest="reroll_only_arms", default=None,
+            metavar="ARM[,ARM]",
+            help="PLACE these arms in the re-roll only (W8 B8): they are "
+                 "computed for a key the battery could NOT close and never "
+                 "for one it did, and they can never win the select fold.  "
+                 "The one-pass door to what the `patch-then-pure` and "
+                 "`everything+patch+pure` profiles name; the ledger header "
+                 "records it and a certificate says reroll:<arm>")
         item.add_argument("--pages", type=str, default=None)
         return item
+
+    def knob_door(item: argparse.ArgumentParser) -> None:
+        item.add_argument(
+            "--knob", action="append", default=None, metavar="KEY=VALUE",
+            help="a library knob (JSON value, else a string), repeatable; "
+                 "merged AFTER --profile so the operator's value wins; "
+                 f"reserved: {', '.join(RESERVED_KNOBS)}")
 
     census = common("census", "coverage, bands, residue, rank cross-check")
     census.add_argument("--check-rank", action="store_true", default=True)
@@ -99,8 +187,16 @@ def build_parser() -> argparse.ArgumentParser:
         item.add_argument("--arms", default=None)
         item.add_argument("--rules", default=None)
         item.add_argument("--rungs", default=None)
-        item.add_argument("--fixed-point", action="store_true")
-        item.add_argument("--max-generations", type=int, default=8)
+        item.add_argument(
+            "--fixed-point", action="store_true",
+            help="run the cascade to convergence under the default cap "
+                 f"({DEFAULT_MAX_GENERATIONS}); with --max-generations "
+                 "that cap bounds the convergence")
+        item.add_argument(
+            "--max-generations", type=int, default=None, metavar="N",
+            help="run up to N generations, stopping early the moment a "
+                 "generation re-attacks nothing; usable on its own "
+                 "(neither flag = ONE generation)")
         item.add_argument("--limit", type=int, default=None,
                           help="stop after this many targets (a smoke run)")
         item.add_argument("--progress-every", type=int,
@@ -108,9 +204,19 @@ def build_parser() -> argparse.ArgumentParser:
                           help="a progress tick on stderr every N finished "
                                "keys (0 = generation lines only); SIGUSR1 "
                                "or ctrl-T prints a status line any time")
+        item.add_argument(
+            "--checkpoint-minutes", dest="checkpoint_minutes", type=float,
+            default=fp.CHECKPOINT_MINUTES, metavar="M",
+            help=f"write {fp.CHECKPOINT_NAME} beside the ledger every M "
+                 f"minutes (0 disables); it carries the generation, the "
+                 f"key counts, the exposure, the knobs and the peak RSS, "
+                 f"and it names the recovery recipe — there is no "
+                 f"--resume")
         item.add_argument("--no-maps", action="store_true")
+        knob_door(item)
 
     control = common("controls", "the controls of DESIGN §8")
+    knob_door(control)
     control.add_argument("--parity", type=int, default=100)
     control.add_argument("--null", type=int, default=5)
     control.add_argument("--frame-null", type=int, default=3)
@@ -125,6 +231,17 @@ def build_parser() -> argparse.ArgumentParser:
     control.add_argument("--arms", default=None)
     control.add_argument("--rules", default=None)
     control.add_argument("--rungs", default=None)
+    control.add_argument(
+        "--targets", default=None, metavar="SPEC",
+        help="W8 B3: restrict the census population the controls draw "
+             "from, in `read`/`ladder`'s own target grammar ('list FILE', "
+             "'band:dead', 'stream:C', 'open-after LEDGER').  NOTE that "
+             "every control draws its donors from PRODUCTION CERTIFICATES "
+             "(`null_arm` and `frame_null` shift a certified tile's "
+             "pixels or frame; `parity_sample` re-derives certificates), "
+             "so a residue spec — or a list of open rows — leaves them "
+             "nothing to draw and they refuse.  Name certified rows of "
+             "the regime you want controlled.")
 
     closer = common("close", "close_volume on the union")
     closer.add_argument("--ledger", type=Path, default=None)
@@ -273,7 +390,8 @@ def build_parser() -> argparse.ArgumentParser:
     scorer.add_argument("--seed", type=int, default=20260903)
     scorer.add_argument("--workers", type=int, default=4)
     scorer.add_argument("--cover-fraction", type=float, default=0.9)
-    scorer.add_argument("--halo-cells", type=int, default=None)
+    scorer.add_argument("--halo-cells", default=None,
+                        metavar="WIDTH|C=..,M=..,Y=..")
     scorer.add_argument("--arms", default=None,
                         help="the FIRST arm is the one whose evidence is "
                              "recomputed and scored")
@@ -286,6 +404,7 @@ def build_parser() -> argparse.ArgumentParser:
                              "(sheet J needs 2)")
     scorer.add_argument("--maps", action="store_true",
                         help="write the bits-wrong PNG per plane")
+    knob_door(scorer)
 
     report = sub.add_parser("report", help="re-render a ledger's summary")
     report.add_argument("ledger", type=Path)
@@ -299,10 +418,7 @@ def build_parser() -> argparse.ArgumentParser:
 # ------------------------------------------------------------- plumbing
 
 def _out_dir(args: Any) -> Path:
-    if getattr(args, "out", None) is not None:
-        path = Path(args.out)
-    else:
-        path = Path("scratch/analyzer") / Path(args.run_dir).name
+    path = Path(args.out)
     path.mkdir(parents=True, exist_ok=True)
     return path
 
@@ -319,27 +435,179 @@ def _load(args: Any) -> Any:
         args.run_dir, format_ref=getattr(args, "format_ref", None))
 
 
+#: The flags a profile may NOT overrule (W8 B5, APPROACHES §4.0 ruling 5).
+#: Each maps the `args` attribute the operator sets to the
+#: `AnalyzerConfig` field it lands in; a profile supplies only what the
+#: operator did not say.
+EXPLICIT_OVER_PROFILE: tuple[tuple[str, str], ...] = (
+    ("arms", "arms"), ("rules", "rules"), ("rungs", "rungs"),
+    ("halo_cells", "halo_cells"), ("ctx_mode", "ctx_mode"),
+    ("no_reroll", "reroll"), ("reroll_only_arms", "reroll_only_arms"))
+
+
+class NameRefused(ValueError):
+    """An arm, rule or rung name the CLI will not pass on (W8 B5)."""
+
+
+def _validate_names(config: AnalyzerConfig) -> None:
+    """Refuse a misspelled arm, rule or rung BEFORE the run dir is opened.
+
+    Every one of these names is checked deep inside a pass today — an arm
+    at the first `evidence_for`, a rung inside a worker at the first key,
+    a rule at the first `combine` — so a typo in a fourteen-worker union
+    pass surfaced as a per-row refusal, or as hours of work that produced
+    nothing.  The names are cheap to check and the check costs one import
+    the CLI already carries.  Nothing here is a policy: the sets are the
+    dispatch tables themselves (`arms.parse_arm`, `combine.RULES`,
+    `types.KNOWN_RUNGS`).
+    """
+    from .arms import ArmError, parse_arm
+    from .combine import RULES
+    for field in ("arms", "reroll_only_arms"):
+        for arm in getattr(config, field, ()) or ():
+            try:
+                parse_arm(str(arm))
+            except (ArmError, ValueError) as error:
+                raise NameRefused(
+                    f"--{field.replace('_', '-')}: {error}") from error
+    for rule in config.rules:
+        if str(rule) not in RULES:
+            raise NameRefused(
+                f"--rules: unknown rule {rule!r} "
+                f"(known: {', '.join(RULES)})")
+    for rung in config.rungs:
+        if str(rung) not in KNOWN_RUNGS:
+            raise NameRefused(
+                f"--rungs: unknown rung {rung!r} "
+                f"(known: {', '.join(KNOWN_RUNGS)})")
+
+
+def _generation_cap(args: Any) -> int:
+    """The generation cap the two flags ask for (ruling R1, 2026-09-06).
+
+    They are ORTHOGONAL.  `--max-generations N` alone runs up to N
+    generations — the driver stops early the moment a generation
+    re-attacks nothing, so the cap is a bound and never a demand for N
+    generations of work.  `--fixed-point` alone runs to convergence
+    under the library's default cap.  Together, the cap bounds the
+    convergence.  With neither the pass runs ONE generation, which is
+    what every pass in the record did.
+
+    What this replaces: `--max-generations N` used to be silently
+    DISCARDED unless `--fixed-point` came with it (the W8 smoke's
+    `--max-generations 2` passes were single generations and nobody was
+    told; APPROACHES §6.5).  A cap the operator spelled is now the cap,
+    and a cap below one is refused rather than run as zero generations.
+    """
+    said = getattr(args, "max_generations", None)
+    if said is None:
+        return (DEFAULT_MAX_GENERATIONS
+                if getattr(args, "fixed_point", False) else 1)
+    cap = int(said)
+    if cap < 1:
+        print(f"GENERATIONS REFUSED: --max-generations must be >= 1 "
+              f"(got {cap})", file=sys.stderr)
+        raise SystemExit(EXIT_WRONG)
+    return cap
+
+
 def _config(args: Any, **overrides: Any) -> AnalyzerConfig:
     halo = None
     if getattr(args, "halo_cells", None) is not None:
-        halo = {name: int(args.halo_cells) for name in ("C", "M", "Y")}
+        # the PER-PLANE spelling (HALO-CHANNEL §4.5): `48` is all three,
+        # `C=48,M=48,Y=32` names them, and a typo is refused here rather
+        # than at the first key of a fourteen-worker pass
+        try:
+            halo = frame_mod.parse_halo_cells(args.halo_cells)
+        except frame_mod.HaloError as error:
+            print(f"HALO REFUSED: {error}", file=sys.stderr)
+            raise SystemExit(EXIT_WRONG) from error
     base = dict(
         arms=_list(getattr(args, "arms", None), DEFAULT_ARMS),
         rules=_list(getattr(args, "rules", None), DEFAULT_RULES),
         rungs=_list(getattr(args, "rungs", None), DEFAULT_LADDER_RUNGS),
         workers=int(args.workers), seed=int(args.seed),
-        halo_cells=halo, cover_fraction=float(args.cover_fraction),
-        max_generations=(int(getattr(args, "max_generations", 8))
-                         if getattr(args, "fixed_point", False) else 1),
+        halo_cells=halo, halo_from="cli" if halo else "defaults",
+        cover_fraction=float(args.cover_fraction),
+        max_generations=_generation_cap(args),
         targets_from=str(getattr(args, "targets", "explicit")),
         knobs_from="cli",
     )
+    if getattr(args, "ctx_mode", None) is not None:
+        base["ctx_mode"] = str(args.ctx_mode)
+    if getattr(args, "no_reroll", False):
+        base["reroll"] = False
+    if getattr(args, "reroll_only_arms", None) is not None:
+        base["reroll_only_arms"] = _list(args.reroll_only_arms, ())
     base.update(overrides)
     config = AnalyzerConfig(**base)
+    from dataclasses import replace as dc_replace
     profile = getattr(args, "profile", None)
+    said_it = False
     if profile:
         config = with_profile(config, str(profile))
+        # PRECEDENCE (W8 B5): the profile is a default set, not an order.
+        # Anything the operator spelled explicitly is re-applied over it,
+        # so `--profile patch --arms "patch+offset"` isolates one arm
+        # inside the profile's knobs instead of silently running three.
+        explicit = {field: base[field]
+                    for flag, field in EXPLICIT_OVER_PROFILE
+                    if field in base and _said(args, flag)
+                    and field not in overrides}
+        if "halo_cells" in PROFILES.get(str(profile), {}):
+            config = dc_replace(config, halo_from=f"profile:{profile}")
+        if explicit:
+            if "halo_cells" in explicit:
+                explicit["halo_from"] = "cli"
+            config = dc_replace(config, **explicit)
+            #: THE HALO IS NOT A KNOB (HALO-CHANNEL-2026-09-07 §4.5).  A
+            #: run whose only CLI word was `--halo-cells` used to read
+            #: `knobs_from: profile:patch+cli`, and a reader diffing that
+            #: one field would call it a knob-pinned run.  `halo_from`
+            #: carries the halo's provenance now, and `knobs_from` is
+            #: left to the knobs.
+            said_it = bool(set(explicit) - {"halo_cells", "halo_from"})
+    # `--knob` lands AFTER the profile (W8 B1): the operator's value wins,
+    # and the header says both had a hand in it.
+    try:
+        given = parse_knobs(getattr(args, "knob", None))
+    except KnobError as error:
+        print(f"KNOB REFUSED: {error}", file=sys.stderr)
+        raise SystemExit(EXIT_WRONG) from error
+    if given:
+        config = dc_replace(config, knobs={**dict(config.knobs), **given})
+        said_it = True
+    if said_it:
+        config = dc_replace(
+            config, knobs_from=(f"{config.knobs_from}+cli" if profile
+                                else "cli"))
+    # a malformed patch_* / pure_* knob is refused HERE, before a run dir is
+    # loaded, not at the first key of a fourteen-worker pass
+    from . import patch as patch_mod
+    from . import pure as pure_mod
+    try:
+        patch_mod.spec_from_knobs(config.knobs)
+        pure_mod.spec_from_knobs(config.knobs)
+    except (patch_mod.PatchError, pure_mod.PureError) as error:
+        print(f"KNOB REFUSED: {error}", file=sys.stderr)
+        raise SystemExit(EXIT_WRONG) from error
+    # and so is a misspelled arm, rule or rung (W8 B5)
+    try:
+        _validate_names(config)
+    except NameRefused as error:
+        print(f"NAME REFUSED: {error}", file=sys.stderr)
+        raise SystemExit(EXIT_WRONG) from error
     return config
+
+
+def _said(args: Any, flag: str) -> bool:
+    """Did the operator spell this flag, as opposed to leaving it out?
+
+    `--no-reroll` is a `store_true`, so "said" means True; every other
+    flag in `EXPLICIT_OVER_PROFILE` defaults to None.
+    """
+    value = getattr(args, flag, None)
+    return bool(value) if flag == "no_reroll" else value is not None
 
 
 def _census(run: Any, args: Any) -> list:
@@ -412,29 +680,99 @@ def _pass(args: Any, *, rungs: Sequence[str] | None = None) -> int:
     config = _config(args, **overrides)
     print(f"targets {len(targets)}  arms {len(config.arms)}  "
           f"rules {config.rules}  rungs {config.rungs}  "
-          f"workers {config.workers}")
+          f"workers {config.workers}  "
+          # R1: the cap the pass actually runs under, said out loud — a
+          # discarded `--max-generations` was invisible until the ledger.
+          f"generations <={config.max_generations}")
     every = int(getattr(args, "progress_every", fp.PROGRESS_EVERY))
-    result = fp.run(run, targets, config, census_rows=rows,
-                    progress=_operator_line,
-                    progress_every=every if every > 0 else len(targets) + 1)
+    # THE OUT DIR AND THE LEDGER BEFORE THE FIRST KEY (2026-09-13).  Both
+    # used to be made after `fp.run` returned, so the pass killed on
+    # 09-10 at 350 keys and 51 certificates left NOTHING behind — and the
+    # rows it was holding to write them were the process's largest
+    # object.  Now the header goes down first, each row as its generation
+    # folds it, each certificate as it lands (`mints.jsonl`), and a
+    # checkpoint at the first key boundary after each half hour.
     out = _out_dir(args)
     name = "ledger" if rungs is None else "ledger-read"
-    ledger_mod.write_rows(out / f"{name}.jsonl", result.rows, result.header)
+    ledger_path = out / f"{name}.jsonl"
+    writer = ledger_mod.LedgerWriter(ledger_path)
+    minutes = float(getattr(args, "checkpoint_minutes",
+                            fp.CHECKPOINT_MINUTES))
+    checkpoint = fp.Checkpointer(out / fp.CHECKPOINT_NAME, minutes=minutes,
+                                 emit=_operator_line)
+    _operator_line(
+        f"ledger {ledger_path} (streamed), mints {writer.mints_path}, "
+        f"checkpoint {'off' if minutes <= 0 else f'every {minutes:g} min'}"
+        + ("" if not writer.kept_aside else
+           "; kept aside " + ", ".join(str(moved)
+                                       for moved in writer.kept_aside))
+        + f"; {doors_mod.RECOVERY_RECIPE}")
+
+    try:
+        result = fp.run(run, targets, config, census_rows=rows,
+                        progress=_operator_line,
+                        progress_every=every if every > 0 else len(targets) + 1,
+                        writer=writer, checkpoint=checkpoint,
+                        fixed_point=bool(getattr(args, "fixed_point", False)))
+    except BaseException:
+        writer.close()          # what it has written stays readable
+        raise
+    writer.finish(result.header)
     close_row = None
     if rungs is None:
-        certs = {row.key: row.rungs["user_bits"] for row in result.rows
-                 if row.verdict in (VERDICT_CERTIFIED, VERDICT_CERTIFIED_LIST)
-                 and row.rungs.get("user_bits") is not None}
-        close_row = close_mod.close(run, certs, out_dir=out)
+        certs = dict(result.certified)
+        if result.header.get("stop_reason") == fp.STOP_INTERRUPTED:
+            # The stop door's products (2026-09-07): a pass the operator
+            # stopped owes the same close an exhausted one writes, and
+            # the exported snapshot their next holo3 `--resume` reads —
+            # each guarded, each printing its own outcome.
+            close_row = doors_mod.interrupt_products(
+                run, certs, out, ledger_path=ledger_path,
+                emit=_operator_line)
+        else:
+            close_row = close_mod.close(run, certs, out_dir=out)
+            (out / "close.json").write_text(
+                json.dumps(ledger_mod.jsonable(close_row), indent=2), "utf-8")
         result.close_row = close_row
-        (out / "close.json").write_text(
-            json.dumps(ledger_mod.jsonable(close_row), indent=2), "utf-8")
-    summary = ledger_mod.summarize(result.rows, header=result.header,
-                                   close_row=close_row)
+        # The pass's blind cross-check, beside its ledger (PAGE-FIELD-PLAN
+        # A2): the pooled `field2` fields the run's own arms fitted, in
+        # the schema `measure/page_field/compare.py --analyzer` reads,
+        # each carrying the revision of the production field that STOOD
+        # for that (page, plane).  So `--fields <production> --analyzer
+        # field2.json` is the consistency check of what THIS pass read;
+        # the standalone measurement is phase C's.
+        #
+        # GUARDED, in the stop door's spelling: this is a product, never
+        # the pass.  It is written mid-sequence, before `ledger.md`, the
+        # maps and the summary, and a raise here would cost a multi-hour
+        # ladder all three over a diagnostic.
+        try:
+            product = fp.write_field2_product(
+                run, config, out / fp.FIELD2_PRODUCT_NAME,
+                pass_token=result.header.get("pass_token"))
+            print(f"field2: {len(product['fields'])} pooled field(s) in "
+                  f"{out / fp.FIELD2_PRODUCT_NAME}")
+        except Exception as error:          # a product, never the pass
+            _operator_line(f"field2: the product FAILED "
+                           f"({type(error).__name__}: {error})")
+    # The report reads the LEDGER, not the pass: `result.rows` is empty
+    # on a streamed pass, and the file is the one artefact that carries
+    # every row — the last one per key, the superseded attempts counted
+    # and skipped, a half-written line tolerated and counted.
+    stats = ledger_mod.ReadStats()
+    summary = ledger_mod.summarize(
+        ledger_mod.iter_rows_latest(ledger_path, stats=stats),
+        header=result.header, close_row=close_row)
     (out / f"{name}.md").write_text(summary, "utf-8")
+    print(f"ledger {ledger_path}: {stats.rows} row(s) read, "
+          f"{stats.superseded} superseded, {writer.n_mints} mint(s) in "
+          f"{writer.mints_path}"
+          + (f", {stats.truncated_lines} TRUNCATED line(s)"
+             if stats.truncated_lines else ""))
     if rungs is None and not args.no_maps:
-        written = ledger_mod.render_maps(result.rows, out,
-                                         tiles_yx=run.tiles_yx)
+        written = ledger_mod.render_maps(
+            ledger_mod.iter_rows_latest(ledger_path), out,
+            tiles_yx=run.tiles_yx, live_pages=run.live_pages)
         print(f"maps: {len(written)} PNG(s) in {out}")
     print(summary)
     return 0
@@ -451,6 +789,8 @@ def cmd_ladder(args: Any) -> int:
 def cmd_controls(args: Any) -> int:
     run = _load(args)
     rows = _census(run, args)
+    if getattr(args, "targets", None):
+        rows = _targets(rows, str(args.targets))
     config = _config(args)
     out = _out_dir(args)
     report: dict[str, Any] = {}
@@ -494,8 +834,9 @@ def cmd_close(args: Any) -> int:
     out = _out_dir(args)
     certs: dict = {}
     if args.ledger is not None:
-        _header, rows = ledger_mod.read_rows(args.ledger)
-        for row in rows:
+        # STREAMED and last-write-wins: a ledger is gigabytes, and a key
+        # a later generation re-attacked carries more than one row.
+        for row in ledger_mod.iter_rows_latest(args.ledger):
             bits = (row.get("rungs") or {}).get("user_bits")
             if bits is not None and row.get("verdict") in (VERDICT_CERTIFIED, VERDICT_CERTIFIED_LIST):
                 certs[(int(row["page"]), int(row["ty"]), int(row["tx"]),
@@ -643,8 +984,14 @@ def cmd_plane_view_decode(args: Any) -> int:
 
 
 def cmd_report(args: Any) -> int:
-    header, rows = ledger_mod.read_rows(args.ledger)
-    summary = ledger_mod.summarize(rows, header=header)
+    stats = ledger_mod.ReadStats()
+    header = ledger_mod.read_header(args.ledger)
+    summary = ledger_mod.summarize(
+        ledger_mod.iter_rows_latest(args.ledger, stats=stats), header=header)
+    if stats.truncated_lines:
+        print(f"{args.ledger}: {stats.truncated_lines} truncated line(s) "
+              f"skipped — this ledger's pass did not finish",
+              file=sys.stderr)
     if args.out is not None:
         Path(args.out).mkdir(parents=True, exist_ok=True)
         (Path(args.out) / "summary.md").write_text(summary, "utf-8")

@@ -1,0 +1,87 @@
+[
+ {
+  "rid": "r0406",
+  "n": 240,
+  "ok": 181,
+  "zero": 0,
+  "sp": 163,
+  "mean_it": 80.96666666666667,
+  "mismatch": 0
+ },
+ {
+  "rid": "r0550",
+  "n": 240,
+  "ok": 155,
+  "zero": 0,
+  "sp": 130,
+  "mean_it": 75.22083333333333,
+  "mismatch": 0
+ },
+ {
+  "rid": "r0775",
+  "n": 240,
+  "ok": 147,
+  "zero": 0,
+  "sp": 115,
+  "mean_it": 65.15833333333333,
+  "mismatch": 0
+ },
+ [
+  {
+   "rid": "r0547",
+   "ch": "bsc",
+   "equal": true,
+   "fails": 13,
+   "und": 0
+  },
+  {
+   "rid": "r0547",
+   "ch": "awgn",
+   "equal": true,
+   "fails": 12,
+   "und": 0
+  },
+  {
+   "rid": "r0547",
+   "ch": "eras",
+   "equal": true,
+   "fails": 3,
+   "und": 0
+  },
+  {
+   "rid": "r0547",
+   "ch": "robust",
+   "equal": true,
+   "fails": 45,
+   "und": 0
+  },
+  {
+   "rid": "r0700",
+   "ch": "bsc",
+   "equal": true,
+   "fails": 9,
+   "und": 0
+  },
+  {
+   "rid": "r0700",
+   "ch": "awgn",
+   "equal": true,
+   "fails": 4,
+   "und": 0
+  },
+  {
+   "rid": "r0700",
+   "ch": "eras",
+   "equal": true,
+   "fails": 20,
+   "und": 0
+  },
+  {
+   "rid": "r0700",
+   "ch": "robust",
+   "equal": true,
+   "fails": 45,
+   "und": 0
+  }
+ ]
+]

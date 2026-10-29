@@ -9,12 +9,14 @@ is doing work another would also have done.
 
 from __future__ import annotations
 
+import inspect
 import json
+from pathlib import Path
 
 import numpy as np
 import pytest
 
-from analyzer import ledger
+from analyzer import ledger, ledgerio
 from analyzer.types import (VERDICT_CERTIFIED, VERDICT_OPEN, LedgerRow)
 
 
@@ -128,6 +130,81 @@ def test_attribution_union_marginals_and_leave_one_out():
     assert out["first_success_by_rung"] == {"L0": 2, "L1": 1}
 
 
+def test_certifying_arm_round_trips_through_the_ledger(tmp_path):
+    """W8 B1: the driver set it since GAPS-2026-09-03 and README §4
+    claimed it; `row_to_dict` never wrote it."""
+    row = make_row(2, 3, "C", rules=("sum",), verdict=VERDICT_CERTIFIED,
+                   rungs_by_rule={"sum": [("L0", VERDICT_CERTIFIED)]},
+                   certifying=("sum|reroll:head+offset", "L0"))
+    row.certifying_arm = "reroll:head+offset"
+    plain = make_row(2, 4, "C")
+    path = ledger.write_rows(tmp_path / "l.jsonl", [row, plain], {})
+    _header, back = ledger.read_rows(path)
+    assert back[0]["certifying_arm"] == "reroll:head+offset"
+    assert back[1]["certifying_arm"] is None
+    assert ledger.certifying_arms("reroll:head+offset") == (
+        ("head+offset",), True)
+    assert ledger.certifying_arms("head+offset|subtract+offset") == (
+        ("head+offset", "subtract+offset"), False)
+    assert ledger.certifying_arms(None) == ((ledger.UNRECORDED_ARM,), False)
+
+
+def test_attribution_by_arm_counts_rerolls_under_their_arm():
+    def certified(ty, arm):
+        row = make_row(ty, 0, "C", rules=("sum",), verdict=VERDICT_CERTIFIED,
+                       rungs_by_rule={"sum": [("L0", VERDICT_CERTIFIED)]},
+                       certifying=("sum", "L0"))
+        row.certifying_arm = arm
+        return row
+
+    rows = [certified(0, "subtract+offset"),
+            certified(1, "reroll:patch+offset"),
+            certified(2, "patch+offset|subtract+offset"),
+            certified(3, "reroll:patch+offset"),
+            certified(4, None),
+            make_row(5, 0, "C", rules=("sum",),
+                     rungs_by_rule={"sum": [("L0", VERDICT_OPEN)]})]
+    out = ledger.attribution(rows, rule_order=("sum",), rung_order=("L0",),
+                             arm_order=("subtract+offset", "patch+offset"))
+    assert out["union"] == 5
+    assert out["arm_order"] == ["subtract+offset", "patch+offset",
+                                ledger.UNRECORDED_ARM]
+    assert out["first_success_by_arm"] == {"subtract+offset": 2,
+                                           "patch+offset": 3,
+                                           ledger.UNRECORDED_ARM: 1}
+    assert out["only_by_arm"] == {"subtract+offset": 1, "patch+offset": 2,
+                                  ledger.UNRECORDED_ARM: 1}
+    assert out["reroll_by_arm"] == {"subtract+offset": 0, "patch+offset": 2,
+                                    ledger.UNRECORDED_ARM: 0}
+    text = ledger.summarize(rows, header={"rules": ["sum"], "rungs": ["L0"],
+                                          "arms": ["subtract+offset",
+                                                   "patch+offset"]})
+    assert "| arm | first-success | only this arm | via re-roll |" in text
+    assert "| patch+offset | 3 | 2 | 2 |" in text
+    assert "FIRST-SUCCESS marginal" in text
+
+
+def test_the_header_records_knobs_reroll_and_reroll_rungs():
+    from types import SimpleNamespace
+    from analyzer import fixedpoint as fp
+    from analyzer.types import AnalyzerConfig, Exposure
+    inputs = SimpleNamespace(format_ref="L:x@1x1", run_dir="/tmp/run",
+                             captures=(), provenance={"a": 1})
+    config = AnalyzerConfig(knobs={"branches": "state",
+                                   "patch_samples_per_cell": 16,
+                                   "weights": np.arange(3)},
+                            reroll=False, reroll_rungs=("L0",))
+    header = fp._header(inputs, config, Exposure(), 7)
+    assert header["knobs"] == {"branches": "state",
+                               "patch_samples_per_cell": 16,
+                               "weights": [0, 1, 2]}
+    assert header["reroll"] is False and header["reroll_rungs"] == ["L0"]
+    json.dumps(ledger.jsonable(header))
+    default = fp._header(inputs, AnalyzerConfig(), Exposure(), 0)
+    assert default["knobs"] == {} and default["reroll"] is True
+    assert default["reroll_rungs"] == ["L0", "L1", "L2"]
+
+
 def test_attribution_ignores_the_user_bits_slot():
     row = make_row(1, 1, rules=("sum",), verdict=VERDICT_CERTIFIED,
                    rungs_by_rule={"sum": [("L0", VERDICT_CERTIFIED)]},
@@ -218,6 +295,67 @@ def test_render_maps_writes_the_verdict_png_per_plane(tmp_path):
 
 def test_render_maps_on_no_rows_writes_nothing(tmp_path):
     assert ledger.render_maps([], tmp_path) == []
+
+
+def _on_page(page: int, *args, **kwargs):
+    row = make_row(*args, **kwargs)
+    row.page = page
+    return row
+
+
+def test_render_maps_draws_each_duplex_FACE_and_not_their_blend(tmp_path):
+    """Review F14: the two faces of sheet J are both 53x37, so a map
+    that groups by stream alone drew one picture of two pages — and
+    which verdict survived a tile was the FOLD ORDER of the rows."""
+    rows = [_on_page(0, 0, 0, "C", verdict=VERDICT_CERTIFIED),
+            _on_page(1, 0, 0, "C")]
+    written = ledger.render_maps(rows, tmp_path, tiles_yx=(1, 1), scale=1)
+    assert sorted(path.name for path in written) == ["verdict-p0-C.png",
+                                                     "verdict-p1-C.png"]
+    from PIL import Image
+    pixels = {}
+    for path in written:
+        with Image.open(path) as image:
+            pixels[path.name] = image.convert("RGB").getpixel((0, 0))
+    assert pixels["verdict-p0-C.png"] == ledger._VERDICT_RGB["certified"]
+    assert pixels["verdict-p1-C.png"] == ledger._VERDICT_RGB["open"]
+
+    # and the pictures do not depend on the order the rows arrive in
+    reversed_dir = tmp_path / "reversed"
+    for path in ledger.render_maps(list(reversed(rows)), reversed_dir,
+                                   tiles_yx=(1, 1), scale=1):
+        with Image.open(path) as image:
+            assert image.convert("RGB").getpixel((0, 0)) == pixels[path.name]
+
+
+def test_render_maps_keeps_the_bare_name_for_a_single_page_pass(tmp_path):
+    """Every sheet-H and sheet-I artefact the record names is
+    `verdict-{stream}.png`; a one-page pass keeps it."""
+    written = ledger.render_maps(
+        [_on_page(0, 0, 0, "C"), _on_page(0, 1, 1, "Y")],
+        tmp_path, tiles_yx=(4, 4), scale=2)
+    assert sorted(path.name for path in written) == ["verdict-C.png",
+                                                     "verdict-Y.png"]
+
+
+def test_a_duplex_pass_spells_the_face_even_when_only_one_survives(tmp_path):
+    """A pass whose rows are all on page 1 is still a duplex pass.
+
+    The rows alone said "one page" and the maps took page 0's names; the
+    RUN knows better, and `live_pages` is how it says so.  Without it, a
+    page above 0 among the rows is the fallback that says the same.
+    """
+    rows = [_on_page(1, 0, 0, "C")]
+    told = ledger.render_maps(rows, tmp_path / "told", tiles_yx=(1, 1),
+                              scale=1, live_pages=(0, 1))
+    assert [path.name for path in told] == ["verdict-p1-C.png"]
+    guessed = ledger.render_maps(rows, tmp_path / "guessed", tiles_yx=(1, 1),
+                                 scale=1)
+    assert [path.name for path in guessed] == ["verdict-p1-C.png"]
+    # and a run that really has one page keeps the bare name
+    alone = ledger.render_maps([_on_page(0, 0, 0, "C")], tmp_path / "alone",
+                               tiles_yx=(1, 1), scale=1, live_pages=(0,))
+    assert [path.name for path in alone] == ["verdict-C.png"]
 
 
 def test_read_rows_tolerates_blank_lines(tmp_path):
@@ -328,3 +466,243 @@ def test_the_summary_carries_the_independent_agreement_section():
     assert "contradictions refused: 1" in text
     assert "| stream | band | rows | certified | corroborated |" in text[
         text.index("## Stream x band"):]
+
+
+# --------------------------------------- the live ledger (2026-09-13)
+
+def _writer_row(ty: int, tx: int, stream: str = "Y", **kw):
+    return make_row(ty, tx, stream, **kw)
+
+
+def test_the_header_is_on_disk_before_the_first_row(tmp_path):
+    """Item 1: a pass killed at hour three must leave a readable file."""
+    path = tmp_path / "ledger.jsonl"
+    writer = ledger.LedgerWriter(path, {"seed": 7, "rules": ["sum"]})
+    assert path.read_text("utf-8").count("\n") == 1
+    assert writer.mints_path == tmp_path / ledger.MINTS_NAME
+    assert json.loads(path.read_text("utf-8"))["partial"] is True
+    writer.append(_writer_row(1, 2))
+    assert path.read_text("utf-8").count("\n") == 2      # flushed per line
+    writer.append(_writer_row(3, 4))
+    header, rows = ledger.read_rows(path)
+    assert header["seed"] == 7 and len(rows) == 2
+    assert [row["row_seq"] for row in rows] == [0, 1]
+    writer.finish({"seed": 7, "n_rows": 2, "stop_reason": "fixed_point"})
+    merged = ledger.read_header(path)
+    assert merged["stop_reason"] == "fixed_point" and merged["n_rows"] == 2
+    assert merged["partial"] is False and merged["type"] == "header"
+
+
+def test_a_partial_ledger_says_so_and_a_finished_one_does_not(tmp_path):
+    partial = ledger.LedgerWriter(tmp_path / "a.jsonl", {"seed": 1})
+    partial.append(_writer_row(0, 0))
+    assert ledger.read_header(tmp_path / "a.jsonl")["partial"] is True
+    partial.close()                       # killed: no footer, ever
+    stats = ledger.ReadStats()
+    assert len(list(ledger.iter_rows(tmp_path / "a.jsonl", stats=stats))) == 1
+    assert stats.partial is True and stats.footer == {}
+
+
+def test_a_re_attacked_key_appends_and_every_reader_takes_the_last(tmp_path):
+    """Item 1: a flushed line cannot be rewritten, so the LAST row wins."""
+    path = tmp_path / "ledger.jsonl"
+    writer = ledger.LedgerWriter(path, {"seed": 1})
+    first = _writer_row(2, 3, "C")
+    first.diag = {"attempts": 1}
+    second = _writer_row(2, 3, "C", verdict=VERDICT_CERTIFIED,
+                         rules=("sum",),
+                         rungs_by_rule={"sum": [("L0", VERDICT_CERTIFIED)]},
+                         certifying=("sum", "L0"))
+    second.diag = {"attempts": 2}
+    other = _writer_row(4, 4, "M")
+    other.diag = {"attempts": 1}
+    for row in (first, other, second):
+
+        writer.append(row)
+    writer.finish({"n_rows": 2})
+
+    assert len(list(ledger.iter_rows(path))) == 3
+    stats = ledger.ReadStats()
+    latest = list(ledger.iter_rows_latest(path, stats=stats))
+    assert stats.rows == 3 and stats.superseded == 1
+    assert [(row["ty"], row["tx"], row["diag"]["attempts"]) for row in latest] \
+        == [(4, 4, 1), (2, 3, 2)]
+    assert latest[-1]["verdict"] == VERDICT_CERTIFIED
+    # the summary counts KEYS, not attempts
+    assert "Order-free union: 1 tile-stream(s)" in ledger.summarize(
+        ledger.iter_rows_latest(path), header={})
+
+
+def test_a_truncated_last_line_is_skipped_and_counted(tmp_path):
+    """What a `kill -9` leaves: the row it was writing, cut in half."""
+    path = tmp_path / "ledger.jsonl"
+    writer = ledger.LedgerWriter(path, {"seed": 1})
+    writer.append(_writer_row(0, 0, "C"))
+    writer.append(_writer_row(0, 1, "C"))
+    writer.close()
+    whole = path.read_text("utf-8")
+    path.write_text(whole[:-40], "utf-8")            # mid-row, no newline
+
+    stats = ledger.ReadStats()
+    rows = list(ledger.iter_rows_latest(path, stats=stats))
+    assert [row["tx"] for row in rows] == [0]
+    assert stats.truncated_lines == 1 and stats.rows == 1
+    header_stats = ledger.ReadStats()
+    header, back = ledger.read_rows(path, stats=header_stats)
+    assert header["seed"] == 1 and len(back) == 1
+    assert header_stats.truncated_lines == 1
+    assert ledger.read_header(path)["partial"] is True
+
+
+def test_the_mint_file_is_a_ledger_in_miniature(tmp_path):
+    """Item 2: one line per certificate, readable by every ledger reader."""
+    writer = ledger.LedgerWriter(tmp_path / "ledger.jsonl", {"seed": 3})
+    writer.mint({"page": 0, "ty": 1, "tx": 2, "stream_id": "C",
+                 "verdict": VERDICT_CERTIFIED, "certifying_rung": "L0",
+                 "rungs": {"user_bits": np.zeros(4, np.uint8)}})
+    writer.finish({"n_rows": 0})
+    rows = list(ledger.iter_rows(writer.mints_path))
+    assert len(rows) == 1 and rows[0]["mint"] is True
+    assert rows[0]["rungs"]["user_bits"] == [0, 0, 0, 0]
+    assert ledger.read_header(writer.mints_path)["seed"] == 3
+    assert ledger.read_header(writer.mints_path)["n_mints"] == 1
+
+
+def test_slim_row_keeps_the_report_and_drops_the_megabyte(tmp_path):
+    row = make_row(1, 1, "C", rules=("sum",), verdict=VERDICT_CERTIFIED,
+                   rungs_by_rule={"sum": [("L0", VERDICT_CERTIFIED)]},
+                   certifying=("sum", "L0"))
+    row.evidence = {"cap/l0|subtract": {"n_labels": 120}}
+    row.combined = {"sum": {"mean_abs": 3.0}}
+    row.rungs["sum"][0]["detail"] = {"hard_packed_b64": "A" * 683}
+    slim = ledger.slim_row(row)
+    assert "evidence" not in slim and "combined" not in slim
+    assert set(slim["rungs"]["sum"][0]) == {"rung", "verdict",
+                                            "unsat_at_exit"}
+    assert "user_bits" not in slim["rungs"]
+
+    assert slim["verdict"] == VERDICT_CERTIFIED
+    assert slim["rungs"]["sum"][0]["unsat_at_exit"] == 0
+    assert ledger.attribution([slim])["union"] == 1
+
+
+def test_opening_a_writer_keeps_the_previous_pass_aside(tmp_path):
+    """A streamed writer opens BEFORE the pass runs, so it may not
+    truncate: a second pass into one out dir would otherwise destroy the
+    first's ledger and mints before doing any work (the batch writer it
+    replaced only overwrote at the end)."""
+    path = tmp_path / "ledger.jsonl"
+    first = ledger.LedgerWriter(path, {"seed": 1})
+    first.append(_writer_row(0, 0, "C"))
+    first.mint({"page": 0, "ty": 0, "tx": 0, "stream_id": "C",
+                "verdict": VERDICT_CERTIFIED,
+                "rungs": {"user_bits": np.zeros(4, np.uint8)}})
+    first.finish({"n_rows": 1})
+
+    second = ledger.LedgerWriter(path, {"seed": 2})
+    assert set(second.kept_aside) == {
+        tmp_path / "ledger.jsonl.bak", tmp_path / "mints.jsonl.bak"}
+    second.finish({"n_rows": 0})
+    # the first pass's record survives, whole, under .bak
+    header, rows = ledger.read_rows(tmp_path / "ledger.jsonl.bak")
+    assert header["seed"] == 1 and len(rows) == 1
+    assert len(list(ledger.iter_rows(tmp_path / "mints.jsonl.bak"))) == 1
+    assert ledger.read_header(path)["seed"] == 2
+    assert list(ledger.iter_rows(path)) == []
+
+
+def test_the_mint_file_is_named_after_its_ledger(tmp_path):
+    """`read` and `ladder` write into the SAME out dir by default, so one
+    fixed mint name would have had the two passes share a file."""
+    assert ledger.mints_beside("x/ledger.jsonl") == Path("x/mints.jsonl")
+    assert ledger.mints_beside("x/ledger-read.jsonl") == \
+        Path("x/mints-read.jsonl")
+    assert ledger.mints_beside("x/census.jsonl") == Path("x/census-mints.jsonl")
+    ladder = ledger.LedgerWriter(tmp_path / "ledger.jsonl", {"seed": 1})
+    read = ledger.LedgerWriter(tmp_path / "ledger-read.jsonl", {"seed": 1})
+    assert ladder.mints_path != read.mints_path
+    assert read.kept_aside == ()                 # it took nothing of the other's
+    ladder.finish({}), read.finish({})
+
+
+def test_a_truncated_last_line_that_ends_in_a_brace_is_still_truncated(
+        tmp_path):
+    """The cheap key scan reads line HEADS, so a cut that lands just
+    after a nested `}` looks complete to it — and the key's earlier,
+    COMPLETE row would then be suppressed as superseded and lost.  The
+    last line is parsed for exactly that reason."""
+    path = tmp_path / "ledger.jsonl"
+    writer = ledger.LedgerWriter(path, {"seed": 1})
+    writer.append(_writer_row(0, 0, "C"))            # the complete one
+    writer.append(_writer_row(0, 0, "C"))            # the re-attack, cut
+    writer.close()
+    lines = path.read_text("utf-8").splitlines()
+    cut = lines[-1]
+    cut = cut[:cut.index('"diag"')] + '"diag": {"seconds": 1.0}'
+    assert cut.endswith("}") and not cut.endswith("}}")
+    path.write_text("\n".join(lines[:-1] + [cut]) + "\n", "utf-8")
+
+    stats = ledger.ReadStats()
+    rows = list(ledger.iter_rows_latest(path, stats=stats))
+    assert len(rows) == 1 and rows[0]["row_seq"] == 0
+    assert stats.truncated_lines == 1 and stats.superseded == 0
+
+
+def test_a_torn_INTERIOR_line_does_not_take_the_complete_row_with_it(
+        tmp_path):
+    """Review §6, 2026-09-13: a tear anywhere, not only at the end.
+
+    The key scan used to count any line that ended in `}`, and repair
+    only the LAST one — so a torn line in the MIDDLE counted as a second
+    row for its key, the complete row before it was dropped as
+    superseded, and the torn one did not parse either.  The key
+    vanished.  Both passes agree on whole rows now: a row line ends in
+    `"row_seq": <n>}` or it is decoded to find out.
+    """
+    path = tmp_path / "ledger.jsonl"
+    writer = ledger.LedgerWriter(path, {"seed": 1})
+    writer.append(_writer_row(0, 0, "C"))            # the complete one
+    writer.append(_writer_row(0, 0, "C"))            # the re-attack, cut
+    writer.append(_writer_row(0, 1, "C"))            # and a later key
+    writer.finish({"n_rows": 3})
+    lines = path.read_text("utf-8").splitlines()
+    torn = lines[2]
+    torn = torn[:torn.index('"diag"')] + '"diag": {"seconds": 1.0}'
+    assert torn.endswith("}") and not torn.endswith("}}")
+    path.write_text("\n".join(lines[:2] + [torn] + lines[3:]) + "\n", "utf-8")
+
+    stats = ledger.ReadStats()
+    rows = list(ledger.iter_rows_latest(path, stats=stats))
+    assert [(row["tx"], row["row_seq"]) for row in rows] == [(0, 0), (1, 2)]
+    assert stats.truncated_lines == 1 and stats.superseded == 0
+
+
+def test_the_one_tear_the_scan_does_not_catch_is_the_one_it_cannot_be_dealt(
+        tmp_path):
+    """M5: a head CONCATENATED with the next row's tail, and the writer.
+
+    Both patterns match such a line, so it counts as the first key's and
+    then fails to parse — the first key's complete row goes with it.
+    The docstring says so rather than paying 384 us a line to close it,
+    and what makes that safe is the writer: `"w"`, one process, no
+    resume, so no concatenation can be written.  Both halves are pinned
+    here, the behaviour and the reason it is out of reach.
+    """
+    path = tmp_path / "ledger.jsonl"
+    writer = ledger.LedgerWriter(path, {"seed": 1})
+    writer.append(_writer_row(0, 0, "C"))            # the complete one
+    writer.append(_writer_row(0, 0, "C"))            # the re-attack
+    writer.append(_writer_row(0, 1, "C"))
+    writer.finish({"n_rows": 3})
+    lines = path.read_text("utf-8").splitlines()
+    glued = lines[2][:lines[2].index('"diag"')] + lines[3]
+    assert ledgerio._ROW_HEAD.match(glued) is not None
+    assert ledgerio._ROW_TAIL.search(glued[-ledgerio._ROW_TAIL_WINDOW:])
+    assert glued.count('{"type": "row"') == 2       # what would catch it
+
+    path.write_text("\n".join(lines[:2] + [glued]) + "\n", "utf-8")
+    rows = list(ledger.iter_rows_latest(path))
+    assert [(row["tx"], row["row_seq"]) for row in rows] == []
+
+    source = inspect.getsource(ledgerio.LedgerWriter)
+    assert 'open(self.path, "w"' in source

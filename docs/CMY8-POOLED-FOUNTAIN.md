@@ -260,4 +260,27 @@ the tiers of §2.3 become weighted, the reserve grows to B·Z solves, the
 dead-Y ceiling rises and the any-one-plane ceiling falls. Ruled (seven
 rulings, §9 there) and built on branch `cmy8-column-groups` for src/holo
 generation + the holo3 receiver, sim-qualified; the v1 receiver and
-holo2 untouched; nothing printed.
+holo2 untouched; nothing printed. Holo2 was retired 2026-09-05 without
+ever taking this up; see CMY8-COLUMN-GROUPS.md §6/§9 for the record.
+
+## 7. Second customer — the cmy family at n = 2 (BUILT 2026-10-11, not printed)
+
+The cmy family (docs/CMY-DESIGN.md v0.3; FORMAT-SPACE §19; HOLO-DESIGN
+§13.38; branch `cmy-generator`, commits 128ed3cb and 6926f6ef) reuses
+this pool unchanged with n_streams = 2: its two streams are the cell's
+label bits `hi` and `lo`, not planes, so esi = counter·2 + s (s = 0 hi,
+1 lo) on domains 7/8 at aux 0, stream-exact per-(block, page, stream)
+quotas, k_total = 2·k_meta with k_meta in the metadata K field, and the
+metadata equation at LFSR index counter·2 + s (§2.4). Decimation by 2
+keeps the degree-24 LFSR primitive, so 24 consecutive same-parity
+indices reach rank 24: recovery at 12 healthy tiles or 24 with one
+stream dead, trust (48 distinct equations) at 24 or 48 — pinned in
+tests/holo/test_pooled_format.py. Blocks and the reserve count the pool
+(B = ceil(2·k_meta / 16384); reserve 16 / 17 / 17 at k_meta 8,192 /
+8,193 / 10,000 on a uniform pair, tests/holo/test_cmy_emission.py). The
+third tier of §2.3 is a dead-STREAM tier for cmy and is reported so: a
+dead Y loses `lo`, a dead M loses `hi`, a dead C loses both. Uneven
+pairs pool through the column-group successor (§6). `fountain_aux` is
+None on both streams; domains 14/15 are not used. Nothing here changes
+for cmy8; F14 holds for cmy too — in no catalog row, PROVISIONAL,
+nothing printed.

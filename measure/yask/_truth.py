@@ -146,8 +146,8 @@ def check_projection_against_field(row: object, geometry: object,
     ``certified_projection`` is fed the GT user bits of every stream and
     the result compared to the emitted field over the whole 64x64 tile.
     """
-    from holo3.data import Certificate
-    from holo3.plugins.color_sites import certified_projection
+    from holo.receiver.data import Certificate
+    from holo.receiver.plugins.color_sites import certified_projection
 
     n_tiles = 0
     n_cells = 0

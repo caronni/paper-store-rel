@@ -804,3 +804,24 @@ confirmation of the 137.5 emission ceiling; multi-scan office passes;
 AltaLink PJL/PCL recon if 1200 is ever wanted (PS path closed); engine-2
 simulator profile beyond PlaneParams (screen family, 30 mm ripple);
 docs/LAYERS.md registry rows for the cross-engine measurements.
+
+## Addendum 2026-10-11 — the two fullpage pages: recipe recovered, never printed
+
+The two full-A4 pages dated 2026-07-07 (their headers name 007.9's B1
+kcell-c2 and A3 7-state c3 rows) are published in the evidence archive's
+paperholo-era release as
+`007-office-disc/fullpage-bw-kcell-c2/jobs/fullpage-bw-kcell-c2.ps` and
+`007-office-disc/fullpage-color-a3-7st-c3/jobs/fullpage-color-a3-7st-c3.ps`.
+They were generated on 2026-07-07 at 18:22 CEST by a Python heredoc over
+`paperholo.encodings` at commit cb2a8ffb, the payload symbols drawn by
+`np.random.default_rng(20260707).integers(...)` (no os.urandom); their
+manifests carry neither the seed nor the commit. On 2026-10-10 the recipe,
+re-run against cb2a8ffb's modules, reproduced both PostScript files
+byte-identically — sha256
+`b3eb799934ca6df42d7a7eabd6131ae64ae9af8435ef47299c4f289ad4337c22` and
+`94c773df944d68a6df0ab996e81ec69ae5bbf9b32a29ca137439e80510e6b5c5` — and both
+payload arrays; the published payload arrays stay as they are. The pages
+were NEVER printed. The regeneration driver is committed beside this log
+as `experiments/007-office-disc/regen_fullpage.py`, and the tree it needs
+is tagged `evidence/fullpage-20260707@cb2a8ffb`. (evidence line,
+docs/EVIDENCE-ARCHIVE-2026-10-08.md §8a)

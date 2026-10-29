@@ -1,74 +1,89 @@
-"""Receiver adapter tests for the addressed one-bit metadata channel.
+"""The addressed one-bit metadata channel, and what a close makes of it.
 
-These use certificate-shaped records because Track 3 owns certificate
-construction and is being rewritten independently; the close adapter's only
-metadata inputs are the certified counter and bit.
+Gate E re-home: the vehicle is `holo.format.metadata` (the algebra) plus
+`holo.receiver.format.close` over generator-minted certificates — the retired v1
+`receive.fountain_close` was a wrapper around exactly those two.
 """
-from types import SimpleNamespace
+from __future__ import annotations
 
 import numpy as np
 import pytest
 
-from holo.devices.profiles import make_spec
+from holo.core import fountain
 from holo.format import envelope, metadata
-from holo.receive import fountain_close
+from holo.format.resolve import resolve_format_ref
+from holo.receiver.data import IntegrityError
+from holo.receiver.format import close
+
+from _receive_free import certificate, holo3_row
+
+FORMAT_REF = "c3-k-r0550@7x7"
+SPEC = resolve_format_ref(FORMAT_REF)
+ROW = holo3_row(FORMAT_REF)
 
 
-SPEC = make_spec("c3-r0550")
-
-
-def _certificates(word, counters):
+def _certificates(word, counters, symbols=None):
+    """Certificates carrying the metadata bit the printed tile would."""
     counters = np.asarray(counters, dtype=np.int64)
     bits = metadata.tile_bits(word, counters)
-    return [SimpleNamespace(counter=int(counter), metadata_bit=int(bit),
-                            stream_id="main")
-            for counter, bit in zip(counters, bits)]
+    zero = np.zeros(SPEC.symbol_bits, np.uint8)
+    return [certificate(ROW, int(counter), "main", int(bit),
+                        zero if symbols is None else symbols[index])
+            for index, (counter, bit) in enumerate(zip(counters, bits))]
+
+
+def _counter_of(cert) -> int:
+    return (cert.page * ROW.tiles_per_page
+            + cert.ty * ROW.tiles_yx[1] + cert.tx)
+
+
+def _decode(certs):
+    """The metadata algebra alone, read back off the same certificates."""
+    return metadata.decode_metadata(
+        (_counter_of(cert), int(cert.user_bits[0])) for cert in certs)
+
+
+def _flip_metadata_bit(certs, index: int) -> None:
+    cert = certs[index]
+    certs[index] = certificate(
+        ROW, _counter_of(cert), "main", int(cert.user_bits[0]) ^ 1,
+        np.asarray(cert.user_bits[1:], np.uint8))
 
 
 def test_close_adapter_recovers_from_hundreds_of_addressed_bits():
     word = metadata.encode_metadata(0, 99_083)
     counters = np.random.default_rng(9).choice(
         metadata.MAX_COUNTER, size=300, replace=False)
-    version, k_total, diagnostics = \
-        fountain_close.metadata_from_certificates(
-            _certificates(word, counters), SPEC)
-    assert (version, k_total) == (0, 99_083)
-    assert diagnostics["ok"] is True
-    assert diagnostics["metadata_rank"] == 24
-    assert diagnostics["n_unique_metadata_counters"] == 300
-
-
-def test_close_adapter_reports_rank_and_check_shortfalls():
-    word = metadata.encode_metadata(0, 99_083)
-    version, k_total, diagnostics = \
-        fountain_close.metadata_from_certificates(
-            _certificates(word, np.arange(10)), SPEC)
-    assert version is None and k_total is None
-    assert diagnostics["state"] == "incomplete"
-    assert diagnostics["metadata_rank_shortfall"] == 14
-    assert diagnostics["metadata_check_shortfall"] == 38
+    certs = _certificates(word, counters)
+    assert close.metadata_from_certificates(certs, ROW) == (0, 99_083,
+                                                            "ready")
+    decoded = _decode(certs)
+    assert decoded.ok is True
+    assert decoded.rank == 24
+    assert decoded.n_unique_counters == 300
 
 
 def test_close_adapter_refuses_unsupported_version_without_more_captures():
     word = metadata.encode_metadata(1, 99_083)
     certs = _certificates(word, np.arange(48))
-    version, k_total, diagnostics = \
-        fountain_close.metadata_from_certificates(certs, SPEC)
-    assert version is None and k_total is None
-    assert diagnostics["state"] == "unsupported"
-    assert diagnostics["decoded_version"] == 1
+    assert close.metadata_from_certificates(certs, ROW) == (1, None,
+                                                            "unsupported")
 
-    result = fountain_close.close_volume(certs, SPEC)
-    assert not result.verified and result.payload is None
-    assert result.status != "open"
-    assert result.diagnostics["state"] == "unsupported"
-    assert result.reason.startswith("metadata unsupported:")
+    result = close.close_volume(certs, ROW)
+    assert result.payload is None
+    assert result.status == "unsupported"
+    assert result.reason == "unsupported metadata version 1"
 
 
-def test_close_adapter_refuses_nonzero_canonical_padding(monkeypatch):
+def test_close_adapter_refuses_nonzero_canonical_padding():
+    """One bit set past the envelope is the whole refusal — no monkeypatch.
+
+    The v1 test stubbed the receiver's decoder build; the pinned law is
+    the padding gate, so mint the offending source and let the real close
+    reach it through the fountain.
+    """
     payload = b"canonical padding"
     k_total = envelope.source_symbol_count(len(payload), SPEC.symbol_bits)
-    certs = _certificates(metadata.encode_metadata(0, k_total), np.arange(48))
     envelope_bits = np.unpackbits(np.frombuffer(
         envelope.wrap(payload), dtype=np.uint8))
     source = np.zeros(k_total * SPEC.symbol_bits, dtype=np.uint8)
@@ -76,63 +91,57 @@ def test_close_adapter_refuses_nonzero_canonical_padding(monkeypatch):
     source[envelope_bits.size] = 1
     source = source.reshape(k_total, SPEC.symbol_bits)
 
-    class _SolvedDecoder:
-        def try_solve(self):
-            return source
-
-        def rank_status(self):
-            return [{"block": 0, "needed": k_total,
-                     "have": k_total + 16, "rank": k_total,
-                     "solved": True}]
-
-    monkeypatch.setattr(
-        fountain_close, "_build_decoder",
-        lambda certificates, spec, k: (_SolvedDecoder(), len(certs)))
-    result = fountain_close.close_volume(certs, SPEC)
-    assert not result.verified and result.payload is None
-    assert result.reason == "nonzero bits in canonical envelope padding"
-    assert result.diagnostics["padding_nonzero"] is True
+    counters = np.arange(48)
+    code = fountain.VolumeCode(k_total, SPEC.symbol_bits, SPEC.seed,
+                               tiles_per_page=SPEC.tiles_per_page)
+    packed = np.packbits(source, axis=1)
+    certs = _certificates(
+        metadata.encode_metadata(0, k_total), counters,
+        code.encode_symbols(packed, counters.astype(np.int64)))
+    result = close.close_volume(certs, ROW)
+    assert result.status == "integrity_failure"
+    assert result.payload is None
+    assert "nonzero padding" in (result.reason or "")
 
 
 def test_close_adapter_rejects_an_inconsistent_certified_system():
     word = metadata.encode_metadata(0, 99_083)
     certs = _certificates(word, np.arange(48))
-    certs[-1].metadata_bit ^= 1
-    with pytest.raises(fountain_close.MetadataIntegrityError) as excinfo:
-        fountain_close.metadata_from_certificates(certs, SPEC)
-    assert excinfo.value.diagnostics["metadata_inconsistent"] is True
+    _flip_metadata_bit(certs, -1)
+    with pytest.raises(IntegrityError, match="inconsistent"):
+        close.metadata_from_certificates(certs, ROW)
 
 
 def test_metadata_progress_publishes_k_without_a_fountain_solve():
-    """v0.32: `decode --complete` still knows K — it is the metadata word."""
+    """`decode --complete` still knows K — it is the metadata word."""
     word = metadata.encode_metadata(0, 99_083)
     certs = _certificates(word, np.arange(64))
-    progress = fountain_close.metadata_progress(certs, SPEC)
-    assert progress.k_total == 99_083
-    assert progress.metadata.rank == 24
-    assert progress.metadata.rank_shortfall == 0
-    assert progress.metadata.check_shortfall == 0
-    assert progress.metadata.inconsistent is False
-    # §10.4 count-only projection: distinct ESIs per block, and NOTHING that
-    # needs a decoder — rank and solved stay deferred, never faked as zero.
-    assert progress.symbols_used == 64
-    assert progress.blocks and sum(row.have for row in progress.blocks) == 64
-    assert all(row.rank == 0 and row.solved is False
-               for row in progress.blocks)
-    assert all(row.needed > 0 for row in progress.blocks)
+    ready, k_total, blocks = close.close_count_progress(certs, ROW)
+    assert not ready
+    assert k_total is not None
+    decoded = _decode(certs)
+    assert decoded.k == 99_083
+    assert (decoded.rank, decoded.rank_shortfall) == (24, 0)
+    assert decoded.check_shortfall == 0
+    assert decoded.inconsistent is False
+    # The count path publishes K and the per-block ESI counts without
+    # solving.  holo3 reports the decoder's real rank here, so the v1
+    # count-only "rank stays 0" projection has no counterpart — the
+    # surviving law is that K arrives from the word, unsolved.
+    assert blocks and sum(row.have for row in blocks) == 64
+    assert all(row.solved is False for row in blocks)
+    assert all(row.needed > 0 for row in blocks)
 
 
 def test_metadata_progress_reports_shortfall_and_never_raises():
     """An observer path must not raise: integrity failure is a fact to show."""
     word = metadata.encode_metadata(0, 99_083)
-    early = fountain_close.metadata_progress(
-        _certificates(word, np.arange(10)), SPEC)
-    assert early.k_total is None
-    assert early.metadata.rank_shortfall == 14
-    assert early.metadata.check_shortfall == 38
+    early = _certificates(word, np.arange(10))
+    assert close.close_count_progress(early, ROW) == (False, None, ())
+    assert _decode(early).rank_shortfall == 14
+    assert _decode(early).check_shortfall == 38
 
     certs = _certificates(word, np.arange(48))
-    certs[-1].metadata_bit ^= 1
-    broken = fountain_close.metadata_progress(certs, SPEC)
-    assert broken.k_total is None
-    assert broken.metadata.inconsistent is True
+    _flip_metadata_bit(certs, -1)
+    assert close.close_count_progress(certs, ROW) == (True, None, ())
+    assert _decode(certs).inconsistent is True

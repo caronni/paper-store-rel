@@ -27,7 +27,13 @@ Geometry seam contract:
 
 Bitmaps are bool/uint8 arrays, nonzero = ink. Rows are packed MSB-first,
 each row padded to a byte boundary (the `imagemask` convention), emitted
-through ASCIIHexDecode.
+through ASCIIHexDecode.  Two additive leaves serve the probe sheet of
+docs/CMY-PROBE-M281.md: ``put_bitmap(..., rgb=, filt=)`` paints a mask in
+one DeviceRGB colour and/or through ASCII85Decode (the defaults emit the
+K bytes unchanged), and ``put_indexed_image`` paints one
+``[/Indexed /DeviceRGB hival <lookup>]`` image of 1/2/4/8-bit samples, the
+e041 image block (experiments/041-m281-screen-routes/ps_mixture.py) with
+its HP calls left to the caller's ``prelude``.
 
 Job identity: the caller passes a sha256-derived 8-hex-char ``jobid``
 (computed over whatever identifies the artifact — never computed here);
@@ -35,12 +41,18 @@ it is embedded in the DSC title as ``J=<jobid>``.
 """
 from __future__ import annotations
 
+import base64
+from collections.abc import Sequence
+
 import numpy as np
 
 HW_DPI = 600        # the frozen device dot grid (Layer-0 freeze; F15)
 A4_DOTS_XY = (4960, 7016)  # the layout A4 raster (x, y) at 600 dpi
 
 _HEX_LINE_CHARS = 128
+_A85_LINE_CHARS = 128
+_FILTERS = {"ASCIIHex": "/ASCIIHexDecode", "ASCII85": "/ASCII85Decode"}
+_INDEX_BPC = (1, 2, 4, 8)
 _JOBID_ALPHABET = set("0123456789abcdef")
 
 
@@ -76,9 +88,55 @@ def pack_cmyk_rows(plane_bits: np.ndarray) -> bytes:
     return pack_bits_rows(cmyk.reshape(h, w * 4))
 
 
+def pack_index_rows(indices: np.ndarray, bpc: int) -> bytes:
+    """Pack 2-D sample values ``< 2**bpc`` MSB-first per row, each row
+    padded to a byte (the ImageType 1 sample layout)."""
+    raw = np.asarray(indices)
+    if raw.ndim != 2 or raw.shape[0] == 0 or raw.shape[1] == 0:
+        raise ValueError(f"expected non-empty 2-D samples, got shape {raw.shape}")
+    if bpc not in _INDEX_BPC:
+        raise ValueError(f"bits per component must be one of {_INDEX_BPC}")
+    if raw.dtype.kind not in "biu" or raw.min() < 0 or raw.max() >= 1 << bpc:
+        raise ValueError(f"samples must be integers in [0, {(1 << bpc) - 1}]")
+    v = raw.astype(np.uint8)
+    if bpc == 8:
+        return v.tobytes()
+    per = 8 // bpc
+    h, w = v.shape
+    padded = np.zeros((h, -(-w // per) * per), dtype=np.uint8)
+    padded[:, :w] = v
+    shifts = (bpc * np.arange(per - 1, -1, -1)).astype(np.uint8)
+    groups = padded.reshape(h, -1, per) << shifts
+    return np.bitwise_or.reduce(groups, axis=2).astype(np.uint8).tobytes()
+
+
 def _hex_lines(packed: bytes) -> list[str]:
     h = packed.hex()
     return [h[i:i + _HEX_LINE_CHARS] for i in range(0, len(h), _HEX_LINE_CHARS)]
+
+
+def _a85_lines(packed: bytes) -> list[str]:
+    """e041's ``a85_lines`` as text lines: 'z' groups, 128 columns, a
+    leading space on a line starting '%', '~>' closing the last line."""
+    enc = base64.a85encode(packed, wrapcol=_A85_LINE_CHARS, adobe=False)
+    lines = [(" " + ln if ln.startswith("%") else ln)
+             for ln in enc.decode("ascii").split("\n")]
+    lines[-1] += "~>"
+    return lines
+
+
+def _data_lines(packed: bytes, filt: str) -> list[str]:
+    if filt not in _FILTERS:
+        raise ValueError(f"filt must be one of {sorted(_FILTERS)}")
+    return _hex_lines(packed) + [">"] if filt == "ASCIIHex" else _a85_lines(packed)
+
+
+def _rgb_triple(rgb: Sequence[int]) -> tuple[int, int, int]:
+    t = tuple(rgb)
+    if len(t) != 3 or not all(isinstance(c, (int, np.integer)) and 0 <= c <= 255
+                              for c in t):
+        raise ValueError(f"rgb must be three integers in [0, 255], got {rgb!r}")
+    return int(t[0]), int(t[1]), int(t[2])
 
 
 def _dots_to_pt(dots: float, engine_dpi: int = HW_DPI) -> float:
@@ -150,9 +208,25 @@ class PSDoc:
         self._cur = None
 
     # -- content -----------------------------------------------------------
-    def put_bitmap(self, bits: np.ndarray, x_dots: int, y_dots: int) -> None:
+    def put_bitmap(
+        self,
+        bits: np.ndarray,
+        x_dots: int,
+        y_dots: int,
+        rgb: Sequence[int] | None = None,
+        filt: str = "ASCIIHex",
+    ) -> None:
         """Paint `bits` (nonzero = ink) as a K imagemask, top-left corner at
-        (x_dots, y_dots) device dots from the page's top-left corner."""
+        (x_dots, y_dots) device dots from the page's top-left corner.
+
+        ``rgb=(r, g, b)`` (0..255) paints the mask in that DeviceRGB colour
+        instead of K; ``filt="ASCII85"`` sends the data through
+        ASCII85Decode.  The defaults emit the K bytes unchanged."""
+        colour = ("0.000 0.000 0.000 1.000 setcmykcolor" if rgb is None else
+                  "{:.6f} {:.6f} {:.6f} setrgbcolor".format(
+                      *(c / 255 for c in _rgb_triple(rgb))))
+        if filt not in _FILTERS:
+            raise ValueError(f"filt must be one of {sorted(_FILTERS)}")
         if self._cur is None:
             raise RuntimeError("begin_page first")
         if bits.ndim != 2:
@@ -171,11 +245,10 @@ class PSDoc:
             "gsave",
             f"{x_pt:.6f} {y_pt:.6f} translate",
             f"{self._pt(w):.6f} {self._pt(h):.6f} scale",
-            "0.000 0.000 0.000 1.000 setcmykcolor",
+            colour,
             f"{w} {h} true [{w} 0 0 -{h} 0 {h}]",
-            "currentfile /ASCIIHexDecode filter imagemask",
-            *_hex_lines(pack_bits_rows(bits)),
-            ">",
+            f"currentfile {_FILTERS[filt]} filter imagemask",
+            *_data_lines(pack_bits_rows(bits), filt),
             "grestore",
         ]
 
@@ -218,6 +291,61 @@ class PSDoc:
             ">> image",
             *_hex_lines(packed),
             ">",
+            "grestore",
+        ]
+
+    def put_indexed_image(
+        self,
+        indices: np.ndarray,
+        lookup: Sequence[Sequence[int]],
+        x_dots: int,
+        y_dots: int,
+        *,
+        bpc: int = 2,
+        filt: str = "ASCII85",
+        prelude: Sequence[str] = (),
+    ) -> None:
+        """Paint one ``[/Indexed /DeviceRGB hival <lookup>]`` image.
+
+        ``indices`` is 2-D, each value an entry of ``lookup`` (rows of
+        0..255 r, g, b; hival = len(lookup) - 1), sent as ``bpc``-bit
+        samples.  Every sample paints, white included.  ``prelude`` lines
+        go verbatim after the colour space (e041's guarded HP calls)."""
+        if self._cur is None:
+            raise RuntimeError("begin_page first")
+        rows = [_rgb_triple(row) for row in lookup]
+        raw = np.asarray(indices)
+        packed = pack_index_rows(raw, bpc)
+        if not 1 <= len(rows) <= 1 << bpc:
+            raise ValueError(f"lookup needs 1..{1 << bpc} entries at bpc {bpc}")
+        if int(raw.max()) >= len(rows):
+            raise ValueError(f"index {int(raw.max())} beyond the "
+                             f"{len(rows)}-entry lookup")
+        data = _data_lines(packed, filt)
+        if any("\n" in ln or "\r" in ln for ln in prelude):
+            raise ValueError("prelude lines must be single lines")
+        h, w = raw.shape
+        if (x_dots < 0 or y_dots < 0 or x_dots + w > self.page_w_dots
+                or y_dots + h > self.page_h_dots):
+            raise ValueError(
+                f"indexed image {w}x{h} at ({x_dots},{y_dots}) exceeds the "
+                f"{self.page_w_dots}x{self.page_h_dots}-dot page")
+        x_pt = self._pt(x_dots)
+        y_pt = self.page_size_pt[1] - self._pt(y_dots + h)
+        hexlut = bytes(c for row in rows for c in row).hex()
+        self._cur += [
+            "gsave",
+            f"[/Indexed /DeviceRGB {len(rows) - 1} <{hexlut}>] setcolorspace",
+            *prelude,
+            f"{x_pt:.6f} {y_pt:.6f} translate",
+            f"{self._pt(w):.6f} {self._pt(h):.6f} scale",
+            "<< /ImageType 1",
+            f"   /Width {w} /Height {h} /BitsPerComponent {bpc}",
+            f"   /Decode [0 {(1 << bpc) - 1}]",
+            f"   /ImageMatrix [{w} 0 0 -{h} 0 {h}]",
+            f"   /DataSource currentfile {_FILTERS[filt]} filter",
+            ">> image",
+            *data,
             "grestore",
         ]
 

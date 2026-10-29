@@ -19,11 +19,11 @@ Covers:
 - payoff: site-fit stage A decodes every window at n_err=0 where the
   all-cells bits scrape at best one window near the t=13 edge;
 - FA structure preserved: wrong seed and every rot90 orientation stay clean
-  rejects through stage A+B with z_grid; wrong-PHASE site populations
-  descramble to ~coin-flip bits;
+  rejects through stage A+B with z_grid (slow lane); wrong-PHASE site
+  populations descramble to ~coin-flip bits;
 - e2e: acquire_and_decode on the rendered luma window (grey scan of a color
   page, rgb=None) acquires with diagnostics["word_detector"]="site_fit",
-  exact origin, all post-fold words; wrong seed fails cleanly;
+  exact origin, all post-fold words;
 - guard: mismatched z_grid shape refused.
 
 K-path byte-identity is proven suite-wide (frozen v2/v3 goldens +
@@ -33,15 +33,24 @@ Runs under pytest, or standalone: env/bin/python tests/test_color_sitefit.py
 """
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path
 
 import numpy as np
+import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from paperholo import acquire, compose, dust, pilots  # noqa: E402
 from paperholo.modulation import rng  # noqa: E402
+
+# 2026-09-05: slow-lane gate (the tests/test_e025.py convention). A MARK,
+# not an in-body skip: the standalone runner below calls every test_*
+# directly, and a mark is inert on a direct call.
+_SLOW = pytest.mark.skipif(
+    os.environ.get("HOLO_RUN_SLOW_TESTS") != "1",
+    reason="set HOLO_RUN_SLOW_TESTS=1 for the wrong-hypothesis stage-A sweep")
 
 SEED = b"paper-store/test-color-sitefit"
 DUST = dust.DustLayout(sites_per_tile=24, pure_quota=3)
@@ -137,6 +146,12 @@ def test_mostly_ink_payoff() -> None:
           f"{len(cands_ac)} candidates n_err>=8 (all-cells)")
 
 
+# 2026-09-05: 11.7 s = four full stage_a passes at ~2.95 s each, and no
+# shrink is available (WIN=150 is the floor test_mostly_ink_payoff needs;
+# dropping orientations would drop two thirds of the pinned law). Moved to
+# the slow lane; the wrong-PHASE third of the old test was cheap and split
+# out below to stay in the default lane.
+@_SLOW
 def test_wrong_hypothesis_clean_reject() -> None:
     """FA structure preserved under per-hypothesis site fits: a wrong seed
     or orientation gathers ~uniform page cells whose 2-GMM bits descramble
@@ -153,7 +168,13 @@ def test_wrong_hypothesis_clean_reject() -> None:
         for c in cands:  # any BCH fluke must die in Stage B
             assert acquire.stage_b(c, hr, spec.pilot, SEED, "K",
                                    page_tiles_yx=(4, 4), z_grid=zr) is None
-    # wrong-PHASE populations: descrambled site-fit bits are ~coin flips
+    print("  clean rejects: wrong seed 0 candidates, rot90 x3 no acceptance")
+
+
+def test_wrong_phase_bits_are_coin_flips() -> None:
+    """The statistical premise under the BCH rejection: site populations
+    gathered at a WRONG phase descramble to ~coin-flip bits."""
+    spec, means, z, hard_ac, m_win, truth = _window()
     pos = pilots.site_positions_tile(spec.pilot, SEED)
     vals, ry, rx = acquire._gather_site_vals(z, (0, 0), pos, PERIOD)
     words = acquire._site_fit_words(vals)
@@ -164,15 +185,20 @@ def test_wrong_hypothesis_clean_reject() -> None:
     wrong = ~((ry == true_ry) & (rx == true_rx))
     bal = float(desc[wrong].mean())
     assert abs(bal - 0.5) < 0.05, bal
-    print(f"  clean rejects: wrong seed 0 candidates, rot90 x3 no "
-          f"acceptance; wrong-phase balance {bal:.3f} "
+    print(f"  wrong-phase balance {bal:.3f} "
           f"({int(wrong.sum())} hypotheses)")
 
 
 def test_e2e_luma_window_site_fit() -> None:
     """Full blind acquire on the rendered mostly-ink luma window (grey scan
     of a color page): the site fit carries Stage A/B AND the post-fold word
-    certification; payload stays pending without rgb."""
+    certification; payload stays pending without rgb.
+
+    2026-09-05: the wrong-seed leg was dropped here — a FAILING blind
+    acquire searches every origin and orientation (18.3 s, 8x the
+    succeeding one). The acquire-level wrong-seed reject lives in
+    test_color_receiver.py::test_color_acquire_guards, which goes through
+    this same site_fit detector."""
     spec, s_idx, refl, mask = _page()
     img = np.kron(refl[20:190, 40:210], np.ones((6, 6)))
     img = np.clip(img + rng(SEED, b"px-noise").standard_normal(img.shape)
@@ -183,13 +209,9 @@ def test_e2e_luma_window_site_fit() -> None:
     assert res.cell_origin_abs_yx == (20, 40)
     assert res.n_tiles_decoded == res.n_tiles_attempted >= 4
     assert res.diagnostics.get("color_payload_pending") is True
-    res_bad = acquire.acquire_and_decode(img, spec, b"not-the-seed")
-    assert not res_bad.ok
-    assert res_bad.diagnostics["failed_stage"] in ("stage_a", "stage_b")
     print(f"  e2e: origin {res.cell_origin_abs_yx}, "
           f"{res.n_tiles_decoded}/{res.n_tiles_attempted} post-fold words, "
-          f"word_detector={res.diagnostics['word_detector']}; wrong seed "
-          f"failed at {res_bad.diagnostics['failed_stage']}")
+          f"word_detector={res.diagnostics['word_detector']}")
 
 
 def test_z_grid_shape_guard() -> None:

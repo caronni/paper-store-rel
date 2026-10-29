@@ -1,0 +1,7 @@
+# The study's outputs land beside its scripts (results, codes, logs, run dirs); only the code is tracked.
+*
+!*/
+!*.py
+!*.sh
+!README.md
+!.gitignore

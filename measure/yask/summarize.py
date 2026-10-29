@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 """Roll several battery reports into one verdict table + one shift map.
 
-    PYTHONPATH=. env/bin/python -m measure.yask.summarize \\
-        scratch/yask/reports/*.json
+    PYTHONPATH=src:. env/bin/python -m measure.yask.summarize \\
+        build/yask/*.json
 
 Two outputs, both read straight out of the reports — nothing is
 recomputed and nothing is re-decoded:

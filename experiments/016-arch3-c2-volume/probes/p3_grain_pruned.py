@@ -8,7 +8,7 @@ set (the F13 decode-state pruning a real session provides) push the
 usable-piece floor?
 
 Design (pre-registered, see the kickoff prompt / 016.4 log):
-  - source scratch/e016c2hp-canon4800gray.tiff (scan A, sha 593742f6...),
+  - source e016c2hp-canon4800gray.tiff (scan A, sha 593742f6...),
     field bbox via gen_confetti_session.field_bbox, 2x2 box-decimate
     crops to 2400 dpi (8 px/cell), e016 c2 spec + volume seed;
   - sizes 4/5/6/8/10 mm, UNROTATED (014.3 comparability), N=10
@@ -51,7 +51,8 @@ b"e016/p3-grain-pruned/v1"), consumed in one documented order
 
 Output: experiments/016-arch3-c2-volume/build/p3_grain_pruned.json
 (per-trial rows + per-cell aggregates). Run from anywhere:
-  env/bin/python experiments/016-arch3-c2-volume/probes/p3_grain_pruned.py
+  env/bin/python experiments/016-arch3-c2-volume/probes/p3_grain_pruned.py \\
+      --scan-dir <evidence dir holding e016c2hp-canon4800gray.tiff>
 """
 from __future__ import annotations
 
@@ -77,7 +78,10 @@ from paperholo.modulation import rng                      # noqa: E402
 
 SEED = gen_e016.SEED
 RNG_LABEL = b"e016/p3-grain-pruned/v1"
-SCAN = ROOT / "scratch/e016c2hp-canon4800gray.tiff"
+if "--scan-dir" not in sys.argv[:-1]:
+    sys.exit(__doc__)
+SCAN_DIR = Path(sys.argv[sys.argv.index("--scan-dir") + 1])  # evidence archive
+SCAN = SCAN_DIR / "e016c2hp-canon4800gray.tiff"
 OUT = ROOT / "experiments/016-arch3-c2-volume/build/p3_grain_pruned.json"
 
 SIZES_MM = (4, 5, 6, 8, 10)
@@ -403,7 +407,7 @@ def main() -> int:
             "a 5-point 12mm calibration placement AFFINE fit (glass skew "
             "~0.23 deg measured; per-axis linear was 4.5 cells off; "
             "residual gate <= 2 cells)"],
-        "source_scan": str(SCAN.relative_to(ROOT)),
+        "source_scan": SCAN.name,
         "source_sha256": src_sha,
         "field_bbox_4800": [int(y0f), int(y1f), int(x0f), int(x1f)],
         "calibration": {

@@ -34,6 +34,19 @@ FIVE RULES, and what each is for:
 * `normalized` — the mean.  A control: it changes no decision `sum`
   makes (a positive scaling), and it exists so the clipped-cell fraction
   of `sum` can be read against a rule that cannot clip.
+* `platt-state` — W8's D1.  `platt`'s weights are one vector for the
+  whole tile, and the measurement says the lanes do not agree on how
+  much they are worth CELL BY CELL: a C cell under M+Y is read 2-4x
+  worse than any other C cell, and how badly depends on the capture.
+  So the pooled weights are fitted first and then refitted per SIBLING
+  STATE wherever that state's own select-fold minority clears
+  `statecal.PLATT_STATE_MIN_PER_CLASS`; a state under the floor, and
+  every cell whose siblings are unproven, keeps the pooled vector.
+  `Combined.coefficients` stays the POOLED vector so
+  `pooled_ctx_offsets` and every reader of the rule's scale are
+  unchanged, and the per-state vectors ride beside it in
+  `coefficients_by_state`.  Without a sequential state vector the rule
+  IS `platt` and says so.
 
 WHY LABELS COME OUT OF THE FOOTPRINT, NOT THE SEQUENTIAL VECTOR.  The
 sequential vector is the target tile's payload cells alone, and DESIGN
@@ -66,12 +79,14 @@ from typing import Any, Mapping, Sequence
 import numpy as np
 from scipy import optimize
 
-from holo3.lib import ldpc, pava
+from holo.receiver.lib import ldpc, pava
 
+from . import statecal
 from .calibrate import SELECT_MIN_MINORITY, _minority_count, _per_label_loss
 from .types import Combined, Evidence, Folds, LaneId
 
-RULES: tuple[str, ...] = ("sum", "best", "platt", "corr", "normalized")
+RULES: tuple[str, ...] = ("sum", "best", "platt", "corr", "normalized",
+                          "platt-state")
 
 #: L7a's default disagreement threshold (DESIGN §6 L7a): a cell is
 #: disagreeing when ANY voting lane's sign differs from the combination's,
@@ -126,11 +141,15 @@ def _finer(left: LaneId, right: LaneId,
 # --------------------------------------------------------- the label view
 
 def _label_view(evidence: Sequence[Evidence],
-                ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+                ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """Per-lane select-fold LLRs at the labels EVERY lane priced.
 
-    Returns ``(rows, llr (L, n), values (n,))``; empty when the lanes
-    share too few labels for a fit to mean anything.
+    Returns ``(rows, llr (L, n), values (n,), state (n,))``; empty when
+    the lanes share too few labels for a fit to mean anything.  `state`
+    is the SIBLING STATE `calibrate` published beside the labels, read
+    from the first lane exactly as `_discriminating_minority` reads the
+    discriminating flags: the frame is lane-independent, so one lane's
+    copy is every lane's.  It is all −1 for evidence produced before C1.
     """
     rows: np.ndarray | None = None
     for item in evidence:
@@ -139,17 +158,24 @@ def _label_view(evidence: Sequence[Evidence],
             rows, mine, assume_unique=True)
     if rows is None or not rows.size:
         return (np.zeros(0, np.int64), np.zeros((len(evidence), 0)),
-                np.zeros(0, np.uint8))
+                np.zeros(0, np.uint8), np.zeros(0, np.int8))
     stack = np.empty((len(evidence), rows.size), np.float64)
-    values = np.zeros(rows.size, np.uint8)
     for index, item in enumerate(evidence):
         mine = np.asarray(item.blind.get("label_rows", ()), np.int64)
         take = np.searchsorted(mine, rows)
         stack[index] = np.asarray(
             item.blind.get("label_llr", ()), np.float64)[take]
-        values = np.asarray(
-            item.blind.get("label_values", ()), np.uint8)[take]
-    return rows, stack, values
+    #: `label_values` is `frame.bits[:, target_plane]` at the label rows
+    #: and the frame is lane-independent, so every lane's copy is the
+    #: same: read it ONCE, from the first lane, exactly as `state` and
+    #: `_discriminating_minority` are read (review 2026-09-06 — the old
+    #: loop recomputed it per lane and kept the last lane's arbitrary
+    #: copy).
+    first = np.asarray(evidence[0].blind.get("label_rows", ()), np.int64)
+    values = np.asarray(
+        evidence[0].blind.get("label_values", ()),
+        np.uint8)[np.searchsorted(first, rows)]
+    return rows, stack, values, statecal.state_view(evidence[0].blind, rows)
 
 
 def _discriminating_minority(evidence: Sequence[Evidence],
@@ -235,6 +261,7 @@ def combine(evidence: Sequence[Evidence], rule: str,
             folds: Folds | None = None, *, labels: Any = None,
             lane_ppc: Mapping[LaneId, Fraction] | None = None,
             agreement_threshold: float = AGREEMENT_UNANIMOUS,
+            sibling_state: np.ndarray | None = None,
             ) -> Combined:
     """DESIGN §5's rules over one tile-stream's lanes.
 
@@ -242,7 +269,14 @@ def combine(evidence: Sequence[Evidence], rule: str,
     the select-fold restriction is already baked into the `label_*`
     arrays `analyzer.calibrate.calibrate` publishes, so a caller cannot
     accidentally fit a rule on a fold an arm searched.  `labels` overrides
-    those arrays as ``(rows, llr_stack, values)`` for a test.
+    those arrays as ``(rows, llr_stack, values[, state])`` for a test.
+
+    `sibling_state` is the tile's own per-POSITION sibling state in the
+    SEQUENTIAL domain (`statecal.sequential_state`), which only the
+    driver can build — it needs the frame, and the frame is lane- and
+    arm-independent, so it is computed once per key and handed in rather
+    than carried thirteen times over in `Evidence.blind`.  Only
+    `platt-state` consults it; every other rule ignores it.
     """
     if rule not in RULES:
         raise CombineError(f"unknown rule {rule!r}; known: {RULES}")
@@ -266,13 +300,20 @@ def combine(evidence: Sequence[Evidence], rule: str,
     effective = rule
 
     if labels is not None:
-        rows, label_stack, values = labels
+        rows, label_stack, values, *rest = labels
         rows = np.asarray(rows, np.int64)
         label_stack = np.asarray(label_stack, np.float64)
         values = np.asarray(values, np.uint8)
+        label_state = (np.asarray(rest[0], np.int8) if rest
+                       else np.full(rows.size, np.int8(-1), np.int8))
     else:
-        rows, label_stack, values = _label_view(kept)
+        rows, label_stack, values, label_state = _label_view(kept)
     detail["n_paired_labels"] = int(rows.size)
+    #: `platt-state`'s per-state vectors, state index -> weights.  Every
+    #: other rule leaves this None and `Combined.coefficients_by_state`
+    #: stays None with it.
+    by_state: dict[int, np.ndarray] | None = None
+    state_seq = _sequential_state(sibling_state, n)
 
     if rule == "best":
         losses = [_select_loss(item, label_stack, values, index)
@@ -299,6 +340,33 @@ def combine(evidence: Sequence[Evidence], rule: str,
             coefficients, platt = _platt_weights(label_stack, values)
             detail.update(platt)
             detail["platt_refused"] = None
+    elif rule == "platt-state":
+        minority = _discriminating_minority(kept, rows)
+        detail["n_minority_discriminating"] = int(minority)
+        if (label_stack.size == 0 or minority < SELECT_MIN_MINORITY
+                or len(kept) < 2):
+            # The POOLED Platt is the floor of this rule: per-state
+            # weights over lanes whose pooled weights are not identified
+            # would be a smaller fit on a smaller population.
+            detail["platt_refused"] = (
+                "below_minority_floor" if minority < SELECT_MIN_MINORITY
+                else "too_few_lanes_or_labels")
+            detail["platt_state_refused"] = {
+                "rule": "pooled_platt_refused"}
+            effective = "sum"
+        elif state_seq is None:
+            coefficients, platt = _platt_weights(label_stack, values)
+            detail.update(platt)
+            detail["platt_refused"] = None
+            detail["platt_state_refused"] = {
+                "rule": "no_sequential_state"}
+            effective = "platt"
+        else:
+            coefficients, by_state, platt = statecal.state_platt_weights(
+                label_stack, values, label_state, pooled_fit=_platt_weights)
+            detail.update(platt)
+            detail["platt_refused"] = None
+            effective = ("platt-state" if by_state else "platt")
     elif rule == "corr":
         rho = _error_correlation(label_stack, values)
         detail["error_correlation"] = float(rho)
@@ -314,6 +382,15 @@ def combine(evidence: Sequence[Evidence], rule: str,
     detail.update(ctx_detail)
 
     llr = coefficients @ stack_seq
+    if by_state and state_seq is not None:
+        # Σ_s [state == s]·(w_s @ stack) + [state < 0 or s refused]·pooled.
+        # `where`, NOT `rows`: `rows` above holds the select-fold LABEL
+        # ROW indices and nothing below may silently inherit a boolean
+        # position mask under that name (review 2026-09-06).
+        for index, weights in by_state.items():
+            where = state_seq == index
+            if np.any(where):
+                llr[where] = weights @ stack_seq[:, where]
     llr[~observed] = 0.0
     # L7a's disagreement set is read against the sign the ladder decodes,
     # so it is computed from the FINISHED combination (DESIGN §6 L7a).
@@ -331,6 +408,12 @@ def combine(evidence: Sequence[Evidence], rule: str,
         np.abs(llr[observed]) >= ldpc.LLR_CLIP)) if np.any(observed) else 0
     detail["rule_effective"] = effective
     detail["n_observed"] = int(np.count_nonzero(observed))
+    by_state_tuple = _state_coefficients(by_state)
+    detail["coefficients_by_state"] = by_state_tuple
+    state_adopted = _state_context_adopted(kept, coefficients, by_state)
+    detail["ctx_state_adopted"] = bool(state_adopted)
+    detail["n_state_positions"] = (None if state_seq is None
+                                   else int(np.count_nonzero(state_seq >= 0)))
     llr = np.asarray(llr, np.float64)
     llr.setflags(write=False)
     observed.setflags(write=False)
@@ -343,7 +426,52 @@ def combine(evidence: Sequence[Evidence], rule: str,
             np.count_nonzero(observed))),
         ctx_offsets=(None if pooled is None
                      else tuple(float(value) for value in pooled)),
-        agreement=agreement, disagree=disagree)
+        agreement=agreement, disagree=disagree,
+        coefficients_by_state=by_state_tuple,
+        ctx_state_adopted=bool(state_adopted))
+
+
+def _sequential_state(sibling_state: np.ndarray | None, n: int
+                      ) -> np.ndarray | None:
+    """The per-position sibling state, validated against the vector length.
+
+    A wrong-length vector is a driver bug, and silently broadcasting or
+    truncating it would weight the wrong cells; it is refused as absent
+    instead, which puts `platt-state` on the pooled weights and says so.
+    """
+    if sibling_state is None:
+        return None
+    values = np.asarray(sibling_state, np.int8).ravel()
+    return values if values.size == int(n) else None
+
+
+def _state_coefficients(by_state: Mapping[int, np.ndarray] | None
+                        ) -> tuple[tuple[float, ...] | None, ...] | None:
+    """`{state: weights}` -> one entry per state, `None` where pooled."""
+    if not by_state:
+        return None
+    return tuple(
+        None if index not in by_state
+        else tuple(float(value) for value in by_state[index])
+        for index in range(statecal.N_STATES))
+
+
+def _state_context_adopted(evidence: Sequence[Evidence],
+                           coefficients: np.ndarray,
+                           by_state: Mapping[int, np.ndarray] | None) -> bool:
+    """Did any CONTRIBUTING lane adopt a per-state context (ruling 10)?
+
+    A lane contributes when its POOLED coefficient is non-zero OR when
+    any per-state coefficient is — the `platt-state` case where the
+    L-BFGS-B bound put a lane's pooled weight at 0 while its state-3
+    weight carries the M+Y cells.  If the answer is yes, L3's APPLY mode
+    is no longer exact for this row and the rung refuses.
+    """
+    support = np.abs(np.asarray(coefficients, np.float64)) > 0.0
+    for weights in (by_state or {}).values():
+        support = support | (np.abs(np.asarray(weights, np.float64)) > 0.0)
+    return any(bool(item.blind.get("ctx_state_any_adopted", False))
+               for item, live in zip(evidence, support) if live)
 
 
 def pooled_ctx_offsets(evidence: Sequence[Evidence],
@@ -461,6 +589,12 @@ def combine_detail(result: Combined) -> dict:
             "lanes": tuple((lane[0][:12], int(lane[1]))
                            for lane in result.lanes),
             "coefficients": result.coefficients,
+            # W8 (D1): the per-state weights beside the pooled ones, and
+            # the ruling-10 flag L3 refuses on.  `contributing_captures`
+            # reads BOTH coefficient fields, so a lane the pooled fit put
+            # on the 0 bound still counts when a state's fit uses it.
+            "coefficients_by_state": result.coefficients_by_state,
+            "ctx_state_adopted": bool(result.ctx_state_adopted),
             "clipped_fraction": result.clipped_fraction,
             "ctx_offsets": result.ctx_offsets,
             # Counts, never the per-cell vectors: the ledger carries one row
@@ -547,14 +681,29 @@ def contributing_captures(detail: Mapping[str, Any]) -> frozenset[str]:
     A zero coefficient contributes nothing to ``sum_l c_l * llr_l``, so
     the lane it names is not evidence for anything the combination
     decided; under `best` that leaves exactly the winning capture.
+
+    UNDER `platt-state` (W8 D1) THE SUPPORT IS A UNION.  The pooled
+    vector prices the cells whose sibling state is unproven or starved
+    and each per-state vector prices its own state's cells, so a lane
+    whose pooled weight sits on the L-BFGS-B zero bound while its
+    state-3 weight is positive DID contribute — to exactly the cells the
+    third-layer problem lives in.  Counting only the pooled vector there
+    would call two certificates independent when they read the same
+    paper, which is the one thing `independent_agreement` may not do.
     """
     lanes = tuple(detail.get("lanes", ()) or ())
-    coefficients = tuple(detail.get("coefficients", ()) or ())
-    if len(coefficients) != len(lanes):
-        return frozenset(str(lane[0]) for lane in lanes)
+    vectors = [tuple(detail.get("coefficients", ()) or ())]
+    for per_state in tuple(detail.get("coefficients_by_state", ()) or ()):
+        if per_state:
+            vectors.append(tuple(per_state))
+    live = [False] * len(lanes)
+    for vector in vectors:
+        if len(vector) != len(lanes):
+            return frozenset(str(lane[0]) for lane in lanes)
+        for index, value in enumerate(vector):
+            live[index] = live[index] or float(value) != 0.0
     return frozenset(str(lane[0])
-                     for lane, value in zip(lanes, coefficients)
-                     if float(value) != 0.0)
+                     for lane, flag in zip(lanes, live) if flag)
 
 
 def independent_agreement(claims: Sequence[CertificateClaim]) -> dict:

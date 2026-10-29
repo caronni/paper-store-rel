@@ -15,7 +15,8 @@ encode_tile's codeword order; the honest per-tile BER =
 mean(sign(llr[slots]) != truth[pidx]) over OBSERVED slots only.
 
   env/bin/python experiments/018-confetti-c3-play/tile_forensics.py \
-      [--state PATH] [--out PNG]
+      --state <evidence>/e018/try_2/e018-session_state.pkl \
+      [--e018-gt DIR] [--out PNG]
 """
 import argparse
 import pickle
@@ -31,17 +32,18 @@ from paperholo import ldpc, compose                       # noqa: E402
 from paperholo.compose import _payload_keystream          # noqa: E402
 
 _ap = argparse.ArgumentParser()
-_ap.add_argument("--state", type=Path,
-                 default=_ROOT / "scratch/e018/try_2/e018-session_state.pkl")
+_ap.add_argument("--state", type=Path, required=True)
+_ap.add_argument("--e018-gt", type=Path,
+                 default=_ROOT / "experiments/018-confetti-c3-play/build/e018_gt")
 _ap.add_argument("--out", type=Path,
-                 default=_ROOT / "scratch/e018/e018_failed_tiles.png")
+                 default=_ROOT / "experiments/018-confetti-c3-play/build/e018_failed_tiles.png")
 _args = _ap.parse_args()
 OUT = _args.out.parent
 OUT.mkdir(parents=True, exist_ok=True)
 pds, done = pickle.loads(_args.state.read_bytes())
 spec, seed = pds.spec, pds.seed
 H, W = spec.page_cells_yx
-gt = np.load(str(_ROOT / "experiments/018-confetti-c3-play/build/e018_gt/K__e018_field.npy"))
+gt = np.load(str(_args.e018_gt / "K__e018_field.npy"))
 gt = gt.reshape(H, 3, W, 3)[:, 0, :, 0].astype(np.uint8)   # dots -> cells
 ks = _payload_keystream(spec, seed, 0).astype(np.uint8)
 true_cell = gt ^ ks

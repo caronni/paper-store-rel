@@ -42,10 +42,10 @@ from typing import Any, Iterable, Mapping, Sequence
 
 import numpy as np
 
-from holo3.format import tile_codec
-from holo3.lib import ldpc, pava
-from holo3.lib.ldpc import CODES
-from holo3.plugins.tiles import stream_fact
+from holo.receiver.format import tile_codec
+from holo.receiver.lib import ldpc, pava
+from holo.receiver.lib.ldpc import CODES
+from holo.receiver.plugins.tiles import stream_fact
 
 from . import ladder as ladder_mod
 from . import mother as mother_mod

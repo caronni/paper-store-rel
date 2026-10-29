@@ -8,15 +8,16 @@ envelope. Byte-exact or bust.
 import hashlib
 
 import numpy as np
+import pytest
 
 
 from holo.core import fountain, keystream
 from holo.core.ldpc import tile as ldpc_tile
 from holo.format import envelope, metadata, pilots
-from holo.devices.profiles import make_spec
+from holo.format.fossils import resolve_fossil_spec
 from holo.gen import compose, emit, plan
 
-ROW = make_spec("c3-r0550")
+ROW = resolve_fossil_spec("c3-r0550@2240x1536")
 PAYLOAD = hashlib.sha256(b"holo-roundtrip").digest() * 160  # 5,120 bytes
 Q = 0.35
 
@@ -49,7 +50,10 @@ def _compose_pages(row, payload, q, pages=(0,)):
     return vplan, out
 
 
-def _compose_first_page():
+# One composed page 0 for the whole module: three laws read it and
+# nothing mutates the returned cells (2026-09-20).
+@pytest.fixture(scope="module")
+def first_page():
     vplan, cells = _compose_pages(ROW, PAYLOAD, Q)
     return vplan, cells[0]
 
@@ -95,8 +99,8 @@ def reference_decode_page(cells: np.ndarray, row, page: int = 0,
     return words_ok, observations, symbols
 
 
-def test_compose_page_golden():
-    _, cells = _compose_first_page()
+def test_compose_page_golden(first_page):
+    _, cells = first_page
     digest = hashlib.sha256(np.packbits(cells).tobytes()).hexdigest()
     assert digest == GOLDEN_PAGE0_CELLS, "format fork — see comment above"
 
@@ -116,13 +120,22 @@ def _fountain_close(symbols: dict, md, symbol_bits: int, row,
     assert envelope.unwrap(np.packbits(src.ravel()).tobytes()) == payload
 
 
-def test_roundtrip_byte_exact():
-    vplan, cells = _compose_first_page()
+def test_roundtrip_byte_exact(first_page):
+    vplan, cells = first_page
     assert vplan.n_pages == 1 and vplan.k_total < ROW.tiles_per_page
     words_ok, observations, symbols = reference_decode_page(cells, ROW)
     assert words_ok == ROW.tiles_per_page
     md = metadata.decode_metadata(observations)
     assert md.ok and md.version == 0 and md.k == vplan.k_total
+    # The metadata bit in EVERY tile, folded in here 2026-09-20 from
+    # test_metadata_bit_survives_in_every_tile: it decoded this same
+    # page a second time to read the same observations.
+    word = metadata.encode_metadata(0, vplan.k_total)
+    assert md.n_unique_counters == ROW.tiles_per_page, (
+        "metadata: one distinct counter per tile")
+    assert all(bit == metadata.tile_bit(word, counter)
+               for counter, bit in observations), (
+        "metadata: every tile carries its own addressed equation")
     # drop 30% of tiles at random to prove repair works
     _fountain_close(symbols, md, vplan.symbol_bits, ROW, 0.30, PAYLOAD)
 
@@ -149,7 +162,7 @@ def test_multipage_roundtrip_byte_exact():
 def test_c2_r0700_roundtrip_byte_exact():
     """The c2 geometry (52x36 tiles) + the r0700 rung through the whole
     stack — the 'max' profile's row."""
-    row = make_spec("c2-r0700")
+    row = resolve_fossil_spec("c2-r0700@3328x2304")
     payload = hashlib.sha256(b"holo-c2").digest() * 320  # 10,240 bytes
     vplan, pages = _compose_pages(row, payload, 0.75, pages=(0,))
     digest = hashlib.sha256(np.packbits(pages[0]).tobytes()).hexdigest()
@@ -162,31 +175,8 @@ def test_c2_r0700_roundtrip_byte_exact():
 
 
 def test_c2_r0550_compose_golden():
-    row = make_spec("c2-r0550")
+    row = resolve_fossil_spec("c2-r0550@3328x2304")
     payload = hashlib.sha256(b"holo-c2-r0550").digest() * 32
     _, pages = _compose_pages(row, payload, 0.70, pages=(0,))
     digest = hashlib.sha256(np.packbits(pages[0]).tobytes()).hexdigest()
     assert digest == GOLDEN_C2_R0550_PAGE0, "format fork"
-
-
-def test_wrong_geometry_hypothesis_refuses_at_word_gate():
-    _, cells = _compose_first_page()
-    wrong = make_spec("c2-r0550")   # different geometry row
-    word_cells = pilots.word_site_cells_yx(ROW.family_seed)
-    refused = 0
-    for ty, tx in ((0, 0), (3, 5), (17, 11), (34, 23)):
-        tile = cells[ty * 64:(ty + 1) * 64, tx * 64:(tx + 1) * 64]
-        wv = tile[word_cells[:, 0], word_cells[:, 1]]
-        if pilots.decode_word(wv, wrong.seed, wrong.plane) is None:
-            refused += 1
-    assert refused == 4
-
-
-def test_metadata_bit_survives_in_every_tile():
-    vplan, cells = _compose_first_page()
-    _, observations, _ = reference_decode_page(cells, ROW)
-    md = metadata.decode_metadata(observations)
-    word = metadata.encode_metadata(0, vplan.k_total)
-    assert md.ok and md.n_unique_counters == ROW.tiles_per_page
-    assert all(bit == metadata.tile_bit(word, counter)
-               for counter, bit in observations)

@@ -1,0 +1,5 @@
+a410631d6ff6a8519767a4cdb7c55bd6e5b90b549a7450d017e783064991e8dd  scratch/xerox-canon-18.8-I-c2-cmy8-r700-q90-p120-4mm-2400dpi-displaced.tiff
+36b90a50f272bb02982286b18657a8630eaa378eb7ac553e3a54461e548d55af  scratch/xerox-canon-18.8-I-c2-cmy8-r700-q90-p120-4mm-2400dpi-displaced2.tiff
+269d81217ec48a5e57ae5736baf091f0afe3f66dd15539c0f39dfc6cffdea30c  scratch/xerox-canon-18.8-I-c2-cmy8-r700-q90-p120-4mm-2400dpi.tiff
+5d24205330ff296534c3330305c84f1abb53c89fb3326d36174ceba7b5c98b0a  scratch/xerox-canon-18.8-I-c2-cmy8-r700-q90-p120-4mm-4800dpi.tiff
+DONE

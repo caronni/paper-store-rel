@@ -1,5 +1,12 @@
 # COLOR-UPLIFT-MEASUREMENTS — the campaign's measured record
 
+> The receiver these measurements were made on — the v1 receiver and its
+> `measure/_color_uplift_harness` — was retired 2026-09-05 at `284ae3e`; this
+> document is the measured record, historical from that sha (readable at
+> `git show b167b9f:…`). holo3 carries the ported arms (`plugins/color_*`,
+> `tiles.uplift`); the mechanism map is src/holo/receiver/docs/retirement_docs-2026-09/HOLO1-MAP.md.
+
+
 Companion to `docs/COLOR-UPLIFT-PLAN.md` (v1.8) and RECEIVE-DESIGN §6.2a (v0.53).
 Doctrine: CPU-seconds primary (shared machine, wall indicative); replays are
 development signal, FULL decodes are the only qualification numbers; every table
@@ -1302,7 +1309,8 @@ PK4 recorded "peak RSS 45.6 GiB against PK3's 34.1 (+34%)" and attributed it to 
 third feature tuple; PK4.1 dropped the tuple, measured no change, and left the cause
 open. PK4.2 measured the cause, with a bounded instrument and then with the clock.
 
-**(a) The discriminating run.** `scratch/color-uplift/pk42_memtrace.py` replays ONE lane
+**(a) The discriminating run.** `scratch/color-uplift/pk42_memtrace.py` (retired 2026-10-09; it
+ran only at b167b9f, its result stands below) replays ONE lane
 with a 0.5 s sampler of `ru_maxrss` (monotone, so its steps localize the peak) and of
 instantaneous RSS. The lane is hp c3-cmy8 `l04-24ppc-4800dpi` — a full-capture peak can
 only be set in one of the three 4800-dpi lanes, and one costs 6 minutes instead of 47.

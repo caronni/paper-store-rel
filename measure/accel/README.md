@@ -11,8 +11,8 @@ cores, 32-core GPU, 64 GB), macOS 26.5.2.
 
 ```sh
 W=<worktree root>
-V=$W/scratch/accel/venv          # python3.13 + mlx + numpy + scipy
-E=<checkout>/env314t   # the working free-threaded venv
+V=<mlx venv>                     # python3.13 + mlx + numpy + scipy, its own venv
+E=<repo>/env                     # the working free-threaded venv
 
 # (a) linkage + per-op costs
 $E/bin/python                      $W/measure/accel/blas_probe.py --out OUT
@@ -32,8 +32,9 @@ PYTHONPATH=$W $E/bin/python  $W/measure/accel/bp_throughput.py \
                                 --corpus CORPUS --out OUT --engines cpu1 cpu8
 ```
 
-The scratch venv is built under the worktree and never touches
-`env314t`. `mlx` is only ever installed there.
+The mlx venv is a separate one, outside `env/` and outside the tree;
+`mlx` is only ever installed there. Every artefact lands in the
+required `--out` (or `--corpus`, which `corpus.py` wrote).
 
 ## Files
 

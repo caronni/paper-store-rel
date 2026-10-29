@@ -18,9 +18,9 @@ from dataclasses import dataclass
 from fractions import Fraction
 
 from ..core import capacity, fountain
-from ..devices.profiles import PayloadProfile, make_spec
 from ..format.descriptor import FormatSpec
 from ..format.envelope import OVERHEAD_BYTES, source_symbol_count
+from ..format.profiles import Family
 
 
 @dataclass(frozen=True)
@@ -118,6 +118,13 @@ def _pooled_dial_policy(spec: FormatSpec, q: float) -> tuple[Fraction, bool]:
     true dial) and the plan says so out loud instead."""
     frac = capacity.q_fraction(q)          # exact; refuses dirty floats
     return frac, frac <= spec.column_groups.any_plane_ceiling
+
+
+def tier_word(spec: FormatSpec) -> str:
+    """What one pooled tier-3 death takes out: a plane, or for cmy, whose
+    streams are label bits, a stream (dead Y kills lo, dead M kills hi,
+    dead C both — docs/CMY-DESIGN.md §2.2, §2.6)."""
+    return "stream" if spec.codec_family is Family.CMY else "plane"
 
 
 def pooled_plane_tier(spec: FormatSpec, q: float) -> str | None:
@@ -248,9 +255,3 @@ def max_payload_bytes(spec: FormatSpec, q: float, n_pages: int) -> int:
     if k <= 0:
         return 0
     return max(0, (k * spec.aggregate_symbol_bits) // 8 - OVERHEAD_BYTES)
-
-
-def plan_for_profile(profile: PayloadProfile, payload_len_bytes: int,
-                     printer_id: str = "default") -> VolumePlan:
-    return plan_volume(make_spec(profile.coding_id, printer_id),
-                       payload_len_bytes, profile.source_fraction_q)

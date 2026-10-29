@@ -26,13 +26,15 @@ Data sources (all real scans, GT via the experiment gen modules):
 
 Usage (from anywhere; env python):
   probe17_stagea_luma.py e004 <scan-path> <out-tag>
-  probe17_stagea_luma.py calpage <scan-path> <out-tag>
-  probe17_stagea_luma.py e006c <s2col|s3col> <out-tag>
+  probe17_stagea_luma.py calpage <scan-path> <out-tag> --e002-build <002's build>
+  probe17_stagea_luma.py e006c <s2col|s3col> <out-tag> --scan-dir <evidence>/scans
 
-Writes scratch/probe17_out/<out-tag>.json and prints a table.
+Writes experiments/017-color-channel/build/probe17_out/<out-tag>.json (the
+record is probe17_out/ beside this file) and prints a table.
 """
 from __future__ import annotations
 
+import argparse
 import json
 import sys
 import time
@@ -41,7 +43,7 @@ from pathlib import Path
 import numpy as np
 from scipy.stats import binom
 
-_REPO = Path("<repo>")
+_REPO = Path(__file__).resolve().parents[3]
 for rel in ("experiments/004-finalists-checkerboard",
             "experiments/002-calibration-page",
             "experiments/003-modulation-probes",
@@ -58,8 +60,8 @@ import analyze_e004 as ae4                 # noqa: E402
 import strip_tracker as st                 # noqa: E402
 from paperholo.acquire import cell_bits_blind  # noqa: E402
 
-OUT = _REPO / "scratch" / "probe17_out"
-OUT.mkdir(exist_ok=True)
+OUT = _REPO / "experiments/017-color-channel/build/probe17_out"
+E002_BUILD = Path()  # set from --e002-build (calpage mode)
 
 STATES7 = ("W", "C", "M", "Y", "CM", "CY", "MY")
 # state8: bit0=C bit1=M bit2=Y (manifest semantics, gen_calpage.state_field)
@@ -202,13 +204,11 @@ def run_e004(scan_path: str) -> dict:
 
 
 def run_calpage(scan_path: str) -> dict:
-    manifest = cc.load_manifest(
-        _REPO / "experiments/002-calibration-page/build/calpage_manifest.json")
+    manifest = cc.load_manifest(E002_BUILD / "calpage_manifest.json")
     scan = cc.load_scan(scan_path)
     cc.register(scan, manifest)
     e = cc.entry(manifest, "state8_C")
-    build = _REPO / "experiments/002-calibration-page/build"
-    states = cc.load_gt_named(e["params"]["states_gt"], build).astype(np.int64)
+    states = cc.load_gt_named(e["params"]["states_gt"], E002_BUILD).astype(np.int64)
     gts = [cc.load_gt(cc.entry(manifest, f"state8_{p}")) for p in "CMY"]
     gt_union = (gts[0] | gts[1] | gts[2]).astype(np.uint8)
     out = scanlab.decode_cells(cc._channel_f32(scan, "grey"), scan["affine"],
@@ -280,7 +280,25 @@ def summarize(payload: dict) -> None:
 
 
 def main() -> None:
-    mode, arg, tag = sys.argv[1], sys.argv[2], sys.argv[3]
+    global E002_BUILD
+    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    ap.add_argument("mode", choices=("e004", "calpage", "e006c"))
+    ap.add_argument("arg")
+    ap.add_argument("tag")
+    ap.add_argument("--e002-build", type=Path)
+    ap.add_argument("--scan-dir", type=Path)
+    a = ap.parse_args()
+    mode, arg, tag = a.mode, a.arg, a.tag
+    if mode == "calpage":
+        if a.e002_build is None:
+            ap.error("calpage needs --e002-build")
+        E002_BUILD = a.e002_build
+    if mode == "e006c":
+        if a.scan_dir is None:
+            ap.error("e006c needs --scan-dir")
+        import analyze_e006c as a6c
+        a6c.SCANS_DIR = a.scan_dir
+    OUT.mkdir(parents=True, exist_ok=True)
     t0 = time.time()
     payload = {"mode": mode, "arg": arg,
                "run": {"e004": run_e004, "calpage": run_calpage,

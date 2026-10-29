@@ -14,11 +14,11 @@ from dataclasses import dataclass
 import numpy as np
 from scipy.special import ndtri
 
-from holo3.format import keystream, tile_codec
-from holo3.format.identity import build_site_geometry, resolve_format_ref
-from holo3.lib import ldpc
-from holo3.lib.ldpc import CODES
-from holo3.plugins.tiles import stream_fact
+from holo.receiver.format import keystream, tile_codec
+from holo.receiver.format.identity import build_site_geometry, resolve_format_ref
+from holo.receiver.lib import ldpc
+from holo.receiver.lib.ldpc import CODES
+from holo.receiver.plugins.tiles import stream_fact
 
 R0850 = "L:c2-cmy8-r0850-p120-x1@3392x2368"
 R0700 = "L:c2-cmy8-r0700-p120-x1@3392x2368"

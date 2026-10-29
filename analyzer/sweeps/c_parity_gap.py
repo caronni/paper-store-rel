@@ -9,8 +9,17 @@ Phases:
   D  the page-scope context fit against the per-footprint fit.
 
 Run:
-    PYTHONPATH=. env/bin/python \
-        -m analyzer.sweeps.c_parity_gap --phase A
+    PYTHONPATH=src:. env/bin/python \
+        -m analyzer.sweeps.c_parity_gap --phase A \
+        --run-dir RUN --gt-dir GEN --payload PAYLOAD --out OUT
+
+Historical record of the 2026-09-03 C parity sweep on sheet H (run
+H7-mirror.page-field — the converted sibling since 2026-09-12: the
+archived `H7-mirror` is pre-W2 (per-lane `PlaneField`) and unreadable on
+this tree; the sibling carries the same facts plus the page field the
+receiver harness solved from them, `measure/page_field/convert.py`,
+analyzer plan A0 — gen dir xerox-v1-20260818/H-c2-cmy8r0850-q090-4mm,
+payload payload-counting.bin in it); inputs in the evidence archive.
 
 2026-09-04 NOTE.  This sweep is the RECORD of a finished measurement.
 The ruling that took ground truth out of the run removed the oracle
@@ -41,10 +50,6 @@ from analyzer import truth as truth_mod
 from analyzer.types import (DEFAULT_ARMS, AnalyzerConfig, VERDICT_CERTIFIED,
                             VERDICT_CERTIFIED_LIST)
 
-RUN_DIR = "scratch/analyzer/H7-mirror"
-GT_DIR = "scratch/xerox-v1-20260818/H-c2-cmy8r0850-q090-4mm"
-PAYLOAD = GT_DIR + "/payload-counting.bin"
-OUT = Path("scratch/analyzer/sweeps/C-parity-gap")
 SEED = 20260903
 WORKERS = 6
 
@@ -69,9 +74,10 @@ def jsonable(value: Any) -> Any:
     return str(value)
 
 
-def load() -> tuple[Any, Any, list]:
-    run = inputs_mod.load_run(RUN_DIR)
-    truth = truth_mod.load_truth(GT_DIR, PAYLOAD, run.row,
+def load(run_dir: str | Path, gt_dir: str | Path,
+         payload: str | Path) -> tuple[Any, Any, list]:
+    run = inputs_mod.load_run(run_dir)
+    truth = truth_mod.load_truth(gt_dir, payload, run.row,
                                  max(run.live_pages) + 1,
                                  format_ref=run.format_ref)
     rows = residue_mod.census(run, events=None, check_rank=False)
@@ -201,9 +207,9 @@ def run_config(run, truth, rows, targets, config, label: str) -> dict:
     }
 
 
-def write(name: str, payload: Any) -> None:
-    OUT.mkdir(parents=True, exist_ok=True)
-    path = OUT / name
+def write(name: str, payload: Any, out: Path) -> None:
+    out.mkdir(parents=True, exist_ok=True)
+    path = out / name
     path.write_text(json.dumps(jsonable(payload), indent=1), "utf-8")
     print(f"wrote {path}", flush=True)
 
@@ -320,18 +326,23 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--phase", default="A")
     parser.add_argument("--only", default=None)
+    parser.add_argument("--run-dir", type=Path, required=True)
+    parser.add_argument("--gt-dir", type=Path, required=True)
+    parser.add_argument("--payload", type=Path, required=True)
+    parser.add_argument("--out", type=Path, required=True)
     args = parser.parse_args()
-    run, truth, rows = load()
+    run, truth, rows = load(args.run_dir, args.gt_dir, args.payload)
     print("loaded", flush=True)
     if args.phase == "A":
-        write("phase-A.json", phase_a(run, truth, rows))
+        write("phase-A.json", phase_a(run, truth, rows), args.out)
     elif args.phase in ("B", "B2"):
-        missed = json.loads((OUT / "phase-A.json").read_text())["missed"]
+        missed = json.loads((args.out / "phase-A.json").read_text())["missed"]
         stem = "phase-" + args.phase
         name = (f"{stem}.json" if args.only is None
                 else f"{stem}-{args.only}.json")
         write(name, phase_b(run, truth, rows, missed, only=args.only,
-                            table="b" if args.phase == "B" else "b2"))
+                            table="b" if args.phase == "B" else "b2"),
+              args.out)
     return 0
 
 

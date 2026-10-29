@@ -10,8 +10,9 @@ Reuses analyze_e004.tile_features / decode_rect_by_squares verbatim (import,
 no reimplementation). GT comes only from build/e004_gt (sha-gated gen output).
 
 Usage:
-  env/bin/python scratch/probe17_dust_features.py <scan.png> <out.npz>
-Run from anywhere; paths resolved absolutely.
+  env/bin/python experiments/017-color-channel/probes/probe17_dust_features.py \\
+      <scan.png> <out.npz>
+Run from anywhere; paths resolved from this file.
 """
 from __future__ import annotations
 
@@ -21,7 +22,7 @@ from pathlib import Path
 
 import numpy as np
 
-REPO = Path("<repo>")
+REPO = Path(__file__).resolve().parents[3]
 E004 = REPO / "experiments" / "004-finalists-checkerboard"
 sys.path.insert(0, str(E004))
 

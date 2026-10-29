@@ -1,0 +1,14 @@
+Refuter notes, candidate 'ppm' (2026-10-18)
+- count_lines: dec.py 25/920, dec32.py 27/1014, dec_plus.py 38/1447, 0 violations each.
+- rt.py (loads enc.py/enc_plus.py/dec*.py by path): all 24 sizes + 3 KAVs reproduce to the byte,
+  all round trips byte-exact; run under PYTHONHASHSEED=0 and =4242 in separate processes:
+  compressed sha and output sha identical everywhere (hs0.json, hs4242.json).
+  dec.py T4 primed decode 4.6 s, encode 4.3 s here; dec.py CLI round trip on T3 primed OK.
+- widths.py: max coded total on T4 primed: dec 101,651 (17 bit), dec32 60,067, dec_plus 8.3e11 (40 bit).
+- reimpl.py: decoder written from plate_spec_items only. Tables keyed by context bytes:
+  bit-exact on KAV and T1-T3 both modes. Tables keyed by (order, context): KAV and every
+  stream fail (primed too: the primer's first 6 bytes). GAP: the Plate must say tables are
+  keyed by the context string alone, so near the start several orders share one table,
+  are visited twice in the escape walk and updated twice (2 then 6).
+- Prose corrections: 'within about 2% of lpaq1 on T2 unprimed' is 6.9%; 'beats xz on T4'
+  but dec.py loses to bzip2 (143,711 vs 142,758); dec_plus beats bzip2.

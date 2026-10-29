@@ -796,3 +796,15 @@ which still has no independent scissors-to-page transform (synthetic/
 render GT remains the precision metric; the native/decimated
 cross-footing agreement above is the strongest scanner-side check
 available without one).
+
+2026-10-09: `probe_dec3r0.py` (the decimated-3 region-0 mechanism probe cited in DESIGN-NOTES)
+was retired from scratch/ into this directory; it reads `e018/decimated-3_1600.tiff` under
+`--evidence-root`.
+
+2026-10-09: inputs renamed to the published archive paths. `e018/decimated-3_1600.tiff` is NOT in
+the published archive (tier delete: the six e018 decimations regenerate byte-identically), so
+`probe_dec3r0.py` now reads it from `build/decimated-3_1600.tiff` and refuses by name, with the
+command, until it is regenerated from the published 4800 capture:
+`env/bin/python experiments/018-confetti-c3-play/decimate_scan.py <root>/paper-store-evidence-paperholo-era/018-confetti-c3-play/confetti/captures/confetti-canon-4800grey-3.tiff experiments/022-pilot-tile-search/build/decimated-3_1600.tiff --factor 3`
+(`<root>` = `--evidence-root`; the capture is published as `.tiff.jxl`, rebuilt by the release's
+`tools/unpack.sh`).

@@ -32,6 +32,7 @@ interpreter/flag regression cannot masquerade as an engine finding.
 from __future__ import annotations
 
 import hashlib
+import pytest
 import json
 import shutil
 import subprocess
@@ -43,6 +44,12 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[1]
 EXP = ROOT / "experiments" / "002-calibration-page"
 BUILD = EXP / "build"
+
+# 2026-09-06: every test here reads a build that a test regenerates in place;
+# test_calpage.py, test_composite_probe.py, test_modprobe.py write the same
+# directory.  One xdist worker per build directory (pyproject: --dist
+# loadgroup).
+pytestmark = pytest.mark.xdist_group("build-002-003-probes")
 EXP001 = ROOT / "experiments" / "001-engine-characterization"
 
 # byte-identity pins for artifacts that already went to (or gate) hardware:

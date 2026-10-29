@@ -4,14 +4,15 @@
 # HP M281 geometry, clean 600 dpi Ghostscript renders, the frozen CAL-1
 # hp-m281-flatbed-k print+scan simulator (bit-faithful K imagemask path,
 # emits 1200 dpi grayscale), two scrap sheets of 25 scraps per printed
-# page (10 captures), and receiver processing with mop-up and refinement.
+# page (10 captures), and two holo3 receiver passes (the second resumes the
+# first's fact snapshot).
 #
 # This is synthetic qualification against the characterized CAL-1 channel
 # (screened-composite emission), not a fresh hardware run.
 # Scrap long edges are 24-72mm: the tool's default 28-105mm cannot place
 # 25 non-overlapping scraps per sheet at this canvas size (probed on the
 # exact 14032x9920 @1200dpi canvas, all 10 sheets, 2026-08-02).
-# decode --workers assumes the holo-parallel-tier1 receiver is merged.
+# decode --workers is holo3's worker count (execution-only).
 # The five per-page front-end chains run in parallel (each CAL-1 distort
 # takes ~35 s and peaks at a few GB of RAM).
 # Expect roughly 7 GiB of retained raster artifacts.
@@ -19,7 +20,7 @@ set -euo pipefail
 
 if [ "${1:-}" = "--help" ] || [ "${1:-}" = "-h" ]; then
   echo "usage: $0 [fresh-run-directory] [diagnostic-port]"
-  echo "default run directory: scratch/c2-r0700-hp-flatbed1200-q070-5p-25x2-<timestamp>"
+  echo "default run directory: build/c2-r0700-hp-flatbed1200-q070-5p-25x2-<timestamp>"
   echo "default diagnostic port: 8023"
   exit 0
 fi
@@ -27,11 +28,14 @@ fi
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$REPO_ROOT"
 
-RUN_DIR="${1:-scratch/c2-r0700-hp-flatbed1200-q070-5p-25x2-$(date +%Y%m%d-%H%M%S)}"
+RUN_DIR="${1:-build/c2-r0700-hp-flatbed1200-q070-5p-25x2-$(date +%Y%m%d-%H%M%S)}"
 DIAG_PORT="${2:-8023}"
 PYTHON="./env/bin/python"
 CODING="c2-r0700"
 PRINTER="hp-m281"
+# 2026-10-12 (R21): the generator names the page by its fossil, PRINTER its
+# emission engine; CODING/PRINTER stay for holo3's own decode door below.
+FORMAT="L:$CODING@3328x2304"
 SOURCE_FRACTION="0.7"
 PAGES=5
 SCAN_DPI=1200
@@ -56,7 +60,7 @@ mkdir -p "$RUN_DIR"
 
 CAPACITY_JSON="$(
   env PYTHONPATH=src "$PYTHON" -m holo.cli capacity \
-    --coding "$CODING" \
+    --format "$FORMAT" \
     --source-fraction "$SOURCE_FRACTION" \
     --printer "$PRINTER" \
     --pages "$PAGES" \
@@ -80,7 +84,7 @@ dd \
 
 env PYTHONPATH=src "$PYTHON" -m holo.cli generate \
   "$RUN_DIR/payload.bin" \
-  --coding "$CODING" \
+  --format "$FORMAT" \
   --source-fraction "$SOURCE_FRACTION" \
   --printer "$PRINTER" \
   --out "$RUN_DIR/volume"
@@ -132,51 +136,49 @@ done
 
 SCAN_ARGS=()
 DPI_ARGS=()
-PAGE_ARGS=()
 for page in $(seq 0 $((PAGES - 1))); do
   printf -v P '%03d' "$page"
   for sheet in 001 002; do
     SCAN_ARGS+=("$RUN_DIR/scraps-p$P-$sheet.tif")
-    DPI_ARGS+=(--scan-dpi "$SCAN_DPI")
+    DPI_ARGS+=(--dpi "$SCAN_DPI")
   done
-  PAGE_ARGS+=(--page "$page")
 done
 
 echo "live diagnostics: http://127.0.0.1:$DIAG_PORT/"
 
-env PYTHONPATH=src "$PYTHON" -m holo.cli decode \
+# 2026-09-05: the v1 receiver is retired, so both passes decode with holo3
+# (Gate E §3 step 2). --dpi replaces --scan-dpi, --max-pages replaces the
+# per-page --page list, --run-dir replaces --state, and holo3 schedules its
+# own ladder (no --mopup/--refine) with one --diag PORT for the live view.
+./confetti3.py decode \
   "${SCAN_ARGS[0]}" \
   "${DPI_ARGS[0]}" "${DPI_ARGS[1]}"\
   --coding "$CODING" \
   --printer "$PRINTER" \
-  "${PAGE_ARGS[@]}" \
-  --state "$RUN_DIR/receive.json" \
-  --out "$RUN_DIR/recovered.bin" \
-  --mopup \
-  --refine \
+  --max-pages "$PAGES" \
+  --run-dir "$RUN_DIR/holo3-pass1" \
+  --out "$RUN_DIR/recovered-pass1.bin" \
   --workers "$WORKERS" \
-  --diag \
-  --diag-dir "$RUN_DIR/diag" \
-  --diag-port "$DIAG_PORT" \
-  --diag-interval 1 \
-  --diag-panel-width 600
+  --diag "$DIAG_PORT"
 
-env PYTHONPATH=src "$PYTHON" -m holo.cli decode \
+# holo3 stamps its run directory with the pid, so read the snapshot back by
+# glob: this run directory is fresh, so the first pass wrote the only one.
+FACTS_PASS1="$(ls -1 "$RUN_DIR"/holo3-pass1.*/facts.npz)"
+
+# 2026-09-05: the second pass accumulates the remaining captures on top of
+# the first, which is what sharing one --state used to do; holo3 resumes by
+# folding that fact snapshot back through its ordinary ingest.
+./confetti3.py decode \
   "${SCAN_ARGS[@]}" \
   "${DPI_ARGS[@]}" \
   --coding "$CODING" \
   --printer "$PRINTER" \
-  "${PAGE_ARGS[@]}" \
-  --state "$RUN_DIR/receive.json" \
+  --max-pages "$PAGES" \
+  --run-dir "$RUN_DIR/holo3-pass2" \
+  --resume "$FACTS_PASS1" \
   --out "$RUN_DIR/recovered.bin" \
-  --mopup \
-  --refine \
   --workers "$WORKERS" \
-  --diag \
-  --diag-dir "$RUN_DIR/diag" \
-  --diag-port "$DIAG_PORT" \
-  --diag-interval 1 \
-  --diag-panel-width 600
+  --diag "$DIAG_PORT"
 
 cmp "$RUN_DIR/payload.bin" "$RUN_DIR/recovered.bin"
 echo "verified byte-identical recovery: $RUN_DIR/recovered.bin"

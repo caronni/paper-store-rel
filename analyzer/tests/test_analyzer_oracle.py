@@ -2,9 +2,9 @@
 
 Synthetic first: the information rate, d', AUC and the waterfall are
 arithmetic and are pinned against vectors whose answer is known by
-construction.  The sheet-I legs then check the truth vector itself —
+construction.  The emitted leg then checks the truth vector itself —
 that `true_sequential` is the same as what the format writes onto the
-cells — and score one real certified tile.
+cells of a volume emitted at test time (sheet I's until 2026-10-09).
 """
 
 from __future__ import annotations
@@ -16,7 +16,7 @@ from analyzer import oracle
 from analyzer.types import Truth
 
 from . import _synthetic as syn
-from ._analyzer_fixtures import i_inputs, i_truth, needs_i_run
+from ._analyzer_fixtures import emitted_volume
 
 
 def _truth_for(frame) -> Truth:
@@ -252,21 +252,19 @@ def test_score_rung_without_a_hard_vector_still_reports_the_verdict():
     assert scored["verdict"] in ("certified", "open")
 
 
-# --------------------------------------------------------- sheet I legs
+# ------------------------------------------------------- the emitted leg
 
-@needs_i_run
-def test_sheet_i_true_sequential_matches_the_emitted_field():
-    run = i_inputs()
-    truth = i_truth()
-    from holo3.plugins import color_sites
-    key = sorted(run.certificates)[0]
-    page, ty, tx, stream_id = key
-    printed = oracle.true_sequential(truth, run.row, key)
-    field = truth.fields[page]
-    grid = oracle.sequential_cells(run.row, key)
-    plane = {"C": 0, "M": 1, "Y": 2}[stream_id]
-    cells = np.stack((grid[:, 0] + ty * 64, grid[:, 1] + tx * 64), axis=1)
-    emitted = field.plane_bits[plane][cells[:, 0], cells[:, 1]]
-    assert np.array_equal(np.asarray(printed, np.uint8),
-                          np.asarray(emitted, np.uint8))
-    del color_sites
+def test_true_sequential_matches_the_emitted_field():
+    volume = emitted_volume()
+    truth = volume.truth
+    field = truth.fields[0]
+    page, ty, tx = 0, 3, 4
+    for stream_id, plane in (("C", 0), ("M", 1), ("Y", 2)):
+        key = (page, ty, tx, stream_id)
+        printed = oracle.true_sequential(truth, volume.row, key)
+        grid = oracle.sequential_cells(volume.row, key)
+        cells = np.stack((grid[:, 0] + ty * 64, grid[:, 1] + tx * 64),
+                         axis=1)
+        emitted = field.plane_bits[plane][cells[:, 0], cells[:, 1]]
+        assert np.array_equal(np.asarray(printed, np.uint8),
+                              np.asarray(emitted, np.uint8)), key

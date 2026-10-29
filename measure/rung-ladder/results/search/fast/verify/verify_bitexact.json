@@ -1,0 +1,422 @@
+[
+ {
+  "rid": "r0406",
+  "k": 1664,
+  "E": 13439,
+  "pool": 57,
+  "ref_ok": 45,
+  "zero_iter": 10,
+  "sp_ran": 13,
+  "full_budget_fail": 12,
+  "comparisons": 533,
+  "mismatches": [],
+  "ref_s": 0.9,
+  "by_label": {
+   "all-zero": [
+    [
+     true,
+     0
+    ]
+   ],
+   "all-negzero": [
+    [
+     true,
+     0
+    ]
+   ],
+   "all+inf": [
+    [
+     false,
+     120
+    ]
+   ],
+   "all-inf": [
+    [
+     true,
+     0
+    ]
+   ],
+   "rand+-inf": [
+    [
+     false,
+     120
+    ]
+   ],
+   "cw-inf-1erased": [
+    [
+     true,
+     1
+    ],
+    [
+     true,
+     0
+    ],
+    [
+     true,
+     0
+    ]
+   ],
+   "cw-3-1erased": [
+    [
+     true,
+     0
+    ],
+    [
+     true,
+     0
+    ],
+    [
+     true,
+     0
+    ]
+   ],
+   "cw-3-1flipped": [
+    [
+     true,
+     1
+    ],
+    [
+     true,
+     1
+    ],
+    [
+     true,
+     1
+    ]
+   ],
+   "huge-finite": [
+    [
+     true,
+     0
+    ]
+   ],
+   "denormal": [
+    [
+     true,
+     0
+    ]
+   ],
+   "half-erased": [
+    [
+     true,
+     22
+    ]
+   ]
+  }
+ },
+ {
+  "rid": "r0547",
+  "k": 2240,
+  "E": 14911,
+  "pool": 57,
+  "ref_ok": 41,
+  "zero_iter": 9,
+  "sp_ran": 19,
+  "full_budget_fail": 16,
+  "comparisons": 533,
+  "mismatches": [],
+  "ref_s": 1.2,
+  "by_label": {
+   "all-zero": [
+    [
+     true,
+     0
+    ]
+   ],
+   "all-negzero": [
+    [
+     true,
+     0
+    ]
+   ],
+   "all+inf": [
+    [
+     false,
+     120
+    ]
+   ],
+   "all-inf": [
+    [
+     true,
+     0
+    ]
+   ],
+   "rand+-inf": [
+    [
+     false,
+     120
+    ]
+   ],
+   "cw-inf-1erased": [
+    [
+     true,
+     1
+    ],
+    [
+     true,
+     0
+    ],
+    [
+     true,
+     0
+    ]
+   ],
+   "cw-3-1erased": [
+    [
+     true,
+     1
+    ],
+    [
+     true,
+     0
+    ],
+    [
+     true,
+     0
+    ]
+   ],
+   "cw-3-1flipped": [
+    [
+     true,
+     1
+    ],
+    [
+     true,
+     1
+    ],
+    [
+     true,
+     1
+    ]
+   ],
+   "huge-finite": [
+    [
+     true,
+     0
+    ]
+   ],
+   "denormal": [
+    [
+     true,
+     0
+    ]
+   ],
+   "half-erased": [
+    [
+     false,
+     120
+    ]
+   ]
+  }
+ },
+ {
+  "rid": "r0700",
+  "k": 2880,
+  "E": 17343,
+  "pool": 57,
+  "ref_ok": 17,
+  "zero_iter": 6,
+  "sp_ran": 40,
+  "full_budget_fail": 40,
+  "comparisons": 533,
+  "mismatches": [],
+  "ref_s": 2.4,
+  "by_label": {
+   "all-zero": [
+    [
+     true,
+     0
+    ]
+   ],
+   "all-negzero": [
+    [
+     true,
+     0
+    ]
+   ],
+   "all+inf": [
+    [
+     false,
+     120
+    ]
+   ],
+   "all-inf": [
+    [
+     true,
+     0
+    ]
+   ],
+   "rand+-inf": [
+    [
+     false,
+     120
+    ]
+   ],
+   "cw-inf-1erased": [
+    [
+     true,
+     0
+    ],
+    [
+     true,
+     1
+    ],
+    [
+     true,
+     1
+    ]
+   ],
+   "cw-3-1erased": [
+    [
+     true,
+     1
+    ],
+    [
+     true,
+     1
+    ],
+    [
+     true,
+     1
+    ]
+   ],
+   "cw-3-1flipped": [
+    [
+     true,
+     1
+    ],
+    [
+     true,
+     1
+    ],
+    [
+     true,
+     1
+    ]
+   ],
+   "huge-finite": [
+    [
+     true,
+     0
+    ]
+   ],
+   "denormal": [
+    [
+     true,
+     0
+    ]
+   ],
+   "half-erased": [
+    [
+     false,
+     120
+    ]
+   ]
+  }
+ },
+ {
+  "rid": "r0850",
+  "k": 3520,
+  "E": 14783,
+  "pool": 57,
+  "ref_ok": 14,
+  "zero_iter": 9,
+  "sp_ran": 43,
+  "full_budget_fail": 43,
+  "comparisons": 533,
+  "mismatches": [],
+  "ref_s": 2.2,
+  "by_label": {
+   "all-zero": [
+    [
+     true,
+     0
+    ]
+   ],
+   "all-negzero": [
+    [
+     true,
+     0
+    ]
+   ],
+   "all+inf": [
+    [
+     false,
+     120
+    ]
+   ],
+   "all-inf": [
+    [
+     true,
+     0
+    ]
+   ],
+   "rand+-inf": [
+    [
+     false,
+     120
+    ]
+   ],
+   "cw-inf-1erased": [
+    [
+     true,
+     0
+    ],
+    [
+     true,
+     1
+    ],
+    [
+     true,
+     1
+    ]
+   ],
+   "cw-3-1erased": [
+    [
+     true,
+     0
+    ],
+    [
+     true,
+     0
+    ],
+    [
+     true,
+     0
+    ]
+   ],
+   "cw-3-1flipped": [
+    [
+     true,
+     1
+    ],
+    [
+     true,
+     1
+    ],
+    [
+     true,
+     1
+    ]
+   ],
+   "huge-finite": [
+    [
+     true,
+     0
+    ]
+   ],
+   "denormal": [
+    [
+     true,
+     0
+    ]
+   ],
+   "half-erased": [
+    [
+     false,
+     120
+    ]
+   ]
+  }
+ }
+]

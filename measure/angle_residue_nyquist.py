@@ -1,18 +1,19 @@
 #!/usr/bin/env python
 """Is the coarse-lane rotation sign recoverable?  Both receivers, probed.
 
-    PYTHONPATH=holo2/src:. env/bin/python -m measure.angle_residue_nyquist
+    PYTHONPATH=src:. env/bin/python -m measure.angle_residue_nyquist
 
 Synthesises a printed cell lattice at a given pixels-per-cell, rotates it
-by +/-theta, and asks each receiver's OWN ``lattice_reciprocal`` what
-rotation it sees.  Nothing is imported across the firewall into either
-receiver; this module imports both, which is what an instrument is for.
+by +/-theta, and asks holo3's ``lattice_reciprocal`` what rotation it
+sees.  Until 2026-09-05 the same probe ran holo2's fit beside it (both
+trees ran the same rfft2 fit, so the mirror below was inherited, not a
+holo3 defect); that column went with holo2.
 
 WHAT IT IS TESTING.  At 2 px/cell the cell fundamental sits on the
 Nyquist bin, and ``np.fft.rfft2``'s last column is Hermitian-symmetric:
 |X[+ky, N/2]| == |X[-ky, N/2]|.  A magnitude argmax there cannot tell
 +theta from -theta.  Both trees run the same rfft2 fit, so if the mirror
-is real it is inherited, not a holo3 defect.
+is real it is inherited from the shared rfft2 fit, not a holo3 defect.
 """
 from __future__ import annotations
 
@@ -54,23 +55,19 @@ def angle_of(rows: np.ndarray | None) -> float | None:
 
 def probe(ppc: float, cells: int, thetas: tuple[float, ...],
           trials: int) -> None:
-    from holo3.plugins import pose as h3pose
-    from holo2.solve import pose_fit as h2pose
+    from holo.receiver.plugins import pose as h3pose
 
     print(f"\nppc={ppc}  window={cells} cells "
           f"({int(cells * ppc)} px)  trials={trials}")
-    print(f"{'theta':>7} | {'holo3 fitted':>28} | {'holo2 fitted':>28}")
-    print("-" * 72)
+    print(f"{'theta':>7} | {'holo3 fitted':>28}")
+    print("-" * 40)
     for theta in thetas:
-        h3, h2 = [], []
+        h3 = []
         for trial in range(trials):
             image = lattice(ppc, cells, theta, seed=1000 + trial)
             a3 = angle_of(h3pose.lattice_reciprocal(image, ppc))
-            a2 = angle_of(h2pose.lattice_reciprocal(image, ppc))
             if a3 is not None:
                 h3.append(a3)
-            if a2 is not None:
-                h2.append(a2)
 
         def summary(values: list[float]) -> str:
             if not values:
@@ -85,7 +82,7 @@ def probe(ppc: float, cells: int, thetas: tuple[float, ...],
             return (f"med {np.median(arr):+7.3f}  sign-ok "
                     f"{right}/{len(arr)}")
 
-        print(f"{theta:+7.2f} | {summary(h3):>28} | {summary(h2):>28}")
+        print(f"{theta:+7.2f} | {summary(h3):>28}")
 
 
 def main(argv: list[str] | None = None) -> int:

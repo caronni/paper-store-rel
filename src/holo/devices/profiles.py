@@ -1,4 +1,5 @@
-"""Payload profiles + the coding->printer geometry resolver.
+"""Payload profiles — documentation of the measured dials, listed by
+``registry``.
 
 Profiles (rocksolid / resilient / high-volume / max) name one decision:
 which coding at which source fraction. Each carries the measurement
@@ -10,18 +11,15 @@ grade:
   "provisional"  — recorded hypothesis, pending the matched-payload rung
                    control (018b.5) and v1 requalification.
 
-Geometry is NOT part of a profile: it comes from the printer at resolve
-time (spec = coding x printer margins x media). Every profile is
-provisional against format v1 itself until the first v1 print qualifies
-(HOLO-DESIGN §11).
+Every profile is provisional against format v1 itself until the first v1
+print qualifies (HOLO-DESIGN §11). Generation no longer selects them
+(R21, CMY-DESIGN §2.8): a volume is named by ``--format`` with an
+explicit ``--source-fraction``, and a
+legacy row by its ``L:`` fossil, which carries its own page.
 """
 from __future__ import annotations
 
 from dataclasses import dataclass
-
-from ..format.descriptor import Coding, FormatSpec, get_coding
-from ..format.layout import MEDIA_MM
-from .registry import PRINTERS, Printer
 
 
 @dataclass(frozen=True)
@@ -54,36 +52,3 @@ PROFILES: dict[str, PayloadProfile] = {p.name: p for p in (
         note="best intact-sheet hypothesis; pending the matched-payload "
              "rung control print"),
 )}
-
-
-def get_profile(name: str) -> PayloadProfile:
-    try:
-        return PROFILES[name]
-    except KeyError:
-        raise KeyError(f"unknown profile {name!r}; "
-                       f"known: {sorted(PROFILES)}") from None
-
-
-def get_printer(printer_id: str) -> Printer:
-    try:
-        return PRINTERS[printer_id]
-    except KeyError:
-        raise KeyError(f"unknown printer {printer_id!r}; "
-                       f"known: {sorted(PRINTERS)}") from None
-
-
-def make_spec(coding: Coding | str, printer: Printer | str = "default",
-              media_id: str | None = None) -> FormatSpec:
-    """coding x printer -> the printed-format spec (geometry derived from
-    the printer's margins and media)."""
-    if isinstance(coding, str):
-        coding = get_coding(coding)
-    if isinstance(printer, str):
-        printer = get_printer(printer)
-    if media_id is None:
-        media_id = printer.media_ids[0]
-    if media_id not in printer.media_ids:
-        raise ValueError(f"{printer.printer_id} does not take {media_id!r}")
-    return FormatSpec(coding=coding, media_id=media_id,
-                      media_mm=MEDIA_MM[media_id],
-                      margin_mm=printer.payload_safe_margin_mm)

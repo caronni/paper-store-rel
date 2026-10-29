@@ -239,7 +239,8 @@ available footings before any change:
   248 tiles — strictly worse than its own decimated twin;
 - native 2nd take (session s001): 27 placements, 150 tiles.
 
-Mechanism probe (decimated-3 largest region, `scratch/e022_probe_dec3r0.py`):
+Mechanism probe (decimated-3 largest region, `scratch/e022_probe_dec3r0.py`; since 2026-10-09
+`probe_dec3r0.py` in this directory):
 e021's hint was -4.45 deg and the truth -4.50 deg, but v1's region-level
 score picked -3.95 deg because the region-scale contrast objective is
 measurably FLAT in angle (40.34 at the wrong angle vs 40.73 at the true one

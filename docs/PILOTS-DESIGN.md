@@ -1525,7 +1525,8 @@ measurement, not a claim);
 
 
 **15.9 Mask-aware ctx detection for pieces — BUILT + MEASURED NEGATIVE
-(2026-07-13, decoder-axis; ON BRANCH `pilot-first-receiver`, NOT MERGED).**
+(2026-07-13, decoder-axis; ON BRANCH `pilot-first-receiver`, NOT MERGED;
+since 2026-10-26 preserved as tag `preserve/pilot-first-receiver-5bf9847`).**
 The §15.8 S4 fix: bring the word path's ctx+PAVA detector to the
 correlation-locked geometry by making `acquire`'s z-normalisation, GMM fit
 and 16-context ICM take an optional core `mask` — quantiles and fits over
@@ -1547,7 +1548,8 @@ gap to the word path's 110 is upstream — `lock_grid` + `sample_cell_means`
 sub-cell phase lock, not emission detection. Full text and numbers:
 experiments/018-confetti-c3-play.md "Branch record"; branch commits
 `8ebbf0d` (v1) and `5bf9847` (this negative) at
-https://github.com/caronni/paper-store/tree/pilot-first-receiver.
+https://github.com/caronni/paper-store/tree/preserve/pilot-first-receiver-5bf9847
+(the tag that preserves the branch since 2026-10-26).
 In `src/holo` the equivalent protection exists but was re-derived from the
 E023b line, not ported: `receive/detect.py` marks any cell without a
 complete 8-neighbourhood as context-invalid (bin −1) rather than masking a

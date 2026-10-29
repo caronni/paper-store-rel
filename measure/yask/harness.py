@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 """The Y-as-K battery: one case, five declared arms, one verdict.
 
-    PYTHONPATH=. env/bin/python -m measure.yask.harness --case H-a
-    PYTHONPATH=. env/bin/python -m measure.yask.harness --case all
-    PYTHONPATH=. env/bin/python -m measure.yask.harness --case H-a \\
-        --arms A0,A2 --shift-sweep
+    PYTHONPATH=src:. env/bin/python -m measure.yask.harness --case H-a \\
+        --evidence-root <evidence> --out build/yask
+    PYTHONPATH=src:. env/bin/python -m measure.yask.harness --case all \\
+        --evidence-root <evidence> --out build/yask
 
 THE PRE-REGISTERED BAR, stated once and never moved: the experiment is
 USEFUL if at least one Y-stream certificate passes the full codec gate
@@ -62,6 +62,8 @@ from pathlib import Path
 
 import numpy as np
 
+from measure import _evidence
+
 from . import _cases, _paths, _read, _spectral, _truth
 
 ARMS = ("A0", "A1", "A2", "C0", "C1", "X1", "N0")
@@ -106,13 +108,13 @@ ARM_TABLE: dict[str, Arm] = {
 
 
 def load_context(case: _cases.Case) -> dict:
-    from holo3.data import Certificate
-    from holo3.format.identity import build_site_geometry, resolve_format_ref
+    from holo.receiver.data import Certificate
+    from holo.receiver.format.identity import build_site_geometry, resolve_format_ref
     from measure.crop_parity import _gt as gt_module
 
-    sheet = _cases.SHEETS[case.sheet]
-    _paths.refuse_if_absent((sheet.events_xz, sheet.gen_dir,
-                             sheet.certified_tiles_json))
+    sheet = _cases.sheet_for(case.sheet)
+    _paths.refuse_if_absent((sheet.gen_dir, sheet.certified_tiles_json))
+    _paths.refuse_if_withdrawn(sheet.events_xz)
     row = resolve_format_ref(sheet.format_ref)
     geometry = build_site_geometry(row)
     payload = _truth.load_payload(sheet.gen_dir)
@@ -544,9 +546,13 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--shift-min", type=float, default=-2.0)
     parser.add_argument("--shift-max", type=float, default=2.0)
     parser.add_argument("--shift-step", type=float, default=0.25)
-    parser.add_argument("--out", type=Path, default=None)
+    _evidence.add_argument(parser)
+    parser.add_argument("--out", type=Path, required=True,
+                        help="directory the reports are written to")
     args = parser.parse_args(argv)
 
+    _paths.use_evidence_root(args.evidence_root)
+    _paths.evidence_root()
     _paths.install_src()
     wanted = args.case or ["all"]
     cases = (list(_cases.CASES) if "all" in wanted
@@ -581,7 +587,7 @@ def main(argv: list[str] | None = None) -> int:
             for name, arm in report["arms"].items()]
         print("\n".join(decode_lines), file=sys.stderr, flush=True)
 
-    out_dir = args.out or (_paths.SCRATCH / "reports")
+    out_dir = args.out
     out_dir.mkdir(parents=True, exist_ok=True)
     # The arm set is part of the name: two invocations over the same
     # cases with different arms are two measurements, not one that

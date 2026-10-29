@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 """P4 stage 2: centroid-noise stats, v1 registration-model fits, dust sim.
 
-Reads scratch/probe17_reg_<scan>.npz (from probe17_perplane_reg.py).
+Reads the probe17_reg_<scan>.npz files named on the command line (from
+probe17_perplane_reg.py); writes ../build/probe17_fit_report.json (the
+record of the run is probe17_fit_report.json beside this file).
 
   * centroid noise per plane/channel = MAD-std of per-cell displacement
     after removing the per-tile median (noise excludes the registration
@@ -24,7 +26,7 @@ from pathlib import Path
 
 import numpy as np
 
-_SCRATCH = Path(__file__).resolve().parent
+_BUILD = Path(__file__).resolve().parents[1] / "build"
 PLANES = "CMY"
 BUDGET_DOTS = 1.5
 N_DUST = (100, 200, 400, 650, 900)
@@ -195,7 +197,8 @@ def main(paths: list[str]) -> None:
                 res[f"{a}-{b}/dust_n{n}/rms_med"] = float(np.median(rmserr))
                 res[f"{a}-{b}/dust_n{n}/n_used"] = [int(na), int(nb)]
         report[path.stem] = res
-    out = _SCRATCH / "probe17_fit_report.json"
+    _BUILD.mkdir(parents=True, exist_ok=True)
+    out = _BUILD / "probe17_fit_report.json"
     out.write_text(json.dumps(report, indent=1))
     print(f"-> {out}")
 

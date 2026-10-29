@@ -10,18 +10,21 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from holo.devices.profiles import PROFILES, get_profile, make_spec
-from holo.devices.registry import PRINTERS, SCANNERS
-from holo.format.descriptor import CODINGS
-from holo.format.lattice import (display_pitch_token, parse_format_id,
-                                 parse_pitch)
+from holo.devices.profiles import PROFILES
+from holo.devices.registry import PRINTERS, SCANNERS, Printer
+from holo.format.descriptor import CODINGS, FormatSpec, get_coding
+from holo.format.fossils import FOSSILS, is_fossil_ref
+from holo.format.layout import MEDIA_MM
+from holo.format.lattice import display_pitch_token, parse_pitch
 from holo.format.profiles import Family
-from holo.gen.emit import default_out_dir, emit_volume
-from holo.gen.plan import max_payload_bytes, plan_volume, pooled_plane_tier
+from holo.format.registry import FORMAT_ROWS
+from holo.format.resolve import resolve_format_ref
+from holo.gen.emit import color_route, default_out_dir, emit_volume
+from holo.gen.plan import (max_payload_bytes, plan_volume, pooled_plane_tier,
+                           tier_word)
 from holo.gen.sheet import (
     DEFAULT_ENGINE_DPI,
     DEFAULT_PAPER,
-    PAPER_PROFILES,
     dots_per_cell,
     fit,
     get_paper,
@@ -34,56 +37,105 @@ _SOURCE_FRACTION_HELP = (
     "fraction of printed tiles that carry SOURCE data; the rest are "
     "repair (fountain redundancy). 0.5 means any ~half of the printed "
     "tiles recovers the whole payload; lower = more robust, less "
-    "capacity. Profiles set this — override it only when you know why.")
+    "capacity. `registry` lists the profiles' documented dials.")
 
 
 def _resolve_spec_q(args) -> tuple:
-    """(spec, q, profile, sheet) from the mutually exclusive selectors.
+    """(spec, q, sheet) from ``--format``, the whole identity.
 
     ``sheet`` is the v2 emission placement (paper x engine grid), or None
-    for a legacy row, whose page geometry comes from the printer registry.
+    for an ``L:`` fossil, which carries its own page (A4 x its margin).
+    A bare legacy id refuses: on the CLI a fossil is spelled ``L:``.
     """
-    if args.format:
-        if args.profile or args.coding:
-            raise SystemExit(
-                "--format is the whole identity (coding x tile matrix); "
-                "it does not combine with --profile/--coding")
-        if args.printer:
-            raise SystemExit(
-                "--format takes its paper from --paper and its engine grid "
-                "from --dpi; printers are not part of the v2 generation "
-                "path (FORMAT-SPACE §9)")
-        if args.source_fraction is None:
-            raise SystemExit("--format needs an explicit --source-fraction")
+    if getattr(args, "coding", None):
+        return _recipe_coding_spec(args)
+    if not args.format:
+        raise SystemExit("pick --format ID: a v2 id (see `fit`) or an "
+                         "L: fossil (FORMAT-SPACE §8)")
+    if args.source_fraction is None:
+        raise SystemExit("--format needs an explicit --source-fraction")
+    ref = args.format
+    if not is_fossil_ref(ref) and (ref in FOSSILS or ref in FORMAT_ROWS):
+        raise SystemExit(f"{ref!r} is a legacy id; a fossil is spelled "
+                         f"--format L:{ref}")
+    try:
+        spec = resolve_format_ref(ref)
+        if spec.coding.namespace == "v1":
+            if args.paper is not None or args.dpi is not None:
+                raise SystemExit(
+                    f"{ref}: an L: fossil carries its own page (A4 x "
+                    f"{spec.margin_mm:g} mm); --paper/--dpi place a v2 "
+                    f"field")
+            return spec, args.source_fraction, None
+        sheet = sheet_layout(
+            spec,
+            DEFAULT_PAPER if args.paper is None else args.paper,
+            DEFAULT_ENGINE_DPI if args.dpi is None else args.dpi)
+    except (KeyError, ValueError) as exc:
+        raise SystemExit(str(exc))
+    return spec, args.source_fraction, sheet
+
+
+# retained for measure/evidence_regen until the owner's ruling (CMY-GENERATOR-PLAN W2b ii)
+def _recipe_coding_spec(args) -> tuple:
+    """The evidence recipes' ``--coding ID --printer ID`` door: the page
+    on A4 from that printer row's margin, as the published jobs and
+    manifests were made, opening only onto a fossil identity; the printer
+    is recorded, never an emission engine (cmyk1)."""
+    if args.format or args.paper is not None or args.dpi is not None:
+        raise SystemExit("--coding is the evidence recipes' legacy door; "
+                         "it takes --printer and --source-fraction only")
+    if args.source_fraction is None:
+        raise SystemExit("--coding needs an explicit --source-fraction")
+    printer = PRINTERS.get(args.printer or "default")
+    if printer is None:
+        raise SystemExit(f"unknown printer {args.printer!r}; known: "
+                         f"{', '.join(sorted(PRINTERS))}")
+    try:
+        spec = FormatSpec(coding=get_coding(args.coding), media_id="a4",
+                          media_mm=MEDIA_MM["a4"],
+                          margin_mm=printer.payload_safe_margin_mm)
+    except KeyError as exc:
+        raise SystemExit(str(exc)) from None
+    fossil = FOSSILS.get(spec.spec_id)
+    if fossil is None or fossil.seed != spec.seed:
+        raise SystemExit(f"{spec.spec_id} is not a fossil; new work "
+                         f"spells --format")
+    if spec.codec_family is not Family.K and printer.color_route is None:
+        raise SystemExit(f"{printer.printer_id}: no colour record — it "
+                         f"prints no {spec.codec_family.name} row")
+    return spec, args.source_fraction, None
+
+
+def _engine(args, spec: FormatSpec) -> Printer | None:
+    """The emission engine a --format row names (None = cmyk1, unnamed).
+
+    Never a geometry: paper and grid come from --paper/--dpi or the
+    fossil.  The route is checked here so ``capacity`` refuses what
+    ``generate`` would."""
+    if args.printer is None:
+        return None
+    try:
+        printer = PRINTERS[args.printer]
+    except KeyError:
+        raise SystemExit(
+            f"unknown emission engine {args.printer!r}; known: "
+            f"{', '.join(sorted(PRINTERS))}") from None
+    if spec.codec_family is not Family.K:
         try:
-            spec = parse_format_id(args.format)
-            sheet = sheet_layout(
-                spec,
-                DEFAULT_PAPER if args.paper is None else args.paper,
-                DEFAULT_ENGINE_DPI if args.dpi is None else args.dpi)
-        except (KeyError, ValueError) as exc:
+            color_route(spec, printer)
+        except ValueError as exc:
             raise SystemExit(str(exc))
-        return spec, args.source_fraction, None, sheet
-    if args.paper is not None or args.dpi is not None:
-        raise SystemExit(
-            "--paper/--dpi place a v2 --format field on paper; a "
-            "--profile/--coding row derives its page from --printer")
-    if args.profile and args.source_fraction is not None:
-        raise SystemExit(
-            "--profile fixes the source fraction; for custom parameters "
-            "use --coding ID --source-fraction Q instead (the result is "
-            "then recorded as 'custom', carrying no profile evidence)")
-    printer = args.printer or "default"
-    if args.profile:
-        p = get_profile(args.profile)
-        return make_spec(p.coding_id, printer), p.source_fraction_q, p, None
-    if args.coding:
-        if args.source_fraction is None:
-            raise SystemExit("--coding needs an explicit --source-fraction")
-        return make_spec(args.coding, printer), args.source_fraction, \
-            None, None
-    raise SystemExit("pick --format ID (the v2 lattice), --profile NAME or "
-                     "--coding ID (see `registry` for the legacy lists)")
+    return printer
+
+
+def _engine_block(spec: FormatSpec, printer: Printer | None) -> dict:
+    if printer is None:
+        return {}
+    block = {"printer": printer.printer_id}
+    if spec.codec_family is not Family.K:
+        block["color_route"] = printer.color_route
+    return block
 
 
 def _coding_detail(c) -> None:
@@ -136,30 +188,6 @@ def _printer_detail(p) -> None:
         print(f"      print path: {p.print_path}")
     for n in p.notes:
         print(f"      note: {n}")
-    print(f"      derived geometry on {p.media_ids[0]} "
-          f"@ {p.payload_safe_margin_mm}mm margins:")
-    for cid in sorted(CODINGS):
-        spec = make_spec(cid, p)
-        lay = spec.layout
-        raw_kb = spec.tiles_per_page * spec.aggregate_symbol_bits / 8192
-        print(f"        {spec.display_id}: field "
-              f"{lay.cells_yx[0]}x{lay.cells_yx[1]} cells = "
-              f"{lay.tiles_yx[0]}x{lay.tiles_yx[1]} tiles "
-              f"({spec.tiles_per_page}/page), borders t/b/l/r "
-              f"{lay.border_top_mm:.2f}/{lay.border_bottom_mm:.2f}/"
-              f"{lay.border_left_mm:.2f}/{lay.border_right_mm:.2f}mm, "
-              f"max {spec.max_pages} pages/volume, "
-              f"{raw_kb:.0f} KiB/page before redundancy")
-
-
-def _profile_detail(p) -> None:
-    spec = make_spec(p.coding_id, "default")
-    cap1 = max_payload_bytes(spec, p.source_fraction_q, 1)
-    plan = plan_volume(spec, cap1, p.source_fraction_q)
-    print(f"      on the default printer: {spec.display_id}, promise-grade "
-          f"{cap1:,} B/page ({plan.net_bits_per_mm2:.1f} b/mm2 net); "
-          f"any >={p.source_fraction_q:.0%} of printed tiles (+rank "
-          f"reserve) recovers the volume")
 
 
 def cmd_registry(args) -> int:
@@ -183,7 +211,7 @@ def cmd_registry(args) -> int:
                 f"(~{c.aggregate_symbol_bits // 8} B/tile)")
         if v:
             _coding_detail(c)
-    print("printers (geometry + capability; margins decide capacity):")
+    print("printers (emission engines for --printer; never a geometry):")
     for pid, p in sorted(PRINTERS.items()):
         print(f"  {pid}: {p.name}")
         print(f"      {p.usable_dpi} dpi usable, media {'/'.join(p.media_ids)}, "
@@ -191,6 +219,10 @@ def cmd_registry(args) -> int:
               f"({p.margin_footing})")
         print(f"      b/w:   {p.bw}")
         print(f"      color: {p.color}")
+        route = p.color_route or "none (colour formats refuse)"
+        if p.rgb_solid is not None:
+            route += " at C/M/Y " + " ".join(map(str, p.rgb_solid))
+        print(f"      colour route: {route}")
         if v:
             _printer_detail(p)
     print("scanners:")
@@ -200,13 +232,12 @@ def cmd_registry(args) -> int:
         if v:
             for n in s.notes:
                 print(f"      note: {n}")
-    print("profiles (coding + redundancy, priced on the measured record):")
+    print("profiles (documentation: coding + redundancy, priced on the "
+          "measured record; select with --format + --source-fraction):")
     for name, p in sorted(PROFILES.items()):
         print(f"  {name}: {p.coding_id}, source-fraction "
               f"{p.source_fraction_q} [{p.evidence}, {p.priced_on}] — "
               f"{p.note}")
-        if v:
-            _profile_detail(p)
     return 0
 
 
@@ -225,10 +256,11 @@ def _geometry_block(spec, sheet=None) -> dict:
 
 
 def cmd_capacity(args) -> int:
-    spec, q, prof, sheet = _resolve_spec_q(args)
-    head = ({"printer": args.printer or "default"} if sheet is None else
+    spec, q, sheet = _resolve_spec_q(args)
+    engine = _engine_block(spec, _engine(args, spec))
+    head = (engine if sheet is None else
             {"paper": sheet.paper.name, "engine_dpi": sheet.engine_dpi,
-             "dots_per_cell": sheet.dots_per_cell})
+             "dots_per_cell": sheet.dots_per_cell, **engine})
     out = {**head, **_geometry_block(spec, sheet), "source_fraction": q}
     try:
         if args.payload_bytes is not None:
@@ -250,12 +282,9 @@ def cmd_capacity(args) -> int:
                                                                args.pages)})
         tier = pooled_plane_tier(spec, q)
         if tier is not None:
-            out["plane_tier"] = tier
+            out[f"{tier_word(spec)}_tier"] = tier
     except ValueError as e:
         raise SystemExit(str(e))
-    if prof is not None:
-        out["profile"] = prof.name
-        out["evidence"] = prof.evidence
     if args.json:
         print(json.dumps(out, indent=1))
     else:
@@ -300,37 +329,47 @@ def cmd_fit(args) -> int:
           f"        (rungs are baked per generation)")
     print(f"  {token}-cmy8-<rung>@{tiles_y}x{tiles_x}"
           f"  (or a mixed triplet <rC>x<rM>x<rY>)")
+    print(f"  {token}-cmy-<rung>@{tiles_y}x{tiles_x}"
+          f"   (or a stream pair <rHi>x<rLo>)")
     return 0
 
 
 def cmd_generate(args) -> int:
-    spec, q, prof, sheet = _resolve_spec_q(args)
+    spec, q, sheet = _resolve_spec_q(args)
     payload = Path(args.payload).read_bytes()
     if not payload:
         raise SystemExit("empty payload")
     out_dir = Path(args.out) if args.out else default_out_dir(spec, payload)
-    # A v2 row records paper + engine grid; a legacy row records the
-    # printer whose margins derived its page.
-    emission = ({"printer_id": args.printer or "default"} if sheet is None
+    # A v2 row records paper + engine grid, a fossil its own page; both
+    # record the emission engine, if named.  The recipes' --coding door
+    # records its legacy printer id (cmyk1).
+    engine = None if args.coding else _engine(args, spec)
+    emission = ({"printer_id": args.printer or "default"} if args.coding
+                else {"printer": engine} if sheet is None
                 else {"paper": sheet.paper.name,
-                      "engine_dpi": sheet.engine_dpi})
+                      "engine_dpi": sheet.engine_dpi,
+                      "printer": engine})
     try:
-        vol = emit_volume(spec, payload, q, out_dir, profile=prof,
-                          **emission)
+        vol = emit_volume(spec, payload, q, out_dir, **emission)
     except (FileExistsError, ValueError) as e:
         # ValueError = a legitimate planner refusal (dirty float dial,
         # 18-bit page cap): the operator gets the message, not a trace.
         raise SystemExit(str(e))
-    label = prof.name if prof else "custom"
     tier = ("" if vol.plan.plane_tier is None
-            else f", dead-plane tier {vol.plan.plane_tier}")
+            else f", dead-{tier_word(spec)} tier {vol.plan.plane_tier}")
     # The echo is the DISPLAY spelling (FORMAT-SPACE §6): the canonical
     # identity is what the seed and the manifest carry, and it is what
     # --json reports; a person reading stdout gets the short form.
-    where = (f"on {args.printer or 'default'}" if sheet is None else
-             f"on {sheet.paper.name} @ {sheet.engine_dpi} dpi "
-             f"({sheet.dots_per_cell} dots/cell)")
-    print(f"{spec.display_id} {where} [{label}]: "
+    where = (f"on {args.printer or 'default'}" if args.coding else
+             (f"on its fossil page (A4, {spec.margin_mm:g} mm)"
+              if sheet is None else
+              f"on {sheet.paper.name} @ {sheet.engine_dpi} dpi "
+              f"({sheet.dots_per_cell} dots/cell)")
+             + ("" if engine is None else
+                f", engine {engine.printer_id}"
+                + ("" if spec.codec_family is Family.K else
+                   f" ({engine.color_route} route)")))
+    print(f"{spec.display_id} {where}: "
           f"{vol.plan.payload_bytes} bytes -> K={vol.plan.k_total} over "
           f"{vol.plan.n_pages} page(s), "
           f"K/N={vol.plan.effective_k_over_n:.3f}{tier}")
@@ -339,5 +378,3 @@ def cmd_generate(args) -> int:
     print(f"  {out_dir}/manifest.json  (sidecar — sheets decode "
           f"without it)")
     return 0
-
-

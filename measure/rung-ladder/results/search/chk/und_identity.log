@@ -1,0 +1,7 @@
+OK  bsc {'p': 0.05} t0 0 fails 4 undetected 4 und_w entries 4
+OK  bsc {'p': 0.05} t0 400 fails 1 undetected 1 und_w entries 1
+OK  awgn {'esn0_db': -1.25} t0 0 fails 19 undetected 3 und_w entries 3
+OK  awgn {'esn0_db': -1.25} t0 400 fails 21 undetected 0 und_w entries 0
+OK  bsc {'p': 0.035} t0 0 fails 1 undetected 1 und_w entries 1
+OK  robust {'esn0_db': -1.0, 'f': 0.002} t0 0 fails 383 undetected 1 und_w entries 1
+UND-IDENTITY: PASS

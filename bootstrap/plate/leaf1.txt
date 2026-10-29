@@ -1,0 +1,63 @@
+VOLUME {V}  R0 PLATE 1/3 (LEAF 1)  COPY {C}  WHAT THIS BOOK IS
+This book keeps {NBYTES} bytes of digital data on paper. The grey
+pages that look like noise ARE the data. These first leaves teach
+you to read them, step by step; each step needs only the steps
+before it. One hour: read the 8 x 8 block below with a pencil.
+One day: type the 12-line checker (leaf 2), then the typed pages.
+One week: everything. A piece of a dense page the size of a
+fingernail still carries its own address.
+PROOF: THE 8 x 8 BLOCK (printed beside this text; squares 1.016 mm).
+Ink = 1, paper = 0. Rows top to bottom, each row left to right. The
+left square counts 128, then 64, 32, 16, 8, 4, 2, 1 (high bit first).
+       marks             binary    number                 letter
+row 1  . # . . # . . .   01001000  64+8 = 72              H
+row 2  . # # . . # . #   01100101  64+32+4+1 = 101        e
+row 3  . # # . # # . .   01101100  64+32+8+4 = 108        l
+row 4  . # # . # # . .   01101100  64+32+8+4 = 108        l
+row 5  . # # . # # # #   01101111  64+32+8+4+2+1 = 111    o
+row 6  . . # . . . . .   00100000  32 = 32                (space)
+row 7  . . # # . # . .   00110100  32+16+4 = 52           4
+row 8  . . # # . . # .   00110010  32+16+2 = 50           2
+These are the letters Hello 42. If you can read them, your method
+works. If a camera reads the block wrong, fix the light, not the
+program: soft light from the side, no flash (shiny toner looks white).
+Lost which way is up, or which is ink? Try 16 ways: these 8, each
+with ink = 1 and ink = 0. Only one reads Hello 42.
+  corners as printed: ab -> ab  ca  dc  bd    ba  ac  cd  db
+                      cd    cd  db  ba  ac    dc  bd  ab  ca
+THE KEY. EXAMPLE ONLY - each real volume prints its own key here:
+  holo/v2/1i300-cmy8-r0700-p120-v1@53x37   (38 bytes, CRC-32 3ed4f759)
+  hex: 68 6f 6c 6f 2f 76 32 2f 31 69 33 30 30 2d 63 6d 79 38 2d
+       72 30 37 30 30 2d 70 31 32 30 2d 76 31 40 35 33 78 33 37
+For a holo v2 volume this text IS the seed of the dense pages.
+Without it they are noise, for ever: that keeps the data private.
+It is printed here, on both copies of the Plate, and nowhere else.
+This line is the price of privacy. Copy it with every copy of the book.
+CRC-32: A CHECK NUMBER FOR BYTES. r is a 32-bit number, start r =
+ffffffff (hex). For each byte b: r = r XOR b, then 8 times: if r is
+odd, r = (r >> 1) XOR edb88320, else r = r >> 1. End: CRC = r XOR
+ffffffff. (edb88320 = 04c11db7 with its 32 bits reversed.) CRCs are
+stored high byte first. That is all of CRC-32: one shift register.
+Every step for the bytes "12" = 31 32 (hex). k:bit = step k and the
+low bit of r before it; then r >> 1; then new r (XOR edb88320 if 1).
+start r = ffffffff. byte 31: r XOR 31 = ffffffce
+1:0 7fffffe7 7fffffe7   2:1 3ffffff3 d2477cd3   3:1 6923be69 849b3d49
+4:1 424d9ea4 aff51d84   5:0 57fa8ec2 57fa8ec2   6:0 2bfd4761 2bfd4761
+7:1 15fea3b0 f8462090   8:0 7c231048 7c231048
+byte 32: r XOR 32 = 7c23107a
+1:0 3e11883d 3e11883d   2:1 1f08c41e f2b0473e   3:0 7958239f 7958239f
+4:1 3cac11cf d11492ef   5:1 688a4977 8532ca57   6:1 4299652b af21e60b
+7:1 5790f305 ba287025   8:1 5d143812 b0acbb32
+end: b0acbb32 XOR ffffffff = 4f5344cd = CRC-32 of "12".
+More: no bytes -> 00000000, "a" -> e8b7be43, "123456789" -> cbf43926.
+THE TYPED PAGES. Each typed line is up to 64 characters, then 3 check
+characters. c = n * 1000003 + the sum of i * (ASCII number of
+character i), i = 1, 2, 3 ... (check characters not counted), n = the
+line number. Take c mod 32768; write it as 3 base-32 digits (0-9, then
+a-v = 10-31), high digit first. The checker (leaf 2) prints OK n (type
+line n) or BAD n (type line n again); it keeps only good lines. RUN
+ends the stream. The text is Python: ~ is a new line, @ is 4 spaces of
+indent. After it come a line ### and data in base 32 (5 bits per
+character, high bit first). At RUN the checker writes the code to a.py
+and runs it; that code unpacks the data: the reader of the next pages.
+

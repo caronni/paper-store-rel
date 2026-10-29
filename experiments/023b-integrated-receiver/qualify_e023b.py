@@ -5,6 +5,12 @@ The compatibility and append-schedule gates replay immutable qualified E023
 ScanEmissions, isolating orchestration from TIFF sampling.  The integrated
 gate then checks E023b states produced from the original TIFFs against the
 frozen E022/E023 artifacts before accepting their final LDPC outcomes.
+
+  env/bin/python experiments/023b-integrated-receiver/qualify_e023b.py \\
+      --e022-build <022's build> --e023-build <023's build> \\
+      --e018-gt <018's build>/e018_gt [--replay-only]
+
+The three are sha-pinned below; their files are in the evidence archive.
 """
 from __future__ import annotations
 
@@ -26,14 +32,13 @@ from paperholo import compose, ldpc, payloaddec, pilotsearch, receiver  # noqa:E
 from paperholo.formats import FORMAT_REGISTRY  # noqa:E402
 
 
-E022_BUILD = ROOT / "experiments/022-pilot-tile-search/build"
-E023_BUILD = ROOT / "experiments/023-payload-tiles/build"
-E018_GT = ROOT / "experiments/018-confetti-c3-play/build/e018_gt"
+E018_GT = Path()  # set from --e018-gt
+# the e022/e023 file names below join --e022-build / --e023-build
 GT_SHA256 = "6c6f54b7a8dec9d5b5d4e75ce5a29af4323bb91da5eca50391cc5d5eebc5cc82"
 DEFAULTS = {
     "decimated": {
-        "e022": E022_BUILD / "session_state.pkl",
-        "e023": E023_BUILD / "e023_decimated.pkl",
+        "e022": "session_state.pkl",
+        "e023": "e023_decimated.pkl",
         "integrated": HERE / "build/e023b_decimated.pkl",
         "compat_certified": 741, "compat_attempts": 1024,
         "e022_sha256": "e31fe62814d6edd8f488df2d557929a44ae44fe430e8aaada6659a16ff121e36",
@@ -50,8 +55,8 @@ DEFAULTS = {
         "extras": {(0, 16, 18)},
     },
     "native": {
-        "e022": E022_BUILD / "session_native.pkl",
-        "e023": E023_BUILD / "e023_native.pkl",
+        "e022": "session_native.pkl",
+        "e023": "e023_native.pkl",
         "integrated": HERE / "build/e023b_native.pkl",
         "compat_certified": 740, "compat_attempts": 1037,
         "e022_sha256": "35d89375999b13bd518880d0fae40247ed8606f5a35fd32998dbf1522b2966a0",
@@ -487,15 +492,23 @@ def main() -> int:
     parser.add_argument("--replay-only", action="store_true")
     parser.add_argument("--out", type=Path,
                         default=HERE / "build/qualify_report.json")
+    parser.add_argument("--e022-build", type=Path, required=True)
+    parser.add_argument("--e023-build", type=Path, required=True)
+    parser.add_argument("--e018-gt", type=Path, required=True)
     args = parser.parse_args()
+    global E018_GT
+    E018_GT = args.e018_gt
+    configs = {name: {**row, "e022": args.e022_build / row["e022"],
+                      "e023": args.e023_build / row["e023"]}
+               for name, row in DEFAULTS.items()}
     report = {
         "experiment": "023b-integrated-receiver",
         "boundary": "LDPC and below; no fountain/stop condition",
         "decimated": run_footing(
-            "decimated", DEFAULTS["decimated"],
+            "decimated", configs["decimated"],
             integrated_path=args.decimated, replay_only=args.replay_only),
         "native": run_footing(
-            "native", DEFAULTS["native"],
+            "native", configs["native"],
             integrated_path=args.native, replay_only=args.replay_only),
     }
     report["replay_gates_ok"] = all(

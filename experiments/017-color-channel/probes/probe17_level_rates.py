@@ -21,9 +21,11 @@ stack is UNMEASURED; warp is genie-synced (2-squares dense warp); one
 sheet/day per engine.
 
 Usage:
-  env/bin/python scratch/probe17_level_rates.py [scan ...]
-Defaults to scans/finalists.png + scans/xerox-e004-finalists-hp-scan.png.
-Writes scratch/probe17_level_rates_report.json.
+  env/bin/python experiments/017-color-channel/probes/probe17_level_rates.py \\
+      <scan> [...]
+The run of record read scans/finalists.png + scans/xerox-e004-finalists-hp-scan.png
+(evidence archive). Writes experiments/017-color-channel/build/
+probe17_level_rates_report.json (the record is the copy beside this file).
 """
 from __future__ import annotations
 
@@ -34,7 +36,7 @@ from pathlib import Path
 
 import numpy as np
 
-REPO = Path(__file__).resolve().parents[1]
+REPO = Path(__file__).resolve().parents[3]
 E004 = REPO / "experiments" / "004-finalists-checkerboard"
 for rel in (E004, REPO / "experiments" / "002-calibration-page",
             REPO / "experiments" / "003-modulation-probes",
@@ -53,7 +55,6 @@ LEVELS = "CMY"
 MEMBER = {p: np.array([int(p in s) for s in STATES7], np.uint8) for p in LEVELS}
 CELLS_MM2_C3 = (600 / 25.4 / 3) ** 2          # 61.98 cells/mm2
 RUNGS = list(ldpc.LDPC_LADDER)                 # r0550..r0850
-DEFAULT_SCANS = ["scans/finalists.png", "scans/xerox-e004-finalists-hp-scan.png"]
 POST_CLIP = 1e-9
 
 
@@ -255,12 +256,15 @@ def net_density(rung_by_level: dict[str, str], dust_frac: float,
 
 
 def main() -> None:
-    scans = sys.argv[1:] or [str(REPO / s) for s in DEFAULT_SCANS]
+    scans = sys.argv[1:]
+    if not scans:
+        sys.exit(__doc__)
     report = {"probe": "P5-level-rates", "date": "2026-07-10",
               "footing": "e004 A3 7-state c3, cross-tile QDA, genie warp, "
                          "1200dpi home flatbed (2 px/dot)",
               "scans": [analyze_scan(s) for s in scans]}
-    out = REPO / "scratch" / "probe17_level_rates_report.json"
+    out = REPO / "experiments/017-color-channel/build/probe17_level_rates_report.json"
+    out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(report, indent=1))
     print(f"\nwrote {out}", flush=True)
 

@@ -57,9 +57,6 @@ import cal_geometry as cg      # noqa: E402  (transport machinery — imported, 
 import cal_structural as cs    # noqa: E402  (slant/grating machinery — imported)
 
 DOTS_TO_MM = 25.4 / cc.HW_DPI
-REPO = _HERE.parent.parent
-SCAN_TOP_DEFAULT = REPO / "scans/test-scan-calpage-color-quer-top.png"
-SCAN_BOT_DEFAULT = REPO / "scans/test-scan-calpage-color-quer-bot.png"
 REPORT_A_PATH = cc.BUILD / "calpage_report.json"
 
 # scan-B scan times (platen metadata, from the run notes — files saved 16:50)
@@ -903,9 +900,10 @@ def overlap_consistency(reg_top: dict, reg_bot: dict) -> dict:
 
 def main() -> None:
     ap = argparse.ArgumentParser(description="run 002.0b: scan-B analysis")
-    ap.add_argument("--scan-top", default=str(SCAN_TOP_DEFAULT))
-    ap.add_argument("--scan-bot", default=str(SCAN_BOT_DEFAULT))
-    ap.add_argument("--scan-a", default=str(REPO / "scans/test-scan-calpage-color.png"),
+    # the run's scans: scans/test-scan-calpage-color{-quer-top,-quer-bot,}.png
+    ap.add_argument("--scan-top", required=True)
+    ap.add_argument("--scan-bot", required=True)
+    ap.add_argument("--scan-a", required=True,
                     help="scan A color scan for the channel-matched K control")
     ap.add_argument("--out", default=str(cc.BUILD / "scanb_report.json"))
     ap.add_argument("--draft", default=str(cc.BUILD / "RESULTS-002.0b-draft.md"))

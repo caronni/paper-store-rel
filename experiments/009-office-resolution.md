@@ -121,7 +121,7 @@ contrast there is meaningless (scanner Nyquist, not printer).
 
 - 2026-07-07 — built + preflight green. Job shas in build/ores_manifest.json.
 - **2026-07-07 PRINTED all 4 ORES sheets on the AltaLink (office, raw 9100,
-  <ip>); photo scratch/photo-2026-07-07-1.jpg, not yet scanned.**
+  <ip>); the phone photo of 2026-07-07 (scratch, archive-private), not yet scanned.**
   PRELIMINARY VERDICT FROM THE PHOTO (before any scan):
   - Sheet sizes grow monotonically: J1 (PS+PJL, correct size) < J2/J3 (PCL
     1200, ~2x oversize) < J4 (PCL 2400, ~4x oversize, CLIPPED — the "2400"
@@ -155,6 +155,18 @@ contrast there is meaningless (scanner Nyquist, not printer).
   claim an unlock (geometry unchecked). 4 new tests (honored->UNLOCKED,
   scaled-but-decodes->SCALED, under-resolved->INDETERMINATE, no-scan-dpi->
   geometry None); suite 100 passed.
+- **2026-10-11 — addendum, the office run re-read** (evidence line,
+  docs/EVIDENCE-ARCHIVE-2026-10-08.md §8a). The ORES-1 run folder
+  (README.txt, run_ores.sh) that sent the five ORES jobs (J0–J4) now sits
+  beside this log at `office-run-2026-07-07/` (the printer's IP replaced by
+  `<ip>`); the jobs published under 009 in the paperholo-era release of the
+  evidence archive are byte-identical to the original run folder's `jobs/`
+  (the jobs are not kept in git; they are published in the archive). J0
+  (`ores_query.pjl`) was sent 2026-07-07 at 16:24 from machine 2, and the
+  printer's reply file stayed empty (0 bytes; the file itself is not kept).
+  The four ORES sheets were NEVER scanned: the verdict above rests on the
+  2026-07-07 phone photo alone, whose crop is published under 009 in that
+  release.
 
 ## Limitations
 

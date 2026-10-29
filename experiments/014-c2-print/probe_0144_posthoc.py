@@ -6,7 +6,11 @@ floor admits decoys whose binomial sd is ~0.11), not genuine confusability.
 Re-runs arm 3 recording per-decoy site counts; reports the decoy minimum
 stratified by support and each decoy's binomial z-score against 0.5.
 Primary-arm values are untouched (deterministic; same positions as
-probe_0144.py)."""
+probe_0144.py).
+
+Run from repo root: python experiments/014-c2-print/probe_0144_posthoc.py \\
+    --scan-dir <evidence>/scans
+"""
 import sys
 from pathlib import Path
 
@@ -27,7 +31,10 @@ CD = 2
 P = spec.pilot.period_cells
 CPM = 600 / 25.4 / CD
 PX_CELL = CD * 8
-SCAN = ROOT / "scans/xerox-e014-A-canon-4800gray-C-flattened.tiff"
+if "--scan-dir" not in sys.argv[:-1]:
+    sys.exit(__doc__)
+SCAN_DIR = Path(sys.argv[sys.argv.index("--scan-dir") + 1])  # evidence archive
+SCAN = SCAN_DIR / "xerox-e014-A-canon-4800gray-C-flattened.tiff"
 CANDIDATES = [(0.3, fx) for fx in (0.2, 0.35, 0.5, 0.65, 0.8)]
 SIZES_MM = (6, 8, 10)
 

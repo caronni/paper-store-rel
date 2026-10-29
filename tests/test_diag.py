@@ -39,12 +39,26 @@ def _small_canvas():
     rotated smaller piece) — enough to exercise placement, multi-window
     emission, the site overlay, and LDPC certification, kept small for speed."""
     gen = np.random.default_rng(4188)
-    H_C, M = tsa.H_C, tsa.MARGIN_CELLS
+    M = tsa.MARGIN_CELLS
     pcs = [
         tsa.render_piece((M + 700, M + 500, 300, 300), -9.0, gen)[0],
         tsa.render_piece((M + 300, M + 950, 150, 150), 22.0, gen)[0],
     ]
     return tsa._canvas(pcs)
+
+
+def _byte_identity_canvas():
+    """Two SMALL pieces. The byte-identity contract covers the driver's
+    per-piece progressive decode_tiles (session_decode.py names this test
+    as its guard), and that block only fires from the SECOND piece on —
+    a one-piece canvas would never execute it in either run.
+    2026-09-05: 150+150 cells, 49 s -> 23 s, both pieces still emit."""
+    gen = np.random.default_rng(4188)
+    M = tsa.MARGIN_CELLS
+    return tsa._canvas([
+        tsa.render_piece((M + 700, M + 500, 150, 150), -9.0, gen)[0],
+        tsa.render_piece((M + 300, M + 950, 150, 150), 22.0, gen)[0],
+    ])
 
 
 def _drive(canvas, dv, pds):
@@ -119,7 +133,7 @@ def test_driver_default_off_byte_identical(tmp_path):
     """The wired driver: a plain run and a --diag run over the same canvas
     write byte-identical session_state.pkl (the observer never touches the
     decode state) — the default-off regression guarantee."""
-    canvas = _small_canvas()
+    canvas = _byte_identity_canvas()
     png = tmp_path / "canvas.png"
     Image.fromarray(np.clip(canvas, 0, 255).astype(np.uint8)).save(png)
     off = tmp_path / "off.pkl"

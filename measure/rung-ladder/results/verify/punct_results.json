@@ -1,0 +1,170 @@
+{
+ "r0547 punct_last p=0.0 max_iters=60": {
+  "n": 50,
+  "syndrome_ok": 0,
+  "info_bits_correct": 50,
+  "whole_cw_correct": 0,
+  "mean_iters": 120.0
+ },
+ "r0547 punct_last p=0.0 max_iters=200": {
+  "n": 20,
+  "syndrome_ok": 20,
+  "info_bits_correct": 20,
+  "whole_cw_correct": 20,
+  "mean_iters": 119.2
+ },
+ "r0547 punct_last p=0.0 max_iters=400": {
+  "n": 20,
+  "syndrome_ok": 20,
+  "info_bits_correct": 20,
+  "whole_cw_correct": 20,
+  "mean_iters": 119.2
+ },
+ "r0547 punct_last p=0.06 max_iters=60": {
+  "n": 50,
+  "syndrome_ok": 0,
+  "info_bits_correct": 41,
+  "whole_cw_correct": 0,
+  "mean_iters": 120.0
+ },
+ "r0547 punct_last p=0.06 max_iters=200": {
+  "n": 20,
+  "syndrome_ok": 18,
+  "info_bits_correct": 18,
+  "whole_cw_correct": 17,
+  "mean_iters": 222.35
+ },
+ "r0547 punct_last p=0.06 max_iters=400": {
+  "n": 20,
+  "syndrome_ok": 18,
+  "info_bits_correct": 18,
+  "whole_cw_correct": 17,
+  "mean_iters": 322.35
+ },
+ "r0547 punct_even p=0.0 max_iters=60": {
+  "n": 50,
+  "syndrome_ok": 50,
+  "info_bits_correct": 50,
+  "whole_cw_correct": 50,
+  "mean_iters": 1.0
+ },
+ "r0547 punct_even p=0.0 max_iters=200": {
+  "n": 20,
+  "syndrome_ok": 20,
+  "info_bits_correct": 20,
+  "whole_cw_correct": 20,
+  "mean_iters": 1.0
+ },
+ "r0547 punct_even p=0.0 max_iters=400": {
+  "n": 20,
+  "syndrome_ok": 20,
+  "info_bits_correct": 20,
+  "whole_cw_correct": 20,
+  "mean_iters": 1.0
+ },
+ "r0547 punct_even p=0.06 max_iters=60": {
+  "n": 50,
+  "syndrome_ok": 47,
+  "info_bits_correct": 47,
+  "whole_cw_correct": 47,
+  "mean_iters": 35.52
+ },
+ "r0547 punct_even p=0.06 max_iters=200": {
+  "n": 20,
+  "syndrome_ok": 19,
+  "info_bits_correct": 19,
+  "whole_cw_correct": 19,
+  "mean_iters": 53.95
+ },
+ "r0547 punct_even p=0.06 max_iters=400": {
+  "n": 20,
+  "syndrome_ok": 19,
+  "info_bits_correct": 19,
+  "whole_cw_correct": 19,
+  "mean_iters": 83.95
+ },
+ "r0313 punct_last p=0.0 max_iters=60": {
+  "n": 50,
+  "syndrome_ok": 0,
+  "info_bits_correct": 50,
+  "whole_cw_correct": 0,
+  "mean_iters": 120.0
+ },
+ "r0313 punct_last p=0.0 max_iters=200": {
+  "n": 20,
+  "syndrome_ok": 20,
+  "info_bits_correct": 20,
+  "whole_cw_correct": 20,
+  "mean_iters": 117.65
+ },
+ "r0313 punct_last p=0.0 max_iters=400": {
+  "n": 20,
+  "syndrome_ok": 20,
+  "info_bits_correct": 20,
+  "whole_cw_correct": 20,
+  "mean_iters": 117.65
+ },
+ "r0313 punct_last p=0.12 max_iters=60": {
+  "n": 50,
+  "syndrome_ok": 0,
+  "info_bits_correct": 49,
+  "whole_cw_correct": 0,
+  "mean_iters": 120.0
+ },
+ "r0313 punct_last p=0.12 max_iters=200": {
+  "n": 20,
+  "syndrome_ok": 20,
+  "info_bits_correct": 20,
+  "whole_cw_correct": 20,
+  "mean_iters": 290.55
+ },
+ "r0313 punct_last p=0.12 max_iters=400": {
+  "n": 20,
+  "syndrome_ok": 20,
+  "info_bits_correct": 20,
+  "whole_cw_correct": 20,
+  "mean_iters": 450.55
+ },
+ "r0313 punct_even p=0.0 max_iters=60": {
+  "n": 50,
+  "syndrome_ok": 50,
+  "info_bits_correct": 50,
+  "whole_cw_correct": 50,
+  "mean_iters": 1.0
+ },
+ "r0313 punct_even p=0.0 max_iters=200": {
+  "n": 20,
+  "syndrome_ok": 20,
+  "info_bits_correct": 20,
+  "whole_cw_correct": 20,
+  "mean_iters": 1.0
+ },
+ "r0313 punct_even p=0.0 max_iters=400": {
+  "n": 20,
+  "syndrome_ok": 20,
+  "info_bits_correct": 20,
+  "whole_cw_correct": 20,
+  "mean_iters": 1.0
+ },
+ "r0313 punct_even p=0.12 max_iters=60": {
+  "n": 50,
+  "syndrome_ok": 48,
+  "info_bits_correct": 48,
+  "whole_cw_correct": 48,
+  "mean_iters": 67.32
+ },
+ "r0313 punct_even p=0.12 max_iters=200": {
+  "n": 20,
+  "syndrome_ok": 20,
+  "info_bits_correct": 20,
+  "whole_cw_correct": 20,
+  "mean_iters": 133.65
+ },
+ "r0313 punct_even p=0.12 max_iters=400": {
+  "n": 20,
+  "syndrome_ok": 20,
+  "info_bits_correct": 20,
+  "whole_cw_correct": 20,
+  "mean_iters": 233.65
+ }
+}

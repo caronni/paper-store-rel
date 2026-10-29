@@ -14,7 +14,7 @@ origin, so a scan-origin retry re-attempts one capture alone.
 So: on multi-capture material, would mirroring the origin — one attempt
 per lane — win tiles the union loses?
 
-**Nothing in `holo3/` changes.** The union arm is `local_ctx._attempt`
+**Nothing in `src/holo/receiver/` changes.** The union arm is `local_ctx._attempt`
 itself.
 
 ---
@@ -189,7 +189,7 @@ closed), each decoded from all three 2400 dpi captures at once.
 Both stores were audited before the A/B: 158 and 514 decode
 certificates, **0 wrong**.
 
-Per-case reports: `scratch/local-ab/reports/I-nw.md`, `I-tl.md`, and the
+Per-case reports: `<evidence>/local-ab/reports/I-nw.md`, `I-tl.md`, and the
 roll-up via `measure.local_ab.summarize`.
 
 ### Recommendation
@@ -208,7 +208,7 @@ per lane and a lane is therefore a genuinely independent read.
 
 ## 6. The simulated control
 
-`holo3/tests/_h3_sims.py`'s hard pair is the multi-scan law's own
+`src/holo/receiver/tests/_h3_sims.py`'s hard pair is the multi-scan law's own
 regime, built on purpose: ONE emitted colour page rendered twice, once
 in register and once with the Y plane displaced by a rounded sinusoid,
 both with the same noise draw. Not two independent looks at one sheet —
@@ -241,23 +241,35 @@ Always from the worktree root, always `PYTHONPATH=.`:
 
 ```sh
 # cut one case's three crops (one per 2400 dpi capture) and print its record
-PYTHONPATH=. env/bin/python -m measure.local_ab._cases --case I-tl
+PYTHONPATH=src:. env/bin/python -m measure.local_ab._cases --case I-tl \
+    --evidence-root <evidence> --out build/local-ab/crops
 
 # the battery: decode + both arms + the null + every audit
-PYTHONPATH=. env/bin/python -m measure.local_ab.harness \
-    --case I-tl --workers 3 --decode-diag 8026
+PYTHONPATH=src:. env/bin/python -m measure.local_ab.harness \
+    --case I-tl --workers 3 --decode-diag 8026 \
+    --evidence-root <evidence> --out build/local-ab
 
-# the simulated control (seconds, no sheet)
-PYTHONPATH=. env/bin/python -m measure.local_ab._sim --workers 1 --probe 40
-PYTHONPATH=. env/bin/python -m measure.local_ab._sim --workers 1 \
-    --noise-sd 140 --amplitude-dots 6.0 --probe 40
+# the simulated control (seconds, no sheet, no evidence root)
+PYTHONPATH=src:. env/bin/python -m measure.local_ab._sim --workers 1 \
+    --probe 40 --out build/local-ab
+PYTHONPATH=src:. env/bin/python -m measure.local_ab._sim --workers 1 \
+    --noise-sd 140 --amplitude-dots 6.0 --probe 40 --out build/local-ab
 ```
 
-Artifacts land in `scratch/local-ab/`
-(crops, run dirs, `reports/`). Nothing is written under
-`scratch/crop-parity/` — a battery owns that tree — and every capture,
-archived event log and generated stimulus under
-`scratch` is read-only.
+Artifacts land in `--out` (crops, run dirs, `reports/`). The captures,
+the archived event log and the generation set are read-only, under
+`--evidence-root` (or `$PAPER_EVIDENCE_ROOT`, refused by name when
+neither is given — `measure/_evidence.py`) — the published evidence
+archive (the 2026-10-09 note below).
+
+2026-10-09: inputs renamed to the published archive paths — sheet I's three 2400 dpi captures
+`paper-store-evidence-holo-2026-10/033-xerox-rung-experiments/I/captures/I-canon-2400rgb{,-displaced,-displaced2}.tiff`
+(published as `.tiff.jxl`, rebuilt by the release's `tools/unpack.sh`) and its emitted payload
+`…/I/emission/payload-counting.bin`. The overnight harvest's event log
+(`holo3-overnight-events/sheet-I-events.jsonl.xz`, the poses the crops are cut by and the
+production baseline) is NOT in the published archive (tier delete: event journals excluded by
+rule) and nothing rebuilds it, so `_cases` and `harness` now refuse by name at the harvest; the
+battery's result records are published under `034-sheet-i-full-readout/records/local-ab/`.
 
 ---
 
@@ -266,7 +278,7 @@ archived event log and generated stimulus under
 §1's recommendation is built. `tiles.local` now attempts the union
 first and, on its failure, each covering lane alone at the same
 `STAGE_LOCAL150` gate, stopping at the first certificate
-(`holo3/plugins/local_ctx.py`, `attempt_sets`). Lane order is
+(`src/holo/receiver/plugins/local_ctx.py`, `attempt_sets`). Lane order is
 `tiles.component_signature`'s key — the order `store.cover_lanes`
 enumerates captures in and `tiles._combine` sums them — so the row has
 one lane order, not two. A single-lane subject makes exactly the
@@ -357,7 +369,7 @@ by both halves — 421.3 s of `I-tl`'s 445.1 s row CPU, 136.3 s of
 ### Invocation
 
 ```sh
-PYTHONPATH=. env/bin/python -m measure.local_ab.harness \
+PYTHONPATH=src:. env/bin/python -m measure.local_ab.harness \
     --case I-nw --workers 2 --replay --fresh
 ```
 

@@ -19,8 +19,8 @@ from dataclasses import replace as dc_replace
 import numpy as np
 import pytest
 
-from holo3.lib import ldpc
-from holo3.plugins import calibrate as calibrate_plugin
+from holo.receiver.lib import ldpc
+from holo.receiver.plugins import calibrate as calibrate_plugin
 
 from analyzer import arms as arms_mod
 from analyzer import calibrate as cal
@@ -28,6 +28,7 @@ from analyzer import combine as combine_mod
 from analyzer import controls as ctl
 from analyzer import fixedpoint as fp
 from analyzer import frame as frame_mod
+from analyzer import unmix
 from analyzer.types import (AnalyzerConfig, Evidence, KnownFrame,
                             LaneFootprint, Ledger, LedgerRow, LocalContext,
                             TileFootprint, VERDICT_CERTIFIED)
@@ -291,6 +292,10 @@ class _FakeInputs:
         self.row = row
         self.geometry = geometry
         self.plane_fields: dict = {}
+        # W8 B4: `blind_key` now builds the tile's sibling state from a
+        # real (halo-0, certificate-free) frame, whose projection memo
+        # lives in `inputs._cache`.
+        self._cache: dict = {}
 
 
 def _reroll_world(monkeypatch, *, good_arm: str = "head+offset"):
@@ -306,7 +311,7 @@ def _reroll_world(monkeypatch, *, good_arm: str = "head+offset"):
         return [_FakeLane()]
 
     def fake_evidence(_inputs, _certs, key, lane, arm, *, halo_cells=None,
-                      knobs=None):
+                      knobs=None, crop_memo=None):
         values = good if arm == good_arm else noise
         return Evidence(key=key, lane=lane.lane_id, arm=arm,
                         llr_sequential=np.asarray(values, np.float64),
@@ -396,6 +401,139 @@ def test_a_reroll_certificate_is_gated_like_any_other(monkeypatch):
     assert hit and all(item.syndrome_ok for item in hit)
 
 
+# ------------------------- 3b. the collapsed-field economy (A2/finding 3)
+
+def _collapsing_field_world(monkeypatch, *, collapses: bool):
+    """One lane, four arms, and a `field` arm that collapses or does not.
+
+    `evidence_for` is stubbed to report what `register` would: a field
+    that reads zero over the footprint renames the row
+    (`register_arm_effective`) and samples the committed pose, so the
+    row IS the arm it names.  The stub counts its calls, which is what
+    the economy is measured in.
+    """
+    built = build_frame(R0850, key=(0, 12, 7, "C"), seed=5)
+    row = row_of(R0850)
+    inputs = _FakeInputs(row, frame_mod.geometry_of(row))
+    values = np.zeros(int(row.payload_cells), np.float64)
+    calls: list[str] = []
+
+    def fake_lanes(_inputs, _page, _ty, _tx, cover_fraction=0.9):
+        return [_FakeLane()]
+
+    def fake_evidence(_inputs, _certs, key, lane, arm, *, halo_cells=None,
+                      knobs=None, crop_memo=None):
+        calls.append(arm)
+        blind = {"arm": arm, "register_arm": arms_mod.parse_arm(arm)[1],
+                 "offset_evaluations": 26}
+        tail = arms_mod.parse_arm(arm)[1]
+        if tail in arms_mod.FIELD_COLLAPSE and collapses:
+            blind.update({
+                "field_applied": False,
+                "field_reason": "field_reads_zero_here",
+                "register_arm_effective": arms_mod.FIELD_COLLAPSE[tail]})
+        return Evidence(key=key, lane=lane.lane_id, arm=arm,
+                        llr_sequential=np.asarray(values, np.float64),
+                        observed=np.ones(values.size, bool), blind=blind)
+
+    monkeypatch.setattr(fp.sample_mod, "lanes_for_tile", fake_lanes)
+    monkeypatch.setattr(fp.arms_mod, "evidence_for", fake_evidence)
+    return inputs, built, calls
+
+
+#: the battery's own order: the twins come before the `field` arms, which
+#: is what makes the economy reachable at all
+_FIELD_BATTERY = ("subtract+offset", "subtract+committed", "subtract+field",
+                  "subtract+field+offset")
+
+
+def test_a_collapsed_field_arm_reuses_the_row_it_collapsed_onto(monkeypatch):
+    """PAGE-FIELD-PLAN finding 3: on unmeasured territory the production
+    field reads zero, `subtract+field` IS `subtract+committed` and
+    `subtract+field+offset` IS `subtract+offset` — and the second of the
+    two is the battery's most expensive arm, a whole 2-D grid.  One
+    evaluation says the field collapsed; the rest take the rows already
+    computed, under their own names, and say where they came from."""
+    inputs, built, calls = _collapsing_field_world(monkeypatch,
+                                                   collapses=True)
+    config = AnalyzerConfig(arms=_FIELD_BATTERY, rules=("sum",),
+                            rungs=("L0",), reroll=False)
+    out = fp.blind_key(inputs, {}, built.key, config, fp.shared_exposure())
+
+    assert calls == ["subtract+offset", "subtract+committed",
+                     "subtract+field"]          # the grid search is saved
+    assert out["reused_arms"] == 1
+    reused = out["evidence"][(("cap-a", 0), "subtract+field+offset")]
+    assert reused["arm"] == "subtract+field+offset"
+    assert reused["register_arm"] == "field+offset"
+    assert reused["register_arm_effective"] == "offset"
+    assert reused["field_reason"] == "field_reads_zero_here"
+    assert reused["reused_from_arm"] == "subtract+offset"
+    # the candidate set is unchanged: every battery arm still has a row
+    assert set(arm for _lane, arm in out["evidence"]) == set(_FIELD_BATTERY)
+    assert out["selected"][("cap-a", 0)]["n_candidates"] == len(_FIELD_BATTERY)
+
+
+def test_a_live_field_arm_is_evaluated_like_any_other(monkeypatch):
+    """The other half: where the field moves the points, nothing is
+    reused and every arm pays for itself."""
+    inputs, built, calls = _collapsing_field_world(monkeypatch,
+                                                   collapses=False)
+    config = AnalyzerConfig(arms=_FIELD_BATTERY, rules=("sum",),
+                            rungs=("L0",), reroll=False)
+    out = fp.blind_key(inputs, {}, built.key, config, fp.shared_exposure())
+    assert calls == list(_FIELD_BATTERY)
+    assert "reused_arms" not in out
+    assert all("reused_from_arm" not in blind
+               for blind in out["evidence"].values())
+
+
+_MISSING = object()
+
+
+def test_the_economys_premise_holds_on_real_pixels():
+    """THE PREMISE, on pixels rather than on a stub.
+
+    The two pins above stub `evidence_for`, so they would pass even if
+    `register` did something else entirely with a zero field (the live
+    one is a null: it passes with an empty `FIELD_COLLAPSE`).  This is
+    the claim the economy actually rests on, over the patch world's real
+    synthetic raster: a `field` arm whose field reads zero samples
+    EXACTLY what its twin samples, both pairs, under two unmix modes,
+    with the details differing only in what the field itself said.
+    """
+    from .test_analyzer_arms import _plane_field
+    from ._patch_world import CELL_DOTS, World
+
+    world = World()
+    zero = _plane_field((0.0, 0.0), page=0, plane=0)
+    # `field_collapse_over` joined them with F4 (2026-09-13): the collapse
+    # now names the cells that decided it, which the twin never had to say.
+    allowed = {"register_arm", "register_arm_effective", "field_reason",
+               "field_collapse_over", "field_ordinal",
+               "field_uncertainty_dots"}
+    for tail, twin in arms_mod.FIELD_COLLAPSE.items():
+        for mode in ("subtract", "head"):
+            plain, plain_detail = arms_mod.register(
+                twin, world.lane, world.crops, world.lfp, world.frame, 0,
+                mode, world.folds, mix=world.mix, cell_dots=CELL_DOTS)
+            reused, reused_detail = arms_mod.register(
+                tail, world.lane, world.crops, world.lfp, world.frame, 0,
+                mode, world.folds, mix=world.mix, cell_dots=CELL_DOTS,
+                plane_field=zero)
+            where = (tail, mode)
+            assert plain.refusal is None and reused.refusal is None, where
+            assert np.array_equal(plain.values_rgb, reused.values_rgb), where
+            assert reused_detail["register_arm_effective"] == twin, where
+            assert reused_detail["field_reason"] == "field_reads_zero_here"
+            assert reused_detail["field_ordinal"] == 17
+            differing = {
+                name for name in set(plain_detail) | set(reused_detail)
+                if plain_detail.get(name, _MISSING)
+                != reused_detail.get(name, _MISSING)}
+            assert differing <= allowed, (where, differing)
+
+
 @pytest.mark.parametrize("mode", cal.CTX_MODES)
 def test_every_context_mode_is_still_dispatchable(mode):
     frame, lfp, cells, _bins, _llr = _ctx_frame()
@@ -435,3 +573,71 @@ def test_a_profile_merges_knobs_instead_of_replacing_them():
     assert split.knobs["starved_fallback"] is False
     with pytest.raises(KeyError):
         with_profile(base, "no-such-profile")
+
+
+# ------------------------------------------- 5. W8's compositions (§2, B3)
+
+def test_the_patch_profiles_parse_keep_the_default_first_and_nest():
+    """X1-X5 of APPROACHES §2: each composition is the previous one plus
+    a little, `subtract+offset` stays the pinned default everywhere, and
+    neither W8 rung rides an existing profile or a re-roll list."""
+    from analyzer.types import (DEFAULT_RULES, PROFILES, STREAM_ONLY_ARMS,
+                                with_profile)
+
+    names = ("patch", "patch-self", "patch-refit", "patch-affine",
+             "everything+patch")
+    for name in names:
+        profile = PROFILES[name]
+        assert profile["arms"][0] == "subtract+offset", name
+        assert profile["rules"] == DEFAULT_RULES + ("platt-state",), name
+        # H48 (2026-09-07, APPROACHES §6.9): the wide halo LOST the one-knob
+        # isolation, so the patch family carries production's own halo and
+        # `--halo-cells 48` is what asks for the wide one.
+        assert profile["halo_cells"] == {"C": 16, "M": 16, "Y": 32}, name
+        assert profile["halo_cells"]["C"] == arms_mod.HALO_CELLS["C"], name
+        assert "L3f" not in profile["reroll_rungs"], name
+        for arm in profile["arms"]:
+            head, tail = arms_mod.parse_arm(arm)          # every arm parses
+            assert head in unmix.UNMIX_MODES and tail in arms_mod.REGISTER_ARMS
+        config = with_profile(AnalyzerConfig(), name)
+        assert config.knobs_from == f"profile:{name}"
+        assert config.knobs["branches"] == "state"
+        assert config.knobs["ctx_state"] is True
+
+    # the nesting: arms and rungs only ever grow
+    assert set(PROFILES["patch"]["arms"]) == set(PROFILES["patch-self"]["arms"])
+    assert set(PROFILES["patch-self"]["arms"]) \
+        <= set(PROFILES["patch-refit"]["arms"])
+    assert set(PROFILES["patch-refit"]["arms"]) \
+        < set(PROFILES["patch-affine"]["arms"])
+    # A2 (2026-09-12): `everything+patch` was rebased off the retired
+    # `everything+field2` onto `everything`, which is the same nesting
+    # minus the two `field2c` arms
+    assert set(PROFILES["everything"]["arms"]) \
+        < set(PROFILES["everything+patch"]["arms"])
+    assert not any("field2c" in arm
+                   for arm in PROFILES["everything+patch"]["arms"])
+    assert set(PROFILES["patch"]["rungs"]) <= set(PROFILES["patch-refit"][
+        "rungs"])
+    assert "L3f" in PROFILES["patch-refit"]["rungs"]
+    assert "L3f" not in PROFILES["patch"]["rungs"]
+    assert "L7c" in PROFILES["patch"]["rungs"]
+
+    # the knobs are what distinguishes X1 from X2 (there is no arm change);
+    # which knob each profile names, not what it names it at — the values
+    # are tuning and move without a ruling (2026-09-20)
+    assert "patch_selftrain_rounds" not in PROFILES["patch"]["knobs"]
+    assert "patch_selftrain_rounds" in PROFILES["patch-self"]["knobs"]
+    for knob in ("refit_rounds", "refit_max_evidence"):
+        assert knob not in PROFILES["patch-self"]["knobs"], knob
+        assert knob in PROFILES["patch-refit"]["knobs"], knob
+
+    # no profile that existed before W8 changed
+    for name in ("wide-halo", "battery", "split-branches", "everything"):
+        assert "L7c" not in PROFILES[name].get("rungs", ())
+        assert "platt-state" not in PROFILES[name].get("rules", ())
+
+    # the patch family's own arms, and the word arm's stream restriction
+    assert STREAM_ONLY_ARMS["patch+word"] == ("C", "M")
+    for arm in ("rings+offset", "mixture+offset"):
+        assert arm in PROFILES["everything+patch"]["arms"]

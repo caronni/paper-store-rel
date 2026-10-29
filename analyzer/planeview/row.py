@@ -12,7 +12,7 @@ WHAT IS ALREADY IDENTICAL (measured, asserted below on every build).
 `identity.build_site_geometry` gives a K row at p120
 `pilots.filler_site_cells_yx(sites_seed, 20, word)` and a cmy8 row
 `pilots.dust_site_cells_yx(sites_seed, 20)` — and the latter IS the
-former, re-sorted by flat index (`pilots.py:78-83`).  So for the sheet-H
+former, re-sorted by flat index (`pilots.py:102-107`).  So for the sheet-H
 identity the two geometries agree byte-for-byte in `word_cells_yx`,
 `shorten_flat`, `payload_flat` (3,976), `slot_a` and `slot_b`; only
 `extra_cells_yx` differs in ROW ORDER, over the same 20 cells.  The K
@@ -38,8 +38,8 @@ from typing import Any
 
 import numpy as np
 
-from holo3.format import identity
-from holo3.format.identity import Family, FormatRow
+from holo.receiver.format import identity
+from holo.receiver.format.identity import Family, FormatRow
 
 #: The sentinel prefix of a plane-view format ref.  `patches.install`
 #: teaches `identity.resolve_format_ref` this one id and nothing else, so

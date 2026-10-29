@@ -9,6 +9,143 @@ src/paperholo + docs (verified spot-checks below), hostile red-team
 and a web-verified deep-time-precedent survey. MEASURED/ESTIMATE labels as
 usual; everything here is design unless labeled MEASURED.
 
+> **Status 2026-10-18.** The typed rungs (R0–R2) were built in simulation on
+> branch `ccr-200d7187-roznny` under `bootstrap/` (specs `bootstrap/R2-FORMAT.md`,
+> `bootstrap/TYPED-STREAM.md`; measured record `bootstrap/RECORD.md`, since
+> 2026-10-23 `bootstrap/RECORD-2026-10-18.md`, RECORD.md being the index; reviews
+> `bootstrap/REVIEW-2026-10-18.md`). Amendments ruled that day and not yet folded
+> into this text: a hand-typed stage-0 decompressor (cm2, 25 lines) is the one
+> decoder at every rung, so R2 shrinks to one leaf and R3 to ~6; the hand-
+> computed per-line sum of R1 is replaced by a typed 12-line checker with
+> immediate feedback (MLX done by machine); CRC-32 is printed as its one-line
+> definition only (no table); the Plate assumes Python-class computing and
+> drops the from-zero primer and ASCII strips ("a different book"); the R2
+> page is bullseyes + an alternating timing lattice every 17th row/column +
+> 16×16 blocks of 2+26+4 bytes, 12-dot modules, 3 copies. **2026-10-19:** the
+> typed rung is one 37-line program typed into a file (base-32 data lines with
+> a 4-glyph check, 3,189 characters in all) plus a diet reader; see
+> bootstrap/README.md and bootstrap/RECORD-2026-10-19.md. **2026-10-20:**
+> R2-FORMAT v1 — the finder photographs the page in pieces: fifteen
+> circular-ring bullseyes in the body carry the 68-bit header, every block its
+> global chunk index under CRC-32, a designed placement guarantees three copies
+> no straight strip under 46 mm can take; the loader is 29 lines with a
+> big-integer rANS decoder (the typed data IS the coder state) and writes r.py
+> = its definitions + the typed reader, which pools frames and pages and
+> decodes the page's content to one file; 3,895 typed characters in all; the
+> R2 payload is still a stand-in for the R3 reader (this section's "Payload"
+> paragraph), three pages. The same afternoon the R3 rung got a candidate:
+> a pure-Python, import-free monolith receiver for the archive's black-only
+> c3-r0550 p100 row at source fraction 0.5 with a linear CM decoder and a
+> tar unpacker, 2 R2 pages, restoring the 9.3 MB src/holo + docs tree from
+> 15 archive pages in simulation (bootstrap/r3/). See
+> bootstrap/RECORD-2026-10-20.md. The same evening the typed rung CLOSED
+> ON PAPER: the owner typed a.py from the printed listing, entered the data
+> lines by phone OCR, photographed the three R2 leaves with a phone (two
+> turned, one in halves) and b.py came out byte-identical
+> (bootstrap/PAPER-2026-10-20.md, experiments/047). One set; nothing
+> promoted; the R3 pages are not printed (as of 2026-10-20; superseded:
+> printed 2026-10-23 and closed on paper 2026-10-26, print-2026-10-23.pdf
+> 4989446c…, bootstrap/PAPER-2026-10-26.md).
+
+> **Status 2026-10-23.** The rungs carry the stage names of ruling 34
+> (bootstrap/RECORD-2026-10-20.md:908), each stage named by the program it
+> yields: stage 0 the Plate; stage 1 the typed program a.py, from its
+> listing; stage 2 the data sheet typed at a.py's prompt, which yields b.py;
+> stage 3 the R2 (bullseye) pages, read from phone photos by b.py, which
+> yield c.py; stage 4 the release, which c.py reads from scans of the holo
+> archive pages. The R0 to R2 names and "Archive" are their former names.
+> The Mid rung (R3 below) was retired by ruling 34 itself. The measured
+> standing is the next section; the chain's index is bootstrap/README.md,
+> its rulings bootstrap/RECORD.md.
+
+> **Status 2026-10-26.** THE WHOLE CHAIN CLOSED ON PAPER: the owner printed
+> the candidate print of record v3 (bootstrap/build/sheets/print-2026-10-23.pdf
+> 4989446c…, 19 pages, the HP M281), typed the listing and the data sheet,
+> and a.py, b.py and c.py came out sha-equal to the chain; c.py read 600 dpi
+> flatbed scans of the archive pages, closed the volume on eight of fifteen
+> and unpacked the release's 321 files (bootstrap/PAPER-2026-10-26.md). The
+> release as unpacked does not run: its tree selection carries no data
+> file and no requirements file (the open item under "R3 payload manifest"
+> below). One print, one typist; nothing promoted. Open threads:
+> docs/TODO.md, section Bootstrap.
+
+## State 2026-10-26 (measured; added 2026-10-26)
+
+- **On paper, 2026-10-26** (bootstrap/PAPER-2026-10-26.md,
+  docs/EXPERIMENT-LOG.md): stages 1 to 4 in one run. a.py 28 lines, 798
+  characters (826 B), 39 data lines, 3,289 typed (the build's count);
+  b.py 4,487 B; c.py 24,176 B (`b4f7de22…`), all three sha-equal to the
+  chain; b.py read the R2 pages from 300 dpi grey scans; c.py closed the
+  1,648,660 B volume from eight 600 dpi scans (6,264 symbols of 6,260),
+  SHA-256 `78d9a4b4…`, and unpacked 321 files. Ruling 37's 600 dpi holds;
+  300 dpi cannot read the c3 row (1.5 px per cell).
+- **On paper, 2026-10-23**: the v2 print; stages 1-3 closed byte-exact,
+  archive page 03 did not decode, which led to c.py's repair (floor 2.0
+  calibrated on the simulator; bootstrap/FINDINGS.md §15).
+- **Stage 3 now**: c.py through cm2 10,130 / 10,133 B = 2 R2 pages, 478 /
+  475 B spare (bootstrap/CONVERGENCE-2026-10-23b.md; ruling 67).
+- **Stage 4 now**: c3-k-r0547-p100 at q 0.5, 15 pages for the 9.28 MB tree
+  of commit 2115a595 (15 pages hold at most 1,655,012 B, the capacity
+  planner). The release as unpacked lacks the LDPC tables and a
+  requirements file and has flat names (bootstrap/FINDINGS.md §16).
+- **Not done:** the Plate (deferred by ruling 38); a second typist,
+  printer or scanner; the release tree's selection law; the promotion of
+  v3 to the print of record.
+
+## State 2026-10-23 (measured; added 2026-10-23)
+
+*Superseded by the state of 2026-10-26 above; kept as written.*
+
+Simulation on machine 1 unless it says paper; one set of leaves, one typist who
+designed the chain; NO promotion.
+
+- **On paper, 2026-10-20** (bootstrap/PAPER-2026-10-20.md, experiments/047):
+  the owner typed the 29-line a.py of that print (826 characters) from the
+  listing and its 48 data lines by phone OCR, 3,895 typed characters in
+  about 40 minutes of keyboard time, every slip caught by the line checks;
+  four phone camera photos of the three R2 leaves (two turned 90°, one in
+  halves) gave stage 3's output byte-identical to the bundle. The R2
+  content was then a stand-in.
+- **Stages 1 and 2 now** (a.py and the data sheet): a.py 28 lines, 807
+  characters (bootstrap/stage1/RESULTS.md), 805 with c.py as the content;
+  with today's reader (the grey padding of ruling 59 applied,
+  bootstrap/r2reader/changeset/RESULTS-2026-10-22.md §20) 3,326 / 3,325
+  typed lowercase / uppercase on 40 data lines with the stand-in content
+  and 3,319 / 3,318 on 40 data lines with c.py as the content (§20, part
+  2); before it 3,335 / 3,335 with the stand-in and the reader of §19, and
+  3,465 / 3,463 on 42 lines with c.py and the reader of ruling 52, from an
+  export of a9826d37 (bootstrap/stage3/RESULTS-2026-10-22.md §6). Data
+  glyphs uppercase in Andale Mono, the listing in Menlo (ruling 51).
+- **Stage 3 now** (b.py reading the R2 pages): b.py's typed text 138
+  lines, 3,781 characters (§20); its reads identical call for call to the
+  ruled text on 129 captures through §19, and with the grey padding on 127
+  of 129, the finder's threshold byte-identical and no chunk lost; every
+  acceptance set passing, both photo pools of 2026-10-20 closing
+  (changeset/RESULTS §17 to §20). The page: R2-FORMAT v1 as amended, 204
+  chunks = 5,304 B per page, three copies on different pages.
+- **Stage 4 now** (c.py reading the archive pages): c.py 23,793 B, pure
+  Python, no import, the receiver of the holo row c3-k-r0547-p100 at source
+  fraction 0.5 with a strong2 decoder and a ustar unpacker, kept as built
+  (ruling 61); 9,966 / 9,971 B through cm2 under today's b.py = 2 R2 pages,
+  642 / 637 B spare (changeset/RESULTS §20, part 2; 9,951 / 9,956 under the
+  b.py of a9826d37, stage3 §6); 321 of 321 files of the record's 9.28 MB
+  tree byte-exact from 1,200-dpi simulated scans of its 15 archive pages,
+  holo's own receiver verifying the same volume
+  (bootstrap/stage3/RESULTS-2026-10-22.md §3, §6).
+- **Python floor 3.11** (ruling 53).
+- **Not done, as of 2026-10-23** (superseded except the Plate and the
+  second typist: the convergence was reached (rulings 60, 67), the rebuild
+  of record made print-2026-10-23.pdf 4989446c…, and that print closed on
+  paper with 600 dpi scans of its archive pages on 2026-10-26,
+  bootstrap/PAPER-2026-10-26.md): the full convergence of the three
+  searches before the sheets, whose result is the candidate print of
+  record v2 pending the c.py review (ruling 60; an interim sheet set of the
+  chain after ruling 59 is under bootstrap/build/sheets/, changeset/RESULTS
+  §20, part 2); the rebuild of record and the next print (the sheets of
+  record and the paper-test set still carry the old reader); the Plate
+  (deferred by ruling 38); any print or scan of an archive page at the
+  r0547 row; the 600-dpi scan question of ruling 37; a second typist.
+
 ## The question
 
 Assume the year ~3026. Finders hold a few bound volumes of our printed
@@ -54,7 +191,9 @@ Fixes, in two halves:
    (seed, label, draw-form) actually used + checked-in golden vectors
    for the e016 volume seed. After this, the repo specifies its own
    scrambling.
-2. **Format-axis (OPEN, user decision, layout_version bump):** the
+2. **Format-axis (OPEN for the v1 src/paperholo stack only, user
+   decision, layout_version bump; the holo v2 format that c.py reads
+   already keys with AES-128, src/holo/core/keystream_spec.py):** the
    existing TODO at modulation.py:9 — swap BLAKE2b/Philox for per-cell-
    address AES-CTR, a construction whose complete spec fits on one
    printed page and is independently re-implementable from public
@@ -82,6 +221,25 @@ technology; each rung opens with a known-answer block whose expected
 output is printed beside it (the "Voyager circle": a decoder that has not
 reproduced the golden block does not proceed).
 
+**Amended 2026-10-23** (ruling 34 of 2026-10-21: the stages are named by
+the program each one yields, the former R-names in brackets; the Mid rung
+retired, "we seem to be doing fine without it"). As built and measured:
+
+| Stage (former name) | Leaves | Carrier | Measured content | Decoder | Gear |
+|---|---|---|---|---|---|
+| 0 Plate (R0) | 3 in the 10-18 draft, one ruled; deferred | typography | promise, CRC-32, key, conventions | eyes | none |
+| 1 the a.py listing (R1 Listing One) | 1 listing | printed text, Menlo | a.py, 28 lines, 798 characters (v3; typed on paper 2026-10-26) | the finder, typing it into a file | any computer; Python 3.11 or later |
+| 2 the data sheet (R1 Listing One) | 1 data sheet | printed text, Andale Mono uppercase | b.py, 4,487 B; typed in all, with a.py, 3,289 on 39 data lines (v3, CONVERGENCE-2026-10-23b.md) | a.py, typed at stage 1 | a keyboard |
+| 3 the R2 pages (R2 Coarse) | 2 (for c.py) | 0.508 mm modules (12 dots) | 5,304 B/page; c.py 10,133 B through cm2, 475 B spare | b.py, from stage 2 | a phone camera (phone camera, 2026-10-20) or a 300 dpi grey scan (2026-10-23, 10-26) |
+| R3 Mid | RETIRED | | | | |
+| 4 the archive pages (Archive) | 15 (for the record's tree) | c3-k-r0547-p100, q 0.5 | ~110 KB/page; the release, the 9.28 MB tree as 1,648,648 B | c.py, from stage 3 | flatbed, 600 dpi grey or more (closed on paper from 8 pages at 600 dpi, 2026-10-26; 300 dpi cannot read c3) |
+| what stage 4 yields | (the payload) | | the paper-store tree | Python with its imports (ruling 40) | |
+
+Pointers: bootstrap/README.md (per stage), TYPED-STREAM.md v3, R2-FORMAT.md
+v1, bootstrap/stage3/RESULTS-2026-10-22.md; ~110 KB/page is ruling 25's
+figure, the tree's size ruling 28's. The v0.1 table (then; historical, its
+R3 Mid row retired by ruling 34):
+
 | Rung | Leaves | Carrier | Net yield | Decoder | Minimum gear |
 |---|---|---|---|---|---|
 | R0 Plate | 2 (x2 copies) | typography | ~9 KB prose/tables | eyes | none |
@@ -98,6 +256,14 @@ trim margins (rebinding guillotines eat 5-10 mm/century); every leaf
 carries an overt header (volume / rung / leaf n-of-m) because bindings
 fail and leaves shuffle. On a 500-leaf volume: ~6% overhead.
 
+*Amended 2026-10-23, the leaf count measured:* the Plate (three draft
+leaves, one ruled), one listing leaf, one data sheet and two R2 pages, then
+the archive pages, 15 for the record's 9.28 MB tree (ruling 44 of
+RECORD-2026-10-20.md for the listing and the data sheet, which it calls
+stage 1's leaves; stage3/RESULTS-2026-10-22.md for the rest). The bootstrap
+itself is thus the Plate plus four leaves; the archive pages carry the
+release.
+
 Hash chain (Merkle, forward): the Plate prints the CRC-32 of Listing
 One's text; Listing One's payload ends with the CRC of the coarse
 payload; the coarse payload contains the hash of the mid payload; the mid
@@ -109,7 +275,27 @@ comparison, and says so. SHA-256 enters only at R3 (as printed reference
 code + FIPS vectors); below that, CRC-32 only — corruption down there is
 accident, not adversary.
 
-## R0 — THE PLATE (2 leaves, duplicated front + back matter)
+*Amended 2026-10-23, as built:* a.py asserts the 4-glyph Horner code of the
+b.py it decodes; b.py asserts a baked CRC-32 (B2) of the c.py it decodes
+(ruling 22); c.py checks the release volume's SHA-256 and the archive's
+CRC-32. The release's hash is to be printed in stage 0 (ruling 39, a
+decision; the Plate is deferred and no leaf carries it yet; the stage-4
+pages print `RELEASE <commit>` in their margin, not the hash, 0dfb3fed) and
+baked into nothing below it, so the bootstrap stays fixed while the release
+moves.
+
+## Stage 0: THE PLATE (formerly R0; 2 leaves, duplicated front + back matter)
+
+*Amended 2026-10-23:* the Plate assumes Python-class computing and is ruled
+cut to one leaf, the cut not yet made (rulings of 2026-10-18,
+bootstrap/RECORD-2026-10-18.md, "OWED (cut not yet made"); CRC-32 is its
+one-line shift register, no table. It is DEFERRED until stages 1 to 3
+are fixed (ruling 38); the 10-18 draft is bootstrap/plate/. The from-zero
+material below (the counting primer, the dot rows, the binary strips beside
+each ASCII glyph, hex as sixteen rows) was ruled out on 2026-10-18 ("a
+different book"); the one-leaf target is the promise, the premise, the 8x8
+proof, how to type, CRC-32 with its vectors, the R2 paragraph, the key and
+care.
 
 Pure typography, ~72 chars x 63 lines/leaf (~4.5 KB text-equivalent
 each). Ordered: promise, then proof, then conventions — the red-team's
@@ -159,7 +345,17 @@ book as decoration.
    marks reappear under raking/transmitted/IR light; corner targets are
    redundant, any 2 of 4 suffice.
 
-## R1 — LISTING ONE (3 leaves, the program you type)
+## Stages 1 and 2: the a.py listing and the data sheet (formerly R1, LISTING ONE; 3 leaves in v0.1, now one listing and one data sheet; the program you type)
+
+*Amended 2026-10-23, as built:* one 28-line program a.py, 807 characters,
+typed into a file, printed in Menlo with every space a middle dot; it checks
+itself by printing a 4-glyph Horner code per line for comparison with the
+listing's margin, then takes a data sheet of base-32 lines (60 glyphs + 4
+check glyphs, uppercase, Andale Mono) and decodes them with a big-integer
+rANS decoder into b.py. No indent digits, no mod-997 sum: the listing's
+codes are computed by the program and compared by eye with the margin, and
+each data line is checked by the program as it is typed. Spec: bootstrap/TYPED-STREAM.md
+v3; numbers: bootstrap/stage1/RESULTS.md and changeset/RESULTS §19.
 
 ~200 lines (~8 KB) in OCR-B, one statement per line, in a deliberately
 tiny Python subset: NO imports at all, no floats, no negative modulo,
@@ -192,7 +388,15 @@ distortion); global threshold from the bullseyes' own ink/paper
 samples; nearest-neighbor sampling; majority-of-3; CRC per block; emit
 bytes.
 
-## R2 — COARSE pages (5 leaves)
+## Stage 3: the R2 pages, read by b.py (formerly R2, COARSE pages; 5 leaves in v0.1, now 2)
+
+*Amended 2026-10-23, as built:* bootstrap/R2-FORMAT.md v1. The module stays
+12 dots; the grid is 358 × 511 modules in 21 × 30 blocks; fifteen
+circular-ring bullseyes in the body replace the four corner bullseyes and
+carry the header; each block has a global chunk index and a CRC-32 bound to
+the header; three copies per chunk on a designed placement and on different
+pages; 204 chunks = 5,304 B per page. b.py reads phone photos, whole pages
+or parts. The payload is c.py, 2 pages, not the ~30 KB mid decoder below.
 
 Module = 12x12 engine dots = 0.508 mm — sized against OUR measured
 morphology (the luxury no other deep-time project had): 12x above
@@ -221,7 +425,15 @@ Payload (~30 KB over 5 leaves): `mid_decoder.py` (~25 KB, **pure Python
 as a monotone-law violation), the mid-format one-page spec, the ASCII
 table repeated as bytes (printed self-check), the hash of R3's payload.
 
-## R3 — MID pages (16-20 leaves)
+## R3: MID pages (16-20 leaves), RETIRED by ruling 34 (2026-10-21)
+
+*Amended 2026-10-23:* retired by ruling 34 of 2026-10-21 (the owner: "we
+seem to be doing fine without it"). c.py, the program of stage 3, rides on
+the two R2 pages and reads the archive pages of stage 4 directly: the
+archive's own black-only row c3-k-r0547-p100 at source fraction 0.5, with
+holo's LDPC, BCH addressing and fountain in place of this section's
+RS(255,223) and duplication. The text below is kept as the design of
+2026-07-10.
 
 Cell = 6x6 dots = 0.254 mm (c6 — 2x the proven c3 cell; design-point raw
 BER 0.2-0.5% ESTIMATE, bracketed by MEASURED c4 0.4-1.4% and c6 ~0-0.35%,
@@ -268,12 +480,47 @@ experience (MEASURED, 007.1/007.6).
   hygroexpansion). The finder decodes through OUR channel; our channel
   facts are part of the format.
 
+*Amended 2026-10-26, an OPEN design item: the release tree's selection
+law.* What crosses at stage 4 is the tree T1 (bootstrap/r3/arch/trees.py:
+`src/holo/**/*.py` + `docs/**/*.md` without docs/archive/ + CLAUDE.md, at
+commit 2115a595; 321 files, 9.28 MB, 1,648,648 B by strong2, 15 pages).
+On paper (2026-10-26) the release restored byte-exact and DID NOT RUN.
+NEW on paper: the selection takes no non-.py file under src/holo, so the
+twelve LDPC code tables (JSON, six under src/holo/core/ldpc/data and the
+same six under src/holo/receiver/lib/ldpc_data, 161,840 B) are missing
+and holo3 dies at import; and c.py writes flat names. KNOWN (ruling 40:
+holo3's imports are not in the tree; the release "magically has all
+imports") and met in practice on 10-26: nothing names the packages and
+versions to install (no requirements file). This manifest's own premise,
+an environment dossier with exact versions, was not carried into T1. The
+law owed is the owner's ruling; ruling 41 in full
+(bootstrap/RECORD-2026-10-20.md:978-982): "The tree is "the paper-store /
+holo release", to be ruled eventually; for now think paper/src, "but it
+will be more" (the readable sources of stages 1–3 do not travel in T1
+today: bootstrap/ is not in it). Speculation recorded as such: a stage 4
+in cmy8-r0850x0775x0700 to carry a lot more data." Three choices: every
+tracked file under src/holo (+164 files, 9,746,575 B; ESTIMATE ~26
+pages), src/holo with its data directories only (+12 files; ESTIMATE 16
+pages), or all of src/ (438 files, 15,080,318 B at 2115a595; not sized);
+plus requirements.txt
+with the venv recipe of its header, and whether the receiver's docs,
+bootstrap/'s readable sources and analyzer/ travel. Any choice is a new
+container and new stage-4 pages; c.py, being content-independent (ruling
+39), and stages 1-3 do not move (bootstrap/FINDINGS.md §16; docs/TODO.md,
+Bootstrap).
+
 After R3 the finder runs acquire-v2 blind, the pilots hand them absolute
 addresses, the fountain absorbs every leaf the centuries ate, and the
 chain closes byte-exact — the same 361,833-byte certification of run
 016.2, executed a millennium late.
 
 ## The irreducible format kernel (what R3 must convey; audited + spot-verified)
+
+(For holo format v1, `src/holo`, the generator-side statement of this
+kernel is `docs/PRINTED-FORMAT.md`, 2026-09-13: its §0 sorts every claim
+into convention, math, algorithm, generated-then-pinned or opaque pin, and
+its §14 lists what a second generator must not invent. The list below is
+paperholo's.)
 
 Facts a from-scratch decoder cannot re-derive (format axis; everything
 decoder-axis — orientation search, warp tracking, detection, LLRs — is
@@ -379,7 +626,9 @@ rungs, K-only and coarse, are the most archival objects in the volume.
 
 1. **Keystream printable-spec** — reference + tests + golden vectors:
    task spawned 2026-07-10 (running in a separate session). AES-CTR swap
-   = format-axis decision, OPEN (modulation.py:9 TODO).
+   = format-axis decision, OPEN (modulation.py:9 TODO) for the v1
+   src/paperholo stack; the holo v2 format already keys with AES-128
+   (src/holo/core/keystream_spec.py).
 2. **Volume-descriptor doctrine**: any real archival deployment needs
    the descriptor (seed included) as a designed overt key sheet — a
    DESIGN.md §5/§9 amendment candidate, alongside the R3 deep-time
@@ -398,7 +647,7 @@ rungs, K-only and coarse, are the most archival objects in the volume.
 | 1 | Acid paper dies in 100-200 y | FATAL | ISO 11108 rag stock + printed recopy directive (LOCKSS by custodians) |
 | 2 | Finder shelves the book (no visible promise/proof) | FATAL | Plate p.1 = inventory + 10-minute golden-block demo + effort ladder |
 | 3 | Keystream unreproducible on drifted numpy | FATAL | pure-Python reference in R3 payload + printed golden vectors (see finding) |
-| 4 | numpy/scipy semantics drift ("they know Python" is approximate) | major | mid_decoder pure-Python; vendored scipy fallbacks; env dossier; printed intermediate vectors |
+| 4 | numpy/scipy semantics drift ("they know Python" is approximate) | major | mid_decoder pure-Python (v0.1; the Mid rung is retired, ruling 34, and c.py is pure Python with no import); vendored scipy fallbacks; env dossier; printed intermediate vectors |
 | 5 | Language death (1000 y ~= Old English gap) | major | 4-6 parallel languages + pictorial primer carries the load-bearing claims language-free |
 | 6 | Nothing grounds numerals (bar grounds length, not "7") | major | counting-dots primer before first numeral use; hex as base-16 extension |
 | 7 | CRC-32 variant hell (~16 plausible knob settings) | major | bit-level trace + 256-entry table + 3 vectors incl. 0xCBF43926 + stored-byte-order shown in place |
@@ -426,8 +675,10 @@ rungs, K-only and coarse, are the most archival objects in the volume.
 3. Per-line CRC bootstrap -> hand-computable weighted sum; CRC validated
    against the Plate trace first (A9).
 4. Python semantics at R1 -> annex + subset discipline + imports banned (A8).
-5. numpy at R2 -> mid_decoder pure-Python; the monotone law extended to
-   "no external library before its spec/source has crossed" (A4).
+5. numpy at R2 -> mid_decoder pure-Python (v0.1, historical: the Mid rung
+   is retired by ruling 34; c.py is pure Python with no import); the
+   monotone law extended to "no external library before its spec/source
+   has crossed" (A4).
 6. scipy at R3 -> vendored pure-Python fallbacks in the payload (A4).
 7. Keystream spec outside the tree -> the headline finding; reference +
    printed vectors (A3).
@@ -453,3 +704,27 @@ Capture: R2 = 0.75 MP/page (2 samples/module); R3 = 3.0 MP/page (2
 px/cell). Loupe floor: 61,469 bits at 1.5 bit/s ~= 11.4 h/page. Archive
 endpoint for contrast: e016 MEASURED 361,833 B certified = 55.1 b/mm2.
 All ESTIMATE except where labeled MEASURED.
+
+*Amended 2026-10-23: then and now.* Each line: the v0.1 figure above, then
+the measured or specified one with its pointer.
+
+- R2 grid: then 360x520 modules, 7,168 B/page; now 358 x 511 modules, 21 x
+  30 blocks, 204 chunks of 26 B = 5,304 B/page (bootstrap/R2-FORMAT.md v1).
+- R2 payload: then ~30 KB over 5 leaves; now (2026-10-26) c.py, 10,133 B
+  through cm2 under the chain's b.py, 2 pages with 475 B spare
+  (bootstrap/CONVERGENCE-2026-10-23b.md; 9,966 B on 2026-10-23 before the
+  repair, bootstrap/r2reader/changeset/RESULTS-2026-10-22.md §20).
+- R3: then 38,653 B/page over 16-20 leaves; now retired (ruling 34).
+- Archive: then e016's c2 page, ~340 KB; now the c3-k-r0547-p100 row at
+  q 0.5, ~110 KB of payload per page (ruling 25), the 9.28 MB tree in 15
+  pages (ruling 28; stage3 §3), closed on paper from 8 of them at 600 dpi
+  (bootstrap/PAPER-2026-10-26.md).
+- Typing: then ~8 KB in 4-6 h (ESTIMATE); now 3,289 typed characters (v3,
+  bootstrap/CONVERGENCE-2026-10-23b.md), typed on paper 2026-10-26 (time
+  not recorded); 3,895 on paper in about 40 minutes on 2026-10-20
+  (bootstrap/PAPER-2026-10-20.md).
+- Capture: then 0.75 MP/page at 2 samples/module; now phone photos of
+  3072 x 4080 at 7.1-11.1 px per module on paper (PAPER-2026-10-20.md;
+  RECORD-2026-10-20.md, the axes section); the 10-20 diet reader's floor 2
+  samples/module at blur 0.45 module or 1.5 at 0.4 (ruling 15's note).
+- Loupe floor: then ~11.4 h/page (ESTIMATE); not measured since.

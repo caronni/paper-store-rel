@@ -56,9 +56,9 @@ from fractions import Fraction
 
 import numpy as np
 
-from holo3.data import AttemptFact, Certificate, TileOutcome
-from holo3.format.identity import Family
-from holo3.plugins import local_ctx, tiles
+from holo.receiver.data import AttemptFact, Certificate, TileOutcome
+from holo.receiver.format.identity import Family
+from holo.receiver.plugins import local_ctx, tiles
 
 STAGE_LOCAL = local_ctx.STAGE_LOCAL
 
@@ -155,9 +155,11 @@ def subjects(store: object, positions: tuple[tuple[int, int], ...],
              page: int = 0) -> tuple[tuple[Subject, ...], dict]:
     """Residue tiles the local row's own eligibility reaches, and a census.
 
-    The gate is `local_ctx._local_eligible` verbatim — uncertified, and
-    with at least one certified tile in the window-derived
-    neighbourhood — plus `armed`, the row's own arming condition (see
+    The gate is `local_ctx._local_eligible` verbatim — the tile-LANE
+    subject the row has carried since 2026-09-21, so the gate is asked
+    once per tile-lane and this measurement's per-STREAM population is
+    filtered by `local_ctx.armed_streams` — plus `armed`, the row's own
+    arming condition from the event stream (see
     :func:`armed_addresses`), plus the one condition this measurement
     adds: the rung must be covered by MORE THAN ONE LANE, because a
     single-lane subject has no union to lose to.
@@ -174,7 +176,7 @@ def subjects(store: object, positions: tuple[tuple[int, int], ...],
                   "ineligible_no_certified_neighbour": 0, "kept": 0}
         for ty, tx in positions:
             for stream in store.row.streams:
-                subject = (page, ty, tx, stream.stream_id, ppc)
+                lane_subject = (page, ty, tx, ppc)
                 if store.has_certificate((page, ty, tx, stream.stream_id)):
                     continue
                 counts["uncertified"] += 1
@@ -188,7 +190,9 @@ def subjects(store: object, positions: tuple[tuple[int, int], ...],
                 if len(lanes) < 2:
                     counts["one_lane"] += 1
                     continue
-                if not local_ctx._local_eligible(store, subject):
+                if (not local_ctx._local_eligible(store, lane_subject)
+                        or stream.stream_id not in local_ctx.armed_streams(
+                            store, page, ty, tx, ppc)):
                     reach = local_ctx.neighbourhood_tiles(
                         store, page, ty, tx, ppc)
                     counts["ineligible_empty_reach" if not reach
@@ -427,9 +431,15 @@ def run_row(store: object, subject: Subject) -> ArmOutcome | None:
 
     Every attempt the row made is recovered from its own facts, so the
     winner is named the same way whether the union won or a lane did.
+
+    Since 2026-09-21 the row's subject is the tile-LANE and one fire
+    decodes EVERY armed stream off one build, so the facts are filtered
+    to this measurement's stream: the arms are per-stream and the
+    comparison must stay so.  The reported `cpu_seconds` is still the
+    whole fire's, which is what the row actually costs, and the report
+    already says the row's and the arms' CPU are not comparable.
     """
-    key = (subject.page, subject.ty, subject.tx, subject.stream_id,
-           subject.ppc)
+    key = (subject.page, subject.ty, subject.tx, subject.ppc)
     job = local_ctx.prepare_local(store, key, STAGE_LOCAL)
     if job is None:
         return None
@@ -439,12 +449,17 @@ def run_row(store: object, subject: Subject) -> ArmOutcome | None:
     for fact in result.facts:
         if not isinstance(fact, AttemptFact):
             continue
+        if str(fact.stream_id) != subject.stream_id:
+            continue
         label = attempt_label(fact.components)
         rows.append((label, str(fact.outcome), int(fact.n_iters),
                      round(float(result.cpu_s), 4)))
         if fact.outcome == tiles.OUTCOME_CERTIFIED and winner is None:
             winner = label
-    certificate = _certificate_of(result.facts)
+    certificate = _certificate_of(
+        tuple(fact for fact in result.facts
+              if not isinstance(fact, Certificate)
+              or str(fact.stream_id) == subject.stream_id))
     return ArmOutcome(certified=certificate is not None,
                       cpu_seconds=float(result.cpu_s), attempts=tuple(rows),
                       bits=(None if certificate is None

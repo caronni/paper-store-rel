@@ -310,7 +310,10 @@ Every color tile contains:
 
 The new family seed derives all 120 positions as one collision-free
 `p120` family. It may redraw the 100 word positions relative to current
-`p100`; that does not alter an existing K row.
+`p100`; that does not alter an existing K row. (The table above is the
+PRINTED density and the only one qualified on paper; the law is
+`n_dust = p - 100` dust and `4096 - p` payload cells per tile, under
+that `p`'s own family seed — FORMAT-SPACE §18.)
 
 Position and value derivation stay separate:
 
@@ -1681,7 +1684,7 @@ the clean composite RGB palette and threshold recovery consumed by the
 `hp-m281-flatbed-cmy` profile:
 
 ```console
-HOLO_RUN_GS_COLOR_SEPARATIONS=1 PYTHONPATH=src env/bin/pytest -q \
+HOLO_RUN_GS_TESTS=1 PYTHONPATH=src env/bin/pytest -q \
   tests/holo/test_color_software_qualification.py -k q1
 ```
 
@@ -1691,7 +1694,7 @@ paper, or scanner channel.
 The complete current software composition has a second slow, opt-in gate:
 
 ```console
-HOLO_RUN_GS_COLOR_RECEIVER=1 PYTHONPATH=src env/bin/pytest -q \
+HOLO_RUN_GS_TESTS=1 PYTHONPATH=src env/bin/pytest -q \
   tests/holo/test_color_software_qualification.py \
   -k closes_through_standalone_tiff_transformer
 ```

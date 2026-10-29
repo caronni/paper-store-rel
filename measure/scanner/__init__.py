@@ -13,9 +13,11 @@ only — no scan, no print, read-only on every TIFF:
   cartridge was empty" stop being the same number.  Also carries a
   per-plane registration arm.
 
-    cd <repo>          # or a plane-fields worktree
-    PYTHONPATH=measure env/bin/python -m scanner.blue_mtf --all
-    PYTHONPATH=measure env/bin/python -m scanner.ink_psf --all
+    cd <repo>
+    PYTHONPATH=measure env/bin/python -m scanner.blue_mtf --all \\
+        --evidence-root <evidence> --out build/scanner
+    PYTHONPATH=measure env/bin/python -m scanner.ink_psf --all \\
+        --evidence-root <evidence> --out build/scanner/e031
 
 Like ``measure/plane_fields``, this is not a test and never runs under
 pytest: ``measure/`` is outside ``testpaths`` (user ruling 2026-08-21 —
@@ -35,6 +37,7 @@ package is numpy + tifffile + PIL.
 * ``blue_mtf`` / ``ink_psf`` — the two drivers, JSON + figure;
 * ``_figures`` — PIL figures (matplotlib is not in this env).
 
-Artifacts land in ``scratch/plane-fields/p2/scanner/`` (``blue_mtf``) and
-``scratch/plane-fields/p2/scanner/e031/`` (``ink_psf``).
+Historical record; the captures are in the evidence archive, joined onto
+``--evidence-root`` (``measure/_evidence.py``; ``--selftest`` needs
+none).  Artifacts land in the required ``--out``.
 """

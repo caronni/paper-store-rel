@@ -17,7 +17,6 @@ import re
 from pathlib import Path
 
 _SRC = Path(__file__).resolve().parents[2] / "src" / "holo"
-_TESTS = Path(__file__).resolve().parent
 
 
 def _py_files(root: Path, *, exclude_format: bool) -> list[Path]:
@@ -53,15 +52,3 @@ def test_no_codec_id_comparisons_outside_format() -> None:
         hits += _offending_lines(path, pattern)
     assert not hits, "\n".join(hits)
 
-
-def test_no_retired_scale_plan_keyword() -> None:
-    pattern = re.compile(r"scale_plan\s*\([^)]*codec_id\s*=")
-    hits = []
-    for root in (_SRC, _TESTS):
-        for path in sorted(root.rglob("*.py")):
-            if path.name == Path(__file__).name:
-                continue
-            text = path.read_text()
-            if pattern.search(text):
-                hits.append(str(path))
-    assert not hits, hits

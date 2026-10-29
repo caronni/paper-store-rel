@@ -7,16 +7,16 @@ whatever ``python3`` happens to be on PATH, and no console script pollutes
 the venv. ``confetti.py`` (holo v1) carries the same shebang for the same
 reason.
 
-Equivalent form: ``env/bin/python -m holo3 ...``
+Equivalent form: ``env/bin/python -m holo.receiver ...``
 """
 import sys
 from pathlib import Path
 
-_ROOT = str(Path(__file__).resolve().parent)
-if _ROOT not in sys.path:
-    sys.path.insert(0, _ROOT)
+_SRC = str(Path(__file__).resolve().parent / "src")
+if _SRC not in sys.path:
+    sys.path.insert(0, _SRC)
 
-from holo3.cli import main  # noqa: E402
+from holo.receiver.cli import main  # noqa: E402
 
 if __name__ == "__main__":
     raise SystemExit(main())

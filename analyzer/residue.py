@@ -40,14 +40,14 @@ THE THREE COLUMNS THAT NEED SAYING OUT LOUD:
 
 from __future__ import annotations
 
-from typing import Any, Mapping, Sequence
+from typing import Any, Callable, Mapping, Sequence
 
 import numpy as np
 from scipy import stats as scipy_stats
 
-from holo3.format import close as fmt_close
-from holo3.format import fountain
-from holo3.plugins import color_sites
+from holo.receiver.format import close as fmt_close
+from holo.receiver.format import fountain
+from holo.receiver.plugins import color_sites
 
 from .close import slot_items
 from .inputs import TILE_CELLS, page_tile_coverage
@@ -121,16 +121,15 @@ def _furniture_only(inputs: RunInputs, page: int, ty: int, tx: int
     certified, so the word/dust half of its own body is reproduced here
     from the same two calls it makes.
     """
-    from holo3.format import pilots, tile_codec
+    from holo.receiver.format import pilots, tile_codec
     row, geometry = inputs.row, inputs.geometry
     counter = row.tile_counter(page, ty, tx)
     bits = np.zeros((TILE_CELLS, TILE_CELLS, 3), np.uint8)
     known = np.zeros((TILE_CELLS, TILE_CELLS, 3), np.bool_)
     word = geometry.word_cells_yx
     dust = geometry.extra_cells_yx
-    word_states = pilots.color_word_states(row.seed, (counter,))[0]
-    dust_states = pilots.dust_state_values(
-        row.seed, (counter,), row.dust_base_cycle, row.n_dust)[0]
+    word_states = pilots.color_word_states(row.seed, (counter,), row)[0]
+    dust_states = pilots.dust_state_values(row.seed, (counter,), row)[0]
     bits[word[:, 0], word[:, 1]] = tile_codec.states_to_planes(word_states)
     bits[dust[:, 0], dust[:, 1]] = tile_codec.states_to_planes(dust_states)
     known[word[:, 0], word[:, 1]] = True
@@ -379,18 +378,44 @@ def residue_rows(rows: Sequence[LedgerRow]) -> list[LedgerRow]:
             if row.covered and not row.certified_by_production]
 
 
+def _atom(spec: str) -> Callable[[LedgerRow], bool]:
+    """One target atom -> the predicate it means (W8 B5).
+
+    `band:<class>`, `stream:<S>`, `siblings:<S,...>` (the row's OTHER
+    streams already certified, as a SET — `siblings:M,Y` is the
+    population where every per-sibling-state mechanism can fire, and
+    `siblings:` alone is the population where none can).
+    """
+    name, separator, want = spec.partition(":")
+    if not separator:
+        raise ValueError(f"unknown target spec {spec!r}")
+    if name == "band":
+        return lambda row: row.band == want
+    if name == "stream":
+        return lambda row: row.stream_id == want
+    if name == "siblings":
+        wanted = frozenset(part.strip() for part in want.split(",")
+                           if part.strip())
+        return lambda row: frozenset(row.siblings_certified) == wanted
+    raise ValueError(f"unknown target spec {spec!r}")
+
+
 def target_rows(rows: Sequence[LedgerRow], spec: str) -> list[LedgerRow]:
-    """residue | band:dead | band:marginal | stream:C (DESIGN §3)."""
+    """residue | band:dead | stream:C | siblings:M,Y, joined by `+`.
+
+    DESIGN §3, extended in W8 B5 with the CONJUNCTION: `band:dead+stream:C`
+    is the dead band's open C rows and `stream:C+siblings:M,Y` the open C
+    rows whose two sibling planes are both certified.  Every atom is
+    ANDed over the residue (covered, uncertified); order does not matter;
+    an unknown atom raises exactly as an unknown spec always did.
+    """
     base = residue_rows(rows)
     if spec == "residue":
         return base
-    if spec.startswith("band:"):
-        want = spec.split(":", 1)[1]
-        return [row for row in base if row.band == want]
-    if spec.startswith("stream:"):
-        want = spec.split(":", 1)[1]
-        return [row for row in base if row.stream_id == want]
-    raise ValueError(f"unknown target spec {spec!r}")
+    tests = [_atom(part) for part in spec.split("+") if part.strip()]
+    if not tests:
+        raise ValueError(f"unknown target spec {spec!r}")
+    return [row for row in base if all(test(row) for test in tests)]
 
 
 # ------------------------------------------------------------ rank cross-check

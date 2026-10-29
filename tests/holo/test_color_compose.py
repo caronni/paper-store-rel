@@ -9,8 +9,10 @@ import pytest
 
 from holo.core import channel, color_tile, keystream
 from holo.format import metadata, pilots
+from holo.format.lattice import parse_format_id
 from holo.format.registry import get_format_row
 from holo.gen.color_compose import (
+    _color_geometry,
     color_cells_to_dot_planes,
     compose_color_tile,
 )
@@ -62,7 +64,7 @@ def test_color_tile_furniture_partition_and_projection(row_id: str):
     word, dust = pilots.color_site_cells_yx(spec.family_seed)
     assert np.array_equal(
         tile[word[:, 0], word[:, 1]],
-        pilots.color_word_states(spec.seed, [counter])[0],
+        pilots.color_word_states(spec.seed, [counter], spec.codec)[0],
     )
     assert np.array_equal(
         tile[dust[:, 0], dust[:, 1]],
@@ -88,6 +90,64 @@ def test_color_tile_furniture_partition_and_projection(row_id: str):
                 dots[dy::spec.cell_dots, dx::spec.cell_dots],
                 channel.states_to_planes(tile),
             )
+
+
+#: The furniture density axis on the WRITER side.  ``p`` is the number of
+#: site cells a tile spends on furniture — 100 indexed word sites plus
+#: ``p - 100`` dust — so the payload is the remaining ``4096 - p`` cells.
+#: p120 is the printed case and the only one the old `_color_geometry`
+#: could compose: it called ``pilots.color_payload_cell_indices`` /
+#: ``color_site_cells_yx``, which hardcode 20 dust, so every other lawful
+#: p died in `compose_color_page_cells` with a shape mismatch between the
+#: states the codec produced (4096 - p) and the 3,976 cells the helper
+#: offered.  cmy8 admits p in [101, 2206]; these are p101 (a single dust
+#: cell — the floor), p120, p172 and p300, plus one uneven rung triplet
+#: to show the column-group pool re-partitions under a new p.
+P_AXIS_ROWS = (
+    "c2-cmy8-r0550-p101@10x10",
+    "c2-cmy8-r0550@10x10",                    # p120, the printed density
+    "c2-cmy8-r0550-p172@10x10",
+    "c2-cmy8-r0550-p300@10x10",
+    "c2-cmy8-r0700x0700x0547-p300@10x10",     # uneven triplet x p300
+)
+
+
+@pytest.mark.parametrize("format_id", P_AXIS_ROWS)
+def test_color_geometry_partitions_the_tile_at_any_furniture_density(
+    format_id: str,
+):
+    """The writer's furniture comes from the row, not from a constant.
+
+    `_color_geometry` hardcoded 20 dust until 2026-09-16, so every
+    density but the printed p120 died in `compose_color_page_cells` with
+    a shape mismatch.  This pins the partition itself — word sites,
+    dust, payload — against what the row declares, then composes a tile
+    through the public path to show the furniture lands where the
+    partition says it does.
+    """
+    spec = parse_format_id(format_id)
+    payload_cells, word_flat, dust_flat = _color_geometry(spec)
+
+    assert word_flat.size == pilots.N_WORD_SITES == 100
+    assert dust_flat.size == spec.n_dust
+    assert payload_cells.size == spec.payload_cells == 4096 - 100 - spec.n_dust
+    everything = np.concatenate((word_flat, dust_flat, payload_cells))
+    assert np.array_equal(np.sort(everything), np.arange(4096))
+
+    word, dust = (pilots.word_site_cells_yx(spec.family_seed),
+                  pilots.dust_site_cells_yx(spec.family_seed, spec.n_dust))
+    assert np.array_equal(word_flat, word[:, 0] * 64 + word[:, 1])
+    assert np.array_equal(dust_flat, dust[:, 0] * 64 + dust[:, 1])
+
+    counter = 137
+    tile = compose_color_tile(
+        spec, counter, _symbols(spec, 11), k_total=321)
+    assert np.array_equal(
+        tile[word[:, 0], word[:, 1]],
+        pilots.color_word_states(spec.seed, [counter], spec.codec)[0])
+    assert np.array_equal(
+        tile[dust[:, 0], dust[:, 1]],
+        pilots.dust_state_values(spec.seed, [counter], spec.codec)[0])
 
 
 @pytest.mark.parametrize("row_id", COLOR_ROWS[:2])

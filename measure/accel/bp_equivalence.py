@@ -1,7 +1,7 @@
 """(b) gates 1 and 2: equivalence and determinism for the mlx BP port.
 
 GATE 1 — EQUIVALENCE.  Every attempt in the corpus is decoded twice: by
-``holo3.lib.ldpc.decode`` (float64, CPU, one tile at a time) and by
+``holo.receiver.lib.ldpc.decode`` (float64, CPU, one tile at a time) and by
 ``bp_mlx.decode_batch`` (float32, GPU, the whole rate's attempts at
 once).  Both outcomes are then run through the codec's own acceptance
 test — syndrome AND CRC — because that, not bitwise float agreement, is
@@ -32,8 +32,8 @@ from pathlib import Path
 
 import numpy as np
 
-from holo3.format import tile_codec
-from holo3.lib import ldpc
+from holo.receiver.format import tile_codec
+from holo.receiver.lib import ldpc
 
 from measure.accel import bp_mlx
 

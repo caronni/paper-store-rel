@@ -11,7 +11,7 @@ patching.  `capture_id = sha256(file)`, so each emitted TIFF is a NEW
 capture and the plane view runs its own survey and placement from
 scratch — which is the point of the experiment.
 
-HOW THE PLANE IS ISOLATED.  `holo3.lib.spectral` fits, per capture, the
+HOW THE PLANE IS ISOLATED.  `holo.receiver.lib.spectral` fits, per capture, the
 first-order mixing model ``v = m0 + mC·C + mM·M + mY·Y`` over cells whose
 three plane bits are known (format furniture plus the payload cells of
 tiles certified in every stream — ordinary receiver knowledge, never an
@@ -55,7 +55,7 @@ platen and the lid), and the affine sends that span to
                            · (DARK_U8 − BRIGHT_U8)),  clipped to [0, 255]
 
 Ink is DARK, which is the polarity `calibrate.window_scores`
-(calibrate.py:255, ``(midpoint − means)/spread``) wants: its score grows
+(calibrate.py:279, ``(midpoint − means)/spread``) wants: its score grows
 as pixel values DROP.  Absolute levels do not matter to holo3 — its
 calibration standardises by median and MAD and then fits PAVA — so what
 the mapping owes is monotonicity, polarity and dynamic range, and this
@@ -87,8 +87,8 @@ from typing import Any, Sequence
 
 import numpy as np
 
-from holo3.plugins import color_model, color_sites, intake
-from holo3.format import tile_codec
+from holo.receiver.plugins import color_model, color_sites, intake
+from holo.receiver.format import tile_codec
 
 from .. import frame as frame_mod
 from .. import sample as sample_mod

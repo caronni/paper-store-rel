@@ -35,7 +35,7 @@ from dataclasses import dataclass
 import mlx.core as mx
 import numpy as np
 
-from holo3.lib.ldpc import LLR_CLIP, LLR_KNOWN, Code
+from holo.receiver.lib.ldpc import LLR_CLIP, LLR_KNOWN, Code
 
 TANH_CLIP = 40.0
 LOG_FLOOR = 1e-300

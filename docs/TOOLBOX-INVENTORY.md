@@ -2,9 +2,9 @@
 
 Version 0.2 — 2026-08-23. Status: **INVENTORY, code-agnostic, NOT
 NORMATIVE.** Nothing here amends a design doc; nothing here is a build
-order. It is the catalogue a future holo2 "toolbox" scheduler would shop
-from, with each item's measured yield, its measured loss, its cost, its
-prerequisites and its isolation notes.
+order. It is the catalogue a future holo2 (retired 2026-09-05, a805888)
+"toolbox" scheduler would shop from, with each item's measured yield, its
+measured loss, its cost, its prerequisites and its isolation notes.
 (v0.2: §6.13 stops being UNMEASURED — the K instance was run over e029's
 complete residue, INDEPENDENT-PLANES §2.13.)
 
@@ -18,9 +18,10 @@ docs/RECEIVE-DESIGN.md v0.57, docs/PLACEMENT-IMPROVEMENTS.md,
 docs/PAYLOAD-IMPROVEMENTS.md, docs/DONE-GEOMETRY.md,
 docs/PHASED-SCHEDULE.md, docs/PILOTS-DESIGN.md §15.9,
 experiments/014, 018, 023b, 023c, 024, 029–033, the `.claude/memories`
-line records, and holo2/docs/DESIGN.md §3a/§6.8/§6.9 + the H4/H5 plans
-(the last **only** to mark what holo2 already has, so this inventory does
-not re-propose it).
+line records, and docs/archive/holo2/DESIGN.md §3a/§6.8/§6.9 + the H4/H5
+plans (docs/archive/holo2/H4-PLAN.md, H4-W2-PLAN.md, H4-LANES-PLAN.md,
+H5-PLAN.md; the last **only** to mark what holo2 (retired 2026-09-05,
+a805888) already has, so this inventory does not re-propose it).
 
 ---
 
@@ -176,12 +177,17 @@ to try), **D** (record-only; keep the knowledge, do not build).
 
 ## 2. What holo2 already has (do not re-propose)
 
-Read from holo2/docs/DESIGN.md and the H4/H5 plans. Listed so the box's
-entries can name their scheduler hook instead of inventing one.
+Every tool's holo2 implementation catalogued in this section was deleted
+2026-09-05 (a805888); the design and measurement record it was read from
+is archived at docs/archive/holo2/.
+
+Read from docs/archive/holo2/DESIGN.md and the H4/H5 plans
+(docs/archive/holo2/H4-PLAN.md, H4-W2-PLAN.md, H4-LANES-PLAN.md,
+H5-PLAN.md). Listed so the box's entries can name their scheduler hook
+instead of inventing one.
 
 **Built and merged in holo2** (everything through H5 EXIT is on main —
-`9d5a54d` H4 EXIT, `940b5b6` H5 EXIT; *note: CLAUDE.md's holo2 bullet is
-STALE, it still says "H4 THROUGH W2 MERGED"*): the commit wall with
+`9d5a54d` H4 EXIT, `940b5b6` H5 EXIT): the commit wall with
 publication-order law; optimistic transactions with a declared
 commutative merge for the tile carry; dispatch/start markers and
 journal-authoritative state; continuous admission; **the pull model** —
@@ -319,7 +325,8 @@ that costs only ~1–3 s at a single-page domain (the measured residual
 that motivated cost-aware ordering).
 **Prereq.** a false-accept budget that prices the widened hypothesis
 count — which exists.
-**holo2.** Present as the word-centre / word-rest tiers.
+**holo2** (retired 2026-09-05, a805888). Present as the word-centre /
+word-rest tiers.
 **Priority.** — (already had).
 
 ### 3.2 Erasure-aware word decoding (known-position rung)
@@ -361,8 +368,8 @@ hypothesis count.
 **Prereq.** **the re-derived false-accept budget** — which is exactly the
 qualification condition (2) says the box makes load-bearing. These two
 items should be done together.
-**holo2.** Word tier; no new machinery, a wider hypothesis set and a new
-budget.
+**holo2** (retired 2026-09-05, a805888). Word tier; no new machinery, a
+wider hypothesis set and a new budget.
 **Priority.** B — unmeasured, but it is a named conversion of the box's
 most expensive tier (cold) into its cheapest (word), and its blocker is
 work the box needs anyway.
@@ -405,7 +412,7 @@ measure a fine offset and today **DISCARD** it.
 channel — "nothing more" (PLANE-FIELDS §2 beat 10).
 **Prereq.** a plane-aware sampling seam at the ADDRESS stage, which does
 not exist today (the field enters ONE seam, payload sampling).
-**holo2.** Blocked on colour (H7).
+**holo2** (retired 2026-09-05, a805888). Blocked on colour (H7).
 **Priority.** C — free evidence and a design-coherence win; a yield item
 only in the marginal regimes, which are exactly the regimes the box is
 for.
@@ -432,7 +439,8 @@ item 2). Crosstalk needs a 3×3 phasor unmix or Y's phase is biased ~0.1
 cell.
 **Prereq.** none — this is its whole point: dense payload, no furniture,
 no decode.
-**holo2.** Blocked on colour; the K instance (n = 1) is buildable.
+**holo2** (retired 2026-09-05, a805888). Blocked on colour; the K instance
+(n = 1) is buildable.
 **Priority.** C for genuinely evidence-free material (small scraps,
 zero-certificate columns), D as a dead-band strategy.
 
@@ -487,7 +495,8 @@ same-region window in chain range) is still owed.
 arithmetic untouched (§5.3: evidence may reorder work, never narrow a
 domain or lower a floor).
 **Cost.** Negative (saves colds). **Prereq.** none.
-**holo2.** Superseded there by the pull model; do not re-propose.
+**holo2** (retired 2026-09-05, a805888). Superseded there by the pull model;
+do not re-propose.
 **Priority.** — (already had).
 
 ### 4.2 Cold-search exact-cost family — FFT caching and batching
@@ -535,10 +544,10 @@ gates.
 **Status.** BUILT in paperholo. **NOT PRESENT IN holo** — holo's placement
 is page-window pose placement, a different mechanism; confetti
 correlation placement is a paperholo-only capability today.
-**holo2.** Would be a new tier below cold (or a cold flavour); it needs
-the prepared-region view and a lease, nothing else. Must not commit a
-pose — propose a seed the ordinary fit revalidates, exactly as holo2's
-cold route already does.
+**holo2** (retired 2026-09-05, a805888). Would be a new tier below cold (or
+a cold flavour); it needs the prepared-region view and a lease, nothing
+else. Must not commit a pose — propose a seed the ordinary fit revalidates,
+exactly as holo2's cold route already does.
 **Priority.** A **for scrap material** — a measured 100%-correct,
 sub-second placement route for pieces that cannot self-address, and the
 capability is currently missing from the production tree.
@@ -652,8 +661,8 @@ remains").
 plus a re-run of regional context; refine is a lane, priced like a lane.
 **Prereq.** certified labels (so it is worthless on lane 0), committed
 poses.
-**holo2.** Wants the certificate carry and the per-window job; must not
-mutate committed poses of other windows.
+**holo2** (retired 2026-09-05, a805888). Wants the certificate carry and the
+per-window job; must not mutate committed poses of other windows.
 **Priority.** A **where the cascade has not already run**; **C as a
 post-cascade pass** — the measured post-E023c yield is 0 and 1 tile at
 tens of thousands of BP iterations, which is exactly the kind of
@@ -686,7 +695,8 @@ decode.
 (0.15°, 0.25 cells) are the cost anchor.
 **Prereq.** certified labels; a bounds/model change in the placement
 layer.
-**holo2.** Placement-layer only; must not read or write field state.
+**holo2** (retired 2026-09-05, a805888). Placement-layer only; must not read
+or write field state.
 **Priority.** B — one measured certificate, tiny population, and the
 population is nameable in advance (corners, edges, stitched windows),
 which makes it cheap to schedule narrowly.
@@ -740,9 +750,9 @@ would cost one extra attempt per slot to find the few where it does not.
 is one extra sampling + decode per residue slot in the covered windows.
 **Prereq.** the probe pass; a sampling seam that accepts a per-window
 override without writing it back.
-**holo2.** Must not write `PoseRecord`; it is an attempt-time override
-only. That is exactly the isolation §2.9c's three-layer pose regression
-already pins in holo1.
+**holo2** (retired 2026-09-05, a805888). Must not write `PoseRecord`; it is
+an attempt-time override only. That is exactly the isolation §2.9c's
+three-layer pose regression already pins in holo1.
 **Priority.** C — cheap to try as a pure attempt, measured hostile as a
 write. Do not resurrect the writer form.
 
@@ -776,9 +786,10 @@ revision half is evidence-level and needs its own version.
 **Cost.** UNMEASURED. It splits only crossing windows, so it is bounded
 by the straddle population (101/449 on that capture).
 **Prereq.** the attribution experiments; a support-extension record.
-**holo2.** Subdivision already exists as the growth mechanism; this is a
-seam-INFORMED subdivision plus a per-side pose, so the machinery is
-mostly there. It must not silently reinterpret an existing audited core.
+**holo2** (retired 2026-09-05, a805888). Subdivision already exists as the
+growth mechanism; this is a seam-INFORMED subdivision plus a per-side pose,
+so the machinery is mostly there. It must not silently reinterpret an
+existing audited core.
 **Priority.** B — the e024 record names it the successor to global
 feedback ("the next mechanism with a distinct error model and
 identifiable value"), and its target population is measured and large.
@@ -824,10 +835,10 @@ scale, monotone by construction" (PLANE-FIELDS §2 beat 16).
 **Prereq.** a sampling seam that takes a per-plane offset override; a
 calibrated detector (the oracle cannot gate its way out of uncalibrated
 LLRs — beat 18); a field or neighbour hint to centre the search.
-**holo2.** Needs: per-slot job scheduling, an offsets override at
-sampling, certificate commit. Must not: write poses, write the field
-before the certificate lands (successful swim offsets are tier-(i) field
-evidence AFTER the fact).
+**holo2** (retired 2026-09-05, a805888). Needs: per-slot job scheduling, an
+offsets override at sampling, certificate commit. Must not: write poses,
+write the field before the certificate lands (successful swim offsets are
+tier-(i) field evidence AFTER the fact).
 **Priority.** A for K/C/M and for scrap rescue; **B for sheet-I-class dead
 Y**, where the ceiling says it cannot reach. The honest reading of §2.3 is
 that the closer is a general-purpose tool that this particular residue is
@@ -855,8 +866,9 @@ E8's G2 did ("ONE refit per capture serves all eight tiles because the
 field is tile-blind", §2.12).
 **Prereq.** a geometry change worth refitting for; the seam that lets a
 refit see the corrected sampling.
-**holo2.** Wants a per-region detector fit that can be re-run over an
-overridden geometry, isolated from the committed evidence blocks.
+**holo2** (retired 2026-09-05, a805888). Wants a per-region detector fit
+that can be re-run over an overridden geometry, isolated from the committed
+evidence blocks.
 **Priority.** B — real, sign-consistent, and its cost is the reason to
 schedule it per-capture rather than per-tile.
 
@@ -967,8 +979,8 @@ prove 2 → 3 → 6 globally optimal.
 example in the record of a tool that pays for itself under the box's own
 bar.
 **Cost.** ~+11–34% of the cascade's decode work for +7 tiles.
-**holo2.** Footing is already a PRICE rather than a gate, so extra rungs
-are a recipe question, not a scheduler question.
+**holo2** (retired 2026-09-05, a805888). Footing is already a PRICE rather
+than a gate, so extra rungs are a recipe question, not a scheduler question.
 **Priority.** A — measured strict superset at a known, modest price.
 
 ---
@@ -1007,7 +1019,8 @@ re-estimation an explicit validity mask, so backing pixels around a scrap
 never enter the statistics and a cell without a complete on-mask
 neighbourhood is not context-corrected.
 **Measured.** PILOTS-DESIGN §15.9 + experiments/018 branch record
-(branch `pilot-first-receiver`, NOT MERGED). **It works as a detector:**
+(branch `pilot-first-receiver`, NOT MERGED; preserved as tag
+`preserve/pilot-first-receiver-5bf9847`). **It works as a detector:**
 on a backing-polluted grid (4,900 core cells against ~14,700 backing
 cells sitting dead-centre between the classes) naive context is driven to
 a coin flip (BER > 0.30) while mask-aware context recovers below 0.20 and
@@ -1086,11 +1099,11 @@ result is monotone. That is condition (1), discovered independently.
 label-pairing correctness the log had to fix — dense labels were once
 paired in the wrong raster order, ~49% mislabeled, and the conversions
 before the fix "had come from the geometry refit alone"**.
-**holo2.** L6 (no self-training) permits this exactly as written: labels
-come from prior commits. CA1's certified-label enrichment is the holo2
-analogue and is **BUILT and DIALLED OFF at +68% cost / zero yield** —
-which is a different regime, not a refutation, and is worth re-measuring
-under the exclusion form.
+**holo2** (retired 2026-09-05, a805888). L6 (no self-training) permits this
+exactly as written: labels come from prior commits. CA1's certified-label
+enrichment is the holo2 analogue and is **BUILT and DIALLED OFF at +68% cost
+/ zero yield** — which is a different regime, not a refutation, and is worth
+re-measuring under the exclusion form.
 **Priority.** A on scrap/multi-scan material (+19 tiles, 0 wrong,
 measured on a real state); C on intact single-capture sheets.
 
@@ -1380,10 +1393,10 @@ configurations at two geometries — but that is an instrument, not the
 arm.
 **Prereq.** the decoder's final per-cell decisions; a context stage that
 accepts an overridden ink column.
-**holo2.** CA2 (region context calibration) is live and is the natural
-host; the iteration must not write anything (L6: labels from prior
-commits only — a within-attempt iteration is inside one attempt, which
-the soft-iteration law already permits).
+**holo2** (retired 2026-09-05, a805888). CA2 (region context calibration) is
+live and is the natural host; the iteration must not write anything (L6:
+labels from prior commits only — a within-attempt iteration is inside one
+attempt, which the soft-iteration law already permits).
 **Priority.** **A** — the single strongest case in this whole inventory
 for the box's premise: measured, reproducible at the production geometry,
 regression-free, and rejected only by an invented threshold.
@@ -1789,7 +1802,7 @@ healthiest slice of the winner-flip canary; gating them changes label
 provenance and removes that canary slice.
 **Additive:** it is the box's only legitimate SUBTRACTION, because it
 subtracts work that provably cannot produce a certificate.
-**holo2.** BUILT (§2).
+**holo2** (retired 2026-09-05, a805888). BUILT (§2).
 **Priority.** — (built in holo2); the open pieces are the erasure
 extension ruling and the fragment census.
 
@@ -1998,14 +2011,14 @@ attempts).**
   a wrong-placement poison — a detector requirement that costs placement
   quality is not additive.
 
-**Already in holo2 — do not re-propose.** Window subdivision; quarantine
-and the whole-word rival gate; re-work aging; the pull model with
-one-bit wakes, fire-time consult and the tried-set floor; global cost
-tiers with gating and instantaneous dryness; cold search per rung that
-proposes rather than commits; park/defer (subsumed); done-pixel
-projection and the done gate; close preemption; the commit wall,
-commutative tile merge, dispatch markers and journal-authoritative
-replay; footing as a price; streaming ingestion. (§2.)
+**Already in holo2 (retired 2026-09-05, a805888) — do not re-propose.**
+Window subdivision; quarantine and the whole-word rival gate; re-work aging;
+the pull model with one-bit wakes, fire-time consult and the tried-set
+floor; global cost tiers with gating and instantaneous dryness; cold search
+per rung that proposes rather than commits; park/defer (subsumed);
+done-pixel projection and the done gate; close preemption; the commit wall,
+commutative tile merge, dispatch markers and journal-authoritative replay;
+footing as a price; streaming ingestion. (§2.)
 
 **Dominated or subsumed.**
 - **Certified-footprint deprioritization** in address space — subsumed by
@@ -2111,19 +2124,20 @@ replacement) · **E** = evidence-level (keeps the original attempt).
 2. **Per-tool attribution.** "Which tool won which certificate, at what
    cost" is not currently derivable: certificates carry a minting route,
    but there is no cost-per-certificate accounting and **no cost feedback
-   loop anywhere** — holo2's cost tiers are declared orders, and the
-   health-ledger-fed cost tables are the unbuilt deciders. Condition (3)
-   is a build item, not a policy.
-3. **A holo2 scope ruling.** holo2's standing rule is that it changes
-   scheduling and orchestration, "never reach", and its step-back round
-   explicitly excludes "changing what work exists". CA8 already
-   contemplates arms as recipe capabilities, so the shape exists — but
-   the box IS new reach, and it needs the ruling before it is built
-   there.
+   loop anywhere** — holo2's cost tiers (holo2 retired 2026-09-05,
+   a805888) are declared orders, and the health-ledger-fed cost tables
+   are the unbuilt deciders. Condition (3) is a build item, not a policy.
+3. **A holo2 scope ruling.** holo2 (retired 2026-09-05, a805888) — its
+   standing rule is that it changes scheduling and orchestration, "never
+   reach", and its step-back round explicitly excludes "changing what
+   work exists". CA8 already contemplates arms as recipe capabilities,
+   so the shape exists — but the box IS new reach, and it needs the
+   ruling before it is built there.
 4. **Colour in holo2 (H7)** for roughly half of this inventory. Nothing
-   in holo2 decodes colour today and there is no field machinery of any
-   kind; the K-only half of the box (placement, swim on K, context
-   iteration on K, refinement, scheduling) can be built first.
+   in holo2 (retired 2026-09-05, a805888) decodes colour today and there
+   is no field machinery of any kind; the K-only half of the box
+   (placement, swim on K, context iteration on K, refinement, scheduling)
+   can be built first.
 
 **Three honest limits on the numbers in this document.**
 

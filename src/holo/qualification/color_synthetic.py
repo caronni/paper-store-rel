@@ -542,3 +542,65 @@ def area_decimate(image: NDArray, factor: int) -> FloatArray:
             array.shape[2],
         )
     return np.mean(blocks, axis=(1, 3), dtype=np.float64)
+
+
+RGB8 = tuple[int, int, int]
+
+
+@dataclass(frozen=True, slots=True)
+class MeasuredBars:
+    """8-bit RGB means of paper and of each solid single-toner bar (C, M, Y)
+    on one capture: a measured subtractive mix for :func:`render_color_scan`.
+    """
+
+    paper_rgb: RGB8
+    toner_rgb: tuple[RGB8, RGB8, RGB8]
+    record: str
+
+    @property
+    def paper(self) -> tuple[float, float, float]:
+        """``ColorChannelParameters.paper_rgb``."""
+        return tuple(value / 255.0 for value in self.paper_rgb)
+
+    @property
+    def subtractive_rgb(self) -> tuple[tuple[float, float, float], ...]:
+        """``ColorChannelParameters.subtractive_rgb``: row R/G/B, column
+        C/M/Y, so a solid bar renders at its measured value."""
+        return tuple(
+            tuple((self.paper_rgb[rgb] - toner[rgb]) / 255.0
+                  for toner in self.toner_rgb)
+            for rgb in range(3))
+
+
+# e041 sheet S14, measured 2026-10-05 (Canon 2400 RGB).  Only C's bar is in
+# the committed e041 log; M's and Y's were read the same day and live here.
+M281_S14_BAR_MIX: Final = MeasuredBars(
+    paper_rgb=(231, 232, 234),
+    toner_rgb=((46, 151, 194), (215, 67, 119), (229, 219, 88)),
+    record="e041 S14 2026-10-05; C's bar in the committed e041 log, "
+           "M's and Y's measured the same day, not in the log",
+)
+
+
+def cmy_channel_parameters(
+    offsets_px: tuple[tuple[int, int], tuple[int, int], tuple[int, int]]
+    = ((0, 0), (0, 0), (0, 0)),
+    bars: MeasuredBars = M281_S14_BAR_MIX,
+    **overrides: object,
+) -> ColorChannelParameters:
+    """A measured-mix channel with constant WHOLE-pixel per-plane offsets
+    ``(x, y)`` for C, M, Y — a shift, never an interpolation, so moving a
+    plane does not blur it.  ``overrides`` are the other
+    :class:`ColorChannelParameters` fields (noise, seed, crop, ...)."""
+    if len(offsets_px) != 3 or any(
+            len(offset) != 2 or any(isinstance(v, bool)
+                                    or not isinstance(v, Integral)
+                                    for v in offset)
+            for offset in offsets_px):
+        raise ValueError("offsets_px must be three whole-pixel (x, y) pairs")
+    planes = tuple(
+        PlaneParameters(offset_xy=(float(x), float(y)))
+        for x, y in offsets_px)
+    return ColorChannelParameters(
+        planes=planes, subtractive_rgb=bars.subtractive_rgb,
+        paper_rgb=bars.paper, **overrides)

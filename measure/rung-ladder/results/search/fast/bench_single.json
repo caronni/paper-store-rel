@@ -1,0 +1,282 @@
+[
+ {
+  "rid": "r0406",
+  "k": 1664,
+  "regime": "conv",
+  "es": -3.1,
+  "B": "prod",
+  "dec_s": 42.23,
+  "mean_iters": 81.5,
+  "speedup": 1.0
+ },
+ {
+  "rid": "r0406",
+  "k": 1664,
+  "regime": "conv",
+  "es": -3.1,
+  "B": 1,
+  "dec_s": 45.14,
+  "mean_iters": 81.5,
+  "speedup": 1.07
+ },
+ {
+  "rid": "r0406",
+  "k": 1664,
+  "regime": "conv",
+  "es": -3.1,
+  "B": 8,
+  "dec_s": 68.14,
+  "mean_iters": 81.5,
+  "speedup": 1.61
+ },
+ {
+  "rid": "r0406",
+  "k": 1664,
+  "regime": "conv",
+  "es": -3.1,
+  "B": 32,
+  "dec_s": 72.8,
+  "mean_iters": 81.5,
+  "speedup": 1.72
+ },
+ {
+  "rid": "r0406",
+  "k": 1664,
+  "regime": "conv",
+  "es": -3.1,
+  "B": 64,
+  "dec_s": 71.75,
+  "mean_iters": 81.5,
+  "speedup": 1.7
+ },
+ {
+  "rid": "r0406",
+  "k": 1664,
+  "regime": "conv",
+  "es": -3.1,
+  "B": 128,
+  "dec_s": 69.36,
+  "mean_iters": 81.5,
+  "speedup": 1.64
+ },
+ {
+  "rid": "r0406",
+  "k": 1664,
+  "regime": "conv",
+  "es": -3.1,
+  "B": "simple-64",
+  "dec_s": 47.39,
+  "mean_iters": 81.5,
+  "speedup": 1.12
+ },
+ {
+  "rid": "r0406",
+  "k": 1664,
+  "regime": "fail",
+  "es": -4.25,
+  "B": "prod",
+  "dec_s": 26.59,
+  "mean_iters": 120.0,
+  "speedup": 1.0
+ },
+ {
+  "rid": "r0406",
+  "k": 1664,
+  "regime": "fail",
+  "es": -4.25,
+  "B": 1,
+  "dec_s": 27.49,
+  "mean_iters": 120.0,
+  "speedup": 1.03
+ },
+ {
+  "rid": "r0406",
+  "k": 1664,
+  "regime": "fail",
+  "es": -4.25,
+  "B": 8,
+  "dec_s": 39.23,
+  "mean_iters": 120.0,
+  "speedup": 1.47
+ },
+ {
+  "rid": "r0406",
+  "k": 1664,
+  "regime": "fail",
+  "es": -4.25,
+  "B": 32,
+  "dec_s": 40.5,
+  "mean_iters": 120.0,
+  "speedup": 1.52
+ },
+ {
+  "rid": "r0406",
+  "k": 1664,
+  "regime": "fail",
+  "es": -4.25,
+  "B": 64,
+  "dec_s": 40.42,
+  "mean_iters": 120.0,
+  "speedup": 1.52
+ },
+ {
+  "rid": "r0406",
+  "k": 1664,
+  "regime": "fail",
+  "es": -4.25,
+  "B": 128,
+  "dec_s": 40.24,
+  "mean_iters": 120.0,
+  "speedup": 1.51
+ },
+ {
+  "rid": "r0406",
+  "k": 1664,
+  "regime": "fail",
+  "es": -4.25,
+  "B": "simple-64",
+  "dec_s": 27.97,
+  "mean_iters": 120.0,
+  "speedup": 1.05
+ },
+ {
+  "rid": "r0550",
+  "k": 2240,
+  "regime": "conv",
+  "es": -1.35,
+  "B": "prod",
+  "dec_s": 68.19,
+  "mean_iters": 52.8,
+  "speedup": 1.0
+ },
+ {
+  "rid": "r0550",
+  "k": 2240,
+  "regime": "conv",
+  "es": -1.35,
+  "B": 1,
+  "dec_s": 58.65,
+  "mean_iters": 52.8,
+  "speedup": 0.86
+ },
+ {
+  "rid": "r0550",
+  "k": 2240,
+  "regime": "conv",
+  "es": -1.35,
+  "B": 8,
+  "dec_s": 92.5,
+  "mean_iters": 52.8,
+  "speedup": 1.36
+ },
+ {
+  "rid": "r0550",
+  "k": 2240,
+  "regime": "conv",
+  "es": -1.35,
+  "B": 32,
+  "dec_s": 103.97,
+  "mean_iters": 52.8,
+  "speedup": 1.52
+ },
+ {
+  "rid": "r0550",
+  "k": 2240,
+  "regime": "conv",
+  "es": -1.35,
+  "B": 64,
+  "dec_s": 103.78,
+  "mean_iters": 52.8,
+  "speedup": 1.52
+ },
+ {
+  "rid": "r0550",
+  "k": 2240,
+  "regime": "conv",
+  "es": -1.35,
+  "B": 128,
+  "dec_s": 101.06,
+  "mean_iters": 52.8,
+  "speedup": 1.48
+ },
+ {
+  "rid": "r0550",
+  "k": 2240,
+  "regime": "conv",
+  "es": -1.35,
+  "B": "simple-64",
+  "dec_s": 77.43,
+  "mean_iters": 52.8,
+  "speedup": 1.14
+ },
+ {
+  "rid": "r0550",
+  "k": 2240,
+  "regime": "fail",
+  "es": -2.25,
+  "B": "prod",
+  "dec_s": 26.49,
+  "mean_iters": 120.0,
+  "speedup": 1.0
+ },
+ {
+  "rid": "r0550",
+  "k": 2240,
+  "regime": "fail",
+  "es": -2.25,
+  "B": 1,
+  "dec_s": 23.5,
+  "mean_iters": 120.0,
+  "speedup": 0.89
+ },
+ {
+  "rid": "r0550",
+  "k": 2240,
+  "regime": "fail",
+  "es": -2.25,
+  "B": 8,
+  "dec_s": 35.87,
+  "mean_iters": 120.0,
+  "speedup": 1.35
+ },
+ {
+  "rid": "r0550",
+  "k": 2240,
+  "regime": "fail",
+  "es": -2.25,
+  "B": 32,
+  "dec_s": 37.33,
+  "mean_iters": 120.0,
+  "speedup": 1.41
+ },
+ {
+  "rid": "r0550",
+  "k": 2240,
+  "regime": "fail",
+  "es": -2.25,
+  "B": 64,
+  "dec_s": 37.02,
+  "mean_iters": 120.0,
+  "speedup": 1.4
+ },
+ {
+  "rid": "r0550",
+  "k": 2240,
+  "regime": "fail",
+  "es": -2.25,
+  "B": 128,
+  "dec_s": 36.89,
+  "mean_iters": 120.0,
+  "speedup": 1.39
+ },
+ {
+  "rid": "r0550",
+  "k": 2240,
+  "regime": "fail",
+  "es": -2.25,
+  "B": "simple-64",
+  "dec_s": 28.33,
+  "mean_iters": 120.0,
+  "speedup": 1.07
+ }
+]

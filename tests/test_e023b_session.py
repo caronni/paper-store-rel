@@ -40,11 +40,26 @@ def _record(descriptor, scan, image, survey=None):
         result=scan.result, descriptor=descriptor, pages=(0,))
 
 
+_PAGE: dict = {}
+
+
+def _coded_render():
+    """The coded page and its render — identical for every _fixture caller
+    (one fixed seed, one fixed draw order), so build it once."""
+    # 2026-09-05: this is ~0.21 s of every _fixture call, and _fixture runs
+    # 18x here and 5x in test_e023b_algorithm_arms. Nothing writes to these
+    # arrays in place, so one build serves all of them.
+    if "page" not in _PAGE:
+        descriptor = t23._descriptor(b"paper-store/e023b-session")
+        rng = np.random.default_rng(2311)
+        values, user, framed = t23._coded_page(descriptor, rng)
+        _PAGE["page"] = (descriptor, values, user, framed,
+                         t23._render_cells(values, rng))
+    return _PAGE["page"]
+
+
 def _fixture(tmp_path: Path, *, n_scans: int = 1, partial: bool = False):
-    descriptor = t23._descriptor(b"paper-store/e023b-session")
-    rng = np.random.default_rng(2311)
-    values, user, framed = t23._coded_page(descriptor, rng)
-    image = t23._render_cells(values, rng)
+    descriptor, values, user, framed, image = _coded_render()
     windows = (t23._grid_windows(values.shape)[:2] if partial
                else t23._grid_windows(values.shape))
     scans = []

@@ -1,0 +1,16 @@
+OK  k1664-h8-f0.5-l3-bal-g24-d1+ara-p0.25h-s0 bsc {'p': 0.112} {'fails': 0, 'undetected': 0, 'iters': 2579, 'n_ok': 48} und_w=0 selfcheck=True
+OK  k1664-h8-f0.5-l3-bal-g24-d1+ara-p0.25h-s0 awgn {'esn0_db': -3.2} {'fails': 0, 'undetected': 0, 'iters': 3517, 'n_ok': 48} und_w=0 selfcheck=True
+OK  k1664-h8-f0.5-l3-bal-g24-d1+ara-p0.25h-s0 eras {'p': 0.03, 'eps': 0.3} {'fails': 0, 'undetected': 0, 'iters': 687, 'n_ok': 48} und_w=0 selfcheck=True
+OK  k1664-h8-f0.5-l3-bal-g24-d1+ara-p0.25h-s0 robust {'esn0_db': -2.9, 'f': 0.005} {'fails': 48, 'undetected': 0, 'iters': 5760, 'n_ok': 0} und_w=0 selfcheck=True
+OK  k1664-h8-f0.5-l3-bal-g24-d1+ara-p0.25h-s0 bsc {'p': 0.125} {'fails': 17, 'undetected': 0, 'iters': 4943, 'n_ok': 31} und_w=0 selfcheck=True
+OK  k1664-h8-f0.5-l3-bal-g24-d1+iraa-q0.25x1-s0 bsc {'p': 0.112} {'fails': 1, 'undetected': 0, 'iters': 2750, 'n_ok': 47} und_w=0 selfcheck=True
+OK  k1664-h8-f0.5-l3-bal-g24-d1+iraa-q0.25x1-s0 awgn {'esn0_db': -3.2} {'fails': 13, 'undetected': 0, 'iters': 4167, 'n_ok': 35} und_w=0 selfcheck=True
+OK  k1664-h8-f0.5-l3-bal-g24-d1+iraa-q0.25x1-s0 eras {'p': 0.03, 'eps': 0.3} {'fails': 0, 'undetected': 0, 'iters': 607, 'n_ok': 48} und_w=0 selfcheck=True
+OK  k1664-h8-f0.5-l3-bal-g24-d1+iraa-q0.25x1-s0 robust {'esn0_db': -2.9, 'f': 0.005} {'fails': 48, 'undetected': 0, 'iters': 5760, 'n_ok': 0} und_w=0 selfcheck=True
+OK  k1664-h8-f0.5-l3-bal-g24-d1+iraa-q0.25x1-s0 bsc {'p': 0.125} {'fails': 36, 'undetected': 0, 'iters': 5535, 'n_ok': 12} und_w=0 selfcheck=True
+OK  k1664-h8-f0.5-l3-bal-g24-d1+ara-p0.5l-s0 bsc {'p': 0.112} {'fails': 3, 'undetected': 0, 'iters': 3350, 'n_ok': 45} und_w=0 selfcheck=True
+OK  k1664-h8-f0.5-l3-bal-g24-d1+ara-p0.5l-s0 awgn {'esn0_db': -3.2} {'fails': 22, 'undetected': 0, 'iters': 5040, 'n_ok': 26} und_w=0 selfcheck=True
+OK  k1664-h8-f0.5-l3-bal-g24-d1+ara-p0.5l-s0 eras {'p': 0.03, 'eps': 0.3} {'fails': 0, 'undetected': 0, 'iters': 735, 'n_ok': 48} und_w=0 selfcheck=True
+OK  k1664-h8-f0.5-l3-bal-g24-d1+ara-p0.5l-s0 robust {'esn0_db': -2.9, 'f': 0.005} {'fails': 48, 'undetected': 0, 'iters': 5760, 'n_ok': 0} und_w=0 selfcheck=True
+OK  k1664-h8-f0.5-l3-bal-g24-d1+ara-p0.5l-s0 bsc {'p': 0.125} {'fails': 32, 'undetected': 0, 'iters': 5444, 'n_ok': 16} und_w=0 selfcheck=True
+VARIANTS: PASS

@@ -1,6 +1,6 @@
 """The close — production ∪ analyzer certificates (DESIGN §6a).
 
-`holo3.format.close.close_volume` is callable standalone and is what
+`holo.receiver.format.close.close_volume` is callable standalone and is what
 production itself uses, so this module CALLS it rather than reproducing
 any part of the fountain arithmetic: the union of the run's certificates
 and the analyzer's own goes in, and a `CloseResult` comes back with the
@@ -111,10 +111,10 @@ from typing import Any, Iterable, Mapping, Sequence
 
 import numpy as np
 
-from holo3 import data
-from holo3.format import close as fmt_close
-from holo3.format import fountain
-from holo3.format import metadata as fmt_metadata
+from holo.receiver import data
+from holo.receiver.format import close as fmt_close
+from holo.receiver.format import fountain
+from holo.receiver.format import metadata as fmt_metadata
 
 from .types import Key
 

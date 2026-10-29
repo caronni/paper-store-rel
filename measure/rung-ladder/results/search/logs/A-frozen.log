@@ -1,0 +1,56 @@
+screen-1 floor at the frozen rungs (incumbent): {2240: 6, 2560: 6, 2880: 7, 3200: 5, 3520: 4}
+screen-1 anchor from scratch/rung-ladder-20260930/search/trial-A: {}
+baseline k=2240 (frozen production codes r0547+r0550 re-keyed edge-identical): True
+baseline k=2560 (frozen production codes r0625 re-keyed edge-identical): True
+baseline k=2880 (frozen production codes r0700 re-keyed edge-identical): True
+baseline k=3200 (frozen production codes r0775 re-keyed edge-identical): True
+baseline k=3520 (frozen production codes r0850 re-keyed edge-identical): True
+[decoder] fastdecode.selfcheck(base-r0547) = True (1.1 s)
+[decoder] fastdecode.selfcheck(base-r0850) = True (1.3 s)
+[decoder] using fast (requested fast)
+[infeasible] skipped 368 configs x seeds whose seed-0 build failed in ['feasibility-frozen-seed0.json', 'feasibility-overnight-seed0.json', 'feasibility-secondary-seed0.json']
+mode overnight: 718 configs over k=(2240, 2560, 2880, 3200, 3520), workers 14, out scratch/rung-ladder-20260930/search/overnight-AF (verify 2.4 s)
+[     30s] s0 73/718 s1 50/71 s2walk 0/0 s2fine 0/0 s2side 0/0 | stages {2240: 'screen0/1', 2560: 'screen0/1', 2880: 'screen0/1', 3200: 'screen0/1', 3520: 'screen0/1'} | decodes 20550 (681/s) queue 761 errors 0
+[     60s] s0 107/718 s1 101/104 s2walk 0/0 s2fine 0/0 s2side 0/0 | stages {2240: 'screen0/1', 2560: 'screen0/1', 2880: 'screen0/1', 3200: 'screen0/1', 3520: 'screen0/1'} | decodes 40950 (680/s) queue 583 errors 0
+[     91s] s0 163/718 s1 136/160 s2walk 0/0 s2fine 0/0 s2side 0/0 | stages {2240: 'screen0/1', 2560: 'screen0/1', 2880: 'screen0/1', 3200: 'screen0/1', 3520: 'screen0/1'} | decodes 54400 (600/s) queue 706 errors 0
+[    121s] s0 169/718 s1 152/165 s2walk 0/0 s2fine 0/0 s2side 0/0 | stages {2240: 'screen0/1', 2560: 'screen0/1', 2880: 'screen0/1', 3200: 'screen0/1', 3520: 'screen0/1'} | decodes 61000 (505/s) queue 608 errors 0
+[    151s] s0 196/718 s1 172/191 s2walk 0/0 s2fine 0/0 s2side 0/0 | stages {2240: 'screen0/1', 2560: 'screen0/1', 2880: 'screen0/1', 3200: 'screen0/1', 3520: 'screen0/1'} | decodes 69150 (458/s) queue 626 errors 0
+[    181s] s0 228/718 s1 201/221 s2walk 0/0 s2fine 0/0 s2side 0/0 | stages {2240: 'screen0/1', 2560: 'screen0/1', 2880: 'screen0/1', 3200: 'screen0/1', 3520: 'screen0/1'} | decodes 81150 (448/s) queue 594 errors 0
+[    211s] s0 260/718 s1 228/249 s2walk 0/20 s2fine 0/0 s2side 0/0 | stages {2240: 'walk', 2560: 'screen0/1', 2880: 'screen0/1', 3200: 'screen0/1', 3520: 'screen0/1'} | decodes 96900 (459/s) queue 879 errors 0
+[    241s] s0 260/718 s1 228/249 s2walk 0/20 s2fine 0/0 s2side 0/0 | stages {2240: 'walk', 2560: 'screen0/1', 2880: 'screen0/1', 3200: 'screen0/1', 3520: 'screen0/1'} | decodes 110300 (457/s) queue 795 errors 0
+[    271s] s0 260/718 s1 236/249 s2walk 18/20 s2fine 0/0 s2side 0/0 | stages {2240: 'walk', 2560: 'screen0/1', 2880: 'screen0/1', 3200: 'screen0/1', 3520: 'screen0/1'} | decodes 147750 (544/s) queue 522 errors 0
+[    302s] s0 275/718 s1 249/262 s2walk 20/20 s2fine 6/6 s2side 3/18 | stages {2240: 'final', 2560: 'screen0/1', 2880: 'screen0/1', 3200: 'screen0/1', 3520: 'screen0/1'} | decodes 170450 (565/s) queue 865 errors 0
+[    332s] s0 275/718 s1 249/262 s2walk 20/20 s2fine 6/6 s2side 13/18 | stages {2240: 'final', 2560: 'screen0/1', 2880: 'screen0/1', 3200: 'screen0/1', 3520: 'screen0/1'} | decodes 182500 (550/s) queue 624 errors 0
+[    346s] k=2240 DONE
+[    362s] s0 308/718 s1 270/294 s2walk 20/20 s2fine 6/6 s2side 18/18 | stages {2240: 'done', 2560: 'screen0/1', 2880: 'screen0/1', 3200: 'screen0/1', 3520: 'screen0/1'} | decodes 197100 (545/s) queue 555 errors 0
+[    392s] s0 318/718 s1 294/303 s2walk 20/20 s2fine 6/6 s2side 18/18 | stages {2240: 'done', 2560: 'screen0/1', 2880: 'screen0/1', 3200: 'screen0/1', 3520: 'screen0/1'} | decodes 206400 (526/s) queue 431 errors 0
+[    422s] s0 341/718 s1 307/322 s2walk 20/20 s2fine 6/6 s2side 18/18 | stages {2240: 'done', 2560: 'screen0/1', 2880: 'screen0/1', 3200: 'screen0/1', 3520: 'screen0/1'} | decodes 211950 (502/s) queue 449 errors 0
+[    452s] s0 372/718 s1 328/341 s2walk 20/20 s2fine 6/6 s2side 18/18 | stages {2240: 'done', 2560: 'screen0/1', 2880: 'screen0/1', 3200: 'screen0/1', 3520: 'screen0/1'} | decodes 220800 (488/s) queue 393 errors 0
+[    482s] s0 435/718 s1 360/377 s2walk 20/20 s2fine 6/6 s2side 18/18 | stages {2240: 'done', 2560: 'screen0/1', 2880: 'screen0/1', 3200: 'screen0/1', 3520: 'screen0/1'} | decodes 233100 (483/s) queue 372 errors 0
+[    513s] s0 469/718 s1 385/400 s2walk 20/20 s2fine 6/6 s2side 18/18 | stages {2240: 'done', 2560: 'screen0/1', 2880: 'screen0/1', 3200: 'screen0/1', 3520: 'screen0/1'} | decodes 243000 (474/s) queue 324 errors 0
+[    543s] s0 470/718 s1 390/400 s2walk 20/38 s2fine 6/6 s2side 18/18 | stages {2240: 'done', 2560: 'walk', 2880: 'screen0/1', 3200: 'screen0/1', 3520: 'screen0/1'} | decodes 257650 (474/s) queue 546 errors 0
+[    573s] s0 470/718 s1 390/400 s2walk 32/38 s2fine 6/6 s2side 18/18 | stages {2240: 'done', 2560: 'walk', 2880: 'screen0/1', 3200: 'screen0/1', 3520: 'screen0/1'} | decodes 283700 (495/s) queue 305 errors 0
+[    603s] s0 497/718 s1 403/423 s2walk 38/62 s2fine 11/11 s2side 20/35 | stages {2240: 'done', 2560: 'final', 2880: 'walk', 3200: 'screen0/1', 3520: 'screen0/1'} | decodes 305850 (507/s) queue 1063 errors 0
+[    634s] s0 497/718 s1 403/423 s2walk 38/62 s2fine 11/11 s2side 30/35 | stages {2240: 'done', 2560: 'final', 2880: 'walk', 3200: 'screen0/1', 3520: 'screen0/1'} | decodes 317150 (501/s) queue 837 errors 0
+[    649s] k=2560 DONE
+[    664s] s0 497/718 s1 403/423 s2walk 38/62 s2fine 11/11 s2side 35/35 | stages {2240: 'done', 2560: 'done', 2880: 'walk', 3200: 'screen0/1', 3520: 'screen0/1'} | decodes 328700 (495/s) queue 662 errors 0
+[    694s] s0 497/718 s1 403/423 s2walk 38/62 s2fine 11/11 s2side 35/35 | stages {2240: 'done', 2560: 'done', 2880: 'walk', 3200: 'screen0/1', 3520: 'screen0/1'} | decodes 339700 (490/s) queue 554 errors 0
+[    724s] s0 497/718 s1 412/423 s2walk 62/62 s2fine 15/16 s2side 35/52 | stages {2240: 'done', 2560: 'done', 2880: 'final', 3200: 'screen0/1', 3520: 'screen0/1'} | decodes 387350 (535/s) queue 709 errors 0
+[    754s] s0 497/718 s1 412/423 s2walk 62/62 s2fine 16/16 s2side 44/52 | stages {2240: 'done', 2560: 'done', 2880: 'final', 3200: 'screen0/1', 3520: 'screen0/1'} | decodes 400300 (531/s) queue 450 errors 0
+[    777s] k=2880 DONE
+[    784s] s0 525/718 s1 423/448 s2walk 62/62 s2fine 16/16 s2side 52/52 | stages {2240: 'done', 2560: 'done', 2880: 'done', 3200: 'screen0/1', 3520: 'screen0/1'} | decodes 413850 (528/s) queue 351 errors 0
+[    814s] s0 567/718 s1 468/484 s2walk 62/62 s2fine 16/16 s2side 52/52 | stages {2240: 'done', 2560: 'done', 2880: 'done', 3200: 'screen0/1', 3520: 'screen0/1'} | decodes 432400 (531/s) queue 226 errors 0
+[    844s] s0 597/718 s1 491/510 s2walk 62/62 s2fine 16/16 s2side 52/52 | stages {2240: 'done', 2560: 'done', 2880: 'done', 3200: 'screen0/1', 3520: 'screen0/1'} | decodes 441100 (523/s) queue 230 errors 0
+[    874s] s0 627/718 s1 524/540 s2walk 62/62 s2fine 16/16 s2side 52/52 | stages {2240: 'done', 2560: 'done', 2880: 'done', 3200: 'screen0/1', 3520: 'screen0/1'} | decodes 455150 (521/s) queue 159 errors 0
+[    904s] s0 694/718 s1 579/607 s2walk 62/62 s2fine 16/16 s2side 52/52 | stages {2240: 'done', 2560: 'done', 2880: 'done', 3200: 'screen0/1', 3520: 'screen0/1'} | decodes 477000 (528/s) queue 191 errors 0
+[    935s] s0 716/718 s1 628/629 s2walk 62/62 s2fine 16/16 s2side 52/52 | stages {2240: 'done', 2560: 'done', 2880: 'done', 3200: 'screen0/1', 3520: 'screen0/1'} | decodes 496150 (531/s) queue 0 errors 0
+[    965s] s0 718/718 s1 629/629 s2walk 62/99 s2fine 16/16 s2side 52/52 | stages {2240: 'done', 2560: 'done', 2880: 'done', 3200: 'walk', 3520: 'walk'} | decodes 517550 (537/s) queue 336 errors 0
+[    995s] s0 718/718 s1 629/629 s2walk 62/99 s2fine 16/16 s2side 52/52 | stages {2240: 'done', 2560: 'done', 2880: 'done', 3200: 'walk', 3520: 'walk'} | decodes 539450 (542/s) queue 214 errors 0
+[   1025s] s0 718/718 s1 629/629 s2walk 95/99 s2fine 21/21 s2side 57/69 | stages {2240: 'done', 2560: 'done', 2880: 'done', 3200: 'walk', 3520: 'final'} | decodes 578150 (564/s) queue 256 errors 0
+[   1055s] k=3520 DONE
+[   1055s] s0 718/718 s1 629/629 s2walk 99/99 s2fine 21/26 s2side 69/86 | stages {2240: 'done', 2560: 'done', 2880: 'done', 3200: 'final', 3520: 'done'} | decodes 594450 (564/s) queue 558 errors 0
+[   1085s] s0 718/718 s1 629/629 s2walk 99/99 s2fine 26/26 s2side 77/86 | stages {2240: 'done', 2560: 'done', 2880: 'done', 3200: 'final', 3520: 'done'} | decodes 613800 (566/s) queue 171 errors 0
+[   1110s] k=3200 DONE
+[   1110s] s0 718/718 s1 629/629 s2walk 99/99 s2fine 26/26 s2side 86/86 | stages {2240: 'done', 2560: 'done', 2880: 'done', 3200: 'done', 3520: 'done'} | decodes 624400 (562/s) queue 0 errors 0
+wall 1110 s; stopped=False; errors=0
+finished; errors 0; summary -> scratch/rung-ladder-20260930/search/overnight-AF/TABLES-search.md

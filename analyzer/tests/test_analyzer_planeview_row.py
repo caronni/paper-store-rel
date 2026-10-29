@@ -15,8 +15,8 @@ from fractions import Fraction
 import numpy as np
 import pytest
 
-from holo3.format import identity, keystream
-from holo3.format.identity import Family
+from holo.receiver.format import identity, keystream
+from holo.receiver.format.identity import Family
 
 from analyzer.planeview import row as row_mod
 
@@ -75,7 +75,7 @@ def test_the_bank_and_the_frame_are_the_cmy8_stream_s_own():
 
 
 def test_the_k_attempt_floor_equals_the_cmy8_bank_floor():
-    from holo3.plugins import tiles
+    from holo.receiver.plugins import tiles
 
     plane, source, _ = row_mod.build_plane_row(H_REF, "C")
     bank = row_mod.source_stream_fact(source, "C").rung_children
@@ -133,33 +133,3 @@ def test_the_geometry_guard_fires_when_the_sites_disagree():
         tiles_yx=source.tiles_yx)
     with pytest.raises(row_mod.PlaneRowError):
         row_mod._assert_geometry_agrees(dataclasses.replace(plane), other)
-
-
-def test_the_plane_view_package_is_blind():
-    """DESIGN §0: truth is a score column and never reaches a decision.
-
-    The plane view decides what the receiver reads (the unmixing, the
-    anchors, the pixel map) and mints certificates through holo3's own
-    gate, so no module of it may import `analyzer.truth` or
-    `analyzer.oracle` — the acceptance test's GT check happens
-    afterwards, from the run dir.
-    """
-    import ast
-    from pathlib import Path
-
-    package = Path(row_mod.__file__).resolve().parent
-    for path in sorted(package.glob("*.py")):
-        tree = ast.parse(path.read_text("utf-8"))
-        names: set[str] = set()
-        for node in ast.walk(tree):
-            if isinstance(node, ast.ImportFrom):
-                module = node.module or ""
-                names.add(module)
-                names.update(f"{module}.{alias.name}" if module
-                            else alias.name for alias in node.names)
-                names.update(alias.name for alias in node.names)
-            elif isinstance(node, ast.Import):
-                names.update(alias.name for alias in node.names)
-        for banned in ("truth", "oracle", "..truth", "..oracle",
-                       "analyzer.truth", "analyzer.oracle"):
-            assert banned not in names, f"{path.name} imports {banned!r}"

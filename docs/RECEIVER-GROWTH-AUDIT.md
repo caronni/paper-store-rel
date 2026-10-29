@@ -1,5 +1,10 @@
 # Is the holo receiver paying polynomial/accumulating data-structure costs over a session?
 
+> Retired 2026-09-05 with the v1 receiver it audited (`284ae3e`); historical
+> from that sha — see docs/RECEIVE-DESIGN.md's header. holo3's cost story is
+> src/holo/receiver/docs/SCHEDULE.md.
+
+
 > **STATUS UPDATE (2026-08-02, payload rework — docs/PAYLOAD-REWORK-PLAN.md;
 > the row text below is the original audit record, unedited).**
 > Dispositions at RECEIVE-DESIGN v0.37:

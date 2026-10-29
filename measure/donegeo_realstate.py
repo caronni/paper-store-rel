@@ -1,7 +1,7 @@
 """Did the done gate bite on paper?  A read-only census over one
 archived run: its INPUT snapshot plus the events it then produced.
 
-    PYTHONPATH=. env/bin/python measure/donegeo_realstate.py \
+    PYTHONPATH=src:. env/bin/python measure/donegeo_realstate.py \
         --snapshot /tmp/I/holo3-I-resume-run/facts.npz \
         --events   /tmp/I/holo3-I-resume-2-run/events.jsonl \
         --format   L:c2-cmy8-r0700-p120-x1@3392x2368
@@ -12,28 +12,38 @@ finished run's fact snapshot through the ordinary store merge and asks
 `store.window_fully_done` about every window.  No raster is opened, no
 scan is decoded, nothing is written outside `--out`.
 
-WHY THIS INSTRUMENT EXISTS.  The gate has two doors and only one of them
-is nameable in the event stream:
+WHY THIS INSTRUMENT EXISTS, AND WHAT CHANGED UNDER IT.  It was written
+when the done gate RETIRED a window, and when the event stream did not
+say why a window retired:
 
-* `place.run_window_pass` (place.py) can settle a window `done_covered`
-  — a `WindowSettled` with a distinct state, easy to count, and
-  UNREACHABLE: `engine._fill` consults `descriptor.retire` (which is
-  `place_sched._place_retire` -> `store.window_fully_done`, the same
-  predicate over the same store instant) before it ever calls
-  `descriptor.prepare`, so a done window is retired one line earlier and
-  the pass never runs.
-* `place_sched._place_retire` — the live door.  It emits `WindowRetired`,
-  which is also what an ordinary placed or ladder-exhausted window emits.
-  The cause is not in the record.
+* `place.run_window_pass` could settle a window `done_covered` — a
+  `WindowSettled` with a distinct state, and UNREACHABLE, because the
+  scheduler asked the same predicate first.  That door is gone; the pass
+  carries no done test at all.
+* `place_sched.place_retire_cause` retired a done window `done_covered`
+  beside the ordinary `placed` and `exhausted`, and the old place-only
+  `WindowRetired` event carried no cause.
 
-So "zero `done_covered` settles" is not evidence that the gate is idle,
-and `WindowRetired` counts alone cannot separate a done-suppression from
-an accepted pose.  This census recovers the split from OUTSIDE the run:
-a window that the input snapshot shows UNPLACED, that this run never
-fired a `place` job for, and that this run retired, was retired by the
-done gate and by nothing else.  The `--replay` column then re-derives
-the gate's verdict directly from the same facts, so the two agree or the
-disagreement is the finding.
+So the split was recovered from OUTSIDE the run: a window that the input
+snapshot shows UNPLACED, that this run never fired a `place` job for,
+and that this run retired, was retired by the done gate and by nothing
+else.  Both premises have since moved:
+
+* `WorkerRetired` carries the retire clause as `cause` (2026-09-21), so
+  for a run that records it the census READS `done_covered` instead of
+  inferring it (`run_retired_by_cause`, `retired_done_covered`); the
+  inference stays for journals that carry no cause.
+* Since 56928c45 (2026-10-03) a done window is NOT retired at all: the
+  pose-free projection it is judged on can shrink under a pose revision,
+  so `place_sched.worker_stage` SUPPRESSES it (no stage) and the store
+  re-opens it on `KEY_WINDOW_DONE`.  On such a run neither the cause nor
+  the inference sees the gate — a suppressed window simply never fires —
+  and `gate_says_done_now` (the replay below) is the only column that
+  measures it.  The script prints a one-line note saying so.
+
+The gate columns re-derive the gate's verdict directly from the same
+facts, so the record and the replay agree or the disagreement is the
+finding.
 
 The re-derivation needs the captures, which a snapshot deliberately does
 not hold (the operator re-declares them every run).  They are rebuilt
@@ -48,11 +58,38 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Iterator
 
 WindowKey = tuple[str, int, int, tuple[int, int, int, int]]
+
+
+#: The seat and retire events, in BOTH spellings.  `WorkerSeated` /
+#: `WorkerRetired` are generic over every row and carry the subject as
+#: a JSON list (2026-09-21); `WindowScheduled` / `WindowRetired` were
+#: place-only and carried the four window fields flat.  Archived
+#: journals hold the old spelling and so does the base leg of any
+#: base-vs-branch A/B, so a reader that matches one name silently
+#: reports zero windows on half its inputs.
+SEATED_TYPES = ("WorkerSeated", "WindowScheduled")
+RETIRED_TYPES = ("WorkerRetired", "WindowRetired")
+
+
+def _is_place(event: dict) -> bool:
+    """The old events were place's alone and carry no `plugin` field."""
+    return event.get("plugin", "place") == "place"
+
+
+def _place_window_key(event: dict) -> WindowKey:
+    """The window a seat/retire event names, in either spelling."""
+    subject = event.get("subject")
+    if subject is None:
+        return (event["capture"], int(event["level_index"]),
+                int(event["region_index"]), tuple(event["extent_cells"]))
+    return (subject[0], int(subject[1]), int(subject[2]),
+            tuple(subject[3]))
 
 
 def events(path: Path) -> Iterator[dict]:
@@ -61,9 +98,20 @@ def events(path: Path) -> Iterator[dict]:
             yield json.loads(line)
 
 
+#: The place retire clause the done gate used until 56928c45
+#: (2026-10-03); `place_sched` keeps the spelling as the record's.
+CAUSE_DONE_COVERED = "done_covered"
+
+NOTE_SUPPRESSED = (
+    "note: runs after 2026-10-03 (56928c45) do not retire done windows -- "
+    "the gate suppresses through the stage, so only gate_says_done_now "
+    "measures it there")
+
+
 def observed(path: Path) -> dict[str, object]:
     """What the run did, counted from its own event stream."""
     retired: set[WindowKey] = set()
+    retire_cause: dict[WindowKey, str | None] = {}
     scheduled: set[WindowKey] = set()
     fired: Counter = Counter()
     settled: Counter = Counter()
@@ -73,14 +121,13 @@ def observed(path: Path) -> dict[str, object]:
         kind = event["type"]
         if kind == "CaptureOpen":
             captures[event["capture"]] = event
-        elif kind == "WindowRetired":
-            retired.add((event["capture"], event["level_index"],
-                         event["region_index"],
-                         tuple(event["extent_cells"])))
-        elif kind == "WindowScheduled":
-            scheduled.add((event["capture"], event["level_index"],
-                           event["region_index"],
-                           tuple(event["extent_cells"])))
+        elif kind in RETIRED_TYPES and _is_place(event):
+            window = _place_window_key(event)
+            retired.add(window)
+            # `WorkerRetired` carries the clause; the old spelling did not
+            retire_cause[window] = event.get("cause")
+        elif kind in SEATED_TYPES and _is_place(event):
+            scheduled.add(_place_window_key(event))
         elif kind == "WindowSettled":
             settled[event["state"]] += 1
         elif kind == "JobDone" and event["plugin"] == "place":
@@ -88,15 +135,16 @@ def observed(path: Path) -> dict[str, object]:
             key = (subject[0], subject[1], subject[2], tuple(subject[3]))
             fired[key] += 1
             place_cpu[key] += event["cpu_s"]
-    return {"retired": retired, "scheduled": scheduled, "fired": fired,
+    return {"retired": retired, "retire_cause": retire_cause,
+            "scheduled": scheduled, "fired": fired,
             "settled": settled, "place_cpu": place_cpu,
             "captures": captures}
 
 
 def rebuilt_captures(opens: dict[str, dict],
                      pitch_in: object) -> tuple[object, ...]:
-    from holo3 import data
-    from holo3.plugins import intake
+    from holo.receiver import data
+    from holo.receiver.plugins import intake
 
     out = []
     for capture_id, event in sorted(opens.items()):
@@ -115,8 +163,8 @@ def replay(snapshot_path: Path, format_ref: str,
            opens: dict[str, dict]) -> object:
     import tempfile
 
-    from holo3 import data, engine, snapshot
-    from holo3.format import identity
+    from holo.receiver import data, engine, snapshot
+    from holo.receiver.format import identity
 
     row = identity.resolve_format_ref(format_ref)
     request = data.DecodeRequest(
@@ -139,9 +187,21 @@ def census(instance: object, seen: dict[str, object]) -> dict:
     fired = set(seen["fired"])
     gate = {wid: instance.window_fully_done(wid) for wid in unplaced}
     gated = {wid for wid, verdict in gate.items() if verdict}
-    suppressed = (unplaced & retired) - fired
+    causes = seen["retire_cause"]
+    # A run either records the clause on every retirement or on none.
+    cause_in_record = any(cause is not None for cause in causes.values())
+    if cause_in_record:
+        suppressed = {wid for wid, cause in causes.items()
+                      if cause == CAUSE_DONE_COVERED}
+    else:
+        suppressed = (unplaced & retired) - fired
     survivors = unplaced & fired
+    by_cause = Counter(str(cause) for cause in causes.values())
     return {
+        "cause_in_record": cause_in_record,
+        "run_retired_by_cause": dict(sorted(by_cause.items())),
+        "retired_done_covered": (len(suppressed) if cause_in_record
+                                 else None),
         "windows": len(windows),
         "placed_in_snapshot": len(placed),
         "unplaced_in_snapshot": len(unplaced),
@@ -214,6 +274,7 @@ def main() -> None:
     parser.add_argument("--reasons-limit", type=int, default=12)
     args = parser.parse_args()
     seen = observed(args.events)
+    print(NOTE_SUPPRESSED, file=sys.stderr)
     instance = replay(args.snapshot, args.format, seen["captures"])
     report = {"snapshot": str(args.snapshot), "events": str(args.events),
               "format": args.format, "census": census(instance, seen),

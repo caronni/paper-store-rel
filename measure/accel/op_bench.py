@@ -26,16 +26,17 @@ from pathlib import Path
 
 import numpy as np
 
-from holo3.format import identity, tile_codec
-from holo3.lib import pava
-from holo3.plugins import cold, color_model, words
-from holo3.plugins import color_region_ctx as ctx
+from holo.receiver.format import identity, tile_codec
+from holo.receiver.lib import pava
+from holo.receiver.plugins import cold, color_model, words
+from holo.receiver.plugins import color_region_ctx as ctx
 
 SEED = 20260831
 REPEATS = 9
 HEAVY_REPEATS = 3
 
-# Census shapes (scratch/accel/census/census.json, colour + K sim decodes).
+# Census shapes (from the accel census of the colour + K sim decodes,
+# 2026-09; measure/accel/README.md).
 QDA_ROWS = (422, 677, 31164, 32610)
 FIT_ROWS = (483, 745)
 PAVA_N = (417, 4096, 40000)

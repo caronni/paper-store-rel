@@ -17,7 +17,7 @@ from dataclasses import replace
 import numpy as np
 
 from analyzer import close as close_mod
-from holo3.tests.test_h3_format_column_groups import _mixed_volume
+from holo.receiver.tests.test_h3_format_column_groups import _mixed_volume
 
 
 def _volume(seed_int: int):

@@ -22,6 +22,7 @@ Runs under pytest, or standalone: env/bin/python tests/test_disc1.py
 from __future__ import annotations
 
 import hashlib
+import pytest
 import json
 import re
 import shutil
@@ -34,6 +35,10 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[1]
 EXP = ROOT / "experiments" / "007-office-disc"
 BUILD = EXP / "build"
+
+# 2026-09-06: every test here reads a build that a test regenerates in place.
+# One xdist worker per build directory (pyproject: --dist loadgroup).
+pytestmark = pytest.mark.xdist_group("build-007-disc1")
 EXP002 = ROOT / "experiments" / "002-calibration-page"
 
 sys.path.insert(0, str(EXP002))

@@ -12,15 +12,15 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from holo3.lib import local_affine, spectral
-from holo3.plugins import calibrate as calibrate_plugin
-from holo3.plugins import color_region_anchor as anchor
-from holo3.plugins import plane_k, pose as pose_plugin
+from holo.receiver.lib import local_affine, page_map, spectral
+from holo.receiver.plugins import calibrate as calibrate_plugin
+from holo.receiver.plugins import color_region_anchor as anchor
+from holo.receiver.plugins import plane_k, pose as pose_plugin, swim
 
-from analyzer import arms, calibrate as cal, combine as comb, unmix
+from analyzer import arms, calibrate as cal, field2_kernel, sample, unmix
 from analyzer.types import KnownFrame, PLANE_OF
 
-from ._analyzer_fixtures import i_inputs, needs_i_run
+from ._analyzer_fixtures import needs_sim, sim_run
 
 
 # ----------------------------------------------------- the delta frame
@@ -40,9 +40,9 @@ def test_to_page_frame_reproduces_production_s_displacement(rot_k):
     production_linear = page_linear @ rotation
     points = rng.normal(0.0, 50.0, (17, 2))
     delta_local = rng.normal(0.0, 1.5, (17, 2))
-    want = anchor.shifted_points(points, production_linear, delta_local)
-    got = anchor.shifted_points(points, page_linear,
-                                arms.to_page_frame(delta_local, rot_k))
+    want = page_map.raster_points(points, production_linear, delta_local, 1)
+    got = page_map.raster_points(points, page_linear,
+                                 arms.to_page_frame(delta_local, rot_k), 1)
     assert np.allclose(want, got)
 
 
@@ -80,29 +80,9 @@ def test_affine_terms_for_delta_reports_the_residual_of_a_curved_field():
     assert residual > 0.0
 
 
-# ------------------------------------------------------------ smoothing
-
-def test_smooth_offsets_normalise_by_support_and_refuse_where_there_is_none():
-    """DESIGN §4.6: zero weights must never pull a solution toward 0."""
-    offsets = {(4, tx): (1.0, -0.5) for tx in range(3, 9)}
-    weights = {key: 10.0 for key in offsets}
-    grid, support = arms.smooth_offsets(offsets, weights, (30, 30),
-                                        bandwidth_tiles=2.0)
-    live = np.asarray([grid[4, tx] for tx in range(3, 9)])
-    assert np.allclose(live[:, 0], 1.0, atol=1e-9), (
-        "support normalisation must return the solution, not a fraction "
-        "of it, on a band with no neighbours")
-    assert np.allclose(live[:, 1], -0.5, atol=1e-9)
-    assert np.all(np.isnan(grid[25, 25])), "no support, no delta"
-    assert support[4, 5] > 0.0
-    assert support[25, 25] == 0.0
-
-
-def test_smooth_offsets_weight_a_confident_tile_more():
-    offsets = {(2, 2): (2.0, 0.0), (2, 3): (0.0, 0.0)}
-    grid, _support = arms.smooth_offsets(
-        offsets, {(2, 2): 100.0, (2, 3): 1.0}, (6, 6), bandwidth_tiles=2.0)
-    assert grid[2, 3][0] > 1.5
+# The `smooth_offsets` pins went with the `smooth` arm on 2026-09-12
+# (A3): a field per (lane, stream) with the page dropped from its key
+# merged two physical faces on a duplex sheet.
 
 
 # ----------------------------------------------- the unmixing seam
@@ -154,8 +134,12 @@ def test_unmix_modes_rank_the_way_the_measured_ladder_says():
         spread = np.sqrt(0.5 * (one.var() + zero.var()))
         return abs(one.mean() - zero.mean()) / max(spread, 1e-12)
 
+    # `global` needs the lane mix and the patch family (W8) needs a read
+    # context — both are enumerated through their own doors, not here.
+    from analyzer import patch as patch_mod
     scores = {mode: arms.unmix_score(mode, 2, mix, values, frame)
-              for mode in unmix.UNMIX_MODES if mode != "global"}
+              for mode in unmix.UNMIX_MODES
+              if mode not in ("global",) + tuple(patch_mod.PATCH_MODES)}
     ranked = {mode: float(d_prime(value)) for mode, value in scores.items()}
     print(f"\nd' per unmix mode (synthetic, sigma 0.05): {ranked}")
     assert ranked["project"] > ranked["raw"]
@@ -222,13 +206,16 @@ def test_local_affine_objective_is_the_swim_s_correlation_ratio():
     assert local_affine.correlation_ratios(groups, flat)[0] == 0.0
 
 
-# ------------------------------------------------------------- sheet I
+# ---------------------------------------------- the colour sim's run dir
+# TIER S (2026-10-09): the receiver's displaced 10x10 colour sim, Y two
+# dots out of register along a one-cycle sinusoid down the page.  The
+# sheet-I numbers these tests printed are records (PAGE-FIELD-PLAN A1b).
 
 def _interior_certified(run, page: int, stream: str, count: int):
     keys = sorted(key for key in run.certificates
                   if key[0] == page and key[3] == stream
-                  and 6 <= key[1] <= run.tiles_yx[0] - 7
-                  and 6 <= key[2] <= run.tiles_yx[1] - 7)
+                  and 1 <= key[1] <= run.tiles_yx[0] - 2
+                  and 1 <= key[2] <= run.tiles_yx[1] - 2)
     if len(keys) < count:
         pytest.skip(f"fewer than {count} interior certified {stream} tiles")
     step = max(1, len(keys) // count)
@@ -246,197 +233,40 @@ PARITY_CONFIGURATIONS: tuple[tuple[str, str], ...] = (
     ("subtract+offset", "production"),
 )
 PARITY_GATE_CONFIGURATION = ("subtract+offset", "production")
-PARITY_TILES_PER_STREAM = 5
+
+# DELETED at A1b, 2026-09-12: `test_sheet_i_field_arm_needs_the_page_
+# frame_at_rot_k_2`, the discriminating test of the RETIRED per-lane
+# field.  It needed a rot-2 placement to discriminate a frame, and the
+# fixture corpus has none — all 988 accepted placements of the
+# single-capture run stand at rot_k 0, so there was nothing to
+# re-measure and no honest way to flip its assertions.  The law it
+# stood for is pinned offline, on both rotations, by
+# `test_the_field_arm_reads_one_page_vector_on_every_rotation`.
 
 
-@needs_i_run
-def test_sheet_i_parity_re_derives_production_certificates():
-    """DESIGN §8's parity sample, at W1d scale (5 tiles per stream).
-
-    The target's own certificate is hidden from the frame by
-    `frame.known_frame`, so every certificate here is re-derived BLIND;
-    GT enters only as `truth_bits`, which `ladder.score_rung` applies
-    strictly after the certificate gate.  Zero-wrong is asserted on every
-    configuration; the >= 80% re-derivation gate is asserted on the
-    production-equivalent one and the whole table is PRINTED, because the
-    spread between the rows is the measurement (2026-09-03: the pinned
-    default with no context re-derives C 3/5, M 5/5, Y 0/5, and adding
-    production's own context takes it to 5/5, 5/5, 3/5).
-    """
-    from analyzer import ladder, sample
-    from ._analyzer_fixtures import i_truth
-    run = i_inputs()
-    truth = i_truth()
-    page = run.live_pages[0]
-    table: dict[tuple[str, str], dict[str, tuple[int, int]]] = {}
-    for arm, ctx_mode in PARITY_CONFIGURATIONS:
-        report: dict[str, tuple[int, int]] = {}
-        for stream in ("C", "M", "Y"):
-            certified = attempted = 0
-            for key in _interior_certified(run, page, stream,
-                                           PARITY_TILES_PER_STREAM):
-                lanes = sample.lanes_for_tile(run, *key[:3])
-                evidence = [
-                    arms.evidence_for(
-                        run, run.certificates, key, lane, arm,
-                        knobs={"mix_scope_ladder": ("footprint",),
-                               "ctx_mode": ctx_mode, "seed": 17})
-                    for lane in lanes]
-                usable = [item for item in evidence
-                          if item.blind.get("refusal") is None]
-                attempted += 1
-                if not usable:
-                    continue
-                combined = comb.combine(usable, "sum")
-                results = ladder.run_ladder(
-                    combined, run, key, rungs=("L0", "L1"),
-                    truth_bits=np.asarray(truth.user_bits[key], np.uint8))
-                verdicts = {item.verdict for item in results}
-                assert "wrong" not in verdicts, (arm, ctx_mode, key, results)
-                assert "false_accept" not in verdicts, (arm, key, results)
-                if "certified" in verdicts:
-                    certified += 1
-            report[stream] = (certified, attempted)
-        table[(arm, ctx_mode)] = report
-    print("\nparity re-derivation, sheet I, 5 interior certified tiles per "
-          "stream (certified/attempted):")
-    for (arm, ctx_mode), report in table.items():
-        print(f"  {arm:20s} ctx={ctx_mode:11s} "
-              + "  ".join(f"{stream} {value[0]}/{value[1]}"
-                          for stream, value in report.items()))
-    gate = table[PARITY_GATE_CONFIGURATION]
-    for stream, (certified, attempted) in gate.items():
-        assert certified >= 4, (
-            f"{PARITY_GATE_CONFIGURATION}: {stream} {certified}/{attempted}")
-
-
-ROT2_FIELD_TILES = 8
-
-
-@needs_i_run
-def test_sheet_i_field_arm_needs_the_page_frame_at_rot_k_2():
-    """DESIGN §4.4's mandatory discriminating test.
-
-    Sheet I's capture `5d242053` is placed 180 degrees round — EVERY one
-    of its accepted placements is rot_k 2 (the other three captures are
-    all rot_k 0), and the run publishes a plane field for the C plane on
-    each of them.  Applying that field's delta rotated into the PAGE frame
-    must lower the search-fold log loss; applying it as production stores
-    it (window-local, un-rotated) must raise it.  Measured 2026-09-03 over
-    ten such tiles: page frame 0.150 mean, un-rotated 0.398, committed
-    0.181 — the un-rotated delta is 2.7x worse than the rotated one.
-
-    Sheet I publishes a C field only, so C is the subject; the DESIGN
-    §4.4 claim is about the FRAME, which is plane-independent.
+@needs_sim
+def test_the_offset_arm_lands_near_the_published_field_delta():
+    """DESIGN §4.6's offset arm against the standing field, blind, on Y —
+    the plane the sim displaces, so the field is not zero and the gap
+    discriminates.  The published delta is read UNROTATED (A1): it is a
+    page-axis vector at its source.  The assertion is loose on purpose:
+    the two estimators are a whole-page smoothed fit and a per-footprint
+    grid, and the number worth having is the DISTRIBUTION, which is
+    printed (sheet I's C plane, the record: n=6, median 0.124 dots).
     """
     from analyzer import frame as frame_mod, sample
-    from holo3.plugins import color_sites
-    run = i_inputs()
+    from holo.receiver.plugins import color_sites
+    run = sim_run()
     page = run.live_pages[0]
-    plane = PLANE_OF["C"]
-    cell_dots = color_sites.cell_dots_of(run.row)
-    rows: list[tuple] = []
-    for key in _interior_certified(run, page, "C", 60):
-        if len(rows) >= ROT2_FIELD_TILES:
-            break
-        for lane in sample.lanes_for_tile(run, *key[:3]):
-            field = run.plane_fields.get(
-                (lane.capture_id, lane.level_index, page, plane))
-            if field is None:
-                continue
-            fp = frame_mod.tile_footprint(run.row, *key[:3], 16,
-                                          geometry=run.geometry)
-            lfp = sample.lane_footprint(lane, fp)
-            if lfp is None or not np.any(lfp.observed):
-                continue
-            rots = {int(lane.placements[int(index)].rot_k)
-                    for index in np.unique(
-                        lfp.owner_index[lfp.observed]).tolist()}
-            delta = plane_k.field_delta_dots(field, fp.page_cells_yx)
-            if rots != {2} or delta is None:
-                continue
-            if float(np.max(np.abs(delta))) < 0.15:
-                continue           # a null delta cannot discriminate
-            folds = cal.split_folds(fp.page_cells_yx, 17)
-            frame = frame_mod.known_frame(run, run.certificates, fp, key,
-                                          metadata_known=False)
-            crops = sample.open_crops(
-                lane, lfp, bound_dots=float(cell_dots) + 2.5,
-                cell_dots=cell_dots)
-            mix, _scope = arms.fit_mix(
-                sample.read_rgb(crops, lfp).values_rgb, frame,
-                scope_ladder=("footprint",), cells_yx=fp.page_cells_yx,
-                usable=np.asarray(lfp.observed, bool))
-            if not mix.accepted:
-                continue
-
-            def loss_for(page_delta, *, _lane=lane, _lfp=lfp, _crops=crops,
-                         _frame=frame, _folds=folds, _mix=mix) -> float:
-                if page_delta is None:
-                    read = sample.read_rgb(_crops, _lfp)
-                else:
-                    override, _residual = arms._override_for_delta(
-                        _lane, _lfp, page_delta, cell_dots)
-                    read = sample.read_rgb(_crops, _lfp,
-                                           affine_override=override)
-                assert read.refusal is None, read.refusal
-                score = arms.unmix_score("subtract", plane, _mix,
-                                         read.values_rgb, _frame)
-                value = cal.fold_logloss(
-                    score, _frame, plane, _folds,
-                    usable=np.asarray(_lfp.observed, bool))
-                assert value is not None
-                return value
-
-            rows.append((
-                key[1], key[2], int(lane.level_index), loss_for(None),
-                loss_for(arms.to_page_frame(delta, 2)),
-                loss_for(np.asarray(delta, np.float64)),
-                tuple(np.round(np.median(delta, axis=0), 3))))
-            break
-    if not rows:
-        pytest.skip("no rot_k == 2 placement with a live C field on sheet I")
-    table = np.asarray([[row[3], row[4], row[5]] for row in rows])
-    print(f"\nrot_k 2 field arm on {len(rows)} certified C tiles "
-          f"(search-fold log loss): committed {table[:, 0].mean():.4f}, "
-          f"page frame {table[:, 1].mean():.4f}, "
-          f"un-rotated {table[:, 2].mean():.4f}; page frame beats committed "
-          f"on {int((table[:, 1] < table[:, 0]).sum())}/{len(rows)}")
-    for row in rows:
-        print(f"  ty={row[0]:3d} tx={row[1]:3d} L{row[2]} "
-              f"committed {row[3]:.4f} page {row[4]:.4f} "
-              f"un-rotated {row[5]:.4f} median delta {row[6]}")
-    assert np.all(table[:, 1] < table[:, 2]), (
-        "the un-rotated production delta must be worse on EVERY tile")
-    assert table[:, 1].mean() < table[:, 0].mean(), (
-        "the page-frame field must help on average")
-
-
-@needs_i_run
-def test_sheet_i_offset_arm_lands_near_the_rotated_field_delta():
-    """DESIGN §4.6's offset arm against the standing field, blind.
-
-    The brief asks this on Y; sheet I publishes a plane field for the C
-    plane ONLY (13 fields, all plane 0 — `test_analyzer_inputs`), so the
-    measurement is made on C and the deviation is recorded.  The
-    assertion is loose on purpose: the two estimators are a whole-page
-    smoothed fit and a per-footprint grid, and the number worth having is
-    the DISTRIBUTION, which is printed.
-    """
-    from analyzer import frame as frame_mod, sample
-    from holo3.plugins import color_sites
-    run = i_inputs()
-    page = run.live_pages[0]
-    plane = PLANE_OF["C"]
+    plane = PLANE_OF["Y"]
     cell_dots = color_sites.cell_dots_of(run.row)
     gaps: list[float] = []
     chosen: list[tuple] = []
-    for key in _interior_certified(run, page, "C", 60):
+    for key in _interior_certified(run, page, "Y", 60):
         if len(gaps) >= 6:
             break
         for lane in sample.lanes_for_tile(run, *key[:3]):
-            field = run.plane_fields.get(
-                (lane.capture_id, lane.level_index, page, plane))
+            field = run.plane_fields.get((page, plane))
             if field is None:
                 continue
             fp = frame_mod.tile_footprint(run.row, *key[:3], 16,
@@ -444,17 +274,11 @@ def test_sheet_i_offset_arm_lands_near_the_rotated_field_delta():
             lfp = sample.lane_footprint(lane, fp)
             if lfp is None or not np.any(lfp.observed):
                 continue
-            delta = plane_k.field_delta_dots(field, fp.page_cells_yx)
-            if delta is None:
-                continue
-            rot = {int(lane.placements[int(index)].rot_k)
-                   for index in np.unique(
-                       lfp.owner_index[lfp.observed]).tolist()}
-            if len(rot) != 1:
-                continue
+            delta = np.asarray(
+                plane_k.field_delta_dots(field, fp.page_cells_yx),
+                np.float64)
             inside = np.asarray(fp.in_tile) & np.asarray(lfp.observed)
-            want = np.median(arms.to_page_frame(delta[inside],
-                                                rot.pop()), axis=0)
+            want = np.median(delta[inside], axis=0)
             folds = cal.split_folds(fp.page_cells_yx, 17)
             frame = frame_mod.known_frame(run, run.certificates, fp, key,
                                          metadata_known=False)
@@ -476,7 +300,7 @@ def test_sheet_i_offset_arm_lands_near_the_rotated_field_delta():
                            tuple(np.round(want, 3))))
             break
     if not gaps:
-        pytest.skip("no C tile with a live plane field on sheet I")
+        pytest.skip("no Y tile with a live plane field on the sim")
     array = np.asarray(gaps)
     print(f"\noffset vs rotated field delta (x axis, dots): "
           f"n={array.size} median={np.median(array):.3f} "
@@ -484,12 +308,12 @@ def test_sheet_i_offset_arm_lands_near_the_rotated_field_delta():
     assert float(np.median(array)) <= 1.0
 
 
-@needs_i_run
-def test_sheet_i_word_arm_decodes_a_certified_c_tile_blind():
+@needs_sim
+def test_the_word_arm_decodes_a_certified_c_tile_blind():
     """DESIGN §4.6's `word` arm: the 100 sites must decode to the counter."""
     from analyzer import frame as frame_mod, sample
-    from holo3.plugins import color_sites
-    run = i_inputs()
+    from holo.receiver.plugins import color_sites
+    run = sim_run()
     page = run.live_pages[0]
     plane = PLANE_OF["C"]
     cell_dots = color_sites.cell_dots_of(run.row)
@@ -527,12 +351,12 @@ def test_sheet_i_word_arm_decodes_a_certified_c_tile_blind():
     assert decoded, f"the word decoded on none of them: {outcomes}"
 
 
-@needs_i_run
-def test_sheet_i_word_arm_refuses_on_the_yellow_plane():
+@needs_sim
+def test_the_word_arm_refuses_on_the_yellow_plane():
     """C and M only — Y is 0 at every word site (DESIGN §1)."""
     from analyzer import frame as frame_mod, sample
-    from holo3.plugins import color_sites
-    run = i_inputs()
+    from holo.receiver.plugins import color_sites
+    run = sim_run()
     page = run.live_pages[0]
     key = _interior_certified(run, page, "Y", 1)[0]
     lane = sample.lanes_for_tile(run, *key[:3])[0]
@@ -548,6 +372,36 @@ def test_sheet_i_word_arm_refuses_on_the_yellow_plane():
     _read, detail = arms.word_pose(lane, crops, lfp, frame, PLANE_OF["Y"],
                                    mix=None, cell_dots=cell_dots)
     assert detail["refusal"] == "word_is_cm_only"
+
+
+@needs_sim
+def test_the_field_arm_refuses_a_field_from_another_plane_on_a_real_run():
+    """AI4 on a published field: another plane is the one other refusal.
+
+    The offline half is `test_the_field_arm_refuses_another_page_and_
+    another_plane`; this is the same law over a `PlaneField` the receiver
+    published for C on the sim, off a real footprint, so the refusal
+    cannot be an artefact of the synthetic fact's shape.
+    """
+    from analyzer import frame as frame_mod, sample
+    run = sim_run()
+    page = run.live_pages[0]
+    plane = PLANE_OF["C"]
+    field = run.plane_fields[(page, plane)]
+    for key in _interior_certified(run, page, "C", 4):
+        for lane in sample.lanes_for_tile(run, *key[:3]):
+            fp = frame_mod.tile_footprint(run.row, *key[:3], 16,
+                                          geometry=run.geometry)
+            lfp = sample.lane_footprint(lane, fp)
+            if lfp is None or not np.any(lfp.observed):
+                continue
+            other, detail = arms._field_delta(field, lfp, PLANE_OF["Y"])
+            assert other is None
+            assert detail["field_applied"] is False
+            assert detail["field_reason"] == \
+                f"field_is_for_plane_{plane}_not_{PLANE_OF['Y']}"
+            return
+    pytest.fail("no lane observes an interior certified C tile of the sim")
 
 
 def test_head_never_reads_the_target_plane_off_the_frame():
@@ -571,29 +425,6 @@ def test_head_never_reads_the_target_plane_off_the_frame():
     assert np.allclose(score, blind)
 
 
-@pytest.mark.parametrize("module", ("arms", "unmix", "calibrate", "combine"))
-def test_w1d_modules_are_blind(module):
-    """DESIGN §0 / PLAN §0: the import-set test, for W1d's four modules.
-
-    `mother` and `ladder` already carry one; W1d's modules did not, and
-    the blindness rule names them explicitly ("unmix, register,
-    calibrate, combine ... never import truth or oracle").
-    """
-    import ast
-    import importlib
-    import pathlib
-    loaded = importlib.import_module(f"analyzer.{module}")
-    tree = ast.parse(pathlib.Path(loaded.__file__).read_text(encoding="utf-8"))
-    imported: set[str] = set()
-    for node in ast.walk(tree):
-        if isinstance(node, ast.Import):
-            imported.update(alias.name for alias in node.names)
-        elif isinstance(node, ast.ImportFrom):
-            imported.add("." * node.level + (node.module or ""))
-    assert not any("truth" in name or "oracle" in name
-                   for name in imported), sorted(imported)
-
-
 def test_the_lane_mix_tile_sample_is_the_same_in_every_process():
     """DESIGN §0's determinism rule: no salted `hash` in a seed.
 
@@ -605,36 +436,464 @@ def test_the_lane_mix_tile_sample_is_the_same_in_every_process():
     assert unmix._stable_seed(("0123456789ab", 2), 0, "M") != seed
 
 
-@needs_i_run
-def test_the_field_arm_refuses_a_field_from_another_plane():
-    """The `field` arm must not apply a field it was not handed for.
+# ------------------------------------------ the production field, offline
+# AB1/AI1/AI3/AI4, over a synthetic `holo.receiver.data.PlaneField` — a
+# plain frozen dataclass — so the three laws are pinned on this machine
+# whether or not a run dir is.
 
-    Sheet I publishes a C-plane field only; asking for it on the Y
-    stream (or on another lane) has to collapse to `committed` with a
-    reason, never move the points by another plane's registration.
+FIELD_TILES_YX = (37, 53)
+FIELD_CELL_DOTS = 2
+
+
+def _plane_field(delta_xy, *, page=0, plane=0, uncertainty=0.4, ordinal=17):
+    from holo.receiver import data
+    delta = np.zeros(FIELD_TILES_YX + (2,), np.float64)
+    delta[..., 0], delta[..., 1] = delta_xy
+    return data.PlaneField(
+        page=page, plane=plane, delta_dots_xy=delta,
+        support=np.ones(FIELD_TILES_YX, np.float64),
+        uncertainty_dots=np.full(FIELD_TILES_YX, float(uncertainty)),
+        n_observations=int(np.prod(FIELD_TILES_YX)), n_captures=2,
+        ordinal=int(ordinal))
+
+
+def _field_footprint(owner_index, *, page=0, ty=4, tx=6):
+    """One tile's worth of cells, owned by the placements named."""
+    from analyzer.types import LaneFootprint, TileFootprint
+    owners = np.asarray(owner_index, np.int64)
+    cells = np.stack((np.full(owners.size, ty * 64 + 10, np.int64),
+                      tx * 64 + np.arange(owners.size, dtype=np.int64)),
+                     axis=1)
+    fp = TileFootprint(page=page, ty=ty, tx=tx, halo_cells=0,
+                       page_cells_yx=cells,
+                       in_tile=np.ones(owners.size, bool),
+                       cargo=np.ones(owners.size, bool),
+                       page_shape_cells_yx=(64 * FIELD_TILES_YX[0],
+                                            64 * FIELD_TILES_YX[1]))
+    return LaneFootprint(lane=("cap", 0), tile=fp,
+                         observed=np.ones(owners.size, bool),
+                         owner_index=owners,
+                         points_yx=np.zeros((owners.size, 2), np.float64))
+
+
+class _Placement:
+    def __init__(self, native_affine, rot_k):
+        self.native_affine = tuple(native_affine)
+        self.rot_k = int(rot_k)
+
+
+class _Lane:
+    """The two attributes `sample._level_terms` reads, and nothing else."""
+
+    def __init__(self, placements):
+        from fractions import Fraction
+        self.frame = Fraction(1)
+        self.placements = tuple(placements)
+
+
+#: A rot-0 page-cell -> pixel affine, and the SAME window placed 180
+#: degrees round: production folds the quarter-turn into `native_affine`,
+#: so at rot 2 the linear part is negated.
+ROT0_TERMS = (6.0, 0.4, 120.0, -0.3, 6.1, 340.0)
+ROT2_TERMS = (-6.0, -0.4, 980.0, 0.3, -6.1, 770.0)
+
+
+def test_the_field_arm_reads_one_page_vector_on_every_rotation():
+    """AB1: a published delta is page-frame AT ITS SOURCE.
+
+    `_field_delta` returns the field's own value on a rot-0 owner and on
+    a rot-2 owner alike — no quarter-turn — and pushing that value
+    through `_override_for_delta` displaces each owner's sample points
+    by the SAME vector in PAGE CELLS, which is what "one page vector"
+    means once the two owners' poses differ.
     """
-    from analyzer import frame as frame_mod, sample
-    run = i_inputs()
-    page = run.live_pages[0]
-    plane = PLANE_OF["C"]
-    for key in _interior_certified(run, page, "C", 20):
-        for lane in sample.lanes_for_tile(run, *key[:3]):
-            field = run.plane_fields.get(
-                (lane.capture_id, lane.level_index, page, plane))
-            if field is None:
-                continue
-            fp = frame_mod.tile_footprint(run.row, *key[:3], 16,
-                                          geometry=run.geometry)
-            lfp = sample.lane_footprint(lane, fp)
-            if lfp is None or not np.any(lfp.observed):
-                continue
-            mine, _detail = arms._field_delta(field, lane, lfp, plane)
-            if mine is None:
-                continue
-            other, detail = arms._field_delta(field, lane, lfp,
-                                              PLANE_OF["Y"])
-            assert other is None
-            assert detail["field_applied"] is False
-            assert "field_is_for_" in detail["field_reason"]
-            return
-    pytest.skip("no certified C tile of this page carries a plane field")
+    from holo.receiver.plugins import calibrate as calibrate_plugin
+    from holo.receiver.plugins import color_region_anchor as anchor
+
+    field = _plane_field((0.7, -0.3))
+    lfp = _field_footprint([0, 0, 1, 1])
+    lane = _Lane((_Placement(ROT0_TERMS, 0), _Placement(ROT2_TERMS, 2)))
+
+    delta, detail = arms._field_delta(field, lfp, 0)
+    assert detail["field_applied"] is True
+    assert np.allclose(delta, np.array([[0.7, -0.3]] * 4)), (
+        "the arm rotated a page-axis delta")
+    assert not np.allclose(delta, arms.to_page_frame(delta, 2))
+
+    override, _residual = arms._override_for_delta(lane, lfp, delta,
+                                                   FIELD_CELL_DOTS)
+    cells = np.asarray(lfp.tile.page_cells_yx, np.float64)
+    want = np.asarray((-0.3, 0.7), np.float64) / FIELD_CELL_DOTS  # (y, x)
+    for index in (0, 1):
+        rows = np.flatnonzero(np.asarray(lfp.owner_index) == index)
+        terms = (ROT0_TERMS, ROT2_TERMS)[index]
+        before = calibrate_plugin.scan_points_yx(terms, 1, cells[rows])
+        after = calibrate_plugin.scan_points_yx(override[index], 1,
+                                                cells[rows])
+        moved_cells = np.linalg.solve(anchor.pose_linear(terms),
+                                      (after - before).T).T
+        assert np.allclose(moved_cells, want, atol=1e-9), (
+            f"owner {index} moved {moved_cells[0]} page cells, not {want}")
+
+
+def test_the_field_arm_applies_on_any_lane_of_its_page():
+    """AI4: the key is (page, plane), so every lane of the page reads it.
+
+    The lane the footprint names is deliberately not the one any field
+    was fitted on — there is no such thing any more — and the read has
+    to succeed anyway.
+    """
+    field = _plane_field((0.5, 0.0))
+    for lane_id in (("capA", 2), ("capB", 8), ("cap", 0)):
+        lfp = _field_footprint([0, 0])
+        lfp = type(lfp)(lane=lane_id, tile=lfp.tile, observed=lfp.observed,
+                        owner_index=lfp.owner_index,
+                        points_yx=lfp.points_yx)
+        delta, detail = arms._field_delta(field, lfp, 0)
+        assert detail["field_applied"] is True, lane_id
+        assert np.allclose(delta, np.array([[0.5, 0.0]] * 2))
+
+
+def test_the_field_arm_refuses_another_page_and_another_plane():
+    """AI4's two refusals, and the only two."""
+    lfp = _field_footprint([0, 0], page=0)
+    delta, detail = arms._field_delta(_plane_field((0.5, 0.0), page=1), lfp,
+                                      0)
+    assert delta is None
+    assert detail == {"field_applied": False,
+                      "field_reason": "field_is_for_page_1_not_0"}
+
+    delta, detail = arms._field_delta(_plane_field((0.5, 0.0), plane=2), lfp,
+                                      0)
+    assert delta is None
+    assert detail["field_reason"] == "field_is_for_plane_2_not_0"
+
+    delta, detail = arms._field_delta(None, lfp, 0)
+    assert delta is None and detail["field_reason"] == "no_field"
+
+    # target_plane None: the arm was not told which plane it is reading,
+    # so the plane clause has nothing to compare and does not fire.
+    delta, _detail = arms._field_delta(_plane_field((0.5, 0.0), plane=2),
+                                       lfp, None)
+    assert delta is not None
+
+
+def test_a_field_that_reads_zero_collapses_by_name_and_still_reports():
+    """AI3: a zero delta renames the row; it never duplicates `committed`.
+
+    `no_support` is gone with production's support gate (design I6/I8) —
+    an unsupported tile reads the pose, which IS zero — so the collapse
+    is made on the VALUE, and it carries the two things a reader wants
+    to know about the field that stood there, and (F4, 2026-09-13) which
+    cells decided it.
+    """
+    lfp = _field_footprint([0, 0, 1])
+    zero = _plane_field((0.0, 0.0), uncertainty=0.62, ordinal=41906)
+    delta, detail = arms._field_delta(zero, lfp, 0)
+    assert delta is None
+    assert detail["field_applied"] is False
+    assert detail["field_reason"] == "field_reads_zero_here"
+    assert detail["field_collapse_over"] == "observed"
+    assert detail["field_uncertainty_dots"] == pytest.approx(0.62)
+    assert detail["field_ordinal"] == 41906
+
+    live = _plane_field((0.0, -0.25), uncertainty=0.11, ordinal=7)
+    delta, detail = arms._field_delta(live, lfp, 0)
+    assert delta is not None
+    assert detail["field_applied"] is True
+    assert detail["field_uncertainty_dots"] == pytest.approx(0.11)
+    assert detail["field_ordinal"] == 7
+    assert detail["field_median_dots_xy"] == pytest.approx((0.0, -0.25))
+    assert "field_rot_k" not in detail and "no_support" not in str(detail)
+
+
+def test_the_reported_uncertainty_is_the_median_over_the_footprints_tiles():
+    """A footprint spanning four tiles reports THEIR median, not the
+    page's: the number is about where this row read."""
+    from analyzer.types import LaneFootprint, TileFootprint
+    field = _plane_field((0.4, 0.0))
+    grid = np.asarray(field.uncertainty_dots)
+    grid[4, 6], grid[4, 7], grid[5, 6], grid[5, 7] = 0.1, 0.2, 0.8, 0.9
+    cells = np.array([[4 * 64 + 1, 6 * 64 + 1], [4 * 64 + 1, 7 * 64 + 1],
+                      [5 * 64 + 1, 6 * 64 + 1], [5 * 64 + 1, 7 * 64 + 1]],
+                     np.int64)
+    fp = TileFootprint(page=0, ty=4, tx=6, halo_cells=64,
+                       page_cells_yx=cells, in_tile=np.ones(4, bool),
+                       cargo=np.ones(4, bool),
+                       page_shape_cells_yx=(64 * FIELD_TILES_YX[0],
+                                            64 * FIELD_TILES_YX[1]))
+    lfp = LaneFootprint(lane=("cap", 0), tile=fp,
+                        observed=np.ones(4, bool),
+                        owner_index=np.zeros(4, np.int64),
+                        points_yx=np.zeros((4, 2), np.float64))
+    _delta, detail = arms._field_delta(field, lfp, 0)
+    assert detail["field_uncertainty_dots"] == pytest.approx(0.5)
+
+
+# ------------------------------- the crop the standing field reaches (F3)
+# On the review's own fixture (`docs/reviews/page-field-analyzer-2026-09-13/
+# probes/sampling.py`): one rot-0 placement over a 900x900 synthetic
+# raster at 8 px per cell, so a bound in dots grows the crop by four
+# times as many pixels at c2 and by 2.67 at c3.  The bound the arms cut
+# at counted the offset search and the patch window and NOT the standing
+# field, so the field spent the aperture margin instead.
+
+_SEARCH_EXTREME_DOTS = arms.OFFSET_X_MAX
+
+
+def _standing_world(halo: int = 8):
+    from .test_analyzer_sample import _footprint, _lane, _placement
+    lane = _lane(_placement())
+    return lane, sample.lane_footprint(lane, _footprint(halo))
+
+
+def _search_bound_dots(cell_dots: int) -> float:
+    """The bound `evidence_for` cut at before F3 — search and cell only."""
+    return max(abs(arms.OFFSET_X_MIN), abs(arms.OFFSET_X_MAX),
+               float(cell_dots)) + 0.5
+
+
+def _field_read(lane, lfp, field, cell_dots, *, reach: bool,
+                offset_dots_x: float = 0.0):
+    bound = _search_bound_dots(cell_dots)
+    if reach:
+        bound += arms.field_reach_dots("field", lfp, 0, plane_field=field)
+    crops = sample.open_crops(lane, lfp, bound_dots=bound,
+                              cell_dots=cell_dots)
+    delta, _detail = arms._field_delta(field, lfp, 0)
+    override, _residual = arms._override_for_delta(lane, lfp, delta,
+                                                   cell_dots)
+    read = sample.read_rgb(crops, lfp, offset_dots_xy=(offset_dots_x, 0.0),
+                           affine_override=override, arm="field")
+    return read, crops
+
+
+def test_the_crop_bound_carries_the_standing_fields_reach_at_c2():
+    """F3: a field past the old bound refused; it reads now.
+
+    MEASURED on this fixture at c2, 8 px per cell: the bare `field` arm
+    refused past 4.25 dots of constant field and the crop only reached
+    that far because it borrows `anchor.points_halo` (8 px here, 2 dots)
+    — so a 4.5-dot field was a lost arm and a 3.0-dot one was a read
+    with 5 px of margin where the aperture alone wants 8.  With the
+    reach in the bound both read, and the 3.0-dot read sits 14 px from
+    the edge: the aperture's margin is the aperture's again.
+    """
+    lane, lfp = _standing_world()
+    past = _plane_field((4.5, 0.0))
+    refused, _crops = _field_read(lane, lfp, past, 2, reach=False)
+    assert refused.refusal == "outside_crop:72"
+    read, _crops = _field_read(lane, lfp, past, 2, reach=True)
+    assert read.refusal is None
+    assert arms.field_reach_dots("field", lfp, 0, plane_field=past) == 4.5
+
+    inside = _plane_field((3.0, 0.0))
+    tight, tight_crops = _field_read(lane, lfp, inside, 2, reach=False)
+    wide, wide_crops = _field_read(lane, lfp, inside, 2, reach=True)
+    assert tight.refusal is None and wide.refusal is None
+    assert sample.read_headroom_px(tight_crops, lfp, tight) == 5.0
+    assert sample.read_headroom_px(wide_crops, lfp, wide) == 14.0
+    assert 5.0 < anchor.points_halo(8.0) <= 14.0
+
+
+def test_the_crop_bound_carries_the_standing_fields_reach_at_c3():
+    """The same at c3, where the cell is the wider term of the bound.
+
+    The old bound refused past 6.25 dots of constant field (the same
+    fixture, 8 px per cell), so 6.5 is the smallest quarter-dot step
+    that was a lost arm.
+    """
+    lane, lfp = _standing_world()
+    past = _plane_field((6.5, 0.0))
+    refused, _crops = _field_read(lane, lfp, past, 3, reach=False)
+    assert refused.refusal == "outside_crop:72"
+    read, _crops = _field_read(lane, lfp, past, 3, reach=True)
+    assert read.refusal is None
+
+
+def test_the_affine_arms_corner_reach_is_twice_the_translation_bound():
+    """M1: the factor `field_reach_dots`'s last paragraph states.
+
+    `local_affine.search` halves the translation bound before it opens
+    the linear terms and clips each of them there, and the normalised
+    coordinates run to +-1, so an axis's two terms add one more
+    translation bound where they meet at the corner — 2x, not the
+    review's 3x, which read `search_linear`'s own signature.  Driven to
+    its extreme by a score that wants the largest displacement there is,
+    and held at both rungs; then the ruling that keeps it out of the
+    crop bound, measured: a CONSTANT delta of that size, which is worse
+    than an affine reaching it at one corner, still reads.
+    """
+    cells = np.stack(np.meshgrid(np.arange(8), np.arange(8), indexing="ij"),
+                     -1).reshape(-1, 2)
+    unit = local_affine.unit_coordinates(cells, (8, 8))
+    lane, lfp = _standing_world()
+    for cell_dots in (2, 3):
+        crops = sample.open_crops(lane, lfp, cell_dots=cell_dots,
+                                  bound_dots=_search_bound_dots(cell_dots))
+        bound = swim.translation_bound_dots(arms.lane_row_of(crops))
+        assert bound == float(cell_dots)
+        result = local_affine.search(
+            lambda candidates: np.array([one.magnitude_dots()
+                                         for one in candidates], np.float64),
+            local_affine.Affine.zero(), bound, 0.05, 64)
+        reach = np.abs(result.affine.offsets_dots_xy(unit)).max()
+        assert reach == pytest.approx(2.0 * bound)
+
+        read, wide = _field_read(lane, lfp, _plane_field((2.0 * bound, 0.0)),
+                                 cell_dots, reach=False)
+        assert read.refusal is None
+        assert sample.read_headroom_px(wide, lfp, read) == 1.0
+
+
+def test_the_field_and_the_offset_search_extreme_share_one_crop():
+    """`field+offset` at the winner's +2-dot extreme, the tight corner.
+
+    The search and the field both move the points, so the reach the
+    crop needs is their SUM: at c2 the old bound refused past 2.25 dots
+    of field once the offset sat at its own limit, against 4.25 with the
+    offset at zero.
+    """
+    lane, lfp = _standing_world()
+    field = _plane_field((2.5, 0.0))
+    refused, _crops = _field_read(lane, lfp, field, 2, reach=False,
+                                  offset_dots_x=_SEARCH_EXTREME_DOTS)
+    assert refused.refusal == "outside_crop:72"
+    read, _crops = _field_read(lane, lfp, field, 2, reach=True,
+                               offset_dots_x=_SEARCH_EXTREME_DOTS)
+    assert read.refusal is None
+
+
+def test_a_field_that_leaves_the_raster_is_still_a_correct_refusal():
+    """The bound cannot buy pixels that were never scanned.
+
+    A field pushing 6 dots off the raster's own origin maps points to
+    x = -8 px; the crop is clipped there because that is where the
+    capture ends, so `outside_crop` is the right answer and the reach
+    does not paper over it.
+    """
+    lane, lfp = _standing_world()
+    off = _plane_field((-6.0, 0.0))
+    read, crops = _field_read(lane, lfp, off, 2, reach=True)
+    assert read.refusal == "outside_crop:72"
+    assert (crops.y0, crops.x0) == (0, 0)
+    delta, _detail = arms._field_delta(off, lfp, 0)
+    mapped = page_map.raster_points(
+        lfp.points_yx, np.eye(2, dtype=np.float64) * 8.0,
+        np.asarray(delta, np.float64), 2)
+    assert mapped[:, 1].min() == pytest.approx(-8.0)
+
+
+def test_the_reach_is_quantised_to_the_search_step_and_scoped_by_arm():
+    """One bound per lane, so the memo's cut count does not fragment.
+
+    Rounding UP to `OFFSET_STEP_DOTS` keeps arms that read the same
+    field over the same footprint asking for the same crop; the arms
+    that read no field ask for the bound they always asked for, and the
+    `field2` arms take field2's own clamp, which is all that is known
+    before the fit.
+    """
+    lane, lfp = _standing_world()
+    field = _plane_field((1.1, 0.0))
+    assert arms.field_reach_dots("field", lfp, 0, plane_field=field) == 1.25
+    assert arms.field_reach_dots("field+offset", lfp, 0,
+                                 plane_field=field) == 1.25
+    for arm in ("committed", "offset", "affine", "word"):
+        assert arms.field_reach_dots(arm, lfp, 0, plane_field=field) == 0.0
+    for arm in arms.FIELD2_ARMS:
+        assert arms.field_reach_dots(arm, lfp, 0) == field2_kernel.BOUND_DOTS
+    # nothing stands, or what stands is not this page's: nothing to add
+    assert arms.field_reach_dots("field", lfp, 0, plane_field=None) == 0.0
+    assert arms.field_reach_dots(
+        "field", lfp, 0, plane_field=_plane_field((3.0, 0.0), page=1)) == 0.0
+    assert arms.field_reach_dots(
+        "field", lfp, 0, plane_field=_plane_field((0.0, 0.0))) == 0.0
+
+
+# ------------------------------ the collapse over the consumed cells (F4)
+
+def _corner_field(value_dots_x: float = 2.0):
+    """Zero over tile (0, 0)'s own cells, non-zero past the next centre.
+
+    A 3x3 grid whose right column alone is displaced: the target tile's
+    cells all lie between the centres of tiles 0 and 1, which are both
+    zero, so they read EXACTLY zero however large the corner is — and a
+    cell past centre 1 (page cell 96) interpolates toward it.
+    """
+    from holo.receiver import data
+    grid = np.zeros((3, 3, 2), np.float64)
+    grid[:, 2, 0] = float(value_dots_x)
+    return data.PlaneField(
+        page=0, plane=0, delta_dots_xy=grid,
+        support=np.ones((3, 3), np.float64),
+        uncertainty_dots=np.full((3, 3), 0.4), n_observations=9,
+        n_captures=1, ordinal=11)
+
+
+def _halo_world(halo: int):
+    """A window wide enough for a halo to pass the next tile centre.
+
+    The sample module's own placement stops at 96 cells — exactly the
+    centre — so a footprint that reaches page cell 97, the first cell
+    that can read a field the target's own cells cannot, needs a wider
+    one.  The raster is 900 px at 8 px per cell, which is what caps this
+    at 104.
+    """
+    from .test_analyzer_sample import _footprint, _lane, _placement
+    lane = _lane(_placement(extent=(0, 0, 104, 104)))
+    return lane, sample.lane_footprint(lane, _footprint(halo))
+
+
+def test_a_zero_target_with_a_live_halo_no_longer_collapses():
+    """F4: the collapse is over the cells the arm CONSUMES.
+
+    The target's own cells read exactly zero and the halo's do not — and
+    the halo is not a spectator: `_override_for_delta` fits each owner's
+    affine over its observed cells, halo included, so the corrections
+    the old predicate discarded moved the TARGET's sample points too.
+    Under it this row collapsed to `committed` and called itself
+    byte-identical to it; the count below is what that claim cost.
+    """
+    lane, lfp = _halo_world(40)
+    field = _corner_field()
+    delta, detail = arms._field_delta(field, lfp, 0)
+    assert detail["field_applied"] is True
+    in_tile = np.asarray(lfp.tile.in_tile, bool)
+    observed = np.asarray(lfp.observed, bool)
+    assert not np.any(delta[in_tile & observed])
+    assert np.count_nonzero(
+        np.any(delta[~in_tile & observed], axis=1)) == 728
+
+    override, _residual = arms._override_for_delta(lane, lfp, delta, 2)
+    bound = _search_bound_dots(2) + arms.field_reach_dots(
+        "field", lfp, 0, plane_field=field)
+    crops = sample.open_crops(lane, lfp, bound_dots=bound, cell_dots=2)
+    committed = sample.read_rgb(crops, lfp, arm="reference")
+    applied = sample.read_rgb(crops, lfp, affine_override=override,
+                              arm="field")
+    assert committed.refusal is None and applied.refusal is None
+    target = in_tile & observed
+    moved = np.any(applied.points_yx != committed.points_yx, axis=1) & target
+    assert int(np.count_nonzero(moved)) == int(np.count_nonzero(target))
+
+
+def test_the_default_halo_cannot_reach_the_cells_that_change_the_answer():
+    """The scope of F4: the divergence needs a halo past the next centre.
+
+    At the default halos (16 for C and M, 32 for Y) the footprint stops
+    inside the same tile-centre interval as its target, so a target that
+    reads zero forces a halo that reads zero and the collapse IS
+    byte-identical — 33 cells of halo still are, 34 is not.  Only
+    `wide-halo` (48) reaches that far by default, which is why widening
+    the predicate costs the twin reuse nothing anyone was paid.
+    """
+    field = _corner_field()
+    for halo in (arms.HALO_CELLS["C"], arms.HALO_CELLS["Y"], 33):
+        _lane_unused, lfp = _halo_world(halo)
+        delta, detail = arms._field_delta(field, lfp, 0)
+        assert delta is None, halo
+        assert detail["field_reason"] == "field_reads_zero_here"
+        assert detail["field_collapse_over"] == "observed"
+    _lane_unused, lfp = _halo_world(34)
+    delta, detail = arms._field_delta(field, lfp, 0)
+    assert delta is not None and detail["field_applied"] is True

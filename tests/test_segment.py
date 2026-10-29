@@ -4,10 +4,12 @@ composed e014 page, rendered at 8 px/cell, rotated by an arbitrary angle
 and pasted on a glass canvas must segment, de-rotate, and PLACE at its
 true origin — placement is the aligner's ground truth. Backing invariance
 (dark sheet vs white lid) is a test, not a claim."""
+import os
 import sys
 from pathlib import Path
 
 import numpy as np
+import pytest
 from scipy import ndimage
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
@@ -115,6 +117,13 @@ def _run_session(backing: float) -> list[dict]:
     return out
 
 
+# 2026-09-05: two full segment/derotate/place sessions over the e014
+# page at 8 px/cell = 7.9 s, three quarters of the module.  Slow-gated,
+# not shrunk: both backings are the point of the test, and the core/grown
+# agreement bars (0.97/0.88) are measured on these crops.
+@pytest.mark.skipif(
+    os.environ.get("HOLO_RUN_SLOW_TESTS") != "1",
+    reason="set HOLO_RUN_SLOW_TESTS=1 for the segment/place sessions")
 def test_segment_align_place_dark_and_white_invariant() -> None:
     dark = _run_session(40.0)
     white = _run_session(250.0)

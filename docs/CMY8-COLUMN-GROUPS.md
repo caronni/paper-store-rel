@@ -13,7 +13,9 @@ gen-v1, since no mixed identity was ever emitted and uniform identities
 are untouched bit for bit. Scope ruled: **the src/holo v1 receiver and
 holo2 are not touched** — a mixed row reaching the v1 receiver fails on
 the profile's common-width property, holo2 keeps refusing the triplet,
-and the cross-tree oracle records that as an intended divergence.
+and the cross-tree oracle records that as an intended divergence. Holo2
+was retired 2026-09-05; §6 and §9 ruling 7 are now the record of that
+divergence.
 Successor of docs/CMY8-POOLED-FOUNTAIN.md (the -v1 pool), which it
 extends and does not replace; every frozen-code claim below was read in
 both trees and is marked **[verified]**.
@@ -341,10 +343,14 @@ fountain's only job is to accept the narrower result without waste.
   code's own emission it had reported "solved" with a wrong matrix).
 - The v1 receiver gets no message of its own (ruling 7): a mixed row
   fails on `common_user_bits` ("stream user widths differ"). holo2's
-  own refusal stays; `tests/holo2_oracles/test_oracle_lattice.py` moved
-  the triplet from the shared refusals to `INTENDED_DIVERGENCES`, and
-  `test_oracle_close.py` declares the fountain and streamset carries
-  `ORIGIN_MOVED`.
+  own refusal stays; `tests/holo2_oracles/test_oracle_lattice.py`
+  (deleted 2026-09-05 at a805888) moved the triplet from the shared
+  refusals to `INTENDED_DIVERGENCES`, and `test_oracle_close.py`
+  (deleted 2026-09-05 at a805888) declares the fountain and streamset
+  carries `ORIGIN_MOVED`. Holo2 itself was retired the same day: this
+  section and §9 ruling 7 are now the only record of the
+  src/holo-vs-holo2 divergence, since the oracles that held it are
+  gone.
 - Physical qualification remains F14-gated.
 
 ## 7. Rejected shapes, with the reason each fails
@@ -373,3 +379,74 @@ fountain's only job is to accept the narrower result without waste.
 - **Y at c3** — DOMINATED per INDEPENDENT-PLANES §H, and it changes
   Y's bits per tile, so it needs this mechanism anyway. Solving the
   width law once at the fountain unlocks every per-plane knob.
+
+## 11. Z vs p — the ruled identities are p120-CONDITIONAL (2026-09-16)
+
+§4's worked examples say "exact widths, p120" and mean it more strongly
+than it reads. A stream's width is `S = k_bits − p − 33`, so every
+width moves with the furniture density `p`, and `(Z, bounds, carried)`
+is a pure function of the widths — which makes Z a function of `p` too.
+Since the p axis became emittable and readable (FORMAT-SPACE §18,
+HOLO-DESIGN §13.37), a triplet can be spelled at any lawful `p`, and
+the grouping it gets is NOT the one ruled here. Computed through
+`holo.core.column_groups`:
+
+| triplet | p | widths C:M:Y | Z | carried | spare bits/site | dead-Y | any-one |
+|---|---|---|---|---|---|---|---|
+| r0700x0700x0547 | 120 | 2727:2727:2087 | 17 | 17:17:13 | 1.6 | 34/47 | 30/47 |
+| r0700x0700x0547 | 172 | 2675:2675:2035 | 25 | 25:25:19 | 2.0 | 50/69 | 44/69 |
+| r0700x0700x0547 | 244 | 2603:2603:1963 | 4 | 4:4:3 | 10.8 | 8/11 | 7/11 |
+| r0700x0700x0547 | 300 | 2547:2547:1907 | 31 | 31:31:23 | 17.3 | 62/85 | 54/85 |
+| r0850x0850x0775 | 120 | 3367:3367:3047 | 21 | 21:21:19 | 0.7 | 42/61 | 40/61 |
+| r0850x0850x0775 | 172 | 3315:3315:2995 | 31 | 31:31:28 | 0.8 | 31/45 | 59/90 |
+| r0850x0850x0775 | 244 | 3243:3243:2923 | 10 | 10:10:9 | 4.3 | 20/29 | 19/29 |
+| r0850x0850x0775 | 300 | 3187:3187:2867 | 29 | 29:29:26 | 9.7 | 29/42 | 55/84 |
+
+Z is NON-MONOTONE in `p`, and so is the waste: p244 collapses the Y
+lever from 17 groups to 4 and RAISES its zero tails from 1.6 to 10.8
+bits per site, while p172 costs the r0700 triplet +0.35 bits per site
+(1.65 -> 2.00) and the r0850 one +0.14 (0.67 -> 0.81). That is the argmin doing its job — the partition that best
+divides one width need not divide the shifted one — but it means the
+identities §4 works out, the Z17 and Z21 of ruling 3, and the tier
+ceilings in every table above are statements about p120 rows and about
+nothing else.
+
+Owed before any `p` row of a ruled triplet is minted: its own
+`EMIT_GOLDENS` entry per (triplet, p). The mechanism itself needs
+nothing — a triplet at p300 composes by construction under the same
+code, verified at `c2-cmy8-r0700x0700x0547-p300@10x10` (3,796 cells,
+tests/holo/test_color_compose.py) — but a golden is what makes an
+emitted row a frozen one, and this table is the reason a p120 golden
+cannot stand in for it. §7's rejected shapes and §9's rulings are
+unaffected: they are about the ALGEBRA, which does not depend on `p`.
+
+## 12. The cmy pairs — the same law at n = 2 (BUILT 2026-10-11, not printed)
+
+The cmy family (docs/CMY-DESIGN.md v0.3 §2.4, §3.2; FORMAT-SPACE §19;
+HOLO-DESIGN §13.38; branch `cmy-generator`, commits 128ed3cb and
+6926f6ef) pools its two label-bit streams, `hi` and `lo`, through this
+document's partition unchanged — the law is n-generic, nothing was
+added to it. A uniform pair is the one-group case (Z = 1); an uneven
+pair `r{hi}x{lo}` (the ruled ones hi-heavy) is partitioned by §3.9's
+argmin.
+Exact widths S = k_bits − p − 33; the ruled pairs at p120, pinned from
+the design text in tests/holo/test_cmy_vectors.py:
+
+| pair (hi × lo) | widths | Z | carried hi : lo | hi-dead ceiling | lo-dead ceiling | reserve (one block) |
+|---|---|---|---|---|---|---|
+| r0775x0700 (the first c2 probe, R4) | 3047 : 2727 | 19 | 19 : 17 | 17/36 | 19/36 | 21 |
+| r0850x0775 | 3367 : 3047 | 21 | 21 : 19 | 19/40 | 21/40 | 21 |
+| r0850x0700 | 3367 : 2727 | 21 | 21 : 17 | 17/38 | 21/38 | 21 |
+| r0700x0547 | 2727 : 2087 | 17 | 17 : 13 | 13/30 | 17/30 | 21 |
+| r0700x0625 | 2727 : 2407 | 17 | 17 : 15 | 15/32 | 17/32 | 21 |
+
+As §11 found for the triplets, Z is p-conditional and non-monotone in
+p: at p300 r0775x0700 → Z 26 (26 : 23), r0700x0625 → Z 31, r0850x0700
+→ Z 29 (test_cmy_vectors.py); at p200 r0850x0700 collapses to Z 5
+(tests/holo/test_column_groups.py). The column-grouped close of a cmy
+row runs through holo3's grouped decoder (`close_volume` over a row
+built from the FormatSpec, tests/holo/test_cmy_round_trip.py: every
+ruled row byte-exact at 10x10); the core decoder still refuses a
+column-group code (§10). The tiers read "stream" for cmy: the
+`dead_stream_ceiling` manifest key, because a stream's death is a toner's
+through the label table (dead Y → lo, dead M → hi, dead C → both).

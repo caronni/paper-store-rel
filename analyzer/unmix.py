@@ -59,20 +59,26 @@ from typing import Any, Mapping, Sequence
 import numpy as np
 from scipy.special import logsumexp
 
-from holo3.format import tile_codec
-from holo3.lib import spectral
-from holo3.plugins import color_model, color_sites, plane_k
+from holo.receiver.format import tile_codec
+from holo.receiver.lib import spectral
+from holo.receiver.plugins import color_model, color_sites, plane_k
 
 from . import calibrate as cal
 from . import frame as frame_mod
+from . import patch as patch_mod
 from . import sample as sample_mod
 from .types import (Key, KnownFrame, Lane, PLANE_OF, RunInputs,
                     TileFootprint)
 
 TILE_CELLS = 64
 
+#: The six modes of DESIGN §4.6 plus the patch family (W8 B1,
+#: `analyzer.patch`), which needs a READ CONTEXT — the raw crop, the
+#: posed read, the lane footprint, the folds and its spec — and refuses
+#: without one.
 UNMIX_MODES: tuple[str, ...] = (
-    "raw", "project", "subtract", "global", "conditional", "head")
+    "raw", "project", "subtract", "global", "conditional", "head",
+) + tuple(patch_mod.PATCH_MODES)
 
 MIX_SCOPES: tuple[str, ...] = ("footprint", "lane")
 
@@ -418,19 +424,31 @@ def _conditional_score(mix: spectral.PlaneMix, values: np.ndarray,
 
 def unmix_score(mode: str, target_plane: int, mix: spectral.PlaneMix,
                 values_rgb: np.ndarray, frame: KnownFrame, *,
-                fit_mask: np.ndarray | None = None) -> np.ndarray:
+                fit_mask: np.ndarray | None = None,
+                context: tuple[Any, ...] | None = None) -> np.ndarray:
     """One plane's PRESENCE, high = ink (PLAN §1.3's ink-dark convention).
 
     `calibrate.calibrate` standardises it with
     `calibrate.window_scores(-score)`, which is `plane_k.isolated_scores`'s
     second line, so this is the same quantity the production arm hands to
     the black-and-white machinery.
+
+    A patch mode (W8) reads pixels, not `values_rgb`: `context` is
+    ``(crops, read, lfp, folds, spec)`` and its absence is an ERROR, never
+    a silent fall-back to another mode.
     """
     if mode not in UNMIX_MODES:
         raise UnmixError(f"unknown unmix mode {mode!r}; known: {UNMIX_MODES}")
     values = np.asarray(values_rgb, np.float64)
     if not mix.accepted:
         return np.full(values.shape[0], np.nan)
+    if mode in patch_mod.PATCH_MODES:
+        if context is None:
+            raise UnmixError("patch modes need a read context "
+                             "(crops, read, lfp, folds, spec)")
+        crops, read, lfp, folds, spec = context
+        return patch_mod.patch_score(spec, target_plane, frame, mix, crops,
+                                     read, lfp, folds, mode=mode)[0]
     if mode in ("raw", "project", "subtract"):
         return np.asarray(spectral.plane_score(
             mix, values, frame.bits, frame.known, target_plane, mode),

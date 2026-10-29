@@ -10,7 +10,7 @@ set -euo pipefail
 
 if [ "${1:-}" = "--help" ] || [ "${1:-}" = "-h" ]; then
   echo "usage: $0 [fresh-run-directory] [diagnostic-port]"
-  echo "default run directory: scratch/c2-cmy7-hp-nominal-canon4800-q070-max-20x2-<timestamp>"
+  echo "default run directory: build/c2-cmy7-hp-nominal-canon4800-q070-max-20x2-<timestamp>"
   echo "default diagnostic port: 8023"
   exit 0
 fi
@@ -18,11 +18,15 @@ fi
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$REPO_ROOT"
 
-RUN_DIR="${1:-scratch/c2-cmy7-hp-nominal-canon4800-q070-max-20x2-$(date +%Y%m%d-%H%M%S)}"
+RUN_DIR="${1:-build/c2-cmy7-hp-nominal-canon4800-q070-max-20x2-$(date +%Y%m%d-%H%M%S)}"
 DIAG_PORT="${2:-8023}"
 PYTHON="./env/bin/python"
 CODING="c2-cmy7-p120-v0"
 PRINTER="hp-m281"
+# 2026-10-12 (R21): the generator names the page by its fossil; --printer is
+# its emission engine there (hp-m281's rgb route prints no cmy7, so none is
+# named: cmyk1). CODING/PRINTER stay for holo3's own decode door below.
+FORMAT="L:$CODING@3328x2304"
 SOURCE_FRACTION="0.7"
 EXPECTED_PAYLOAD_BYTES="966096"
 
@@ -43,9 +47,8 @@ mkdir -p "$RUN_DIR"
 
 CAPACITY_JSON="$(
   env PYTHONPATH=src "$PYTHON" -m holo.cli capacity \
-    --coding "$CODING" \
+    --format "$FORMAT" \
     --source-fraction "$SOURCE_FRACTION" \
-    --printer "$PRINTER" \
     --pages 1 \
     --json
 )"
@@ -67,9 +70,8 @@ dd \
 
 env PYTHONPATH=src "$PYTHON" -m holo.cli generate \
   "$RUN_DIR/payload.bin" \
-  --coding "$CODING" \
+  --format "$FORMAT" \
   --source-fraction "$SOURCE_FRACTION" \
-  --printer "$PRINTER" \
   --out "$RUN_DIR/volume"
 
 gs \
@@ -100,22 +102,22 @@ env PYTHONPATH=src "$PYTHON" -m holo.qualification.scrap_scan \
 
 echo "live diagnostics: http://127.0.0.1:$DIAG_PORT/"
 
-env PYTHONPATH=src "$PYTHON" -m holo.cli decode \
+# 2026-09-05: the v1 receiver is retired, so this decodes with holo3 (Gate E
+# §3 step 2). --dpi replaces --scan-dpi, --max-pages 1 replaces --page 0, the
+# run directory replaces --state (holo3 snapshots facts.npz + diagnostics
+# there), and the live view is one --diag PORT.
+./confetti3.py decode \
   "$RUN_DIR/scraps-r4800-001.tif" \
   "$RUN_DIR/scraps-r4800-002.tif" \
-  --scan-dpi 4800 \
-  --scan-dpi 4800 \
+  --dpi 4800 \
+  --dpi 4800 \
   --coding "$CODING" \
   --printer "$PRINTER" \
-  --page 0 \
-  --state "$RUN_DIR/receive.json" \
+  --max-pages 1 \
+  --run-dir "$RUN_DIR/holo3" \
   --out "$RUN_DIR/recovered.bin" \
   --complete \
-  --diag \
-  --diag-dir "$RUN_DIR/diag" \
-  --diag-port "$DIAG_PORT" \
-  --diag-interval 1 \
-  --diag-panel-width 600
+  --diag "$DIAG_PORT"
 
 cmp "$RUN_DIR/payload.bin" "$RUN_DIR/recovered.bin"
 echo "verified byte-identical recovery: $RUN_DIR/recovered.bin"

@@ -12,9 +12,11 @@ from holo.gen.color_compose import (
     compose_color_tile,
 )
 from holo.qualification.color_synthetic import (
+    M281_S14_BAR_MIX,
     ColorChannelParameters,
     PlaneParameters,
     area_decimate,
+    cmy_channel_parameters,
     render_color_scan,
 )
 
@@ -325,3 +327,26 @@ def test_area_decimation_refuses_malformed_inputs(
 ) -> None:
     with pytest.raises(ValueError, match=match):
         area_decimate(image, factor)  # type: ignore[arg-type]
+
+
+def test_the_m281_bar_mix_renders_each_solid_bar_at_its_measured_value(
+) -> None:
+    """Paper and the three single-toner bars come back as e041 S14's
+    8-bit means; whole-pixel offsets shift a plane without blurring it."""
+    bars = np.zeros((1, 4, 3))
+    bars[0, 1, 0] = bars[0, 2, 1] = bars[0, 3, 2] = 1.0
+    scan = render_color_scan(bars, cmy_channel_parameters())
+    np.testing.assert_allclose(
+        scan.rgb[0] * 255,
+        (M281_S14_BAR_MIX.paper_rgb, *M281_S14_BAR_MIX.toner_rgb),
+        atol=1e-9)
+    stripe = np.zeros((4, 8, 3))
+    stripe[:, 3, :] = 1.0
+    shifted = render_color_scan(stripe, cmy_channel_parameters(
+        offsets_px=((0, 0), (2, 0), (-1, 1)))).truth.sampled_cmy
+    assert np.flatnonzero(shifted[0, :, 0]).tolist() == [3]
+    assert np.flatnonzero(shifted[0, :, 1]).tolist() == [5]
+    assert np.flatnonzero(shifted[1, :, 2]).tolist() == [2]
+    assert set(np.unique(shifted).tolist()) == {0.0, 1.0}
+    with pytest.raises(ValueError, match="whole-pixel"):
+        cmy_channel_parameters(offsets_px=((0, 0), (0.5, 0), (0, 0)))

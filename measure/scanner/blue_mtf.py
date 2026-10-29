@@ -28,10 +28,13 @@ difference at the paper plane from one at the glass plane.
 
 Run (no hardware, read-only on every scan):
 
-    cd <repo>          # or a plane-fields worktree
-    PYTHONPATH=measure env/bin/python -m scanner.blue_mtf --all
+    cd <repo>
+    PYTHONPATH=measure env/bin/python -m scanner.blue_mtf --all \\
+        --evidence-root <evidence> --out build/scanner
 
-Outputs land in ``scratch/plane-fields/p2/scanner/``.
+Historical record of the P2 scanner characterization (2026-08); the
+e028 captures (``KNIFE``/``COLOR`` paths, relative to ``--evidence-root``,
+sha256-pinned) are in the evidence archive.  Outputs land in ``--out``.
 """
 from __future__ import annotations
 
@@ -47,23 +50,25 @@ from typing import Any, Iterable
 import numpy as np
 import tifffile
 
+import _evidence
+
 from . import _edge
 from ._edge import (UM_PER_INCH, ChannelResult, EdgeResult,
                     analyze_edge, band_samples, bin_profile,
                     compare_channels, line_metrics, linearize_srgb)
 
-REPO_SCANS = Path("scratch")
-OUT_DIR = REPO_SCANS / "plane-fields" / "p2" / "scanner"
-
+#: Capture paths are RELATIVE to ``--evidence-root``, the published
+#: archive root (``measure/_evidence.py``).
 KNIFE = {
-    "path": REPO_SCANS / "e028" / "canon-4800-knife-edge-20260804-gray.tiff",
+    "path": Path("paper-store-evidence-holo-2026-10/028-discovery-m281/"
+                 "knife-edge/captures/knife-edge-canon-4800grey.tiff"),
     "sha256": "58a3ceb1e52b984315db435e9b65dbc0e921cd5ce90acb8b5e0088ce3f32e058",
     "dpi": 4800.0,
     "record": "experiments/028-discovery-m281.md 028.4",
 }
 COLOR = {
-    "path": REPO_SCANS / "e028"
-    / "e028-m281-20260804-color-01-canon-4800rgb.tiff",
+    "path": Path("paper-store-evidence-holo-2026-10/028-discovery-m281/"
+                 "discovery/captures/discovery-color-canon-4800rgb.tiff"),
     "sha256": "d0f12451dfc16d06ce904a2bad324e7d1f2b30d6096d558168d1064bdc7aeb8d",
     "dpi": 4800.0,
     "record": "experiments/028-discovery-m281.md capture 028.1b",
@@ -167,8 +172,9 @@ def _groove_slope_and_positions(image: np.ndarray, decimate: int = 2,
     return slope, offsets, mask
 
 
-def measure_knife(scan_dpi: float, verbose: bool = True) -> dict[str, Any]:
-    image = tifffile.imread(KNIFE["path"])
+def measure_knife(scan_dpi: float, evidence_root: Path,
+                  verbose: bool = True) -> dict[str, Any]:
+    image = tifffile.imread(evidence_root / KNIFE["path"])
     height, width = image.shape
     axis_deg = _blade_axis(image)
     slope, offsets, mask = _groove_slope_and_positions(image)
@@ -214,7 +220,7 @@ def measure_knife(scan_dpi: float, verbose: bool = True) -> dict[str, Any]:
     narrowest = min(rows, key=lambda row: row["fwhm_px"])
     fwhm = np.array([row["fwhm_px"] for row in rows])
     return {
-        "scan": str(KNIFE["path"]),
+        "scan": str(evidence_root / KNIFE["path"]),
         "sha256": KNIFE["sha256"],
         "record": KNIFE["record"],
         "scan_dpi": scan_dpi,
@@ -365,9 +371,9 @@ def _line_result(patch: np.ndarray, *, scan_dpi: float, orientation: str,
         channels=channels, note="line target (bar width divides out)")
 
 
-def measure_color(scan_dpi: float, segments: int = 8,
+def measure_color(scan_dpi: float, evidence_root: Path, segments: int = 8,
                   verbose: bool = True) -> dict[str, Any]:
-    image = tifffile.memmap(COLOR["path"], mode="r")
+    image = tifffile.memmap(evidence_root / COLOR["path"], mode="r")
     height, width, _ = image.shape
     measurements: list[Measurement] = []
     curves: dict[str, dict[str, list[float]]] = {}
@@ -461,7 +467,7 @@ def measure_color(scan_dpi: float, segments: int = 8,
         _print_family(measurements, "crossK/")
     del image
     return {
-        "scan": str(COLOR["path"]),
+        "scan": str(evidence_root / COLOR["path"]),
         "sha256": COLOR["sha256"],
         "record": COLOR["record"],
         "scan_dpi": scan_dpi,
@@ -519,7 +525,7 @@ INK_ROWS = (42700, 43700)
 
 
 def measure_inks(scan_dpi: float, scanner_sigma_um: dict[str, float],
-                 verbose: bool = True) -> dict[str, Any]:
+                 evidence_root: Path, verbose: bool = True) -> dict[str, Any]:
     """Per-ink edge width, each ink read in the channel that sees it.
 
     The scanner half of the question is answered by the channel ratios;
@@ -532,7 +538,7 @@ def measure_inks(scan_dpi: float, scanner_sigma_um: dict[str, float],
     a number, and NOT a measurement of sheet I (different engine, sheet
     and capture dpi).
     """
-    image = tifffile.memmap(COLOR["path"], mode="r")
+    image = tifffile.memmap(evidence_root / COLOR["path"], mode="r")
     names = ("R", "G", "B")
     rows: list[dict[str, Any]] = []
     plans = [(ink, spec["channel"], spec["x0"], spec["x1"], INK_ROWS)
@@ -764,7 +770,8 @@ def main(argv: list[str] | None = None) -> int:
                         default="srgb",
                         help="capture transfer function to invert; the "
                              "robustness control for every channel ratio")
-    parser.add_argument("--out", type=Path, default=OUT_DIR)
+    _evidence.add_argument(parser)
+    parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--no-figure", action="store_true")
     arguments = parser.parse_args(argv)
     if arguments.all:
@@ -776,6 +783,13 @@ def main(argv: list[str] | None = None) -> int:
     if arguments.inks and not (arguments.knife and arguments.color):
         parser.error("--inks needs --knife (the sigma anchor) and --color "
                      "(the differentials that split it per channel)")
+    if arguments.knife or arguments.color:
+        arguments.evidence_root = _evidence.resolve(arguments.evidence_root,
+                                                    tool="blue_mtf")
+        _evidence.need(*(arguments.evidence_root / spec["path"]
+                         for wanted, spec in ((arguments.knife, KNIFE),
+                                              (arguments.color, COLOR))
+                         if wanted), tool="blue_mtf")
     arguments.out.mkdir(parents=True, exist_ok=True)
     _edge.TONE_MODE = arguments.tone
 
@@ -790,10 +804,13 @@ def main(argv: list[str] | None = None) -> int:
         "inputs": {},
     }
     for tag, spec in (("knife", KNIFE), ("color", COLOR)):
-        entry = {"path": str(spec["path"]), "sha256_expected": spec["sha256"],
-                 "record": spec["record"], "exists": spec["path"].exists()}
-        if arguments.verify_sha and spec["path"].exists():
-            entry["sha256_measured"] = sha256_of(spec["path"])
+        if arguments.evidence_root is None:
+            break
+        capture = arguments.evidence_root / spec["path"]
+        entry = {"path": str(capture), "sha256_expected": spec["sha256"],
+                 "record": spec["record"], "exists": capture.exists()}
+        if arguments.verify_sha and capture.exists():
+            entry["sha256_measured"] = sha256_of(capture)
             entry["sha256_ok"] = entry["sha256_measured"] == spec["sha256"]
         report["inputs"][tag] = entry
 
@@ -803,7 +820,7 @@ def main(argv: list[str] | None = None) -> int:
     knife_result = None
     if arguments.knife:
         print("[knife] e028 glass-level luma anchor")
-        knife_result = measure_knife(KNIFE["dpi"])
+        knife_result = measure_knife(KNIFE["dpi"], arguments.evidence_root)
         report["knife"] = knife_result
         narrowest = knife_result["narrowest"]
         print(f"  narrowest groove: FWHM {narrowest['fwhm_um']:.1f} um "
@@ -812,7 +829,8 @@ def main(argv: list[str] | None = None) -> int:
               f"(028.4: 50 um / 9-14 / ~17)")
     if arguments.color:
         print("[color] per-channel differentials on K-toner targets")
-        color_result = measure_color(COLOR["dpi"], segments=arguments.segments)
+        color_result = measure_color(COLOR["dpi"], arguments.evidence_root,
+                                     segments=arguments.segments)
         report["color"] = color_result
         report["aggregate"] = _aggregate(color_result, knife_result)
 
@@ -823,7 +841,8 @@ def main(argv: list[str] | None = None) -> int:
         report["scanner_sigma_um"] = sigmas
         report["inks"] = measure_inks(
             COLOR["dpi"],
-            {k: v for k, v in sigmas.items() if isinstance(v, float)})
+            {k: v for k, v in sigmas.items() if isinstance(v, float)},
+            arguments.evidence_root)
 
     suffix = "" if arguments.tone == "srgb" else f"-{arguments.tone}"
     path = arguments.out / f"blue-mtf{suffix}.json"

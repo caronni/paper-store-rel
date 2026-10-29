@@ -200,7 +200,7 @@ Ghostscript, the standalone TIFF command's `nominal` profile, the real
 receiver CLI, and strict session reload:
 
 ```console
-HOLO_RUN_GS_COLOR_RECEIVER=1 PYTHONPATH=src env/bin/pytest -q \
+HOLO_RUN_GS_TESTS=1 PYTHONPATH=src env/bin/pytest -q \
   tests/holo/test_color_software_qualification.py \
   -k closes_through_standalone_tiff_transformer
 ```
@@ -224,6 +224,40 @@ roughly 1.5–2× the certified K-c2 net path after coding.
 ## 1. Historical decisions (with the reasoning that froze them)
 
 ### D1. Alphabet: 8-state CMY (3 presence bits/cell), NOT 7-state
+**STATUS 2026-10-05: the cmy7 line is CLOSED (owner's wrap-up
+instruction).** The 017.6 triple numbers and the 002.0c M281 MI figures
+below were measured in the weak-Y epoch and are invalidated (e038 ruling
+2026-09-14); on fresh toner the M281 fails M and Y in every colour state
+outside one 4–5 mm band through its composite re-screen (e038), and a
+page with every payload triple removed is screened identically (S1dash,
+record in docs/REDUCED-ALPHABET-ERASURE-ROWS.md §6: hard cell error
+C 7.0 → 4.3 %, M 15.3 → 13.7 %, Y 28.7 → 30.6 %, one print each,
+uncontrolled). The AltaLink and the Canon read cmy8 with the triple
+printed. pack7 is a fossil (`L:` route; two identities, three printed
+sheets). If a triple-free or smaller alphabet is ever needed, the
+recommendation is the reduced-alphabet erasure row (that note: cmy8's
+per-plane codewords, forbidden states paid for with known-position
+erasures; seven states = 2.75 b/cell = pack7's rate without the joint
+symbol) rather than pack7. **STATUS 2026-10-06: the FOUR-state alphabet
+{W, C, M, Y} has a design of its own, the `cmy` family
+(docs/CMY-DESIGN.md): two label-bit streams on cmy8's machinery, the
+M281's unscreened alphabet (e041, branch `m281-screen-routes`, since MERGED; v0.2 2026-10-09); its
+two-stage demap reopens §4's "MLC successive decoding" on the decoder
+axis.** **STATUS 2026-10-09 (owner): the furniture law is
+family-independent** (CMY-DESIGN §2.5): the word '1' state, the word '0'
+state set with its keyed rotation rule and the dust multiset law are an
+axis of their own per row, chosen on robustness, anchor supply and the
+death map; the payload family constrains only the payload. Carry-over
+CANDIDATE, not built: cmy8 with single-toner furniture though its
+payload mixes, and the reduced-alphabet erasure row (seven payload
+states) with words and dust in any state the engine lays unscreened (CMY
+included on the AltaLink), each a `-v2` generation token per family when
+picked up; one measurement owed, C against CM as the '1' state on the
+AltaLink (CM darker, C the toner that decodes cold on every engine). At
+20 dust sites the lowest-first law gives about three of each missing
+state, what the cycle gives today, so the gain is the word rotation ('0'
+in {W, Y} puts Y anchors on word sites), not the dust. The paragraph
+below is the historical record.
 **STATUS AMENDED 2026-07-10 (run 017.6): ENGINE-GATED.** The first
 hardware decode measured the triple catastrophic on the M281 (its own
 cells at 25/43/52% level errors; volume not decodable at any ladder

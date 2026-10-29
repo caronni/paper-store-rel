@@ -20,6 +20,7 @@ import sys
 import time
 
 import numpy as np
+import pytest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
@@ -30,6 +31,15 @@ from paperholo.pilots import PilotLayout  # noqa: E402
 
 E012_SEED = b"paper-store/exp012-pilot1"
 BLIND_SEED = b"paper-store/test-fountain-blind"
+
+# 2026-09-05: both tests below are full-stack recoveries (3x840 tile LDPC
+# decodes; two blind print_scan acquisitions) at their MEASURED stimulus —
+# 29 s of the default lane. Slow-gated, not shrunk: the pinned numbers
+# (k_total 1409, 1564 symbols, blind BER 2.85%/2.04%, 16/16 interior) are
+# calibrated on that stimulus and are preserved exactly by the move.
+pytestmark = pytest.mark.skipif(
+    os.environ.get("HOLO_RUN_SLOW_TESTS") != "1",
+    reason="set HOLO_RUN_SLOW_TESTS=1 for the layer-4 volume round-trips")
 
 
 def test_three_page_volume_zero_channel_and_r2_slice() -> None:

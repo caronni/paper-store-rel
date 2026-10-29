@@ -13,8 +13,8 @@ import pathlib
 import numpy as np
 import pytest
 
-from holo3.format import tile_codec
-from holo3.lib.ldpc import LLR_CLIP, LLR_KNOWN
+from holo.receiver.format import tile_codec
+from holo.receiver.lib.ldpc import LLR_CLIP, LLR_KNOWN
 
 from analyzer import ladder as L
 from analyzer import mother as M
@@ -138,14 +138,6 @@ def test_l2_minsum_then_sp_reproduces_l0_on_a_failing_frame():
     assert np.array_equal(extrinsic[mother.transmitted], soft)
 
 
-def test_l3_refuses_without_ctx_offsets():
-    frame, llr = broken()
-    results = L.run_ladder(llr, frame.row, frame.key, rungs=("L3",),
-                           knobs={}, exposure=Exposure(), metadata_bit=None)
-    assert results[0].verdict == VERDICT_REFUSED
-    assert results[0].detail["reason"] == "no_ctx_offsets"
-
-
 def test_l3_refuses_flat_or_malformed_ctx_offsets():
     frame, llr = broken()
     flat = L.run_ladder(llr, frame.row, frame.key, rungs=("L3",),
@@ -160,21 +152,13 @@ def test_l3_refuses_flat_or_malformed_ctx_offsets():
     assert short[0].detail["reason"] == "malformed_ctx_offsets"
 
 
-def test_l3_applies_footprint_offsets_over_rounds_without_a_refit():
-    frame, llr = broken(hard=0.06, seed=303)
-    offsets = [0.4, 0.3, 0.2, 0.1, 0.0, -0.1, -0.2, -0.3, -0.4]
-    results = L.run_ladder(llr, frame.row, frame.key, rungs=("L3",),
-                           knobs={"ctx_offsets": offsets, "rounds": 3,
-                                  "iters": 60},
-                           exposure=Exposure(), metadata_bit=None)
-    assert results, "L3 produced no rows"
-    assert all(item.rung.startswith("L3.r") for item in results)
-    assert tuple(results[0].detail["ctx_offsets"]) == tuple(offsets)
-    assert all(item.verdict != VERDICT_WRONG for item in results)
-
-
 def test_l3_round_zero_is_the_channel_and_the_offsets_never_move():
-    """The apply-only contract: the bins move, the offsets do not."""
+    """The apply-only contract: the bins move, the offsets do not.
+
+    One ladder run for the whole round story since 2026-09-20: that
+    every row is a round of L3 and none of them is WRONG used to be a
+    second run of this same frame under these same knobs.
+    """
     frame, llr = broken(hard=0.06, seed=303)
     offsets = [0.4, 0.3, 0.2, 0.1, 0.0, -0.1, -0.2, -0.3, -0.4]
     knobs = {"ctx_offsets": offsets, "rounds": 3, "iters": 60}
@@ -183,6 +167,9 @@ def test_l3_round_zero_is_the_channel_and_the_offsets_never_move():
     l1 = L.run_ladder(llr, frame.row, frame.key, rungs=("L1",),
                       knobs={}, exposure=Exposure(), metadata_bit=None)
     # round 0 decodes the channel as given, so it IS L1 at these iterations
+    assert l3, "L3 produced no rows"
+    assert all(item.rung.startswith("L3.r") for item in l3)
+    assert all(item.verdict != VERDICT_WRONG for item in l3)
     assert l3[0].rung == "L3.r0"
     assert l3[0].unsat_at_exit == l1[0].unsat_at_exit
     assert "n_bins_moved" not in l3[0].detail   # nothing shifted yet
@@ -364,23 +351,53 @@ def near_codeword(n_bad: int, seed: int, ref=R0850):
     return frame, near_codeword_llr(frame, n_bad, seed)
 
 
+@pytest.fixture(scope="module")
+def l4_miss_sweep():
+    """ONE 52-candidate L4 sweep over `L4_MISS`, shared (2026-09-05).
+
+    The two tests below issued the identical call — 2.2 s of `run_ladder`
+    each — to assert two different things about the same sweep.  The CRC
+    spy rides the shared run and is restored in a `finally`, because the
+    patch lands on the shared `tile_codec` module object, not a local.
+    """
+    frame, llr = near_codeword(*L4_MISS)
+    real = tile_codec.crc32_bits
+    calls = {"n": 0}
+
+    def spy(bits):
+        calls["n"] += 1
+        return real(bits)
+
+    M.tile_codec.crc32_bits = spy
+    try:
+        exposure = Exposure()
+        l4 = L.run_ladder(llr, frame.row, frame.key, rungs=("L1", "L4"),
+                          knobs={}, exposure=exposure,
+                          metadata_bit=None)[-1]
+    finally:
+        M.tile_codec.crc32_bits = real
+    return l4, calls["n"], exposure
+
+
 @pytest.mark.parametrize("n_bad,seed", L4_HITS)
 def test_l4_certifies_what_l0_l1_l2_cannot(n_bad, seed):
     """The rung's reason to exist: a few-bit exit the earlier rungs miss."""
     frame, llr = near_codeword(n_bad, seed)
     exposure = Exposure()
-    without = L.run_ladder(llr, frame.row, frame.key,
-                           rungs=("L0", "L1", "L2"), knobs={"L2": FAST_L2},
-                           exposure=exposure, metadata_bit=None)
+    results = L.run_ladder(llr, frame.row, frame.key,
+                           rungs=("L0", "L1", "L2", "L4"),
+                           knobs={"L2": FAST_L2}, exposure=exposure,
+                           metadata_bit=None)
+    #: The miss is read off the SAME run's earlier rows (2026-09-05): the
+    #: four-rung run's prefix IS the three-rung run — measured identical in
+    #: rung, verdict and `unsat_at_exit` on all three cases — and L0/L1/L2
+    #: charge no exposure, so L4 enters exactly as it did before.
+    without = results[:-1]
     assert all(item.verdict == VERDICT_OPEN for item in without), \
         [(item.rung, item.verdict) for item in without]
     entry = min(item.unsat_at_exit for item in without)
     assert 0 < entry <= L.L4_MAX_UNSAT   # the few-error regime, blindly
 
-    results = L.run_ladder(llr, frame.row, frame.key,
-                           rungs=("L0", "L1", "L2", "L4"),
-                           knobs={"L2": FAST_L2}, exposure=exposure,
-                           metadata_bit=None)
     l4 = results[-1]
     assert l4.rung == "L4"
     assert l4.verdict == VERDICT_CERTIFIED_LIST          # a LIST rung
@@ -394,13 +411,11 @@ def test_l4_certifies_what_l0_l1_l2_cannot(n_bad, seed):
     assert l4.crc_consults_distinct >= 1
 
 
-def test_l4_reaches_the_single_bit_regime_and_not_the_two_bit_one():
+def test_l4_reaches_the_single_bit_regime_and_not_the_two_bit_one(
+        l4_miss_sweep):
     """Measured, not assumed: the pair sweep over 8 heads does not reach a
     two-bit exit, so the rung reports an honest miss rather than a hit."""
-    frame, llr = near_codeword(*L4_MISS)
-    results = L.run_ladder(llr, frame.row, frame.key, rungs=("L1", "L4"),
-                           knobs={}, exposure=Exposure(), metadata_bit=None)
-    l4 = results[-1]
+    l4, _n_crc_calls, _exposure = l4_miss_sweep
     assert l4.verdict == VERDICT_OPEN
     assert l4.detail["n_candidates"] == 52       # 24 singles + C(8,2) pairs
     assert l4.detail["n_singles"] == 24 and l4.detail["n_pairs"] == 28
@@ -575,30 +590,16 @@ def test_l7a_refuses_an_empty_disagreement_set():
     assert results[0].detail["reason"] == "no_disagreement"
 
 
-def test_l4_never_consults_the_crc_on_a_syndrome_failing_candidate():
+def test_l4_never_consults_the_crc_on_a_syndrome_failing_candidate(
+        l4_miss_sweep):
     """DESIGN §0's ordering, measured rather than read: over a full 52-
     candidate sweep that closes no syndrome, `tile_codec.crc32_bits` is
     never called and the exposure is untouched."""
-    frame, llr = near_codeword(*L4_MISS)
-    real = tile_codec.crc32_bits
-    calls = {"n": 0}
-
-    def spy(bits):
-        calls["n"] += 1
-        return real(bits)
-
-    M.tile_codec.crc32_bits = spy
-    try:
-        exposure = Exposure()
-        l4 = L.run_ladder(llr, frame.row, frame.key, rungs=("L1", "L4"),
-                          knobs={}, exposure=exposure,
-                          metadata_bit=None)[-1]
-    finally:
-        M.tile_codec.crc32_bits = real
+    l4, n_crc_calls, exposure = l4_miss_sweep
     assert l4.verdict == VERDICT_OPEN
     assert l4.detail["n_candidates"] == 52
     assert l4.detail["n_syndrome_ok"] == 0
-    assert calls["n"] == 0                       # no codeword, no CRC
+    assert n_crc_calls == 0                      # no codeword, no CRC
     assert exposure.distinct == 0 and l4.crc_consults_distinct == 0
 
 

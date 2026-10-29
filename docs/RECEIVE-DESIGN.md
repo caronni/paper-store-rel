@@ -1,5 +1,17 @@
 # RECEIVE-DESIGN v0.59 — holo Track 3 production read-back
 
+Retired 2026-09-05. This was the normative design of the v1 receiver,
+`src/holo/receive`, which holo3 superseded and which was deleted at `284ae3e`;
+from that sha this document is historical. It stays as the record of what was
+measured and ruled here — the E021-E023c constants, the colour-uplift campaign,
+the version ledger's rulings — and nothing below it has been rewritten, so read
+every present tense as of that date. The living receiver documents are
+`src/holo/receiver/docs/API.md`, `src/holo/receiver/docs/SCHEDULE.md`, `src/holo/receiver/docs/DIAG-DESIGN.md` and
+`src/holo/receiver/docs/PAGE-DOMAIN.md`; the mechanism-by-mechanism map from v1 to holo3 is
+`src/holo/receiver/docs/retirement_docs-2026-09/HOLO1-MAP.md`. Cold format discovery (§8) was
+archived rather than deleted, as a later-port candidate:
+`docs/archive/holo1/discovery/`.
+
 Status: **the numerical receiver and the §10 diagnostic implementation are
 operational with an explicitly provisional historical policy; physical
 production qualification is not frozen; the diagnostic implementation has

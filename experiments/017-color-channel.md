@@ -434,7 +434,7 @@ must use `--fresh`.
 
 **Receiver defect found (clean-render forensics; scripts
 scratch/e017dbg_{repro,dissect,crossfit,scales,ablate,fullpage,native,
-sampling}.py):** the driver selftest had already recorded the smoking gun —
+sampling}.py; retired 2026-10-09, the result stands in this entry):** the driver selftest had already recorded the smoking gun —
 window (4829,509) of the CLEAN full-page render reads C 0.00 / M 50.03 /
 Y 49.96% (deterministic, window-specific; page-wide selftest M/Y 3.98/3.97%
 = one latched window averaged over 15). Ablation ladder on that window:
@@ -527,7 +527,13 @@ THIS engine state. Decision deferred to the user (hardware queue).
 Artifacts: debug scripts scratch/e017dbg_*.py (repro/fullpage/ablate/
 dissect/probe_stage/crossfit/native from the interrupted 017.5 session —
 native's dec->native mapping leg is BROKEN, its native-footing numbers are
-invalid; scales/sampling added this session); reports
+invalid; scales/sampling added this session; retired 2026-10-09, their result stands above); reports
 scratch/e017dbg_real-center.json (ablation ladder verbatim). The selftest
 report build/e017_selftest_report.json still carries the pre-fix latched
 window (page M/Y 3.98/3.97%) — regenerate on the next driver run.
+
+## Addendum 2026-10-09 — an unlogged capture
+
+`scratch/hp-e017-arch-c-canon-4800rgb-take2.tiff` (6,875,455,728 B, mtime 2026-07-10 17:41), never logged
+here; read by `experiments/021-payload-regions/qualify_e021.py`. sha256 from the raw-hash pass of 2026-10-09 (sha256 over the retained evidence):
+`bb87b3790e4f6b549db0cb8537ecb36a4ac669cf961177a1970159a0668e48b5`.

@@ -103,7 +103,7 @@ WINDOW_CELLS = 600                   # e012/016.3 c3 precedent (76.2 mm)
 OVERLAP_CELLS = 60
 ID_WINDOW_PX = WINDOW_CELLS * CELL_PX                # identify on one window
 
-SELFTEST_SYNTH = ROOT / "scratch" / "e017_selftest_synth_8pxdot.tiff"
+SELFTEST_SYNTH = BUILD / "e017_selftest_synth_8pxdot.tiff"
 SELFTEST_MARGIN_DOTS = 192           # paper-white margin around the field
 
 

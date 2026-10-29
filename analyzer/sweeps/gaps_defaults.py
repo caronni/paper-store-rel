@@ -15,8 +15,20 @@ Every configuration runs in ONE process per sheet (the H mirror costs
 while the membership moved is a regression, not a wash.
 
 Run:
-    PYTHONPATH=. env/bin/python -m analyzer.sweeps.gaps_defaults --sheet H
-    PYTHONPATH=. env/bin/python -m analyzer.sweeps.gaps_defaults --sheet I
+    PYTHONPATH=src:. env/bin/python -m analyzer.sweeps.gaps_defaults \
+        --sheet H --run-dir RUN --gt-dir GEN --out OUT
+
+Historical record; the inputs it ran on (in the evidence archive):
+  H  run analyzer/H7-mirror, gen dir
+     xerox-v1-20260818/H-c2-cmy8r0850-q090-4mm;
+  I  run I-single-w8.run.51556, gen dir
+     xerox-v1-20260818/I-c2-cmy8r0700-q090-4mm.  The four-capture
+     resume-3 run this sweep was written against lived in /tmp and is
+     gone; that is the post-W2 single-capture run (e037's capture,
+     5,861 certificates), so a replay is a DIFFERENT population, not a
+     re-run.  A1b re-pins the fixture that reads it.
+`--sheet` picks the sample design (H: the c60 + M/Y parity, I: the
+C/M/Y parity), never the inputs.
 
 2026-09-04 NOTE.  This sweep is the RECORD of a finished measurement.
 The ruling that took ground truth out of the run removed the oracle
@@ -32,6 +44,7 @@ from __future__ import annotations
 import argparse
 import json
 import time
+from pathlib import Path
 from typing import Any
 
 from analyzer import controls as ctl
@@ -43,13 +56,7 @@ from analyzer.types import (DEFAULT_ARMS, DEFAULT_LADDER_RUNGS,
                             VERDICT_CERTIFIED,
                             VERDICT_CERTIFIED_LIST)
 
-from .c_parity_gap import OUT, SEED, base_config, c_sample, jsonable, write
-
-I_RUN_DIR = "/tmp/I/holo3-I-resume-3-run"
-I_GT_DIR = "scratch/xerox-v1-20260818/I-c2-cmy8r0700-q090-4mm"
-
-H_RUN_DIR = "scratch/analyzer/H7-mirror"
-H_GT_DIR = "scratch/xerox-v1-20260818/H-c2-cmy8r0850-q090-4mm"
+from .c_parity_gap import SEED, base_config, c_sample, jsonable, write
 
 #: The four configurations the gate compares.  `proposed` is what the
 #: package adopts; the two middles isolate which half of it moved a key.
@@ -68,9 +75,9 @@ CONFIGURATIONS: tuple[tuple[str, dict], ...] = (
 )
 
 
-def load(run_dir: str, gt_dir: str, *, check_rank: bool) -> tuple:
+def load(run_dir: Path, gt_dir: Path, *, check_rank: bool) -> tuple:
     run = inputs_mod.load_run(run_dir)
-    truth = truth_mod.load_truth(gt_dir, gt_dir + "/payload-counting.bin",
+    truth = truth_mod.load_truth(gt_dir, gt_dir / "payload-counting.bin",
                                  run.row, max(run.live_pages) + 1,
                                  format_ref=run.format_ref)
     rows = residue_mod.census(run, events=None, check_rank=check_rank)
@@ -185,16 +192,17 @@ def main() -> int:
                         help="comma-separated configuration labels")
     parser.add_argument("--n-per-stream", type=int, default=20)
     parser.add_argument("--suffix", default="")
+    parser.add_argument("--run-dir", type=Path, required=True)
+    parser.add_argument("--gt-dir", type=Path, required=True)
+    parser.add_argument("--out", type=Path, required=True)
     args = parser.parse_args()
 
-    if args.sheet == "H":
-        run, truth, rows = load(H_RUN_DIR, H_GT_DIR, check_rank=False)
-    else:
-        run, truth, rows = load(I_RUN_DIR, I_GT_DIR, check_rank=False)
+    run, truth, rows = load(args.run_dir, args.gt_dir, check_rank=False)
     print("loaded", flush=True)
 
     if args.phase == "reroll":
-        write(f"reroll-{args.sheet}.json", reroll_phase(run, truth, rows))
+        write(f"reroll-{args.sheet}.json", reroll_phase(run, truth, rows),
+              args.out)
         return 0
 
     wanted = None if args.only is None else set(args.only.split(","))
@@ -229,9 +237,8 @@ def main() -> int:
             payload["compare"][sample_name] = compare(
                 payload["results"][sample_name])
 
-    OUT.mkdir(parents=True, exist_ok=True)
     name = f"gate-{args.sheet}{args.suffix}.json"
-    write(name, payload)
+    write(name, payload, args.out)
     print(json.dumps(jsonable(payload["compare"]), indent=1))
     return 0
 

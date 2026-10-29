@@ -17,6 +17,7 @@ import sys
 import time
 
 import numpy as np
+import pytest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
@@ -75,6 +76,12 @@ def _structured_damage(cells: np.ndarray, r) -> np.ndarray:
     return np.clip(refl, 0.0, 1.0)
 
 
+# 2026-09-05: four full blind acquisitions = 7.4 s, three quarters of the
+# module. Slow-gated, not shrunk: the ctx-vs-global comparison is only
+# meaningful at this page size and both damage models are load-bearing.
+@pytest.mark.skipif(
+    os.environ.get("HOLO_RUN_SLOW_TESTS") != "1",
+    reason="set HOLO_RUN_SLOW_TESTS=1 for the ctx/global detector pair")
 def test_ctx_pair_free_vs_structured() -> None:
     spec, cp = _page()
     gt = compose.extract_payload(cp.cell_values, spec, SEED, 0)

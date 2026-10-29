@@ -1,0 +1,5 @@
+# e044 (2026-10-11): payloads and printed jobs, byte-identical regeneration by generate_set.py --verify
+8682fe0a85cdb83ec39e035c27399b2c7a7533c9a304a743cba958553c9a2133  counting-A-c2-1123545.bin
+3310f2171e2e79ee229214475809403008cafdad3b11b09203baa8e6df0d84f1  counting-B-c3-558886.bin
+8b9864e91b65e9ebdf64ccb88eb2557cd4dd042d66eab34d58480c93b52aa086  E044-A-page000.ps
+9d341eea502835c67058b1b6e10250f6e5a6c5e4df365cadd907675a951960fc  E044-B-page000.ps

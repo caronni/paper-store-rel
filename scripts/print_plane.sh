@@ -18,5 +18,14 @@ HOST="${2:-${PAPERHOLO_PRINTER_HOST:-<host>}}"
 read -r -p "Physically print '$FILE' via raw socket $HOST:9100? [yes/NO] " ok
 [ "$ok" = "yes" ] || { echo "aborted"; exit 1; }
 shasum -a 256 "$FILE"
-nc -w 10 "$HOST" 9100 < "$FILE"
+# PRINT_NC_WAIT (default 10 s idle) and PRINT_BACKCHANNEL (a file) keep the
+# connection open after the send and capture what the printer says back on
+# it — the PCL XL error report (ErrorReport eBackCh...) and PJL USTATUS come
+# this way and are lost when the socket closes early (e041 S10p, 2026-10-05).
+NC_WAIT="${PRINT_NC_WAIT:-10}"
+if [ -n "${PRINT_BACKCHANNEL:-}" ]; then
+  nc -w "$NC_WAIT" "$HOST" 9100 < "$FILE" | tee "$PRINT_BACKCHANNEL"
+else
+  nc -w "$NC_WAIT" "$HOST" 9100 < "$FILE"
+fi
 echo "sent $(wc -c < "$FILE" | tr -d ' ') bytes to $HOST:9100"

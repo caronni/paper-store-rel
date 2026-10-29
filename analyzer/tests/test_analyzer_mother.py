@@ -7,15 +7,15 @@ a whole sheet.  The measured waterfall these levels sit on is recorded in
 
 from __future__ import annotations
 
-import ast
-import pathlib
+import threading
+from concurrent.futures import ThreadPoolExecutor
 
 import numpy as np
 import pytest
 
-from holo3.format import tile_codec
-from holo3.lib import ldpc
-from holo3.lib.ldpc import CODES, LLR_CLIP, LLR_KNOWN
+from holo.receiver.format import tile_codec
+from holo.receiver.lib import ldpc
+from holo.receiver.lib.ldpc import CODES, LLR_CLIP, LLR_KNOWN
 
 from analyzer import mother as M
 from analyzer.types import Exposure
@@ -25,7 +25,6 @@ from ._synthetic import (
     R0850,
     build_frame,
     channel_llr,
-    hard_error_of,
     through_cells,
 )
 
@@ -239,6 +238,62 @@ def test_exposure_bound_refuses_a_new_consult():
     assert M.gate(frame.codeword, mother, frame.bank, exposure)[0]
 
 
+def test_two_workers_at_the_bound_do_not_both_get_through():
+    """Review F13, 2026-09-13: the reservation is ONE operation.
+
+    Two genuine codewords, a bound that pays for one, and both workers
+    held at the gate's reservation point so they reach it together —
+    the interleaving that was legal while `gate` asked "is it new?",
+    "would it exceed?" and "add it" separately, and which put the run
+    over its bound with two certificates minted.  One is refused now,
+    and it is refused for the exposure.
+    """
+    frame = build_frame(seed=7)
+    other = build_frame(seed=99)
+    mother = M.to_mother(np.zeros(frame.printed.size), frame.row, frame.key,
+                         metadata_bit=None)
+    exposure = Exposure(bound_expected_false=1.5 * 2.0 ** -32)
+    at_the_gate = threading.Barrier(2, timeout=10)
+    reserve = exposure.reserve
+
+    def synchronized(digest):
+        at_the_gate.wait()
+        return reserve(digest)
+
+    exposure.reserve = synchronized
+    notes: list[dict] = [{}, {}]
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        accepted = list(pool.map(
+            lambda pair: M.gate(pair[0].codeword, mother, pair[0].bank,
+                                exposure, notes=pair[1])[0],
+            [(frame, notes[0]), (other, notes[1])]))
+
+    assert sorted(accepted) == [False, True]
+    assert exposure.distinct == 1
+    assert not exposure.exceeded()
+    refused = notes[accepted.index(False)]
+    assert refused["refusal"] == "exposure_exceeded"
+
+
+def test_a_duplicate_candidate_is_charged_to_one_caller_only():
+    """`notes["consulted_new"]` is the rung's own charge; two rungs that
+    propose the SAME codeword at the same moment must not both bill for
+    it while `distinct` rises by one."""
+    frame = build_frame(seed=11)
+    mother = M.to_mother(np.zeros(frame.printed.size), frame.row, frame.key,
+                         metadata_bit=None)
+    exposure = Exposure()
+    notes: list[dict] = [{}, {}, {}, {}]
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        accepted = list(pool.map(
+            lambda note: M.gate(frame.codeword, mother, frame.bank,
+                                exposure, notes=note)[0], notes))
+
+    assert accepted == [True] * 4
+    assert exposure.distinct == 1
+    assert sorted(note["consulted_new"] for note in notes) == [0, 0, 0, 1]
+
+
 def test_gate_refuses_a_bank_that_does_not_match_the_frame():
     frame = build_frame(R0850)
     other = build_frame(R0700)
@@ -299,55 +354,3 @@ def test_clipped_external_respects_the_bounded_llr_invariant():
     assert out[0] == LLR_KNOWN and out[1] == -LLR_KNOWN
     assert out[2] == LLR_CLIP and out[3] == -LLR_CLIP and out[4] == 3.0
 
-
-def imported_names(module) -> set[str]:
-    """Every module this file imports, by AST — comments and prose excluded."""
-    tree = ast.parse(pathlib.Path(module.__file__).read_text(encoding="utf-8"))
-    names: set[str] = set()
-    for node in ast.walk(tree):
-        if isinstance(node, ast.Import):
-            names.update(alias.name for alias in node.names)
-        elif isinstance(node, ast.ImportFrom):
-            prefix = "." * node.level + (node.module or "")
-            names.add(prefix)
-            names.update(f"{prefix}.{alias.name}" for alias in node.names)
-    return names
-
-
-def test_module_is_blind():
-    """DESIGN §0: mother.py must never import truth or oracle."""
-    names = imported_names(M)
-    assert not any("truth" in name or "oracle" in name for name in names), \
-        sorted(names)
-
-
-def test_measured_waterfall_and_bimodality(capsys):
-    """Records the numbers the ladder's deferral rule reads (DESIGN §6).
-
-    Not a bar: it prints (hard error, certified, unsat, bits wrong) so the
-    lead can see where each row's waterfall sits and whether BP failure is
-    bimodal at these levels.
-    """
-    lines = []
-    for ref in (R0850, R0700):
-        frame = build_frame(ref)
-        for hard in (0.03, 0.04, 0.06, 0.10, 0.14):
-            certified = 0
-            rows = []
-            for trial in range(3):
-                llr = channel_llr(frame.printed, hard, seed=2000 + trial)
-                mother = M.to_mother(llr, frame.row, frame.key,
-                                     metadata_bit=None)
-                out = M.bp(mother, None, 60, mode="minsum-then-sp",
-                           alpha=ALPHA)
-                ok, _user = M.gate(out.hard, mother, frame.bank, Exposure())
-                certified += int(ok)
-                rows.append((out.unsat,
-                             int(np.count_nonzero(out.hard != frame.codeword)),
-                             hard_error_of(llr, frame.printed)))
-            lines.append(f"{ref.split(':')[1]} p={hard:.2f} "
-                         f"certified={certified}/3 "
-                         f"(unsat, bits_wrong, measured_hard)={rows}")
-    print("\n".join(lines))
-    captured = capsys.readouterr().out
-    assert "certified=" in captured

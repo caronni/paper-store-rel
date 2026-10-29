@@ -31,7 +31,8 @@ the proven experiment-001 scanlab primitives. This module uses NO randomness.
 
 Run the smoke block:
   env/bin/python experiments/002-calibration-page/cal_structural.py \
-      scans/test-scan-calpage-bw.png scans/test-scan-calpage-color.png
+      <evidence>/scans/test-scan-calpage-bw.png \
+      <evidence>/scans/test-scan-calpage-color.png
 """
 from __future__ import annotations
 
@@ -1063,10 +1064,8 @@ if __name__ == "__main__":
     import time
 
     ap = argparse.ArgumentParser(description="structural family smoke run")
-    ap.add_argument("scan_bw", nargs="?",
-                    default=str(_HERE.parent.parent / "scans/test-scan-calpage-bw.png"))
-    ap.add_argument("scan_color", nargs="?",
-                    default=str(_HERE.parent.parent / "scans/test-scan-calpage-color.png"))
+    ap.add_argument("scan_bw")
+    ap.add_argument("scan_color")
     ap.add_argument("--out", default=str(cc.BUILD / "cal_structural_report.json"))
     args = ap.parse_args()
 

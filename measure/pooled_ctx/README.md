@@ -1,10 +1,10 @@
 # measure/pooled_ctx — the pooled colour context arm's decode evidence
 
-The arm itself is `holo3/plugins/color_pooled.py` (`color.pooled_ctx`).
+The arm itself is `src/holo/receiver/plugins/color_pooled.py` (`color.pooled_ctx`).
 This directory holds the driver that produced the numbers below and the
 stimulus builder for the capture pair it needed.
 
-    PYTHONPATH=.:src env314t/bin/python -m measure.pooled_ctx.harness \
+    PYTHONPATH=src:. env/bin/python -m measure.pooled_ctx.harness \
         --artefacts <dir> --case null-color --out <dir>/null-color.json
 
 `--case` is one of `null-k`, `null-color`, `mixed`, `pair`;
@@ -94,7 +94,7 @@ measured reasons, both worth carrying:
 
 The mechanism's existence proof therefore lives at unit scale, where the
 starved lane can be built exactly:
-`holo3/tests/test_h3_plugins_color_pooled.py` — a 120-row lane refuses
+`src/holo/receiver/tests/test_h3_plugins_color_pooled.py` — a 120-row lane refuses
 its own matrix on the search floor while the pooled fit over it and a
 2400-row lane adopts, and the starved lane's OWN held-out labels rate the
 pooled head strictly better than nothing.

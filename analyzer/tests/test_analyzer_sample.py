@@ -11,18 +11,22 @@ than paper at the committed pose.
 
 from __future__ import annotations
 
+from dataclasses import replace as dc_replace
 from fractions import Fraction
 
 import numpy as np
 import pytest
 
-from holo3.data import Placement
+from holo.receiver.data import Placement
+from holo.receiver.lib import geometry as lib_geometry
+
+from holo.receiver.plugins import color_region_anchor as anchor
 
 from analyzer import frame, sample
 from analyzer.inputs import finest_covering, page_tile_coverage
 from analyzer.types import Lane, TileFootprint
 
-from ._analyzer_fixtures import i_inputs, needs_i_run
+from ._analyzer_fixtures import needs_sim, sim_run
 
 # --- the synthetic page ---------------------------------------------------
 PITCH_PX = 8.0
@@ -59,7 +63,7 @@ def _placement(quality: float = 0.10, region_index: int = 0,
                origin: tuple[int, int] = (0, 0),
                extent: tuple[int, int, int, int] = (0, 0, WINDOW_CELLS,
                                                     WINDOW_CELLS),
-               ) -> Placement:
+               frame_level: Fraction = Fraction(1)) -> Placement:
     height, width = extent[2] - extent[0], extent[3] - extent[1]
     cy, cx = np.meshgrid(np.arange(height), np.arange(width),
                          indexing="ij")
@@ -68,15 +72,19 @@ def _placement(quality: float = 0.10, region_index: int = 0,
         window_id=("cap0", 0, region_index, extent), capture_id="cap0",
         level_index=0, region_index=region_index, patch_ordinal=0, page=0,
         rot_k=0, page_origin_yx=origin,
-        native_affine=(PITCH_PX, 0.0, ORIGIN_Y, 0.0, PITCH_PX, ORIGIN_X),
-        pitch_px=PITCH_PX, route="place", local_cells_yx=local,
+        native_affine=lib_geometry.compose_to_native(
+            (PITCH_PX, 0.0, ORIGIN_Y, 0.0, PITCH_PX, ORIGIN_X), frame_level),
+        pitch_px=float(frame_level) * PITCH_PX, route="place",
+        local_cells_yx=local,
         quality=quality)
 
 
-def _lane(*placements: Placement) -> Lane:
+def _lane(*placements: Placement, frame_level: Fraction = Fraction(1),
+          ) -> Lane:
     return Lane(capture_id="cap0", ordinal=0, level_index=0, dpi=1200.0,
-                ppc=Fraction(8), frame=Fraction(1),
-                pitch_px_native=PITCH_PX, pitch_px_level=PITCH_PX,
+                ppc=Fraction(8), frame=frame_level,
+                pitch_px_native=float(frame_level) * PITCH_PX,
+                pitch_px_level=PITCH_PX,
                 rasters=_raster(), placements=tuple(placements))
 
 
@@ -95,8 +103,13 @@ def _footprint(halo: int = 8) -> TileFootprint:
 
 # ------------------------------------------------------------- synthetic
 
-def test_points_and_level_pitch_follow_the_placement():
-    lane = _lane(_placement())
+@pytest.mark.parametrize("frame_level", [Fraction(1), Fraction(2),
+                                         Fraction(3, 2)])
+def test_points_and_level_pitch_follow_the_placement(frame_level):
+    """A placement posed in NATIVE pixels on a lane `frame_level` times
+    coarser reads the same level points and the same level pitch."""
+    lane = _lane(_placement(frame_level=frame_level),
+                 frame_level=frame_level)
     fp = _footprint()
     lfp = sample.lane_footprint(lane, fp)
     assert lfp is not None
@@ -160,6 +173,44 @@ def test_a_read_outside_the_crop_is_refused_not_filled():
     assert np.isnan(read.values_rgb).all()
 
 
+def test_read_headroom_px_says_how_far_the_read_sat_from_the_refusal():
+    """The other half of the refusal above (F3, review 2026-09-13).
+
+    `outside_crop` is a verdict; this is the distance behind it, so a
+    pass that never refused can say whether it had margin or was one
+    pixel short of the loud answer.  A read pushed toward the edge has
+    less of it, and a refused read has none to report.
+    """
+    lane = _lane(_placement())
+    fp = _footprint()
+    lfp = sample.lane_footprint(lane, fp)
+    crops = sample.open_crops(lane, lfp, bound_dots=CELL_DOTS,
+                              cell_dots=CELL_DOTS)
+
+    def margin(points):
+        local = np.asarray(points, np.float64)[lfp.observed] - np.asarray(
+            (crops.y0, crops.x0), np.float64)
+        height, width = crops.shape_yx
+        return min(local[:, 0].min(), local[:, 1].min(),
+                   float(height - 1) - local[:, 0].max(),
+                   float(width - 1) - local[:, 1].max())
+
+    read = sample.read_rgb(crops, lfp)
+    want = margin(read.points_yx)
+    assert sample.read_headroom_px(crops, lfp, read) == pytest.approx(want)
+
+    nearer = sample.read_rgb(crops, lfp, offset_dots_xy=(-1.0, 0.0))
+    assert nearer.refusal is None
+    closer = sample.read_headroom_px(crops, lfp, nearer)
+    assert closer == pytest.approx(margin(nearer.points_yx))
+    assert closer < want
+
+    refused = sample.read_rgb(crops, lfp, offset_dots_xy=(40.0 * CELL_DOTS,
+                                                          0.0))
+    assert refused.refusal is not None
+    assert sample.read_headroom_px(crops, lfp, refused) is None
+
+
 def test_affine_override_replaces_the_pose_for_the_read():
     lane = _lane(_placement())
     fp = _footprint()
@@ -204,11 +255,232 @@ def test_a_lane_that_does_not_touch_the_footprint_returns_none():
     assert sample.lane_footprint(lane, _footprint()) is None
 
 
-# ------------------------------------------------------------- run dir
+# ------------------------------------------------------------ crop memo
 
-@needs_i_run
-def test_sheet_i_every_covered_tile_has_a_lane_at_0_9():
-    inputs = i_inputs()
+def _crop_counter(monkeypatch) -> list[int]:
+    """Count the cuts that really happen: one `native_crop` per crop."""
+    calls = [0]
+    real = anchor.native_crop
+
+    def counting(*args, **kwargs):
+        calls[0] += 1
+        return real(*args, **kwargs)
+
+    monkeypatch.setattr(anchor, "native_crop", counting)
+    return calls
+
+
+#: The crop memo's whole key, at the values `open_crops` defaults to.
+_BASE_CUT = dict(bound_dots=2.5, cell_dots=CELL_DOTS, keep_raw=False,
+                 aperture_cells=anchor.APERTURE_CELLS, aperture_kind="box")
+
+
+def test_the_crop_memo_hands_back_the_same_object_and_cuts_once(monkeypatch):
+    lane = _lane(_placement())
+    lfp = sample.lane_footprint(lane, _footprint())
+    calls = _crop_counter(monkeypatch)
+    memo: dict = {}
+    first = sample.open_crops(lane, lfp, memo=memo, **_BASE_CUT)
+    second = sample.open_crops(lane, lfp, memo=memo, **_BASE_CUT)
+    assert second is first                     # the OBJECT, not a copy
+    assert calls[0] == 1 and len(memo) == 1
+    # and without a memo the second call cuts again, as it always did
+    third = sample.open_crops(lane, lfp, **_BASE_CUT)
+    assert third is not first
+    assert np.array_equal(third.filtered_rgb, first.filtered_rgb)
+    assert calls[0] == 2
+
+
+@pytest.mark.parametrize("changed", [
+    {"bound_dots": 3.5}, {"cell_dots": CELL_DOTS + 1}, {"keep_raw": True},
+    {"aperture_cells": 0.9}, {"aperture_kind": "gaussian"}])
+def test_the_crop_memo_key_separates_every_argument_the_cut_reads(
+        monkeypatch, changed):
+    """Each of the five cut arguments moves the cut, so each is in the key.
+
+    A key that dropped one would hand an arm the wrong pixels — the whole
+    reason the key spells out what `open_crops` reads rather than naming
+    the (lane, footprint) alone.
+    """
+    lane = _lane(_placement())
+    lfp = sample.lane_footprint(lane, _footprint())
+    calls = _crop_counter(monkeypatch)
+    memo: dict = {}
+    first = sample.open_crops(lane, lfp, memo=memo, **_BASE_CUT)
+    other = sample.open_crops(lane, lfp, memo=memo,
+                              **{**_BASE_CUT, **changed})
+    assert other is not first
+    assert calls[0] == 2 and len(memo) == 2
+
+
+def test_the_crop_memo_key_separates_the_footprint_and_the_lane(monkeypatch):
+    lane = _lane(_placement())
+    other_lane = dc_replace(lane, capture_id="cap1")
+    lfp = sample.lane_footprint(lane, _footprint(halo=8))
+    wider = sample.lane_footprint(lane, _footprint(halo=12))
+    theirs = sample.lane_footprint(other_lane, _footprint(halo=8))
+    calls = _crop_counter(monkeypatch)
+    memo: dict = {}
+    mine = sample.open_crops(lane, lfp, memo=memo, **_BASE_CUT)
+    assert sample.open_crops(lane, wider, memo=memo, **_BASE_CUT) is not mine
+    assert sample.open_crops(other_lane, theirs, memo=memo,
+                             **_BASE_CUT) is not mine
+    assert calls[0] == 3 and len(memo) == 3
+
+
+def test_the_lane_memo_holds_one_lane_and_drops_the_one_before(monkeypatch):
+    """The bound the saving is free under: two crops, not two per lane.
+
+    The driver's memo hands out ONE lane's dict; ask it for another lane
+    and the first lane's crops go.  Without that a ten-capture key would
+    hold twenty crops at once instead of two.
+    """
+    lane = _lane(_placement())
+    other = dc_replace(lane, capture_id="cap1")
+    lfp = sample.lane_footprint(lane, _footprint())
+    theirs = sample.lane_footprint(other, _footprint())
+    calls = _crop_counter(monkeypatch)
+    memo = sample.LaneCropMemo()
+    mine = sample.open_crops(lane, lfp, memo=memo.for_lane(lane.lane_id),
+                             **_BASE_CUT)
+    assert sample.open_crops(lane, lfp, memo=memo.for_lane(lane.lane_id),
+                             **_BASE_CUT) is mine
+    assert calls[0] == 1
+    held = memo.for_lane(other.lane_id)
+    assert held == {}                          # the first lane's crops went
+    sample.open_crops(other, theirs, memo=held, **_BASE_CUT)
+    assert len(held) == 1 and calls[0] == 2
+    # and coming back to the first lane cuts again rather than growing
+    again = memo.for_lane(lane.lane_id)
+    assert again == {}
+    assert sample.open_crops(lane, lfp, memo=again,
+                             **_BASE_CUT) is not mine
+    assert calls[0] == 3
+
+
+def test_a_memoised_crop_is_not_written_through_by_its_readers():
+    """The reuse is safe only because nothing writes through a `Crops`.
+
+    A read, a re-filter at another aperture and a patch extraction all
+    run over the SAME object; if any of them wrote into `filtered_rgb`
+    or `raw_rgb`, the next arm to take the memo's hit would read pixels
+    the first arm changed.
+    """
+    from analyzer import patchgrid
+    from analyzer.patchspec import PatchSpec
+
+    lane = _lane(_placement())
+    lfp = sample.lane_footprint(lane, _footprint())
+    memo: dict = {}
+    crops = sample.open_crops(lane, lfp, memo=memo,
+                              **{**_BASE_CUT, "keep_raw": True})
+    before = (crops.filtered_rgb.tobytes(), crops.raw_rgb.tobytes())
+    read = sample.read_rgb(crops, lfp)
+    sample.refiltered_values(crops, lfp, read, aperture_cells=1.1)
+    patchgrid.extract(crops, read.points_yx, read.linear_by_owner,
+                      lfp.owner_index, np.arange(16, dtype=np.int64),
+                      patchgrid.grid_cells(PatchSpec(), PITCH_PX),
+                      (0, 1, 2))
+    assert sample.open_crops(lane, lfp, memo=memo,
+                             **{**_BASE_CUT, "keep_raw": True}) is crops
+    assert crops.filtered_rgb.tobytes() == before[0]
+    assert crops.raw_rgb.tobytes() == before[1]
+
+
+# ------------------------------------------------------------- run dir
+# TIER S (2026-10-09): the receiver's displaced 10x10 colour sim decoded
+# into a run dir — rasters the receiver wrote, read back by the analyzer.
+
+def _interior_tile(inputs) -> tuple[int, int, int] | None:
+    """The first tile off the page edge with every stream certified."""
+    page = inputs.live_pages[0]
+    tiles_y, tiles_x = inputs.tiles_yx
+    streams = tuple(fact.stream_id for fact in inputs.row.streams)
+    return next(((page, ty, tx) for ty in range(1, tiles_y - 1)
+                 for tx in range(1, tiles_x - 1)
+                 if all((page, ty, tx, s) in inputs.certificates
+                        for s in streams)), None)
+
+
+@needs_sim
+def test_the_crop_memo_moves_no_arm_and_cuts_one_crop_per_cut(monkeypatch):
+    """The memo on real pixels: same rows, one cut per KIND of cut.
+
+    Six arms of the battery over one (key, lane) of a decoded run —
+    four box arms and the two patch arms, which are the two cuts the
+    whole battery resolves to (bound 2.5 / keep_raw off, and bound 4.0 /
+    keep_raw on).  Without the memo each arm cuts its own crop; with it
+    the six arms cut two, and every arm's LLR vector, observation mask
+    and blind row comes back identical field for field.
+
+    `ctx_mode="none"` and a footprint-only mix scope are here so the
+    count is the ARMS' own: production's context labels and the lane mix
+    open crops of their own through process-lifetime memos, which would
+    make the first battery of a process cost more than the second
+    whatever this memo does.
+    """
+    from analyzer import arms as arms_mod
+
+    inputs = sim_run()
+    target = _interior_tile(inputs)
+    assert target is not None
+    key = (*target, "C")
+    lane = sample.lanes_for_tile(inputs, *target)[0]
+    battery = ("raw+committed", "project+committed", "subtract+committed",
+               "subtract+offset", "patch+committed", "patch+offset")
+    knobs = {"seed": 20260913, "ctx_mode": "none",
+             "mix_scope_ladder": ("footprint",)}
+    calls = _crop_counter(monkeypatch)
+
+    def battery_rows(memo):
+        calls[0] = 0
+        rows = {arm: arms_mod.evidence_for(
+            inputs, inputs.certificates, key, lane, arm, halo_cells=16,
+            knobs=knobs, crop_memo=memo) for arm in battery}
+        return rows, calls[0]
+
+    alone, cuts_alone = battery_rows(None)
+    memo: dict = {}
+    shared, cuts_shared = battery_rows(memo)
+    print(f"\n{key} {lane.lane_id}: {len(battery)} arms cut "
+          f"{cuts_alone} crops alone, {cuts_shared} with the memo")
+    assert cuts_alone == len(battery)
+    assert cuts_shared == 2 and len(memo) == 2
+    # the two cuts, named: (bound_dots, keep_raw) at positions 6 and 8 of
+    # `sample.crop_memo_key` — the box arms' and the patch arms' wider
+    # one.  A c3 row: one cell dot wider than sheet I's c2 (2.5 and 4.0).
+    assert {(entry[6], entry[8]) for entry in memo} == {(3.5, False),
+                                                        (5.75, True)}
+    for arm in battery:
+        one, two = alone[arm], shared[arm]
+        assert one.blind.get("refusal") is None, one.blind["refusal"]
+        assert np.array_equal(one.llr_sequential, two.llr_sequential), arm
+        assert np.array_equal(one.observed, two.observed), arm
+        assert _same_blind(dict(one.blind), dict(two.blind)), arm
+
+
+def _same_blind(one: dict, two: dict) -> bool:
+    """Blind rows equal field for field, arrays compared as arrays."""
+    if one.keys() != two.keys():
+        return False
+    return all(_same_value(one[name], two[name]) for name in one)
+
+
+def _same_value(one, two) -> bool:
+    if isinstance(one, np.ndarray) or isinstance(two, np.ndarray):
+        return np.array_equal(np.asarray(one), np.asarray(two))
+    if isinstance(one, dict) and isinstance(two, dict):
+        return _same_blind(one, two)
+    if isinstance(one, (list, tuple)) and isinstance(two, (list, tuple)):
+        return (len(one) == len(two)
+                and all(_same_value(a, b) for a, b in zip(one, two)))
+    return bool(one == two)
+
+
+
+@needs_sim
+def test_every_covered_tile_has_a_lane_at_0_9():
+    inputs = sim_run()
     tiles_y, tiles_x = inputs.tiles_yx
     page = inputs.live_pages[0]
     covered = page_tile_coverage(inputs, page) > 0
@@ -233,40 +505,18 @@ def test_sheet_i_every_covered_tile_has_a_lane_at_0_9():
     assert empty["lanes_for_tile@0.9"] == 0
 
 
-@needs_i_run
-def test_sheet_i_level_pitch_is_the_placement_pitch_over_the_frame():
-    inputs = i_inputs()
-    for lane in inputs.lanes:
-        for placement in lane.placements[:64]:
-            assert sample.placement_pitch_px_level(lane, placement) == (
-                float(placement.pitch_px) / float(lane.frame))
-        pitches = [sample.placement_pitch_px_level(lane, placement)
-                   for placement in lane.placements]
-        spread = (max(pitches) - min(pitches)) / float(np.median(pitches))
-        print(f"\n{lane.lane_id}: ppc={lane.ppc} frame={lane.frame} "
-              f"pitch spread {spread:.4%}")
+@needs_sim
+def test_ink_reads_darker_than_paper_at_the_committed_pose():
+    """The sign convention on rasters the receiver wrote."""
+    from holo.receiver.plugins import color_sites
+    from holo.receiver.plugins.swim import translation_bound_dots
 
-
-@needs_i_run
-def test_sheet_i_ink_reads_darker_than_paper_at_the_committed_pose():
-    from holo3.plugins import color_sites
-    from holo3.plugins.swim import translation_bound_dots
-
-    inputs = i_inputs()
+    inputs = sim_run()
     row = inputs.row
     cell_dots = color_sites.cell_dots_of(row)
     bound = translation_bound_dots(row)
     streams = tuple(fact.stream_id for fact in row.streams)
-    page = inputs.live_pages[0]
-    target = None
-    for ty in range(10, 40):
-        for tx in range(10, 30):
-            if all((page, ty, tx, s) in inputs.certificates
-                   for s in streams):
-                target = (page, ty, tx)
-                break
-        if target:
-            break
+    target = _interior_tile(inputs)
     assert target is not None
     page, ty, tx = target
     fp = frame.tile_footprint(row, page, ty, tx, 16)
@@ -297,18 +547,70 @@ def test_sheet_i_ink_reads_darker_than_paper_at_the_committed_pose():
         assert mean_ink < mean_paper
 
 
-@needs_i_run
-def test_sheet_i_ownership_is_identical_when_computed_twice():
-    inputs = i_inputs()
-    page = inputs.live_pages[0]
-    fp = frame.tile_footprint(inputs.row, page, 20, 18, 16)
-    for lane in sample.lanes_for_tile(inputs, page, 20, 18):
-        first = sample.lane_footprint(lane, fp)
-        second = sample.lane_footprint(lane, fp)
-        if first is None:
-            assert second is None
-            continue
-        assert np.array_equal(first.owner_index, second.owner_index)
-        assert np.array_equal(first.observed, second.observed)
-        assert np.array_equal(first.points_yx, second.points_yx,
-                              equal_nan=True)
+# ------------------------------------------------- W8 B3: A7, the aperture
+
+def test_default_aperture_is_byte_identical_and_a_gaussian_is_not_and_the_halo_grows_with_kind():
+    """A7.  The default width and kind take production's own code path,
+    so no arm's pixels move; a wider box and a gaussian are new apertures
+    and the crop grows for BOTH, because the margin a filter needs is a
+    function of its width and its tail (a gaussian truncates at 4 sigma,
+    1.7 FWHM).  The margin is the point: a filtered value at a footprint
+    cell must not depend on where the crop happened to stop.
+    """
+    lane = _lane(_placement())
+    lfp = sample.lane_footprint(lane, _footprint())
+    common = dict(bound_dots=2.5, cell_dots=CELL_DOTS)
+    default = sample.open_crops(lane, lfp, **common)
+    spelled = sample.open_crops(lane, lfp, aperture_cells=anchor.APERTURE_CELLS,
+                                aperture_kind="box", **common)
+    assert default.aperture_cells == anchor.APERTURE_CELLS
+    assert default.aperture_kind == "box"
+    assert np.array_equal(default.filtered_rgb, spelled.filtered_rgb)
+    assert default.halo_px == spelled.halo_px
+
+    wide = sample.open_crops(lane, lfp, aperture_cells=1.4, **common)
+    blur = sample.open_crops(lane, lfp, aperture_kind="gaussian", **common)
+    assert not np.array_equal(default.filtered_rgb[:64, :64],
+                              blur.filtered_rgb[:64, :64])
+    assert sample.aperture_halo_px(PITCH_PX, anchor.APERTURE_CELLS, "box") == \
+        anchor.points_halo(PITCH_PX)
+    assert wide.halo_px > default.halo_px
+    assert blur.halo_px > default.halo_px           # the 4-sigma tail
+    with pytest.raises(sample.SampleError):
+        sample.open_crops(lane, lfp, aperture_kind="tophat", **common)
+
+    # the crop's own margin is enough: reading the same cells out of a
+    # crop opened with THREE dots more of slack gives the same values,
+    # so `mode="nearest"` never clamped into the answer
+    for kind, cells in (("box", 1.4), ("gaussian", anchor.APERTURE_CELLS)):
+        tight = sample.open_crops(lane, lfp, bound_dots=2.5,
+                                  cell_dots=CELL_DOTS, aperture_cells=cells,
+                                  aperture_kind=kind)
+        loose = sample.open_crops(lane, lfp, bound_dots=5.5,
+                                  cell_dots=CELL_DOTS, aperture_cells=cells,
+                                  aperture_kind=kind)
+        assert loose.halo_px > tight.halo_px
+        assert np.allclose(sample.read_rgb(tight, lfp).values_rgb,
+                           sample.read_rgb(loose, lfp).values_rgb, atol=1e-6)
+
+
+def test_a_gaussian_crop_that_is_not_given_its_tail_reads_differently(
+        monkeypatch):
+    """The control for the halo factor: shrink it and the boundary cells
+    DO move, which is what the 1.7 is there to prevent.
+
+    The page here is NOISE, not the checkerboard: with 8-pixel cell
+    blocks a clamped tail replicates the very value the tail would have
+    read and the control cannot fail for the right reason.
+    """
+    rng = np.random.default_rng(20260906)
+    noise = tuple(rng.integers(0, 256, (RASTER, RASTER), dtype=np.uint8)
+                  for _ in range(3))
+    lane = dc_replace(_lane(_placement()), rasters=noise)
+    lfp = sample.lane_footprint(lane, _footprint())
+    common = dict(bound_dots=2.5, cell_dots=CELL_DOTS,
+                  aperture_kind="gaussian", aperture_cells=1.4)
+    honest = sample.read_rgb(sample.open_crops(lane, lfp, **common), lfp)
+    monkeypatch.setattr(sample, "GAUSSIAN_HALO_FACTOR", 0.05)
+    starved = sample.read_rgb(sample.open_crops(lane, lfp, **common), lfp)
+    assert not np.allclose(honest.values_rgb, starved.values_rgb, atol=1e-6)

@@ -16,9 +16,16 @@ BER at this independent sheet position lands in the 001.4 regime (5.0-5.4%
 best-sheet; this is a COLOR-mode scan, so a color-scan penalty like the c3
 3.74->4.46 bw->color delta is expected) and recalibrated MI supports B1 >=
 ~90 b/mm2 class. Numbers land in build/k4e2_context_report.json.
+
+Run (repo root):
+  env/bin/python experiments/003-modulation-probes/analyze_k4e2_context.py \\
+      <evidence>/scans/test-scan-modprobe.png --e001-build <001's build dir>
+(the cross-sheet tables are analyze_gridtest.py's outputs over the 001.4
+gridtest scans)
 """
 from __future__ import annotations
 
+import argparse
 import json
 import sys
 from pathlib import Path
@@ -33,7 +40,6 @@ sys.path.insert(0, str(_HERE.parents[0] / "001-engine-characterization"))
 import scanlab  # noqa: E402
 
 BUILD = _HERE / "build"
-SCAN = _HERE.parents[1] / "scans" / "test-scan-modprobe.png"
 CELLS_PER_MM2_C2 = (600.0 / 25.4 / 2.0) ** 2  # 139.5
 
 
@@ -95,13 +101,13 @@ def h2(p: float) -> float:
     return -p * np.log2(p) - (1 - p) * np.log2(1 - p)
 
 
-def main() -> None:
+def main(scan_path: Path, e001_build: Path) -> None:
     manifest = json.loads((BUILD / "modprobe_manifest.json").read_text())
     report = json.loads((BUILD / "modprobe_report.json").read_text())
     coef = np.asarray(report["registration"]["affine"], np.float64)
     patch = next(p for p in manifest["patches"] if p["name"] == "K4/encode_c2")
     gt_dots = np.load(BUILD / patch["gt"])
-    scan = np.asarray(Image.open(SCAN).convert("L")).astype(np.float32)
+    scan = np.asarray(Image.open(scan_path).convert("L")).astype(np.float32)
 
     r = scanlab.decode_cells(scan, coef, patch, gt_dots, cell=2)
     soft = r["soft"]
@@ -128,8 +134,7 @@ def main() -> None:
     # Cross-sheet recalibration from the 001.4 gridtest c2 reliability tables.
     cross = {}
     for tag in ("gridtest", "gridtest-direct"):
-        f = (_HERE.parents[0] / "001-engine-characterization" / "build"
-             / f"analysis-test-scan-{tag}" / "encode_c2_v4_metrics.json")
+        f = (e001_build / f"analysis-test-scan-{tag}" / "encode_c2_v4_metrics.json")
         if not f.exists():
             continue
         m4 = json.loads(f.read_text())["v4"]
@@ -147,7 +152,7 @@ def main() -> None:
     ber_ctx = float(err_ctx.mean())
     out = {
         "patch": patch["name"],
-        "scan": SCAN.name,
+        "scan": scan_path.name,
         "scan_mode_note": "1200dpi COLOR scan converted to grey - expect a "
                           "color-mode penalty vs 001.4's grey scans (c3 "
                           "measured 3.74 bw vs 4.46 color on this sheet's day)",
@@ -190,4 +195,8 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    ap.add_argument("scan", type=Path)
+    ap.add_argument("--e001-build", type=Path, required=True)
+    args = ap.parse_args()
+    main(args.scan, args.e001_build)

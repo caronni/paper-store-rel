@@ -1,0 +1,2 @@
+# Optional dependency for compare.py only.
+qrcode==8.2

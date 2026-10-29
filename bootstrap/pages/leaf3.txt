@@ -1,0 +1,42 @@
+VOLUME {V}  R1 LEAF 3  THE PROGRAM. Type the text of each line below into
+a file named a.py, exactly. Each · is one space (one per indent level);
+no space at the end of a line. The number on the left and the 4-glyph
+code on the right are not typed. Run:  python3 a.py
+It prints every line's number and code: each code must equal the one
+on the right; a line whose code differs is mistyped. Then it shows [1]
+and waits for the data of leaf 4: stop it (Ctrl-C) and fix the file
+unless every code matched. If it stops before printing codes, fix the
+line it names. Run it in the folder that holds a.py; no auto-indent
+(a tab or four spaces changes every indented line's code), no blank
+line inside the file. The numbers 4564 and 49 and the code
+'y98y' belong to this print only; 39 and 608 to the program.
+
+ 1 a=open('a.py').read().strip().encode()                                    xbck
+ 2 def d(x,n,r):                                                             fk8c
+ 3 ·z=[256**q-1 for q in(0,1,2,3,4,6,8,12,16)]                               7tkw
+ 4 ·m,t,h=len(r),{},0                                                        bze8
+ 5 ·for i in range(m+n):                                                     8wrt
+ 6 ··u=1                                                                     6aj1
+ 7 ··for j in range(8):                                                      vvk7
+ 8 ···g=[t.setdefault((h&q,u),[0,0])for q in z]                              d0q6
+ 9 ···p=[1+sum(c[y]<<q+(c[1-y]<1)for(q,c)in enumerate(g))for y in(0,1)]      5266
+10 ···s=sum(p)                                                               caga
+11 ···if i<m:y=r[i]>>7-j&1                                                   x2ny
+12 ···else:o=x%s;y=o>=p[0];x=x//s*p[y]+o-p[0]*y                              nfb8
+13 ···for c in g:c[y],c[1-y]=c[y]+1,min(c[1-y],c[1-y]//4+2)                  3bm8
+14 ···u=2*u+y                                                                9maz
+15 ··h=h<<8|u&255                                                            5jr1
+16 ·return h.to_bytes(m+n,'big')[m:]                                         p3e9
+17 q,n,v='0123456789abcdefghjkmnpqrstvwxyz',1,0                              yz31
+18 def k(n,t):                                                               bm73
+19 ·for c in t:n=(n+c)*1000003                                               g95c
+20 ·return''.join(q[n>>s&31]for s in(15,10,5,0))                             n25f
+21 for(i,t)in enumerate(a.splitlines(),1):print(i,k(i,t))                    459c
+22 while n<49:                                                               qgxp
+23 ·t=input([n]).replace(' ','')                                             8eea
+24 ·if k(n,t[:-4].encode())==t[-4:]:                                         6ppc
+25 ··n+=1                                                                    sct0
+26 ··for c in t[:-4]:v=v*32+q.index(c)                                       80wr
+27 r=d(v,4564,a)                                                             ywad
+28 assert k(0,r)=='y98y'                                                     437b
+29 open('r.py','wb').write(a[39:608]+r)                                      1sje

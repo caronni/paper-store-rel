@@ -702,6 +702,10 @@ base at the time plus the record commit below); it is **not merged and is
 not proposed for merge**. Main carries this pointer so the negative is
 findable from the experiment it belongs to.
 
+2026-10-26: the branch tip is preserved as the annotated tag
+`preserve/pilot-first-receiver-5bf9847` (at `5bf9847c`); cite the tag, the branch
+ref is retired in its favour.
+
 | commit | branch section | what |
 |---|---|---|
 | [`8ebbf0d`](https://github.com/caronni/paper-store/commit/8ebbf0d17054d5c422983e880eb1fd68d235a22f) | branch 018.10 | pilot-first receiver v1 (`--piece-chain pilot_first`) BUILT + A/B measured |
@@ -782,3 +786,17 @@ fits calibration on an explicit search/validation split of known sites
 support-limited by construction instead of by masking a polluted estimate.
 The CMY8/QDA path was **not** audited for backing exposure — open question,
 not a claim.
+
+## Addendum 2026-10-09 — capture hashes
+
+The six Canon 4800 grey confetti captures the print section above left "to fill", from the raw-hash pass of 2026-10-09 (sha256 over the retained evidence)
+(2,291,818,718 B each, under `scratch/e018/`):
+
+| capture | sha256 |
+|---|---|
+| `hp-e018-canon-4800-confetti-1.tiff` | `293c6c9490f03923b3f73c86bd5034cee22c13d6bbf620446403ac714a9a1381` |
+| `hp-e018-canon-4800-confetti-1-2ndtake.tiff` | `b0a9fd56b11bb8d840bf84e38a8446f4d8a119199b66b526e2eeeb93713941d3` |
+| `hp-e018-canon-4800-confetti-2.tiff` | `240624d157b0e5eaeb34f5492d66ce8a6dc2f706a6cc44e4dbcd5b203fdf64f9` |
+| `hp-e018-canon-4800-confetti-2-2ndtake.tiff` | `ea8403ff5425857aecc624400e053473c8e99b92e12659aa97fdd77018148ef3` |
+| `hp-e018-canon-4800-confetti-3.tiff` | `bc1889249fd7ef519b65ceca215cecded46b5cf0c42107c88d19cd08074f1f08` |
+| `hp-e018-canon-4800-confetti-3-2ndtake.tiff` | `5e26220dfde73e5a713f89775bd6ff22e50774249e24e9465cd78995a3210910` |

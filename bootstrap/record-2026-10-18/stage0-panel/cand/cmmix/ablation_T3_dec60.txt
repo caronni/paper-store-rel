@@ -1,0 +1,14 @@
+full         6950  6950  maxrss=310MB t=5s
+no_match     7055  7055  maxrss=310MB t=9s
+no_above     6997  6997  maxrss=310MB t=13s
+no_word      7132  7132  maxrss=310MB t=17s
+no_o7        6960  6960  maxrss=310MB t=21s
+no_o0        7071  7071  maxrss=310MB t=25s
+no_o4        6999  6999  maxrss=310MB t=29s
+no_mix2      7026  7026  maxrss=311MB t=33s
+no_mix3      6956  6956  maxrss=311MB t=38s
+no_mix23     7140  7140  maxrss=311MB t=43s
+mix1_c0      6955  6955  maxrss=311MB t=47s
+fixed_rate16 8455  8455  maxrss=311MB t=51s
+st_full      6948  6948  maxrss=311MB t=56s
+m22          7007  7007  maxrss=311MB t=60s

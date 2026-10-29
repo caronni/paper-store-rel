@@ -97,7 +97,7 @@ def draw_offset_map(path: Path, report: dict[str, Any]) -> None:
     draw.text((28, 36), f"Canon LiDE 400, tone {report.get('tone_curve')}; "
                         f"red = R-G, blue = B-G, red rules = "
                         f"{FLOOR_DOTS} dots "
-                        f"(holo3/plugins/fields.py MIN_DELTA_DOTS)",
+                        f"(src/holo/receiver/plugins/fields.py MIN_DELTA_DOTS)",
               fill=MUTED)
 
     ticks_x = [0, 50, 100, 150, 200]

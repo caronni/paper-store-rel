@@ -43,9 +43,14 @@ import time
 from pathlib import Path
 
 import numpy as np
+import pytest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 EXP = Path(__file__).resolve().parent.parent / "experiments/017-color-channel"
+
+# 2026-09-06: every test here reads a build that a test regenerates in place.
+# One xdist worker per build directory (pyproject: --dist loadgroup).
+pytestmark = pytest.mark.xdist_group("build-017")
 sys.path.insert(0, str(EXP))
 
 from paperholo import acquire, compose, formats, fountain, ldpc, \
@@ -62,6 +67,13 @@ GOLD_PS_SHA = ("d99ea1c50d40fd81389fc356cf0157f7d03cac33ecb347014b32e9f33"
 GOLD_DATA_SHA = ("19a5cc15ba4f0b4bdd73cefcb7d1591e1154315417fca2a0abb2a53b"
                  "964ee13b")
 GATE_SEED = b"paper-store/exp017-color/gate"
+
+# 2026-09-05: slow-lane gate (the tests/test_e025.py convention) for the
+# three blind colour decodes below. A MARK, not an in-body skip: the
+# __main__ runner calls these gates directly, and a mark is inert there.
+_SLOW = pytest.mark.skipif(
+    os.environ.get("HOLO_RUN_SLOW_TESTS") != "1",
+    reason="set HOLO_RUN_SLOW_TESTS=1 for the e017 blind colour decodes")
 
 _cache: dict = {}
 
@@ -210,6 +222,12 @@ def test_gs_render_pixel_exact_per_plane() -> None:
     print(f"  gs tiffsep pixel-exact, 3 planes ({gt.shape} dots), K empty")
 
 
+# 2026-09-05: 9.6 s, all of it the decode itself. Moved unshrunk — the
+# 300x300 geometry is what puts 25 pilot tiles over the 300-label PAVA bar,
+# and below it this stops being the e017-class gate. The default lane keeps
+# one blind page_decode -> certify -> fountain byte-exact close on a harder
+# channel (test_color_receiver.py::test_page_decode_coded_volume_byte_exact).
+@_SLOW
 def test_blind_coded_volume_byte_exact_clean() -> None:
     """THE GATE (see module docstring): fully blind, clean channel, ONE
     crop, byte-exact through the whole color stack."""
@@ -241,6 +259,12 @@ def test_blind_coded_volume_byte_exact_clean() -> None:
           f"{len(data)} bytes")
 
 
+# 2026-09-05: 13.5 s. An e0xx record on the real page's own GT, so it moves
+# at its measured stimulus (600-cell window at cell (630,450), >=200
+# certificates) — no shrink. test_sim_noise_leg_clean_mask_regime keeps a
+# real-e017-page blind-acquire -> certify -> byte-exact chain in the
+# default lane on the same build GT at the same window origin.
+@_SLOW
 def test_e017_window_certifies_byte_exact() -> None:
     """The REAL e017 page: one interior 600-cell window rendered clean,
     blind-acquired via the REGISTRY row, per-level LDPC certification
@@ -277,6 +301,13 @@ def test_e017_window_certifies_byte_exact() -> None:
           f"{n_bits} user bits byte-exact vs the fountain frame")
 
 
+# 2026-09-05: 11.2 s. The 017.6 window IS the record (the log names the
+# field cells 540..1140 x -1..600, the 8 px/cell footing and the 5 px
+# sub-cell offset), so it moves unshrunk. A returning cross-fit latch reads
+# ~50% BER and still blows two default-lane PAVA-calibrated detectors
+# (test_color_acquire_end_to_end, the sim leg's declared BER band), though
+# neither is window-specific.
+@_SLOW
 def test_e017_left_edge_window_pava_sign_safe() -> None:
     """Regression for the 017.5 selftest 'M/Y latch' (first e017 hardware
     decode failure): the REAL page's left-edge window (field cells

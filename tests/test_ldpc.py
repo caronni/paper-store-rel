@@ -28,11 +28,19 @@ import sys
 import time
 
 import numpy as np
+import pytest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
 from paperholo import ldpc  # noqa: E402
 from paperholo.modulation import rng  # noqa: E402
+
+# 2026-09-05: slow-lane gate (the tests/test_e025.py convention). A MARK,
+# not an in-body skip: the __main__ runner below calls the test functions
+# directly, and a mark is inert on a direct call.
+_SLOW = pytest.mark.skipif(
+    os.environ.get("HOLO_RUN_SLOW_TESTS") != "1",
+    reason="set HOLO_RUN_SLOW_TESTS=1 for the 500-tile garbage battery")
 
 # --- frozen golden anchors (layer-3 v1) ------------------------------------
 # r0547 = the COLOR-DESIGN P5 Y rung (k=2240 floor twin of r0550, own seed
@@ -72,7 +80,6 @@ def _hard_llr(bits: np.ndarray, mag: float = 4.0) -> np.ndarray:
 def test_ladder_build_structure() -> None:
     """All rates build; geometry, column-weight profile, girth > 4 (via
     sparse column-overlap), min check degree, draw determinism."""
-    from scipy import sparse
     for rid, spec in ldpc.LDPC_LADDER.items():
         code = ldpc.build_code(spec)
         assert spec.k_bits % spec.z == 0 and spec.n_bits == 4096
@@ -228,10 +235,14 @@ def _interior_mask() -> np.ndarray:
     return ldpc.tile_shorten_mask((10, 10), spec, b"paper-store/exp012-pilot1")
 
 
-def test_graceful_failure_and_crc_false_pass() -> None:
+# 2026-09-05: 29.8 s of the old test_graceful_failure_and_crc_false_pass,
+# which was split in two here so the cheap half stays in the default lane.
+# Slow-gated, not shrunk: 0 ok over 500 garbage tiles IS the pinned count
+# (garbage LLRs run BP to max iterations, ~60 ms/tile).
+@_SLOW
+def test_graceful_failure_garbage_battery() -> None:
     """decode_tile must NEVER certify garbage: 500 random-LLR tiles -> 0
-    ok; and mid-waterfall r0625 tiles (where the code's one measured
-    weight-6 word lives) -> no ok result with a wrong payload (F9)."""
+    ok (stray syndrome passes all CRC-rejected)."""
     mask = _interior_mask()
     lspec = ldpc.LDPC_LADDER["r0700"]
     n_ok = n_syn = 0
@@ -245,6 +256,11 @@ def test_graceful_failure_and_crc_false_pass() -> None:
     print(f"  garbage battery: 0/500 certified ({n_syn} stray syndrome "
           f"passes, all CRC-rejected)")
 
+
+def test_crc_false_pass_mid_waterfall() -> None:
+    """Mid-waterfall r0625 tiles (where the code's one measured weight-6
+    word lives) -> no ok result with a wrong payload (F9)."""
+    mask = _interior_mask()
     spec = ldpc.LDPC_LADDER["r0625"]
     cap = ldpc.tile_user_capacity(mask, spec)
     n_bad_certified = n_ok2 = n_und = 0
@@ -329,7 +345,8 @@ if __name__ == "__main__":
                test_bsc_gates_r0700,
                test_bsc_ladder_points,
                test_erasure_frontier,
-               test_graceful_failure_and_crc_false_pass,
+               test_graceful_failure_garbage_battery,
+               test_crc_false_pass_mid_waterfall,
                test_shortened_handling_exact,
                test_decode_speed]:
         print(fn.__name__)

@@ -193,10 +193,20 @@ least one payload bit + metadata after CRC). Large p (e.g. p300 = 200
 dust sites) is a legitimate design point: more known-content cells for
 cold search, placement-by-context, and smaller recoverable scraps, priced
 in payload (user input 5). The site seed `holo/v1/sites/p{p}` (accessor
-`family_seed` in src/holo and holo2, `sites_seed` in holo3) is the
+`family_seed` in src/holo and holo2 — retired 2026-09-05, a805888 —
+`sites_seed` in holo3) is the
 **unchanged** frozen template, so any new sheet at p120 shares the exact
 measured site layout — and the placement lineage — of every p120 sheet
-ever printed.
+ever printed. The seed is keyed on `p`, so a row at any other `p` shares
+NONE of it; that corollary, the repair that made `p != 120` emittable
+and readable at all, and the price in rate are §18.
+
+*Amended 2026-10-11 (§19):* a fourth family, **cmy(rungs=(r_hi, r_lo),
+p=120)** — 2 streams `hi`/`lo` carrying the two LABEL bits of a
+four-state single-toner alphabet {W, C, M, Y}, per-stream independent
+LDPC at its own rung, pooled fountain always (as cmy8, at n = 2, column
+groups for an uneven pair), word '1' = C / '0' a keyed W or Y, dust by
+the per-tile balance law; the furniture bound is cmy8's.
 
 ## 6. The identity grammar
 
@@ -226,6 +236,11 @@ gen        = "v" 1*DIGIT                      ; ALWAYS spelled canonically;
 tiles-y    = 1*DIGIT                          ; ≥ 1
 tiles-x    = 1*DIGIT                          ; ≥ 1
 ```
+
+*Amended 2026-10-11 (§19):* `family` also admits `"cmy"`; its `rungs`
+are `rung` (uniform, expanding to the pair) or `rung "x" rung` in (hi,
+lo) stream order, required; its frozen `sites` default is p120; its
+rung arity in the contraction rule below is 2.
 
 **Canonical and display (amended 2026-08-30).** There are two spellings
 of one format, and exactly one of them is ever seeded.
@@ -289,8 +304,8 @@ The site seed was called the *family* seed until 2026-08-30. The name
 was misleading — it has nothing to do with the `Family` enum; it is
 keyed by SITE COUNT alone, which is exactly why equal-density sheets of
 different families share a lattice. The bytes are unchanged and frozen;
-holo3 spells the accessor `sites_seed`, and src/holo and holo2 owe the
-same rename.
+holo3 spells the accessor `sites_seed`, and src/holo and holo2 (retired
+2026-09-05, a805888) owe the same rename.
 
 The v2 namespace makes the fresh start explicit and collision-proof
 against every legacy string (legacy: `holo/v1/<id>/<cells_y>x<cells_x>`
@@ -426,9 +441,10 @@ holo3's catalogue only. `src/holo`'s cannot hold it — that module's law
 is that the legacy recipe reproduce the frozen seed
 (`resolve_fossil_spec`, `_self_check`), and a `holo/v1` recipe cannot
 produce `holo/v2` bytes; `c2-cmy8-r0547` is not in the legacy `CODINGS`
-either. Consequently neither src/holo nor holo2 can decode sheet J;
-holo3 is its only reader. The key-set asymmetry is declared as
-`sheet-j-v2-fossil` in holo3's drift registry. It also means row 15 must
+either. Consequently neither src/holo nor holo2 (retired 2026-09-05,
+a805888) can decode sheet J; holo3 is its only reader. The key-set
+asymmetry is declared as `sheet-j-v2-fossil` in holo3's drift registry.
+It also means row 15 must
 NOT be deleted with the v1 entries at the sunset — it is a live sheet's
 only decode route, not decode-only history (inference, not yet ruled;
 belongs with the open sunset ruling).
@@ -468,6 +484,19 @@ capability records) but exits the generation code path; the
 `hp-m281-ink` / `xerox-altalink-c8245-ink` pseudo-printers are deleted
 with it. Keying-neutral throughout: none of this ever entered a seed.
 
+**AMENDED 2026-10-11 (§19; CMY-DESIGN R21).** "Generation stops
+selecting printers" now reads: generation selects an ENGINE for
+emission, never a geometry. `--printer ENGINE` beside `--format` names
+the engine whose registry record picks the colour route (`cmyk1` or
+`rgb`, §19); paper and grid still come from `--paper`/`--dpi`, and
+nothing about the engine enters a seed. The printer registry thus
+returns to the generation code path for EMISSION only, keying-neutral as
+before. The legacy selectors' retirement — `--coding`/`--profile` ×
+printer geometry, `make_spec`, `get_printer`, and the `hp-m281-ink`
+pseudo-printer this section already counted as deleted (it is still in
+the registry, and since 6926f6ef carries hp-m281's route) — is W2b of
+docs/CMY-GENERATOR-PLAN.md, pending.
+
 ## 10. Receiver contract (explicit-identity path)
 
 One flag: `--format <format-id>`. Parse → full spec → decode; no
@@ -475,7 +504,7 @@ printer or paper argument at decode time, ever (the matrix is in the
 id). The resumable state persists the canonical format string (~~schema
 bump~~ — struck 2026-08-22: the holo2 catch-up wave built the identical
 contract with NO schema-version bump, RULINGS B6 — the schema did not
-change, one of its values did; see `holo2/docs/CATCHUP-PLAN.md`); a
+change, one of its values did; see `docs/archive/holo2/CATCHUP-PLAN.md`); a
 resume reconstructs the spec by parsing — the catalog no
 longer gates lawfulness, and the entire off-catalog fallback complex
 (the "stream 'M' is not declared" incident class) is deleted rather
@@ -503,6 +532,11 @@ expressiveness.
    integrality); field fits the paper profile.
 9. Build-time: grammar injective; no new seed collides with any fossil
    seed (namespace-disjoint by construction, asserted anyway).
+
+*Amended 2026-10-11 (§19):* rule 1's family set is {k, cmy7, cmy8,
+cmy}; rule 2 adds arity 2-or-contracted-1 for cmy (hi, lo order); rule
+4's `p > 100` applies to cmy as to cmy8 (p100 refused: M appears only in
+dust).
 
 ## 12. Workplan
 
@@ -556,7 +590,7 @@ ruling — RECEIVE-DESIGN §9a); ~~holo2/confetti2 lattice parity
 (H-wave)~~ (DONE 2026-08-22: the catch-up wave — RULINGS §A/§B/§G/§H —
 carried the full v2 grammar, the `L:`-only legacy route, colour
 FORMATS, rung parity, the pitch axis and `--format`/`--no-close` into
-holo2; record: `holo2/docs/CATCHUP-PLAN.md`); `p<100` word subsampling
+holo2; record: `docs/archive/holo2/CATCHUP-PLAN.md`); `p<100` word subsampling
 (e026); the A2 per-plane pose line;
 characterization protocol for any new engine class (a 300-dpi engine
 still owes the e001 protocol before first print); the first A3 print
@@ -628,13 +662,14 @@ day.
 - **Suites**: tests/holo full runs green at each phase (P1: 1274;
   P2–P4: 1305 passed / 42 skipped); the P6 full-repo run and the
   PK-FINAL corpus-state validation are recorded in the P6 commit.
-- **holo2**: the close-carry oracle's own `ORIGIN_MOVED` tripwire
-  declared the family-enum origin move; **retired 2026-08-22** — the
-  catch-up wave's WP-1.1 gave holo2 the same `Family` enum dispatch
-  (`spec.codec_family is Family.K`, replacing the `codec_id == 'k-v1'`
-  string compares), and the pair now compares LIVE again (measured:
-  `drifted=[]` on both `fountain_close`/`close_progress`). See
-  `holo2/docs/CATCHUP-PLAN.md`.
+- **holo2** (itself retired 2026-09-05, a805888): the close-carry
+  oracle's own `ORIGIN_MOVED` tripwire declared the family-enum origin
+  move; **retired 2026-08-22** — the catch-up wave's WP-1.1 gave holo2
+  the same `Family` enum dispatch (`spec.codec_family is Family.K`,
+  replacing the `codec_id == 'k-v1'` string compares), and the pair now
+  compares LIVE again (measured: `drifted=[]` on both
+  `fountain_close`/`close_progress`) — until holo2's own deletion. See
+  `docs/archive/holo2/CATCHUP-PLAN.md`.
 - **Corpus (PK-FINAL states)**: the recorded color-uplift final states
   load + fully validate on the rebuilt tree across families and
   engines — xerox-c2-k VERIFIED 1930 certs, xerox-c3-cmy7 VERIFIED
@@ -762,12 +797,13 @@ riding in the same merge: holo3's `RunOpen` event now records the
 canonical `row_id` in `format_id` and the short spelling in a new
 `display_id` field; holo3 `mint_format` refuses non-positive pitch;
 src/holo's cached v2 coding constructor refuses a non-canonical id;
-holo2 gained the defaults-table half of law 4; `display_id` is now
-pinned across trees by the holo2 oracle and the holo3 drift gate; two
-unrelated `SiteGeometry` positional-argument repairs in measure/ rode
-along. The `family_seed` → `sites_seed` accessor rename above is
-holo3-only for now — src/holo and holo2 still spell it `family_seed`
-and owe the same rename as a separate byte-null change.
+holo2 (retired 2026-09-05, a805888) gained the defaults-table half of
+law 4; `display_id` is now pinned across trees by the holo2 oracle and
+the holo3 drift gate; two unrelated `SiteGeometry` positional-argument
+repairs in measure/ rode along. The `family_seed` → `sites_seed`
+accessor rename above is holo3-only for now — src/holo and holo2
+(retired 2026-09-05, a805888) still spell it `family_seed` and owe the
+same rename as a separate byte-null change.
 
 ## 17. Amendment — the width-heterogeneous pool (RULED + BUILT 2026-09-04)
 
@@ -799,10 +835,353 @@ triplets r0700x0700x0547 (Y at r0547) and r0850x0850x0775 as c3 rows at
 10x10, and the lever as `c2-cmy8-r0700x0700x0547@53x37`.
 
 **Scope (ruled).** src/holo sheet generation and the holo3 receiver;
-src/holo/receive and holo2 untouched — the v1 receiver fails a mixed row
-on its common-width property, holo2 keeps refusing, and the cross-tree
+src/holo/receive (deleted 2026-09-05, `284ae3e`) and holo2 (deleted
+2026-09-05, `a805888`) untouched — the v1 receiver failed a mixed row on its
+common-width property, holo2 refused, and the cross-tree
 oracles record both as intended divergences (`INTENDED_DIVERGENCES`,
 `ORIGIN_MOVED` for the fountain and streamset carries). Exact widths at
 p120 for the record: S = k_bits − p − 33 (2087 / 2407 / 2727 / 3047 /
 3367 for r0550 / r0625 / r0700 / r0775 / r0850). F14 unchanged: nothing
 is printed.
+
+## 18. Amendment — the furniture density axis is emittable and readable (2026-09-16)
+
+Amends §5 (the furniture bound) with a repair, a corollary and a price.
+Branch `p-axis`; the design record it was built from is
+docs/P-AXIS-DESIGN.md.
+
+**The ask.** `p` — the cells a tile spends on furniture, 100 indexed
+word sites plus `p − 100` known-content cells — is an axis of every
+identity this grammar mints, and §5 already called large `p` a
+legitimate design point: more known cells for cold search and
+placement-by-context, and a smaller recoverable scrap, paid for in
+payload. `capacity` has always priced any lawful `p`. Nothing else
+worked. A colour row at any `p` but 120 was priced and then refused at
+emission, and would have been mis-read if a sheet had somehow existed.
+
+**Why.** The site geometry is a pure function of the row and had been
+since holo3's `identity.build_site_geometry` — family dispatch,
+`row.n_dust`, the payload complement. But TWO other derivations of the
+same thing survived beside it, one per tree, both from the era when 20
+dust was the only number there was: the receiver's `words._site_cells`
+called `pilots.color_site_cells_yx(row.sites_seed)`, and the writer's
+`_color_geometry` called that and `color_payload_cell_indices` on the
+gen side. Both helpers hardcode 20. The consequences were asymmetric
+and both bad. The writer failed loudly, in `compose_color_page_cells`,
+on a shape mismatch between the codec's `4096 − p` states and 3,976
+offered cells — a row `capacity` had just priced. The receiver failed
+QUIETLY: `store.__init__` builds the correct geometry at store.py:32
+and hands the row to `words.ReferenceField` at store.py:41, which built
+its addressing reference over a mask carrying 12,000 of a p300 page's
+30,000 sites and raised only on first page touch, deep in a decode.
+
+**The mechanism.** Both derivations now take the count from the object
+that already carries it — `row.n_dust` in the receiver,
+`spec.n_dust` in the writer, with the writer's payload cells derived as
+the complement of the furniture it just drew, as the receiver's
+`payload_flat` already was. Ten lines in two function bodies. Neither
+copy of `pilots.py` was touched, and after the change their
+`color_site_cells_yx` and `color_payload_cell_indices` have no
+production callers in either tree: they are two frozen p120 helpers and
+one unreachable `payload.size != 3976` assertion, and they are the
+format-law dedupe's to delete (RECEIVER-MOVE-PLAN §6), not this
+amendment's. There is no new refusal, no `p` threshold and no special
+case anywhere: the band is lawful and works mechanistically.
+
+**Capacity and generate now agree, for every family.** They did not
+before: K emitted any lawful `p` (its filler count already came from
+the row) and cmy8 was the one family where the two doors of one
+generator answered differently about the same identity. Measured on the
+pre-patch tree, `c2-cmy8-r0550-p300@10x10` at q = 0.5: `capacity`
+printed `max_payload_bytes: 31429`, `generate` exited 1. The parity is
+pinned per family across the sampled band in
+tests/holo/test_lattice_gen.py.
+
+**NO INHERITANCE — the corollary that matters most.** The site seed is
+`holo/v1/sites/p{p}`, so it is keyed on `p`: a different `p` is a
+different site lattice, not the p120 lattice with cells added. Measured
+overlap of the 100 word sites against p120: 7 at p101, 3 at p150, 2 at
+p172, 3 at p244, 5 at p300 — a new `p` is a NEW SITE LINEAGE, and it
+inherits nothing measured. Every placement, addressing and cold-search
+number in this record was measured on the p120 lattice and on p120
+sheets; none of it transfers. §5's sentence about a new p120 sheet
+sharing the exact measured layout of every p120 sheet ever printed is
+exactly as narrow as it sounds.
+
+**The price, in the format's own units.** Shortening is by the full
+`p` (transmitted = 4096 − p), while the parity of the rung is
+untouched, so the effective rate DROPS as `p` rises. Per plane per
+tile, p120 → p300:
+
+| rung | user bits | effective rate | n − k |
+|---|---|---|---|
+| r0550 | 2088 → 1908 (−8.62%) | 0.5252 → 0.5026 | 1856 |
+| r0700 | 2728 → 2548 (−6.60%) | 0.6861 → 0.6712 | 1216 |
+| r0850 | 3368 → 3188 (−5.34%) | 0.8471 → 0.8398 | 576 |
+
+In sheet bytes the cost is rung-INDEPENDENT: on `c2-cmy8-<rung>@53x37`,
+A4-4mm, q = 0.5, p120 → p300 costs 65,813 B at r0550, r0700 and r0850
+alike (763,023 → 697,210; 997,023 → 931,210; 1,231,023 → 1,165,210).
+One step of the rung ladder is 320 user bits = 117,000 sheet bytes, so
+**the whole p120 → p300 traverse costs 56.25% of ONE rung step**, at
+every rung. Read the other way: `p` is the only built-in way to an
+effective rate BELOW the ladder's bottom rung without minting a new
+code — and it is plane-UNIFORM, so it serves a page that is marginal in
+every plane, never a page whose problem is per-plane asymmetry (that is
+the column-group pool's case, §17).
+
+**p101–119 is lawful and is NOT refused.** The precise rule is §11.4 —
+`k: p >= 100; cmy8: p > 100` (colour furniture includes dust), both
+`<= min_stream(k_bits) - 34`, `p < 100` reserved — which §5 states as
+the furniture bound. Measured on this tree, `c2-cmy8-r0550` admits `p`
+in **[101, 2206], contiguous** (2,106 values, no gaps), and p100 is
+refused for want of dust. The band below p120 is inside that and now
+works with no code of its own, which is the ruling (2026-09-16): a
+receiver's comfort is not format law, and a refusal would have to be
+written into BOTH constructibility copies (families.py and
+receiver/format/identity.py). What is measured about the
+bottom of the band: at p101 a tile has ONE dust cell, so most tiles
+have a plane whose dust carries no ink at all (over 100 tiles of
+`c2-cmy8-r0550-p101@10x10`: C empty in 50, M in 51, Y in 34); at p102,
+M in 33 and Y in 34; from p103 up every plane carries dust ink in every
+tile. That is a degeneracy of the EVIDENCE a low-p row offers a
+receiver, not of the format, and p110 prices HIGHER than p120 while
+offering less — so the band is lawful, not recommended, and nothing
+here qualifies it.
+
+**Column groups re-partition with `p` (§17).** The grouping is a pure
+function of the stream widths, and the widths move with `p`, so the
+ruled identities' `(Z, carried)` are p120-CONDITIONAL. Computed through
+`holo.core.column_groups` for the two ruled triplets:
+
+| triplet | p | widths C:M:Y | Z | carried | spare bits/site | dead-Y ceiling | any-one ceiling |
+|---|---|---|---|---|---|---|---|
+| r0700x0700x0547 | 120 | 2727:2727:2087 | 17 | 17:17:13 | 1.6 | 34/47 | 30/47 |
+| r0700x0700x0547 | 172 | 2675:2675:2035 | 25 | 25:25:19 | 2.0 | 50/69 | 44/69 |
+| r0700x0700x0547 | 244 | 2603:2603:1963 | 4 | 4:4:3 | 10.8 | 8/11 | 7/11 |
+| r0700x0700x0547 | 300 | 2547:2547:1907 | 31 | 31:31:23 | 17.3 | 62/85 | 54/85 |
+| r0850x0850x0775 | 120 | 3367:3367:3047 | 21 | 21:21:19 | 0.7 | 42/61 | 40/61 |
+| r0850x0850x0775 | 172 | 3315:3315:2995 | 31 | 31:31:28 | 0.8 | 31/45 | 59/90 |
+| r0850x0850x0775 | 244 | 3243:3243:2923 | 10 | 10:10:9 | 4.3 | 20/29 | 19/29 |
+| r0850x0850x0775 | 300 | 3187:3187:2867 | 29 | 29:29:26 | 9.7 | 29/42 | 55/84 |
+
+Z is NON-MONOTONE in `p` and the zero-tail waste is not a smooth
+function of it: p244 collapses the r0700 triplet from 17 groups to 4 and
+RAISES its waste from 1.6 to 10.8 bits per site, while p172 leaves both
+triplets close to their ruled waste (+0.35 bits on the r0700 triplet,
++0.14 on the r0850 one). A `p` row of a ruled triplet therefore
+owes its own emission golden per (triplet, p) before it is minted;
+§17's goldens speak for p120 and for nothing else.
+
+**What this amendment does NOT claim.** No identity is promoted: no
+`p` row is in FORMAT_ROWS, in a profile or in the fossil catalogue. No
+`p` other than 120 has been printed, scanned or qualified on paper by
+anyone, and the whole colour record — every rate, every placement
+number, every b/mm² — is p120 evidence. The sim evidence is exactly one
+volume: `c2-cmy8-r0550-p300@10x10`, 12,000 B, emitted, rendered,
+decoded blind and closed byte-exact
+(src/holo/receiver/tests/test_h3_e2e_p_axis.py), plus its K twin
+`c3-k-r0550-p300@10x10` — the first K row off p100 decoded anywhere.
+p101–119 is lawful, not qualified.
+
+Three exposures are OPEN and none of them is closed by this amendment.
+(1) The receiver's gate constants were written for p120 furniture error
+rates and have NOT been re-derived. The support floor
+(`place.BER_ENVELOPE`) is not a bar but the error the floor's formula
+assumes, and under a dead plane the pooled furniture error is
+`(1/3)·n_dust/p` — so above p ~ 132 the assumption is false and the
+floor errs toward FALSE ACCEPT, the design record sizing it 2.5× too
+small at p300. Anything that admits on furniture at high `p` is
+unguarded until that is re-derived. (2) docs/DESIGN.md R3 concedes ONE
+measured structure: "a hidden 2.5%-density site pattern" (DESIGN.md
+:164). p300 furniture is 300 of 4,096 cells = 7.3%, three times the
+conceded density — a DESIGN.md amendment is owed before a high-`p` row
+is printed, not after. (3) The column-grouped RECEIVE path at `p != 120`
+is UNEXERCISED: the uneven triplet at p300 is verified writer-side only
+(3,796 cells composed), no such volume has been decoded, and an
+`EMIT_GOLDENS` row per (triplet, p) is owed with it.
+
+**Where the law is pinned.** The receiver's reference field against the
+row's own geometry, over every fossil and four `p` rows:
+src/holo/receiver/tests/test_h3_plugins_placement.py. The two
+`pilots.py` copies against each other at a density that is not 20:
+test_h3_drift_format.py (slow lane). The writer's partition:
+tests/holo/test_color_compose.py. Capacity/generate parity per family:
+tests/holo/test_lattice_gen.py. The volume: test_h3_e2e_p_axis.py
+(slow lane). Untouched throughout, as fork guards must be:
+`EMIT_GOLDENS`, `P120_SITE_GOLDENS`, the p120 tile digests, and every
+p120 drift pin.
+
+## 19. Amendment — family `cmy` (BUILT 2026-10-11, not printed)
+
+Amends §5 (a fourth family), §6 (the family production and the rung
+arity), §9 (what generation selects) and §11 (rules 1, 2 and 4). Branch
+`cmy-generator`; design of record docs/CMY-DESIGN.md v0.3 (§2, §2.5,
+§2.8, §3; rulings R1–R23 in its §12, R3 as amended 2026-10-11); workplan
+docs/CMY-GENERATOR-PLAN.md v0.4; commits 7bad672c (W0: the names, and
+the spec vectors typed from the design text before the code,
+tests/holo/test_cmy_vectors.py), 128ed3cb (W1: the format law) and
+6926f6ef (W2a: emission and `--printer`). Every existing golden is
+unchanged.
+
+**The family.** `cmy(rungs=(r_hi, r_lo), p=120)`, `Family.CMY = "cmy"`,
+the token spelled in every canonical id and so in the seed (§6 law 1),
+no display alias. The alphabet is {W, C, M, Y}: white or exactly one
+toner per cell, no overlap state, no K. The physical numbering stays
+presence bits (`C + 2M + 4Y`), so cmy's state ids are (0, 1, 2, 4), a
+SUBSET of cmy8's numbering and not a prefix; the colour alphabet law of
+`CodecProfile` is now "a subsequence of `channel.STATE_NAMES`" with
+`state_ids` a derived property, and cmy7/cmy8 validate identically.
+TWO streams, `hi` and `lo`, in that order; they carry the cell's two
+LABEL bits, not toner planes (hi = [state ∈ {C, M}], lo = [state ∈
+{C, Y}]; R1, R2):
+
+| label (hi, lo) | index (hi<<1)\|lo | state | presence id |
+|---|---|---|---|
+| 00 | 0 | W | 0 |
+| 01 | 1 | Y | 4 |
+| 10 | 2 | M | 2 |
+| 11 | 3 | C | 1 |
+
+(`channel.CMY_LABEL_TO_STATE = (0, 4, 2, 1)`; cyan is white's
+antipode.) One LDPC codeword per stream per tile, cmy8's law:
+shortening = p, user bits = k_bits − p − 32, S = k_bits − p − 33
+fountain bits per stream per tile. Each codeword is XORed with its
+dither on domain 13 at aux = stream ordinal + 1 — hi 1, lo 2, an
+INTEGER, never a name; `COLOR_STREAM_AUX` does not grow (R6) — and the
+shared domain-12 order places the states. `fountain_aux` is None (the
+row is pooled). Three evidence values per cell, two bits per mapper
+cell.
+
+**Grammar.** Rung arity 2. The rungs are spelled in STREAM order,
+`r{hi}x{lo}`, and one rung expands to the pair exactly as cmy8's one
+rung expands to the triplet: the expansion reads only the closed enum's
+arity table (`lattice._RUNG_ARITY` = {k 1, cmy7 0, cmy8 3, cmy 2}), so
+law 4 holds. The rung token is required; a triplet is refused ("rung
+arity must be 2"). `p` defaults to 120 on input (frozen beside cmy8's,
+R12); the lawful band is cmy8's rule exactly, p > 100 and p ≤
+min_stream(k_bits) − 34, and p100 is refused with cmy's own reason (M
+appears only in dust, so p100 leaves the M plane no anchor).
+`_coding_for_id` now dispatches every family on an explicit branch and
+refuses anything else; the bare `else` that meant cmy8 is gone. Derived
+names: banks `cmy-{hi,lo}-{rung}-p{p}-v1`, codec id `cmy-{token}-p{p}-v1`
+with `token` the contracted rung token. Spellings (pinned in
+tests/holo/test_lattice.py and test_cmy_vectors.py):
+
+| display | canonical (seed = `holo/v2/` + this) | banks |
+|---|---|---|
+| `c2-cmy-r0700@10x10` | `1i300-cmy-r0700-p120-v1@10x10` | `cmy-hi-r0700-p120-v1`, `cmy-lo-r0700-p120-v1` |
+| `c2-cmy-r0775x0700@53x37` | `1i300-cmy-r0775x0700-p120-v1@53x37` | `cmy-hi-r0775-p120-v1`, `cmy-lo-r0700-p120-v1` |
+| `c2-cmy-r0700-p300@10x10` | `1i300-cmy-r0700-p300-v1@10x10` | `cmy-hi-r0700-p300-v1`, `cmy-lo-r0700-p300-v1` |
+| `c3-cmy-r0850@35x24` | `1i200-cmy-r0850-p120-v1@35x24` | `cmy-hi-r0850-p120-v1`, `cmy-lo-r0850-p120-v1` |
+
+`c2-cmy-r0700x0700@53x37` parses to the contracted canonical
+`1i300-cmy-r0700-p120-v1@53x37`.
+
+**Furniture.** The sites are p's lattice (`holo/v1/sites/p{p}`, §5): a
+p120 cmy row shares every printed colour sheet's site positions and
+inherits none of their values or contrast; any other p inherits nothing
+(§18). The word is the K word (BCH, the `PLANE_K` scramble), rendered by
+the family's rule (R10): '1' prints C always; '0' prints the site's
+keyed state from {W, Y}. **The key is domain 9 at aux 0, major = tile
+counter, u = n_dust + site (site 0..99), v = 0, and the site prints Y
+iff the key's MSB is set** (`keystream.color_word_zero_mask`, spec twin
+`keystream_spec.color_word_zero_bit`) — domain 9's u range, which colour
+rows drew only at u < n_dust for the dust order, extends to [n_dust,
+n_dust + 100) for the cmy word keys; the dust draw is byte-identical and
+no domain or aux is added. The dust is the BALANCE LAW, PER TILE (R3 as
+amended 2026-10-11): from the tile's own word supply (its C, W and Y
+counts; M none), each of the n_dust = p − 100 dust sites in turn goes to
+the state with the lowest running total, ties M, Y, W, C, no cap; domain
+9 at u < n_dust then permutes that fill vector onto the dust sites in
+raster order, as it does every colour row's. cmy's `dust_base_cycle` is
+`()` and a cycle is refused; the law is the family's rule inside
+`pilots.dust_state_values`, and k/cmy7/cmy8 dust is untouched. W0's
+vectors on `c2-cmy-r0700@10x10`: counter 12 (C 51, W 19, Y 30) → twenty
+M; counter 28 (W 15) → M 18, W 2; counter 30 (Y 15) → M 18, Y 2; on the
+p300 row, counter 0 → M 75, Y 50, W 55, C 20. Over page 0 of the probe
+row `c2-cmy-r0775x0700@53x37` the word '0' count runs 36–65, Y 12–40,
+W 14–39, and 1,772 of 1,961 tiles carry twenty M
+(test_color_format_profiles.py).
+
+**The death map.** A dead toner's state reads W. Dead Y: Y (01) → W
+(00), only `hi` decodes. Dead M: M (10) → W (00), only `lo` decodes.
+Dead C: C (11) → W (00) flips both bits — neither stream decodes, and
+the words' '1' dies with it. The address words survive a dead Y (its '0'
+sites read W, still '0') and a dead M (the word has no M); over 64
+counters of the probe row dead-Y words decode and dead-C words do not
+(test_color_format_profiles.py).
+
+**Outer code.** §5/§17's pooled fountain at n = 2: esi = counter·2 + s
+(s = 0 hi, 1 lo) on domains 7/8, stream-exact quotas, k_total =
+2·k_meta with k_meta in the metadata K field, each stream's metadata
+equation at LFSR index counter·2 + s (rank 24 from 12 healthy tiles or
+24 with one stream dead; trust at 24 or 48; test_pooled_format.py). A
+uniform pair is the one-group case; an uneven pair is §17's column-group
+pool unchanged (the law is n-generic): at p120 r0775x0700 → Z 19,
+carried 19:17; r0700x0625 → Z 17, 17:15; r0850x0700 → Z 21, 21:17 — and
+Z moves with p as §18 says (r0775x0700 at p300 → Z 26). Blocks and the
+reserve count the POOL: B = ceil(2·k_meta / 16384), reserve 16 +
+bit_length(B·Z − 1) — at k_meta 8,192 / 8,193 / 10,000 the reserve is
+16 / 17 / 17 on a uniform pair and 21 / 22 / 22 on r0775x0700
+(test_cmy_emission.py). Tier 3 is a dead-STREAM tier, so the manifest,
+`capacity` and `generate` say "stream tier" for cmy: a dead Y or a dead
+M is survivable at the row's dial, a dead C at none.
+
+**Routes are ENGINE facts.** The format says "toner t on this cell"; a
+route says how an engine is asked for it, and never enters a seed, the
+GT or a format golden. Two:
+
+- `cmyk1` — the one composite 1-bit DeviceCMYK image, K = 0, that every
+  colour row has always emitted (`put_cmyk_bitmap`, byte-identical for
+  cmy7/cmy8); the route when no engine is named.
+- `rgb` — three single-toner 1-bit imagemasks per page, C then M then Y,
+  each painted after `setrgbcolor` at the ENGINE's solid device-RGB value
+  for that toner, white unpainted, the data through ASCII85Decode; plain
+  PostScript, no PJL (R23). It is lawful only for a family without
+  overlap states: the masks are opaque, so a cmy8/cmy7 CM, CY or MY cell
+  would print as one toner while the GT said two. It refuses them.
+
+An engine's record carries its route and, for `rgb`, the three values:
+`devices/registry.py`, `Printer.color_route` and `Printer.rgb_solid`.
+The registry's `hp-m281` row is `rgb`, its values measured by the e043
+probe sheets (experiments/043-m281-cmy-probe.md §043.3c, §043.5,
+§043.6; docs/CMY-PROBE-M281.md §9–§10) and pinned by
+tests/holo/test_registry_emission.py alone; `xerox-altalink-c8245` is
+`cmyk1`. The GT is the C/M/Y dot planes on either route (`gt_sha`
+route-independent, `ps_sha` the route's). A re-measured value is a
+registry edit with its cause and moves no golden: the `rgb` emission
+goldens are built on a test-local triple.
+
+**`--printer ENGINE`** (R21) is the emission engine on `generate` and
+`capacity` beside `--format`: optional, resolved through `PRINTERS` (an
+unknown engine refuses), never a geometry and never an identity. Its
+record decides the route — there is no `--route` — and `capacity`
+refuses what `generate` would (`rgb` with an overlap family). No engine
+named = `cmyk1`. The manifest records the engine, the route and, on
+`rgb`, the three values sent. holo3's `decode --printer` is its own
+legacy door, not this one; each help text says which.
+
+**What this amendment does NOT claim.** No cmy row is in FORMAT_ROWS, a
+profile or the fossil catalogue; one is reached only by an explicit
+`--format`, and it is PROVISIONAL (HOLO-DESIGN F14). Nothing is printed.
+The simulation evidence: the six ruled rows at 10x10 (`c3-cmy-r0850`,
+`c2-cmy-r0700`, `c2-cmy-r0700x0625`, `c2-cmy-r0775x0700`,
+`c2-cmy-r0850x0700`, `c2-cmy-r0700-p300`) emit on both routes under
+frozen goldens (tests/holo/test_cmy_emission.py, plus the two
+printed-size rows `c3-cmy-r0850@35x24` and `c2-cmy-r0775x0700@53x37` in
+the slow lane); each closes byte-exact from its own GT through holo3's
+grouped decoder (`holo.receiver.format.close.close_volume` over a row
+built from the FormatSpec), uniform pairs also through the core decoder,
+and a corrupted certificate set does not verify
+(tests/holo/test_cmy_round_trip.py); the `rgb` page renders through
+ghostscript to the plane GT at 0 differing dots (test_cmy_gs_route.py,
+the gs lane). holo3's own identity has no cmy yet — a decode of a cmy
+capture is the receiver plan's W0–W5.
+
+OPEN (W2b of the generator plan, R21, after P1's job is written): the
+legacy generation door — `--coding`/`--profile`, `make_spec`,
+`get_printer`, `registry -v`'s derived geometry, the `hp-m281-ink` row
+and the legacy meaning of `--printer` beside `--coding`/`--profile` —
+still stands beside `--format`. Its retirement onto the `L:` fossils,
+which already carry their placement, is that wave's.

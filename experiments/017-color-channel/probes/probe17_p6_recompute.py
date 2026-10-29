@@ -6,7 +6,8 @@ the REAL scans) every MI/capacity/subset number the 7-vs-8-state decision
 rests on, plus per-level (C/M/Y presence bit) BER and the CMY-triple
 confusion structure, on both engines.
 
-Data sources (all measured, hard-decision CV confusion counts):
+Data sources (all measured, hard-decision CV confusion counts; the build/
+dirs are flags, --e002-build and --e004-build):
   - experiments/002-calibration-page/build/calpage_report.json        (home M281, CAL-1, 2026-07-04)
   - experiments/002-calibration-page/build/calpage_report_xerox.json  (AltaLink C8245 print, home flatbed scan)
   - experiments/002-calibration-page/build/overlap2_report.json       (home M281, 002.2 printed 7-state fields)
@@ -15,24 +16,28 @@ Data sources (all measured, hard-decision CV confusion counts):
 Machinery reused verbatim: analyze_overlap2.blahut_arimoto /
 best_uniform_subsets / _row_normalize (the 002.0c port).
 
-Run: env/bin/python scratch/probe17_p6_recompute.py
+Run: env/bin/python experiments/017-color-channel/probes/probe17_p6_recompute.py \\
+         --e002-build <002's build> --e004-build <004's build>
+Writes experiments/017-color-channel/build/probe17_p6_recompute.json (the
+record is the copy beside this file).
 """
 from __future__ import annotations
 
+import argparse
 import json
 import sys
 from pathlib import Path
 
 import numpy as np
 
-REPO = Path(__file__).resolve().parent.parent
+REPO = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(REPO / "experiments" / "002-calibration-page"))
 
 import analyze_overlap2 as ao2  # noqa: E402
 import cal_color as ccol  # noqa: E402
 
-B002 = REPO / "experiments/002-calibration-page/build"
-B004 = REPO / "experiments/004-finalists-checkerboard/build"
+B002 = Path()  # set from --e002-build
+B004 = Path()  # set from --e004-build
 
 # state index -> name for the raw 3-bit CMY field (bit0=C, bit1=M, bit2=Y)
 NAMES8 = ["W", "C", "M", "CM", "Y", "CY", "MY", "CMY"]
@@ -196,11 +201,17 @@ def main() -> None:
         a["scan"] = r["scan"]
         out[f"{eng}_e004_A3_crosstile"] = a
 
-    outp = REPO / "scratch" / "probe17_p6_recompute.json"
+    outp = REPO / "experiments/017-color-channel/build/probe17_p6_recompute.json"
+    outp.parent.mkdir(parents=True, exist_ok=True)
     json.dump(out, open(outp, "w"), indent=1)
     print(json.dumps(out, indent=1))
     print(f"\nwritten: {outp}")
 
 
 if __name__ == "__main__":
+    _ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    _ap.add_argument("--e002-build", type=Path, required=True)
+    _ap.add_argument("--e004-build", type=Path, required=True)
+    _args = _ap.parse_args()
+    B002, B004 = _args.e002_build, _args.e004_build
     main()

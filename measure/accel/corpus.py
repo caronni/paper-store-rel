@@ -27,8 +27,8 @@ from pathlib import Path
 
 import numpy as np
 
-from holo3.format import tile_codec
-from holo3.lib import ldpc
+from holo.receiver.format import tile_codec
+from holo.receiver.lib import ldpc
 
 SEED = 20260831
 RATE_IDS = ("r0547", "r0550", "r0625", "r0700", "r0775", "r0850")

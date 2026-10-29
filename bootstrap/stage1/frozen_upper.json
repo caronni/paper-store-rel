@@ -1,0 +1,613 @@
+{
+ "case": "upper",
+ "edits": [
+  "selfdump-counter",
+  "update-split-b",
+  "sum-inline",
+  "find",
+  "init-perm-021",
+  "pos-gt",
+  "check-swap",
+  "part-double",
+  "alpha-perm-201",
+  "yc-list",
+  "assert-literal-first",
+  "hist-mod",
+  "check-order",
+  "xor-yc",
+  "min-order",
+  "num-order"
+ ],
+ "letters": {
+  "Prog": "c",
+  "Alpha": "m",
+  "Line": "n",
+  "Num": "i",
+  "Check": "f",
+  "Seed": "t",
+  "Text": "r",
+  "Byte": "x",
+  "Shift": "r",
+  "Dec": "d",
+  "State": "y",
+  "Count": "p",
+  "Primer": "r",
+  "Orders": "t",
+  "Masks": "o",
+  "Order": "s",
+  "Len": "m",
+  "Table": "u",
+  "Hist": "s",
+  "Pos": "i",
+  "Part": "k",
+  "Bit": "x",
+  "Pairs": "z",
+  "Mask": "y",
+  "Weights": "g",
+  "Index": "q",
+  "Pair": "c",
+  "Yc": "y",
+  "Sum": "a",
+  "Y": "h",
+  "Slot": "n",
+  "PairU": "c",
+  "Idx": "i",
+  "Td": "t",
+  "Typed": "s",
+  "Glyph": "j",
+  "Out": "y"
+ },
+ "record": {
+  "base_exact": 3368,
+  "after_rewrite_exact": 3332,
+  "after_names_exact": 3288,
+  "final_exact": 3288,
+  "search_tuple": [
+   0,
+   1,
+   2,
+   3,
+   4,
+   6
+  ],
+  "alone": [
+   {
+    "id": "selfdump-counter",
+    "what": "the self-dump counts with the data counter: prompts continue the listing's numbering ([L+1] ...); the enumerate goes",
+    "chars": -10,
+    "smooth": -13.921,
+    "exact": -14
+   },
+   {
+    "id": "update-split",
+    "what": "the counter update as two statements: c[1-y]=min(...);c[y]+=1",
+    "chars": -4,
+    "smooth": -3.644,
+    "exact": -4
+   },
+   {
+    "id": "update-split-b",
+    "what": "the counter update as two statements: c[y]+=1;c[1-y]=min(...)",
+    "chars": -4,
+    "smooth": -4.358,
+    "exact": -4
+   },
+   {
+    "id": "sum-inline",
+    "what": "s=sum(p) moved into the else branch (its only reader)",
+    "chars": -2,
+    "smooth": -3.154,
+    "exact": -3
+   },
+   {
+    "id": "part-double",
+    "what": "u=2*u+y as u+=u+y",
+    "chars": -1,
+    "smooth": -1.631,
+    "exact": -1
+   },
+   {
+    "id": "part-double-b",
+    "what": "u=2*u+y as u=u*2+y",
+    "chars": 0,
+    "smooth": 0.509,
+    "exact": 1
+   },
+   {
+    "id": "hist-minus",
+    "what": "u&255 as u-256 (u is 256..511 after eight bits)",
+    "chars": 0,
+    "smooth": -0.546,
+    "exact": 0
+   },
+   {
+    "id": "hist-mod",
+    "what": "u&255 as u%256",
+    "chars": 0,
+    "smooth": -1.071,
+    "exact": -1
+   },
+   {
+    "id": "num-order",
+    "what": "v=v*32+... as v=32*v+...",
+    "chars": 0,
+    "smooth": 0.396,
+    "exact": 1
+   },
+   {
+    "id": "find",
+    "what": "q.index(c) as q.find(c) (the line passed its check first)",
+    "chars": -1,
+    "smooth": -3.126,
+    "exact": -3
+   },
+   {
+    "id": "slot-cmp",
+    "what": "y=o>=p[0] as y=p[0]<=o",
+    "chars": 0,
+    "smooth": 0.12,
+    "exact": 0
+   },
+   {
+    "id": "state-order",
+    "what": "...-p[0]*y as ...-y*p[0]",
+    "chars": 0,
+    "smooth": 1.843,
+    "exact": 2
+   },
+   {
+    "id": "out-is-num",
+    "what": "the decoded reader bound to v (r=d(v,..) as v=d(v,..))",
+    "chars": 0,
+    "smooth": 1.369,
+    "exact": 1
+   },
+   {
+    "id": "u1-merge",
+    "what": "item 13 (u=1 merged into the init and the history line), as a candidate",
+    "chars": 3,
+    "smooth": 2.948,
+    "exact": 3
+   },
+   {
+    "id": "masks-merge",
+    "what": "the masks line merged into the init line",
+    "chars": 0,
+    "smooth": 1.431,
+    "exact": 1
+   },
+   {
+    "id": "alpha-check-order",
+    "what": "def k above the alphabet line (both stay above d)",
+    "chars": 0,
+    "smooth": 0.285,
+    "exact": 0
+   },
+   {
+    "id": "enum-paren-sum",
+    "what": "for(q,c)in as for q,c in (inside the weights)",
+    "chars": 0,
+    "smooth": 0.156,
+    "exact": 0
+   },
+   {
+    "id": "enum-paren-dump",
+    "what": "for(i,t)in as for i,t in (the self-dump)",
+    "chars": 0,
+    "smooth": -0.701,
+    "exact": -1
+   },
+   {
+    "id": "yc-list",
+    "what": "for y in(0,1) as for y in[0,1]",
+    "chars": 0,
+    "smooth": -1.428,
+    "exact": -1
+   },
+   {
+    "id": "boost-first",
+    "what": "c[y]<<q+(c[1-y]<1) as c[y]<<(c[1-y]<1)+q",
+    "chars": 1,
+    "smooth": 2.895,
+    "exact": 3
+   },
+   {
+    "id": "boost-gt",
+    "what": "(c[1-y]<1) as (1>c[1-y])",
+    "chars": 0,
+    "smooth": 0.916,
+    "exact": 1
+   },
+   {
+    "id": "min-order",
+    "what": "min(c,c//4+2) as min(c//4+2,c)",
+    "chars": 0,
+    "smooth": -0.449,
+    "exact": 0
+   },
+   {
+    "id": "xor-y",
+    "what": "1-y as y^1 in the update",
+    "chars": 0,
+    "smooth": -0.336,
+    "exact": 0
+   },
+   {
+    "id": "xor-yc",
+    "what": "1-y as y^1 in the weights",
+    "chars": 0,
+    "smooth": -0.547,
+    "exact": 0
+   },
+   {
+    "id": "check-order",
+    "what": "n=(n+c)*K as n=(c+n)*K",
+    "chars": 0,
+    "smooth": -0.719,
+    "exact": -1
+   },
+   {
+    "id": "pos-gt",
+    "what": "if i<m as if m>i",
+    "chars": 0,
+    "smooth": -1.96,
+    "exact": -2
+   },
+   {
+    "id": "range-order",
+    "what": "range(m+n) as range(n+m)",
+    "chars": 0,
+    "smooth": 0.513,
+    "exact": 1
+   },
+   {
+    "id": "check-swap",
+    "what": "if k(...)==t[-4:] as if t[-4:]==k(...)",
+    "chars": 0,
+    "smooth": -1.724,
+    "exact": -1
+   },
+   {
+    "id": "assert-literal-first",
+    "what": "assert k(0,r)=='...' as assert'...'==k(0,r)",
+    "chars": -1,
+    "smooth": -1.332,
+    "exact": -1
+   },
+   {
+    "id": "line-inc-last",
+    "what": "n+=1 after the digit loop instead of before",
+    "chars": 0,
+    "smooth": 0.187,
+    "exact": 0
+   },
+   {
+    "id": "bit-shift",
+    "what": "r[i]>>7-j&1 as r[i]<<j>>7&1 (a byte shifted left first)",
+    "chars": 1,
+    "smooth": 2.078,
+    "exact": 2
+   },
+   {
+    "id": "init-perm-021",
+    "what": "m,t,h=... in the order (0, 2, 1)",
+    "chars": 0,
+    "smooth": -2.731,
+    "exact": -2
+   },
+   {
+    "id": "init-perm-102",
+    "what": "m,t,h=... in the order (1, 0, 2)",
+    "chars": 0,
+    "smooth": 1.993,
+    "exact": 2
+   },
+   {
+    "id": "init-perm-120",
+    "what": "m,t,h=... in the order (1, 2, 0)",
+    "chars": 0,
+    "smooth": 3.62,
+    "exact": 4
+   },
+   {
+    "id": "init-perm-201",
+    "what": "m,t,h=... in the order (2, 0, 1)",
+    "chars": 0,
+    "smooth": 1.416,
+    "exact": 1
+   },
+   {
+    "id": "init-perm-210",
+    "what": "m,t,h=... in the order (2, 1, 0)",
+    "chars": 0,
+    "smooth": 2.291,
+    "exact": 2
+   },
+   {
+    "id": "alpha-perm-021",
+    "what": "q,n,v=... in the order (0, 2, 1)",
+    "chars": 0,
+    "smooth": -0.999,
+    "exact": -1
+   },
+   {
+    "id": "alpha-perm-102",
+    "what": "q,n,v=... in the order (1, 0, 2)",
+    "chars": 0,
+    "smooth": -0.094,
+    "exact": 0
+   },
+   {
+    "id": "alpha-perm-120",
+    "what": "q,n,v=... in the order (1, 2, 0)",
+    "chars": 0,
+    "smooth": 0.11,
+    "exact": 0
+   },
+   {
+    "id": "alpha-perm-201",
+    "what": "q,n,v=... in the order (2, 0, 1)",
+    "chars": 0,
+    "smooth": -1.563,
+    "exact": -1
+   },
+   {
+    "id": "alpha-perm-210",
+    "what": "q,n,v=... in the order (2, 1, 0)",
+    "chars": 0,
+    "smooth": -0.587,
+    "exact": 0
+   }
+  ],
+  "greedy": [
+   {
+    "id": "selfdump-counter",
+    "taken": true,
+    "gain": -13.921
+   },
+   {
+    "id": "update-split-b",
+    "taken": true,
+    "gain": -4.449
+   },
+   {
+    "id": "update-split",
+    "taken": false,
+    "why": "target rewritten by an earlier one"
+   },
+   {
+    "id": "sum-inline",
+    "taken": true,
+    "gain": -2.522
+   },
+   {
+    "id": "find",
+    "taken": true,
+    "gain": -3.131
+   },
+   {
+    "id": "init-perm-021",
+    "taken": true,
+    "gain": -2.972
+   },
+   {
+    "id": "pos-gt",
+    "taken": true,
+    "gain": -1.9
+   },
+   {
+    "id": "check-swap",
+    "taken": true,
+    "gain": -1.909
+   },
+   {
+    "id": "part-double",
+    "taken": true,
+    "gain": -0.285
+   },
+   {
+    "id": "alpha-perm-201",
+    "taken": true,
+    "gain": -1.297
+   },
+   {
+    "id": "yc-list",
+    "taken": true,
+    "gain": -1.29
+   },
+   {
+    "id": "assert-literal-first",
+    "taken": true,
+    "gain": -0.989
+   },
+   {
+    "id": "hist-mod",
+    "taken": true,
+    "gain": -1.073
+   },
+   {
+    "id": "alpha-perm-021",
+    "taken": false,
+    "why": "target rewritten by an earlier one"
+   },
+   {
+    "id": "check-order",
+    "taken": true,
+    "gain": -0.708
+   },
+   {
+    "id": "enum-paren-dump",
+    "taken": false,
+    "why": "target rewritten by an earlier one"
+   },
+   {
+    "id": "alpha-perm-210",
+    "taken": false,
+    "why": "target rewritten by an earlier one"
+   },
+   {
+    "id": "xor-yc",
+    "taken": true,
+    "gain": -0.411
+   },
+   {
+    "id": "hist-minus",
+    "taken": false,
+    "why": "target rewritten by an earlier one"
+   },
+   {
+    "id": "min-order",
+    "taken": true,
+    "gain": -0.469
+   },
+   {
+    "id": "xor-y",
+    "taken": false,
+    "gain": 1.306
+   },
+   {
+    "id": "alpha-perm-102",
+    "taken": false,
+    "why": "target rewritten by an earlier one"
+   }
+  ],
+  "names": [
+   [
+    {
+     "move": "Prog a->s",
+     "gain": -2.066
+    },
+    {
+     "move": "Alpha q->m",
+     "gain": -1.96
+    },
+    {
+     "move": "Num v->k (swap with Check)",
+     "gain": -2.608
+    },
+    {
+     "move": "Check v->b",
+     "gain": -0.828
+    },
+    {
+     "move": "Seed n->t (swap with Text)",
+     "gain": -1.051
+    },
+    {
+     "move": "Text n->r",
+     "gain": -2.183
+    },
+    {
+     "move": "Byte c->x",
+     "gain": -5.588
+    },
+    {
+     "move": "Shift s->r",
+     "gain": -0.192
+    },
+    {
+     "move": "State x->j (swap with Bit)",
+     "gain": -1.6
+    },
+    {
+     "move": "Count n->p (swap with Weights)",
+     "gain": -2.101
+    },
+    {
+     "move": "Orders w->t",
+     "gain": -0.972
+    },
+    {
+     "move": "Masks z->h (swap with Hist)",
+     "gain": -0.289
+    },
+    {
+     "move": "Order q->s",
+     "gain": -2.417
+    },
+    {
+     "move": "Table t->u (swap with Part)",
+     "gain": -0.748
+    },
+    {
+     "move": "Hist z->s (swap with Sum)",
+     "gain": -1.077
+    },
+    {
+     "move": "Part t->k",
+     "gain": -0.617
+    },
+    {
+     "move": "Pairs g->n (swap with Weights)",
+     "gain": -0.922
+    },
+    {
+     "move": "Mask q->y",
+     "gain": -1.291
+    },
+    {
+     "move": "Sum z->h (swap with Masks)",
+     "gain": -2.569
+    },
+    {
+     "move": "Y y->h (swap with Sum)",
+     "gain": -0.058
+    },
+    {
+     "move": "Slot o->n (swap with Pairs)",
+     "gain": -1.473
+    },
+    {
+     "move": "Typed t->c (swap with Glyph)",
+     "gain": -2.323
+    },
+    {
+     "move": "Glyph t->i",
+     "gain": -0.218
+    },
+    {
+     "move": "Out r->y",
+     "gain": -1.495
+    }
+   ],
+   [
+    {
+     "move": "Prog s->c (swap with Typed)",
+     "gain": -2.341
+    },
+    {
+     "move": "Num k->i (swap with Glyph)",
+     "gain": -0.486
+    },
+    {
+     "move": "Check b->f",
+     "gain": -0.365
+    },
+    {
+     "move": "State j->y (swap with Sum)",
+     "gain": -0.361
+    },
+    {
+     "move": "Masks z->o (swap with Pairs)",
+     "gain": -0.225
+    },
+    {
+     "move": "Sum j->a",
+     "gain": -1.405
+    },
+    {
+     "move": "Glyph k->j",
+     "gain": -0.283
+    }
+   ],
+   [],
+   []
+  ],
+  "rewrite_repass": [
+   {
+    "move": "+num-order",
+    "gain": -0.919
+   }
+  ]
+ }
+}

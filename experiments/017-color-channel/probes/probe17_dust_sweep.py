@@ -21,9 +21,10 @@ Repeats per condition: N_SEEDS draws; report mean / min / max. Degenerate
 draws (any class with < n_features+2 samples) are redrawn (counted).
 
 Usage:
-  env/bin/python scratch/probe17_dust_sweep.py \
-      scratch/probe17_feats_home.npz scratch/probe17_feats_xerox.npz
-Writes scratch/probe17_dust_report.json.
+  env/bin/python experiments/017-color-channel/probes/probe17_dust_sweep.py \
+      <probe17_feats_home.npz> <probe17_feats_xerox.npz>
+Writes experiments/017-color-channel/build/probe17_dust_report.json (the
+record of the run is probe17_dust_report.json beside this file).
 """
 from __future__ import annotations
 
@@ -34,7 +35,7 @@ from pathlib import Path
 
 import numpy as np
 
-REPO = Path("<repo>")
+REPO = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(REPO / "experiments" / "004-finalists-checkerboard"))
 sys.path.insert(0, str(REPO / "experiments" / "002-calibration-page"))
 
@@ -179,7 +180,8 @@ def main(paths: list[str]) -> None:
     for p, lab in zip(paths, labels):
         report["engines"][lab] = run_engine(p, lab)
     report["runtime_s"] = round(time.time() - t0, 1)
-    out = REPO / "scratch" / "probe17_dust_report.json"
+    out = REPO / "experiments/017-color-channel/build/probe17_dust_report.json"
+    out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(report, indent=1))
     print(f"\nwrote {out} ({report['runtime_s']}s)", flush=True)
 

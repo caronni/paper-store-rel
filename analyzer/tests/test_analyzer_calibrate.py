@@ -10,14 +10,14 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from holo3.format import keystream, tile_codec
-from holo3.lib import ldpc, pava
-from holo3.plugins import tiles as tiles_plugin
+from holo.receiver.format import keystream, tile_codec
+from holo.receiver.lib import ldpc, pava
+from holo.receiver.plugins import tiles as tiles_plugin
 
 from analyzer import calibrate as cal
 from analyzer.types import Evidence, KnownFrame, LaneFootprint, TileFootprint
 
-from ._analyzer_fixtures import i_inputs, needs_i_run
+from ._analyzer_fixtures import needs_sim, sim_run, sim_truth
 from ._synthetic import R0700, row_of
 
 
@@ -220,7 +220,7 @@ def test_select_arm_keeps_the_default_on_a_tie():
 def test_to_sequential_is_production_s_own_scatter_and_nothing_else():
     """PLAN §1.3: un-permute ONLY; the dither stays."""
     row = row_of(R0700)
-    from holo3.format.identity import build_site_geometry
+    from holo.receiver.format.identity import build_site_geometry
     geometry = build_site_geometry(row)
     page, ty, tx = 0, 9, 4
     cells = np.stack(np.meshgrid(
@@ -252,7 +252,7 @@ def test_to_sequential_is_production_s_own_scatter_and_nothing_else():
 
 def test_to_sequential_marks_unobserved_cells_and_zeroes_them():
     row = row_of(R0700)
-    from holo3.format.identity import build_site_geometry
+    from holo.receiver.format.identity import build_site_geometry
     geometry = build_site_geometry(row)
     page, ty, tx = 0, 3, 3
     cells = np.stack(np.meshgrid(
@@ -288,9 +288,10 @@ SIGN_CONFIGURATIONS: tuple[tuple[str, str], ...] = (
 SIGN_GATE_CONFIGURATION = ("subtract+offset", "production")
 
 
-@needs_i_run
-def test_sheet_i_llr_sign_agrees_with_the_emitted_bits():
-    """Q1-shaped: one certified tile per stream, read blind, scored.
+@needs_sim
+def test_the_llr_sign_agrees_with_the_emitted_bits():
+    """Q1-shaped: one certified tile per stream, read blind, scored, on
+    the receiver's displaced colour sim decoded into a run dir (TIER S).
 
     The target's own certificate is hidden from the frame by
     `frame.known_frame`, so the LLR is produced without ever seeing the
@@ -300,9 +301,8 @@ def test_sheet_i_llr_sign_agrees_with_the_emitted_bits():
     capture's cell-level agreement, not the union's.
     """
     from analyzer import arms, sample
-    from ._analyzer_fixtures import i_truth
-    run = i_inputs()
-    truth = i_truth()
+    run = sim_run()
+    truth = sim_truth()
     page = run.live_pages[0]
     table: dict[tuple[str, str], dict[str, tuple[float, int]]] = {}
     for arm, ctx_mode in SIGN_CONFIGURATIONS:
@@ -333,7 +333,7 @@ def test_sheet_i_llr_sign_agrees_with_the_emitted_bits():
 
 
 def _printed_bits(row, key, user_bits) -> np.ndarray:
-    from holo3.plugins.tiles import stream_fact
+    from holo.receiver.plugins.tiles import stream_fact
     fact = stream_fact(row, key[3])
     counter = row.tile_counter(*key[:3])
     return (tile_codec.encode_frame(np.asarray(user_bits, np.uint8),
@@ -345,8 +345,8 @@ def _printed_bits(row, key, user_bits) -> np.ndarray:
 def _pick_certified(run, page: int, stream: str, count: int):
     keys = sorted(key for key in run.certificates
                   if key[0] == page and key[3] == stream
-                  and 4 <= key[1] <= run.tiles_yx[0] - 5
-                  and 4 <= key[2] <= run.tiles_yx[1] - 5)
+                  and 1 <= key[1] <= run.tiles_yx[0] - 2
+                  and 1 <= key[2] <= run.tiles_yx[1] - 2)
     if not keys:
         pytest.skip(f"no interior certified {stream} tile")
     step = max(1, len(keys) // count)

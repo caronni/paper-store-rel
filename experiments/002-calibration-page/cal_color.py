@@ -673,12 +673,16 @@ def main() -> None:
     import time
 
     ap = argparse.ArgumentParser(description="cal_color family smoke run")
-    ap.add_argument("--scan-color", default="scans/test-scan-calpage-color.png")
-    ap.add_argument("--scan-bw", default="scans/test-scan-calpage-bw.png")
+    # the run's scans: scans/test-scan-calpage-{color,bw}.png
+    ap.add_argument("--scan-color", required=True)
+    ap.add_argument("--scan-bw", default=None,
+                    help="required unless --no-bw")
     ap.add_argument("--no-bw", action="store_true",
                     help="skip the grey-scan cross-check (halves memory)")
     ap.add_argument("--out", default=str(cc.BUILD / "cal_color_report.json"))
     args = ap.parse_args()
+    if args.scan_bw is None and not args.no_bw:
+        ap.error("--scan-bw is required unless --no-bw")
 
     t0 = time.time()
     scan_color = cc.load_scan(args.scan_color)

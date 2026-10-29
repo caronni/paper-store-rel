@@ -8,18 +8,20 @@ format and IS the AES row-seed payload under the ``holo/v2/`` namespace:
 
   pitch      = reduced rational "NiD" (n/d inch).  Class names (c1..c4)
                are input/display sugar, never canonical.
-  family     = "k" | "cmy7" | "cmy8"
+  family     = "k" | "cmy7" | "cmy8" | "cmy"
   rungs      = k: required single rung; cmy8: required, uniform
                shorthand "r0700" or mixed "r0700x0700x0550" (C,M,Y
-               order); cmy7: forbidden (baked per generation)
+               order); cmy: required, uniform "r0700" or mixed
+               "r0775x0700" (hi,lo order); rung order = stream order;
+               cmy7: forbidden (baked per generation)
   sites      = always spelled canonically; omitted on input fills the
-               frozen defaults k -> p100, cmy7/cmy8 -> p120
+               frozen defaults k -> p100, cmy7/cmy8/cmy -> p120
   gen        = always spelled canonically; omitted on input fills the
                frozen default v1
 
 The canonical string is fully explicit and reads no mutable table.
 The short spelling is ``display_id``: class names, defaults omitted,
-uniform triplets contracted.  The parser accepts either; every
+uniform rungs contracted.  The parser accepts either; every
 serialization point stores canonical form only.
 
 Public doors: ``parse_format_id`` (string) and ``mint`` / ``make_format``
@@ -37,7 +39,7 @@ from functools import lru_cache
 from types import MappingProxyType
 
 from .descriptor import Coding, FormatSpec
-from .families import cmy7_codec, cmy8_codec, k_codec, rung_token
+from .families import cmy7_codec, cmy8_codec, cmy_codec, k_codec, rung_token
 from .layout import MAX_TILES, TILE_CELLS
 from .profiles import Family
 
@@ -62,7 +64,9 @@ _SITES_RE = re.compile(r"^p([0-9]+)$")
 _GEN_RE = re.compile(r"^v([0-9]+)$")
 _TILES_RE = re.compile(r"^([0-9]+)x([0-9]+)$")
 
-_DEFAULT_SITES = {Family.K: 100, Family.CMY7: 120, Family.CMY8: 120}
+_DEFAULT_SITES = {Family.K: 100, Family.CMY7: 120, Family.CMY8: 120,
+                  Family.CMY: 120}
+_RUNG_ARITY = {Family.K: 1, Family.CMY7: 0, Family.CMY8: 3, Family.CMY: 2}
 _DEFAULT_GEN = 1
 _DEFINED_GENS: tuple[int, ...] = (1,)
 assert _DEFAULT_GEN in _DEFINED_GENS
@@ -122,11 +126,10 @@ class CodingParams:
     def __post_init__(self) -> None:
         if self.pitch <= 0:
             raise ValueError("pitch must be positive")
-        expected_arity = {Family.K: 1, Family.CMY7: 0, Family.CMY8: 3}
-        if len(self.rungs) != expected_arity[self.family]:
+        if len(self.rungs) != _RUNG_ARITY[self.family]:
             raise ValueError(
                 f"{self.family.value}: rung arity must be "
-                f"{expected_arity[self.family]}, got {self.rungs}")
+                f"{_RUNG_ARITY[self.family]}, got {self.rungs}")
 
 
 def canonical_coding_id(params: CodingParams) -> str:
@@ -173,8 +176,8 @@ def parse_coding_id(coding_id: str) -> CodingParams:
     if idx < len(rest) and _RUNGS_TOKEN_RE.match(rest[idx]):
         body = rest[idx][1:]
         rungs = tuple(f"r{part}" for part in body.split("x"))
-        if family is Family.CMY8 and len(rungs) == 1:
-            rungs = rungs * 3
+        if len(rungs) == 1 and _RUNG_ARITY[family] > 1:
+            rungs = rungs * _RUNG_ARITY[family]
         idx += 1
     if idx < len(rest) and _SITES_RE.match(rest[idx]):
         sites = int(_SITES_RE.match(rest[idx]).group(1))
@@ -186,7 +189,7 @@ def parse_coding_id(coding_id: str) -> CodingParams:
         raise ValueError(
             f"coding id {coding_id!r}: unrecognized or misordered "
             f"token {rest[idx]!r} (order: rungs, sites, generation)")
-    if family in (Family.K, Family.CMY8) and not rungs:
+    if _RUNG_ARITY[family] and not rungs:
         raise ValueError(
             f"coding id {coding_id!r}: {family.value} requires a rung token")
     if family is Family.CMY7 and rungs:
@@ -216,9 +219,14 @@ def _coding_for_id(canonical_id: str) -> Coding:
     elif params.family is Family.CMY7:
         codec = cmy7_codec(params.sites, params.gen)
         rate_id = None
-    else:
+    elif params.family is Family.CMY8:
         codec = cmy8_codec(params.rungs, params.sites)
         rate_id = None
+    elif params.family is Family.CMY:
+        codec = cmy_codec(params.rungs, params.sites)
+        rate_id = None
+    else:
+        raise ValueError(f"{canonical_id}: no codec for {params.family}")
     dots600 = params.pitch * 600
     return Coding(
         coding_id=canonical_id,
@@ -227,7 +235,7 @@ def _coding_for_id(canonical_id: str) -> Coding:
         rate_id=rate_id,
         n_filler=params.sites - 100,
         codec=codec,
-        pooled_fountain=params.family is Family.CMY8,
+        pooled_fountain=params.family in (Family.CMY8, Family.CMY),
         pitch_in=params.pitch,
         namespace="v2",
     )

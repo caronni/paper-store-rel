@@ -1,7 +1,7 @@
 """When could the done gate have bitten?  A read-only walk of one
 finished run's event stream.
 
-    PYTHONPATH=. env/bin/python measure/donegeo_timeline.py \
+    PYTHONPATH=src:. env/bin/python measure/donegeo_timeline.py \
         /tmp/I/holo3-I-first-run/events.jsonl
 
 NOT A TEST and not collectable as one (`measure/` standing, alongside
@@ -30,7 +30,7 @@ whole of what a per-stream relaxation could reach, and it is a design
 ruling, not a measurement.
 
 IT ALSO RECOVERS THE RETIREMENT CAUSE, which the v1 record does not
-carry (`WindowRetired` is emitted for all three clauses of
+carry (`WorkerRetired` is emitted for all three clauses of
 `place_sched.place_retire_cause` and names none of them).  A window that
 leaves the frontier having never been posed and never fired a single
 `place` job cannot have been retired as `placed` or as `exhausted`: the
@@ -51,6 +51,8 @@ from pathlib import Path
 from typing import IO, Iterator
 
 CERTIFIED = "certified"
+#: `revisit` was dissolved 2026-09-21 and no live run emits it; the name
+#: stays because this reader's job is ARCHIVED journals, which do.
 PLACING_PLUGINS: frozenset[str] = frozenset({"place", "revisit"})
 WindowKey = tuple[str, int, int, tuple[int, int, int, int]]
 
@@ -63,6 +65,18 @@ def window_key(event: dict) -> WindowKey:
 def job_window_key(event: dict) -> WindowKey:
     subject = event["subject"]
     return (subject[0], subject[1], subject[2], tuple(subject[3]))
+
+
+#: The retire event in BOTH spellings: `WorkerRetired` is generic over
+#: every row and carries the subject as a JSON list (2026-09-21),
+#: `WindowRetired` was place's alone and carried the window flat.  An
+#: archived journal -- and the base leg of any A/B -- holds the old one.
+RETIRED_TYPES = ("WorkerRetired", "WindowRetired")
+
+
+def retired_window_key(event: dict) -> WindowKey:
+    return (job_window_key(event) if "subject" in event
+            else window_key(event))
 
 
 def events(path: Path) -> Iterator[dict]:
@@ -144,19 +158,20 @@ def walk(path: Path) -> dict:
             if not any_cert:
                 cpu_before_any_cert[plugin] += float(event["cpu_s"])
             if plugin in PLACING_PLUGINS:
-                # `revisit` builds the same `place_sched.ring_pass_job`
-                # and folds the same PlaceOutcome, so a window it fired
-                # for can reach the exhausted clause with no `place` job
-                # of its own: both count as "this window was tried".
+                # In journals written before 2026-09-21, `revisit`
+                # builds the same `place_sched.ring_pass_job` and folds
+                # the same PlaceOutcome, so a window it fired for can
+                # reach the exhausted clause with no `place` job of its
+                # own: both count as "this window was tried".
                 key = job_window_key(event)
                 fired[key] += 1
                 place_cpu[key] += float(event["cpu_s"])
         elif kind == "WindowSettled":
             settled[event["state"]] += 1
             refused.add(window_key(event))
-        elif kind == "WindowRetired":
+        elif kind in RETIRED_TYPES and event.get("plugin", "place") == "place":
             retired += 1
-            key = window_key(event)
+            key = retired_window_key(event)
             left_frontier.add(key)
             if key in posed:
                 cause = "placed"

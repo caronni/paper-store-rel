@@ -2,11 +2,11 @@
 """The pooled-context arm's decode evidence: null proof and existence.
 
     cd <worktree>
-    PYTHONPATH=.:src env314t/bin/python -m measure.pooled_ctx.harness \\
+    PYTHONPATH=src:. env/bin/python -m measure.pooled_ctx.harness \\
         --artefacts <dir> --case null-color --out <dir>/null-color.json
 
     # the null proof runs the SAME command against an unmodified tree:
-    PYTHONPATH=<baseline>:<baseline>/src env314t/bin/python \\
+    PYTHONPATH=<baseline>:<baseline>/src env/bin/python \\
         -m measure.pooled_ctx.harness --artefacts <dir> --case null-color \\
         --out <dir>/null-color-baseline.json
     # (the baseline copy needs this driver on its PYTHONPATH too:
@@ -46,7 +46,7 @@ COLOR_BORDER_DOTS = 60
 
 
 def _sims_module():
-    from holo3.tests import _h3_sims
+    from holo.receiver.tests import _h3_sims
 
     return _h3_sims
 
@@ -86,7 +86,7 @@ def build_artefacts(artefacts: Path) -> dict[str, Path]:
 def build_pair(artefacts: Path, base: Path, spec) -> tuple[Path, Path]:
     from measure.pooled_ctx import sims as pair_sims
 
-    from holo3.format import identity
+    from holo.receiver.format import identity
 
     row = identity.resolve_format_ref(COLOR_FORMAT_REF)
     cell_px = float(row.pitch_in * DPI)
@@ -98,7 +98,7 @@ def build_pair(artefacts: Path, base: Path, spec) -> tuple[Path, Path]:
 def decode(scans: tuple[Path, ...], format_ref: str, run_dir: Path,
            out_path: Path, workers: int, pooled: bool,
            dpis: tuple[float, ...]) -> dict:
-    from holo3 import data, engine
+    from holo.receiver import data, engine
 
     run_dir.mkdir(parents=True, exist_ok=True)
     if out_path.exists():
@@ -251,7 +251,9 @@ def compare(left: Path, right: Path) -> int:
 
 def main(argv: list[str]) -> int:
     parser = argparse.ArgumentParser(prog="measure.pooled_ctx.harness")
-    parser.add_argument("--artefacts", default="scratch/pooled-ctx")
+    parser.add_argument("--artefacts",
+                        help="stimulus + run directory (required with --case; "
+                             "the decode states are multi-GB)")
     parser.add_argument("--case", choices=("null-k", "null-color", "mixed",
                                            "pair"))
     parser.add_argument("--label")
@@ -276,6 +278,8 @@ def main(argv: list[str]) -> int:
         return compare(*args.compare)
     if args.case is None:
         parser.error("--case or --compare is required")
+    if args.artefacts is None:
+        parser.error("--artefacts is required with --case")
     if args.label is None:
         args.label = f"{args.case}-{'on' if args.pooled else 'off'}"
     record = run_case(args)

@@ -1,5 +1,5 @@
 """Where to sample it — the registration arms of DESIGN §4.6, and the
-delta over `holo3/plugins/plane_k.py` that §4.1 asks this module to be.
+delta over `src/holo/receiver/plugins/plane_k.py` that §4.1 asks this module to be.
 
 BLIND.  Nothing here may import :mod:`analyzer.truth` or
 :mod:`analyzer.oracle`.  The unmixing half lives in
@@ -8,9 +8,14 @@ PLAN §1.2's contract reads off one module.
 
 REUSE (DESIGN §4.1), per function:
 
-* `plane_k.field_delta_dots` — CALLED by the `field` arm, support gate
-  and all: it returns None when the standing field has no support under
-  the footprint, which is exactly §4.6's "collapse to committed".
+* `plane_k.field_delta_dots` — CALLED by the `field` arm, whole: it
+  evaluates the standing field through `lib/page_map`, with no support
+  gate and no refusal, so a tile no evidence reached reads exactly zero,
+  which is the pose (design I6/I8).  §4.6's "collapse to committed" is
+  then the ANALYZER's own rule, made on the value: a field that reads
+  zero over every cell the arm CONSUMES — its halo included, because the
+  affine below is fitted over those cells too — renames the row rather
+  than paying for a byte-identical duplicate of `committed`.
 * `plane_k.choose_offset` — NOT called, for three reasons that are
   design-level, not convenience.  It needs a window-scope `RegionWindow`
   and the lane's FULL rasters, where this module holds a footprint and
@@ -27,28 +32,34 @@ REUSE (DESIGN §4.1), per function:
 * `local_affine.search` / `correlation_ratios` / `state_groups` /
   `unit_coordinates`, and `swim.translation_bound_dots` /
   `swim.resolution_dots` — CALLED by the `affine` and `word` arms.
-  `swim.fit_window` itself is NOT called: it needs `fields.window_sites`
+  `swim.fit_window` itself is NOT called: it needs `swim.window_sites`
   and its own window crop, and it fits all three planes against the
   8-state level table where these arms fit ONE plane against its own
   known bits.
-* `plane_field.smooth` / `gaussian_kernel` — CALLED by
-  :func:`smooth_offsets`, with the support normalisation DESIGN §4.6
-  requires (`smooth` is zero-padded, so smoothing offsets alone pulls a
-  sparse band's edge toward zero — the failure §4.6 names).
+* `plane_field.tile_codes` — CALLED by :func:`_field_uncertainty_dots`,
+  to name the grid cells a footprint covers.  The kernel smoother
+  (`smooth`, `gaussian_kernel`, `clamp`) is no longer reached from here:
+  `smooth_offsets` and its `smooth` arm were retired with the per-lane
+  field (A3, 2026-09-12) and `analyzer.field2_kernel` carries the
+  smoother `field2` fits with.
 * `pilots.decode_color_word` — CALLED by the `word` arm as its BLIND
   verification: the arm believes its hard read only when the 100 sites
   decode to this tile's own counter.
 
-THE DELTA FRAME (DESIGN §4.4, ruled 2026-09-03).  Every delta in this
-module is PAGE-frame dots (x, y).  Production's deltas are WINDOW-LOCAL
-(`PlaneField.delta_dots_xy` and `plane_k.choose_offset` are both applied
-through `anchor.pose_linear(window.affine)`, whose linear part is
-``level_terms[:, :2] @ rotation(rot_k)``), so every production delta an
-arm consumes goes through :func:`to_page_frame` first, with the
-CONTRIBUTING PLACEMENT's own `rot_k`.  579 of sheet I's 3,687 accepted
-placements are rot_k 2, where the two frames differ by a sign on both
-axes; getting this backwards makes the field arm actively harmful, and a
-test on a rot_k-2 placement is mandatory.
+THE DELTA FRAME (DESIGN §4.4; re-ruled with the page field, 2026-09-12).
+Every delta in this module is PAGE-frame dots (x, y), and so is every
+production delta it consumes: `PlaneField.delta_dots_xy` and
+`plane_k.choose_offset`'s sweep both reach the raster through
+`lib/page_map`, which carries a page-axis vector into pixels with the
+window's own `page_linear` and therefore with its rotation.  A lane's
+rot_k is a placement property the MAPPING composes, not something a
+consumer applies, so an arm reads a published delta unrotated on a rot-2
+owner exactly as on a rot-0 one.  What stays window-local is the swim's
+local affine and `refine.color`'s candidate poses, and `page_map`'s own
+`local_axes` / `page_axes` convert those.  The per-lane fact this module
+DID have to rotate was retired with the receiver's per-lane fitter
+(docs/PAGE-FIELD-DESIGN.md §2.2); :func:`to_page_frame` survives as the
+algebra, applied to no production field.
 
 PER-CELL DELTAS AND THE 6-TERM AFFINE.  `sample.read_rgb` takes a SCALAR
 offset in dots plus an optional per-owner affine override; a per-cell
@@ -59,7 +70,10 @@ coordinate — adding ``d(c) = a + Bc`` before the pose is
 :func:`affine_terms_for_delta` builds, by least squares over the owner's
 own cells so a delta that is NOT affine (the plane field is bilinear
 between tile centres) is fitted and its residual REPORTED rather than
-silently dropped.
+silently dropped.  MEASURED on the record's own published fields
+(review lens 2026-09-13): the approximation displaces a sample by a
+median 0.005-0.076 dots and at worst 0.213 (sheet H's Y at halo 48),
+all under the 0.25-dot resolution the field itself is published at.
 """
 
 from __future__ import annotations
@@ -68,17 +82,22 @@ from typing import Any, Mapping, Sequence
 
 import numpy as np
 
-from holo3.format import pilots
-from holo3.lib import local_affine, plane_field as plane_field_lib, spectral
-from holo3.plugins import color_sites, plane_k, swim
+from holo.receiver.format import pilots
+from holo.receiver.lib import local_affine, plane_field as plane_field_lib, spectral
+from holo.receiver.plugins import color_sites, plane_k, swim
 
-from holo3.plugins import calibrate as calibrate_plugin
+from holo.receiver.plugins import calibrate as calibrate_plugin
+from holo.receiver.plugins import color_region_anchor as anchor
 
 from . import calibrate as cal
 from . import frame as frame_mod
+from . import patch as patch_mod
+from . import pure as pure_mod
 from . import sample as sample_mod
+from .field2_kernel import BOUND_DOTS as FIELD2_BOUND_DOTS
 from .types import (Evidence, Folds, Key, KnownFrame, Lane, LaneFootprint,
-                    LocalContext, PLANE_OF, PageContext, Read, RunInputs)
+                    LocalContext, PLANE_OF, PageContext, PseudoLabels, Read,
+                    RunInputs)
 from .unmix import (LANE_MIX_TILES, MIX_SCOPES, UNMIX_MODES, _sample_tiles,
                     fit_mix, isolated_scores, lane_mix, mix_detail, shim_read,
                     unmix_score)
@@ -86,16 +105,51 @@ from .unmix import (LANE_MIX_TILES, MIX_SCOPES, UNMIX_MODES, _sample_tiles,
 TILE_CELLS = 64
 
 REGISTER_ARMS: tuple[str, ...] = (
-    "committed", "field", "offset", "field+offset", "affine", "smooth",
-    "word", "field2", "field2+offset", "field2c", "field2c+offset")
+    "committed", "field", "offset", "field+offset", "affine",
+    "word", "field2", "field2+offset")
 
-#: The `field2` family, and which field each member reads.  `field2` is
-#: the POOLED FURNITURE field (one fit per page-plane over every lane,
-#: certificate-free, generation-invariant — RULED 2026-09-03 late);
-#: `field2c` is the per-lane CERTIFICATE-anchored fit that came first.
+#: The `field2` family, and which field each member reads: the POOLED
+#: FURNITURE field, one fit per page-plane over every lane,
+#: certificate-free and generation-invariant (RULED 2026-09-03 late).
+#: `field2c`, the per-lane CERTIFICATE-anchored fit that came first, was
+#: RETIRED 2026-09-12 (A2) — it was the analyzer's last lane-keyed field
+#: and the only one whose absence from `controls.FIELD_ARMS` was a
+#: withholding hazard.
 FIELD2_ARMS: dict[str, str] = {
-    "field2": "furniture", "field2+offset": "furniture",
-    "field2c": "certified", "field2c+offset": "certified"}
+    "field2": "furniture", "field2+offset": "furniture"}
+
+#: WHICH FIELD EACH REGISTER ARM READS, for the withholding controls to
+#: walk (DESIGN §8; PAGE-FIELD-PLAN A6).  TOTAL over `REGISTER_ARMS`,
+#: and that is the whole safety of it: a control asks this table what an
+#: arm reads, so an arm that is not in it must be an ERROR at
+#: registration rather than a silent admission (the check below runs at
+#: import).  `certified` = fitted from certificates and not rebuildable
+#: without them, so a pass that withholds certificates must refuse the
+#: arm; `furniture` = word and dust only, which a withholding pass may
+#: keep; `none` = reads no field at all.
+#:
+#: The production `field` family is `certified` BY CONSTRUCTION, not by
+#: inspection: every page field the receiver publishes is solved from
+#: certified templates plus furniture and the blind tier is retired
+#: (docs/PAGE-FIELD-DESIGN.md §2.5), so the reason is no longer "it may
+#: have used certificates" but "it always does".
+FIELD_SOURCE: dict[str, str] = {
+    "committed": "none", "offset": "none", "affine": "none", "word": "none",
+    "field": "certified", "field+offset": "certified",
+    **FIELD2_ARMS}
+
+#: What a production `field` arm BECOMES when the standing field reads
+#: zero over every cell the arm consumes, or none stands:
+#: :func:`_field_delta` returns None and :func:`register` renames the row
+#: (`register_arm_effective`) rather than paying for a byte-identical
+#: duplicate of `committed` /
+#: `offset`.  That collapse is a property of the (page, plane, lane) and
+#: the field alone — never of the unmix mode — so ONE evaluation says
+#: what every other `field` arm on the same (key, lane) would do, which
+#: is the economy `fixedpoint.blind_key` takes on the row it has already
+#: computed (DESIGN §4.6; PAGE-FIELD-PLAN finding 3).
+FIELD_COLLAPSE: dict[str, str] = {"field": "committed",
+                                  "field+offset": "offset"}
 
 #: DESIGN §4.6's blind 2-D grid, separable.  The x half is
 #: `plane_k.shift_grid`'s reach verbatim (the measured yask battery's ends
@@ -132,13 +186,15 @@ PAGE_CTX_TILES: int = LANE_MIX_TILES
 LOCAL_CTX_RADIUS_TILES: int = 2
 
 __all__ = [
-    "ArmError", "FIELD2_ARMS", "HALO_CELLS", "LANE_MIX_TILES", "MIX_SCOPES",
+    "ArmError", "FIELD2_ARMS", "FIELD_COLLAPSE", "FIELD_SOURCE",
+    "HALO_CELLS", "LANE_MIX_TILES", "MIX_SCOPES",
     "LOCAL_CTX_RADIUS_TILES", "PAGE_CTX_TILES", "REGISTER_ARMS",
     "UNMIX_MODES",
     "affine_terms_for_delta",
-    "evidence_for", "fit_mix", "isolated_scores", "lane_mix", "local_context",
+    "evidence_for", "field_reach_dots", "fit_mix", "isolated_scores",
+    "lane_mix", "local_context",
     "mix_detail",
-    "page_context", "parse_arm", "register", "shim_read", "smooth_offsets",
+    "page_context", "parse_arm", "register", "shim_read",
     "to_page_frame", "unmix_score", "word_pose", "word_site_rows",
 ]
 
@@ -146,18 +202,45 @@ __all__ = [
 class ArmError(RuntimeError):
     """The arm cannot be built as asked."""
 
+
+def _check_field_source() -> None:
+    """`FIELD_SOURCE` is TOTAL over `REGISTER_ARMS`, checked at import.
+
+    The withholding controls decide what to refuse by asking this table
+    what an arm reads (DESIGN §8).  A table that merely LISTS the field
+    arms fails open — an arm nobody classified is admitted in silence,
+    and the reviewer's `prior` arm proved it — so registering an arm
+    without classifying it is an error here, at import, where it is one
+    line to fix and cannot reach a control.
+    """
+    missing = tuple(arm for arm in REGISTER_ARMS if arm not in FIELD_SOURCE)
+    unknown = tuple(sorted(set(FIELD_SOURCE) - set(REGISTER_ARMS)))
+    if missing or unknown:
+        raise ArmError(
+            "FIELD_SOURCE must classify every register arm and no other: "
+            f"unclassified {missing}, not a register arm {unknown}")
+
+
+_check_field_source()
+
 # ------------------------------------------------------- the delta frame
 
 def to_page_frame(delta_dots_xy: Any, rot_k: int) -> np.ndarray:
-    """A production (window-local) dot delta, in the PAGE frame.
+    """A WINDOW-LOCAL dot delta, in the PAGE frame.
 
-    Production applies a delta through ``pose_linear(window.affine)``,
-    whose linear part is ``level_terms[:, :2] @ R`` with
-    ``R = pose.rotation_affine(rot_k, shape)[0]``; this module applies it
-    through ``level_terms[:, :2]``.  Equal displacement therefore needs
-    ``e_yx = R @ d_yx``, and in the (x, y) spelling both functions use
-    that is a quarter-turn of the pair.  Exact for every `rot_k`, arrays
-    and scalars alike.
+    A displacement applied through ``pose_linear(window.affine)``
+    (whose linear part is ``level_terms[:, :2] @ R`` with
+    ``R = pose.rotation_affine(rot_k, shape)[0]``, the window's own
+    local frame) equals ``e_yx = R @ d_yx`` applied through
+    ``level_terms[:, :2]``, which is what this module samples in; in the
+    (x, y) spelling both functions use that is a quarter-turn of the
+    pair.  Exact for every `rot_k`, arrays and scalars alike.
+
+    NO PRODUCTION FIELD GOES THROUGH HERE.  Every published delta is a
+    page-axis vector already (see the module docstring); this is the
+    algebra the window-local searches — the swim's local affine,
+    `refine.color`'s candidate poses — need when their answers have to
+    be spoken about the page, and it is kept for that work alone.
     """
     delta = np.asarray(delta_dots_xy, np.float64)
     flat = delta.reshape(-1, 2)
@@ -203,15 +286,20 @@ def affine_terms_for_delta(terms: Sequence[float], cells_yx: np.ndarray,
     return out, residual
 
 
-def _owner_rot_k(lane: Lane, lfp: LaneFootprint) -> dict[int, int]:
-    return {int(index): int(lane.placements[int(index)].rot_k)
-            for index in np.unique(lfp.owner_index[lfp.observed]).tolist()}
-
-
 def _override_for_delta(lane: Lane, lfp: LaneFootprint,
                         delta_dots_xy_page: np.ndarray, cell_dots: int,
                         ) -> tuple[dict[int, tuple], float]:
-    """Per-owner affines carrying a per-cell PAGE-frame dot delta."""
+    """Per-owner affines carrying a per-cell PAGE-frame dot delta.
+
+    Fitted over each owner's OBSERVED cells, the halo among them — so
+    the halo's deltas move where the target is sampled, which is why
+    :func:`_field_delta` collapses on the observed cells and not on the
+    target's.  The fit is exact for an affine delta and approximate for
+    the bilinear plane field by a measured 0.005-0.076 dots (median) and
+    0.213 at worst on the record's own fields, under the 0.25-dot
+    resolution the field is published at; the worst residual is
+    returned.
+    """
     cells = np.asarray(lfp.tile.page_cells_yx, np.float64)
     delta_cells = np.asarray(delta_dots_xy_page, np.float64)[:, ::-1] \
         / float(cell_dots)                      # (x, y) dots -> (y, x) cells
@@ -231,11 +319,18 @@ def _override_for_delta(lane: Lane, lfp: LaneFootprint,
 
 def _loss_of(read: Read, mix: spectral.PlaneMix, frame: KnownFrame,
              plane: int, mode: str, folds: Folds,
-             lfp: LaneFootprint) -> float | None:
+             lfp: LaneFootprint, crops: Any = None,
+             spec: Any = None) -> float | None:
     if read.refusal is not None:
         return None
-    score = unmix_score(mode, plane, mix, read.values_rgb, frame,
-                        fit_mask=folds.fit)
+    # W8 ruling 1: a patch mode searches the grid under `subtract` unless
+    # its spec says `search_mode="patch"`, in which case it gets its context.
+    objective = patch_mod.objective_mode(mode, spec, grid=True)
+    score = unmix_score(objective, plane, mix, read.values_rgb, frame,
+                        fit_mask=folds.fit,
+                        context=((crops, read, lfp, folds, spec)
+                                 if objective in patch_mod.PATCH_MODES
+                                 else None))
     return cal.fold_logloss(score, frame, plane, folds,
                             usable=np.asarray(lfp.observed, bool))
 
@@ -252,7 +347,7 @@ def _search_offset(crops: Any, lfp: LaneFootprint, frame: KnownFrame,
                    override: Any, *,
                    x_range: tuple[float, float] | None = None,
                    y_range: tuple[float, float] | None = None,
-                   profile: bool = False,
+                   profile: bool = False, spec: Any = None,
                    ) -> tuple[tuple[float, float], dict]:
     """DESIGN §4.6's separable 2-D grid on the SEARCH fold.
 
@@ -281,7 +376,9 @@ def _search_offset(crops: Any, lfp: LaneFootprint, frame: KnownFrame,
             read = sample_mod.read_rgb(
                 crops, lfp, offset_dots_xy=(candidate[0], candidate[1]),
                 affine_override=override, arm="offset")
-            loss = _loss_of(read, mix, frame, plane, mode, folds, lfp)
+            loss = _loss_of(read, mix, frame, plane, mode, folds, lfp,
+                            **({"crops": crops, "spec": spec}
+                               if mode in patch_mod.PATCH_MODES else {}))
             evaluated += 1
             if profile:
                 losses[name].append(None if loss is None else float(loss))
@@ -292,56 +389,103 @@ def _search_offset(crops: Any, lfp: LaneFootprint, frame: KnownFrame,
                 best = (candidate[0], candidate[1])
     detail = {"offset_evaluations": evaluated,
               "offset_search_logloss": best_loss}
+    # E2: under `patch_search_mode="patch"` every candidate pose is a
+    # fresh extraction AND a fresh cross-fit, so the count is the cost.
+    if patch_mod.objective_mode(mode, spec, grid=True) in patch_mod.PATCH_MODES:
+        detail["patch_search_fits"] = evaluated
     if profile:
         detail["offset_profile"] = {name: tuple(values)
                                     for name, values in losses.items()}
     return best, detail
 
 
-def _field_delta(inputs_or_field: Any, lane: Lane, lfp: LaneFootprint,
+def _field_uncertainty_dots(field: Any, cells_yx: np.ndarray) -> float:
+    """The standing field's median uncertainty over the footprint's tiles.
+
+    RECORDED, never gating (design I8): a reader samples where the field
+    says, and the uncertainty is what a sparse page says out loud about
+    what it does not know.  Per TILE rather than per cell — the grid is
+    tile-resolution, so cell weighting would only re-weight by footprint
+    shape.
+    """
+    grid = np.asarray(field.uncertainty_dots, np.float64)
+    cells = np.asarray(cells_yx, np.int64)
+    if not cells.shape[0]:
+        return 0.0
+    # Clamped at the page edge, which is `plane_field.evaluate`'s own rule
+    # for a cell the grid does not cover.
+    tiles = np.clip(cells // TILE_CELLS, 0,
+                    np.asarray(grid.shape, np.int64) - 1)
+    codes = plane_field_lib.tile_codes(
+        tiles * TILE_CELLS, (int(grid.shape[0]), int(grid.shape[1])),
+        TILE_CELLS)
+    return float(np.median(grid.reshape(-1)[np.unique(codes)]))
+
+
+def _field_delta(field: Any, lfp: LaneFootprint,
                  target_plane: int | None = None,
                  ) -> tuple[np.ndarray | None, dict]:
-    """`plane_k.field_delta_dots`, CALLED, then rotated to the page frame.
+    """`plane_k.field_delta_dots`, CALLED, at this footprint's cells.
 
-    A `PlaneField` names its own (capture, level, page, plane) and the
-    driver hands one in as a knob; applying another lane's or another
-    plane's field would move the points silently and wrongly, so the
-    mismatch REFUSES and says which key it was handed.
+    A `PlaneField` is keyed by (page, plane) and by nothing else, so it
+    applies on EVERY lane of its page: the capture, the level, the scrap
+    and the rotation are axes the receiver's evidence pooled over
+    (docs/PAGE-FIELD-DESIGN.md §2.2).  What is left to refuse is another
+    page, and — cheaply, because a driver can hand one in by mistake —
+    another plane.  No rotation: the delta is a PAGE-axis vector at its
+    source and this module samples in the page frame (see the module
+    docstring).  No support gate either (I6/I8): a tile no evidence
+    reached reads exactly zero, which is the pose, and a field that
+    reads zero over every cell this arm CONSUMES is an EXPLICIT collapse
+    to `committed` rather than a duplicate of it.
+
+    THE COLLAPSE PREDICATE IS `observed`, halo included (F3/F4, review
+    2026-09-13).  It used to be `in_tile & observed` — the target's own
+    cells — and that made the collapse an approximation rather than the
+    identity DESIGN §4.6 claims: :func:`_override_for_delta` fits each
+    owner's affine over ALL of that owner's observed cells, so a halo
+    cell with a non-zero delta tilts the affine the TARGET is then read
+    through (the review lens measured it on a real footprint at halo 48:
+    a target reading exactly zero still moves 4,092 of its 4,096 cells,
+    by up to 0.0142 dots).
+    Exact zero stays exact zero — no near-zero threshold
+    — and the row says which cells decided it
+    (`field_collapse_over`).  Reachable only at halo >= 34, since a
+    narrower footprint cannot pass the next tile centre; the published
+    fields on the record have no exactly-zero tile at all, so the
+    widening costs the twin reuse nothing that was ever paid.
     """
-    field = inputs_or_field
     if field is None:
         return None, {"field_applied": False, "field_reason": "no_field"}
-    mine = (str(lane.capture_id), int(lane.level_index),
-            int(lfp.tile.page),
-            None if target_plane is None else int(target_plane))
-    theirs = (str(field.capture_id), int(field.level_index),
-              int(field.page),
-              None if target_plane is None else int(field.plane))
-    if mine != theirs:
-        return None, {"field_applied": False,
-                      "field_reason": f"field_is_for_{theirs}_not_{mine}"}
+    if int(field.page) != int(lfp.tile.page):
+        return None, {
+            "field_applied": False,
+            "field_reason": f"field_is_for_page_{int(field.page)}_not_"
+                            f"{int(lfp.tile.page)}"}
+    if target_plane is not None and int(field.plane) != int(target_plane):
+        return None, {
+            "field_applied": False,
+            "field_reason": f"field_is_for_plane_{int(field.plane)}_not_"
+                            f"{int(target_plane)}"}
     cells = np.asarray(lfp.tile.page_cells_yx, np.int64)
-    local = plane_k.field_delta_dots(field, cells)
-    if local is None:
-        return None, {"field_applied": False, "field_reason": "no_support"}
-    local = np.asarray(local, np.float64)
-    page = np.zeros_like(local)
-    rot = _owner_rot_k(lane, lfp)
-    owner = np.asarray(lfp.owner_index, np.int64)
-    for index, rot_k in rot.items():
-        rows = np.flatnonzero(owner == index)
-        page[rows] = to_page_frame(local[rows], rot_k)
-    inside = np.asarray(lfp.tile.in_tile, bool) & np.asarray(lfp.observed,
-                                                             bool)
+    page = np.asarray(plane_k.field_delta_dots(field, cells), np.float64)
+    inside = np.asarray(lfp.observed, bool)
     if not np.any(inside):
         return None, {"field_applied": False, "field_reason": "no_observed"}
+    stood = {"field_uncertainty_dots": _field_uncertainty_dots(field,
+                                                             cells[inside]),
+             "field_ordinal": int(field.ordinal)}
+    if not np.any(page[inside]):
+        return None, {"field_applied": False,
+                      "field_reason": "field_reads_zero_here",
+                      "field_collapse_over": "observed", **stood}
     median = np.median(page[inside], axis=0)
     return page, {
         "field_applied": True,
         "field_median_dots_xy": (float(median[0]), float(median[1])),
         "field_spread_dots": float(np.max(page[inside], axis=0).max()
                                    - np.min(page[inside], axis=0).min()),
-        "field_rot_k": tuple(sorted(set(rot.values())))}
+        **stood}
 
 
 def _field2_delta(page_field2: Any, lfp: LaneFootprint,
@@ -391,6 +535,73 @@ def _field2_delta(page_field2: Any, lfp: LaneFootprint,
         "field2_stream": str(page_field2.stream_id)}
 
 
+def field_reach_dots(arm: str, lfp: LaneFootprint,
+                     target_plane: int | None = None, *,
+                     plane_field: Any = None) -> float:
+    """How far a STANDING field moves this footprint's points, in dots.
+
+    The term F3 (review 2026-09-13) found missing from the crop bound.
+    `sample.open_crops`'s `bound_dots` is "the registration bound the
+    arms may move within" and a field IS a registration delta, but
+    :func:`evidence_for` built that bound from the offset search and the
+    patch window alone — so a field borrowed the APERTURE margin, which
+    `open_crops` keeps because a crop sized to the bound alone would
+    refuse a read exactly at the bound.  Measured there (c2, 8 px/cell):
+    a bare `field` arm refuses past 4.25 dots of constant field and
+    `field+offset` past 2.25 with the winner at its +2-dot extreme, and
+    from ~0.25 dots below each of those the read is still returned but
+    edge-replicated, differing from a generously cut crop by up to 0.11
+    of full scale.  The largest vector published on the record is 1.089
+    dots (sheet H's Y), so nothing has reached it — this makes the
+    margin true by construction rather than by luck.
+
+    Rounded UP to `OFFSET_STEP_DOTS` so the crop memo's cut count does
+    not fragment: every arm of one lane reads the same field over the
+    same footprint and therefore asks for the same bound, so the
+    battery's two cuts become at most three while a field stands
+    (`sample.crop_memo_key` carries `bound_dots`, so the identity is
+    right by construction; a battery naming `field2` arms as well pays
+    one more).  The affine fit's own residual — 0.213 dots at worst on
+    the record's fields — is what is left riding the aperture margin.
+
+    The `field2` arms take `field2_kernel.BOUND_DOTS`, field2's clamp on
+    its fitted grid and so an upper bound on every vector it can
+    evaluate: their field is fitted AFTER the crop is opened, and the
+    clamp is the honest ceiling available before it.  The `affine` arm's
+    swim translation is already in the bound (`swim.translation_bound_
+    dots(row)` IS `cell_dots`, the term that is there); its linear half
+    is not.  `local_affine.search` opens the linear terms at
+    `LINEAR_BOUND_FRACTION` (0.5) of the translation bound and clips each
+    of them there, and `unit_coordinates` runs to +-1, so the two terms
+    of one axis add at most ONE more translation bound where they meet at
+    the corner: the arm's worst case is 2x `swim.translation_bound_
+    dots(row)` — 4.00 dots at c2, 6.00 at c3 (measured 2026-09-13 by
+    driving `local_affine.search` to its extreme; the review's "3x" read
+    `search_linear`'s own signature, where the caller's bound is the
+    translation's, and `search` halves it before it gets there).
+
+    It stays out of the bound all the same, now for a measured reason
+    rather than for want of one.  On the F3 fixture a CONSTANT delta of
+    that size — strictly worse than the affine, which reaches it at the
+    corner alone — still reads at both rungs, with 1.0 px of headroom
+    left; it is the aperture's margin it spends to do it.  Nothing has
+    ever come close: the review found no such affine in 3 GB of ledger,
+    and `read_headroom_px` (`sample`) now publishes the distance every
+    read sat from its refusal, so a search that did reach would be read
+    off the ledger rather than guessed at.
+    """
+    if arm in FIELD2_ARMS:
+        return float(FIELD2_BOUND_DOTS)
+    if arm not in FIELD_COLLAPSE:
+        return 0.0
+    delta, _detail = _field_delta(plane_field, lfp, target_plane)
+    observed = np.asarray(lfp.observed, bool)
+    if delta is None or not np.any(observed):
+        return 0.0
+    reach = float(np.max(np.abs(np.asarray(delta, np.float64)[observed])))
+    return float(np.ceil(reach / OFFSET_STEP_DOTS) * OFFSET_STEP_DOTS)
+
+
 def _unit_coordinates(lfp: LaneFootprint) -> np.ndarray:
     cells = np.asarray(lfp.tile.page_cells_yx, np.int64)
     low = cells.min(axis=0)
@@ -428,25 +639,27 @@ def _correlation_score(crops: Any, lfp: LaneFootprint, frame: KnownFrame,
 def register(arm: str, lane: Lane, crops: Any, lfp: LaneFootprint,
              frame: KnownFrame, target_plane: int, unmix_mode: str,
              folds: Folds, *, mix: spectral.PlaneMix,
-             plane_field: Any = None, smooth_field: Any = None,
-             page_field2: Any = None,
-             cell_dots: int | None = None) -> tuple[Read, dict]:
+             plane_field: Any = None, page_field2: Any = None,
+             cell_dots: int | None = None,
+             spec: Any = None) -> tuple[Read, dict]:
     """DESIGN §4.6's registration arms over one (lane, footprint).
 
-    Every delta is PAGE-frame dots; a production delta arrives rotated by
-    :func:`to_page_frame` before it is used.  The returned dict is BLIND
-    diagnostics only.
-
-    `page_field2` is the analyzer's OWN page field (:mod:`analyzer.field2`,
-    DESIGN §13) and is already page-frame — it is fitted from this
-    module's own blind offsets, which are page-frame by construction —
-    so it does NOT go through :func:`to_page_frame`.  Only production's
-    deltas do.
+    Every delta is PAGE-frame dots, production's (`plane_field`, keyed
+    by page and plane) and the analyzer's own (`page_field2`,
+    :mod:`analyzer.field2`, DESIGN §13) alike: neither is rotated, and
+    nothing here calls :func:`to_page_frame`.  The returned dict is
+    BLIND diagnostics only.
     """
     if arm not in REGISTER_ARMS:
         raise ArmError(f"unknown registration arm {arm!r}")
     cell_dots = int(crops.cell_dots if cell_dots is None else cell_dots)
-    detail: dict[str, Any] = {"register_arm": arm, "field_applied": False}
+    # W8 ruling 1: the swim and the word pose ALWAYS search under `subtract`
+    # for a patch mode (their objectives run over fit ∪ search rows); the
+    # offset grid follows the spec (`patch_search_mode`).
+    objective = patch_mod.objective_mode(
+        unmix_mode, spec, grid=arm.endswith("offset"))
+    detail: dict[str, Any] = {"register_arm": arm, "field_applied": False,
+                              "register_objective_mode": objective}
     override: Any = None
     base_offset = (0.0, 0.0)
     narrow = False
@@ -466,8 +679,7 @@ def register(arm: str, lane: Lane, crops: Any, lfp: LaneFootprint,
             narrow = searches
 
     if arm in ("field", "field+offset"):
-        delta, field_detail = _field_delta(plane_field, lane, lfp,
-                                           target_plane)
+        delta, field_detail = _field_delta(plane_field, lfp, target_plane)
         detail.update(field_detail)
         if delta is None:
             arm = "committed" if arm == "field" else "offset"
@@ -477,34 +689,21 @@ def register(arm: str, lane: Lane, crops: Any, lfp: LaneFootprint,
                 lane, lfp, delta, cell_dots)
             detail["field_affine_residual_cells"] = float(residual)
 
-    if arm == "smooth":
-        if smooth_field is None:
-            return (sample_mod.read_rgb(crops, lfp, arm=arm),
-                    {**detail, "refusal": "no_smooth_field",
-                     "register_arm_effective": "committed"})
-        grid = np.asarray(smooth_field, np.float64)
-        value = grid[int(lfp.tile.ty), int(lfp.tile.tx)]
-        if not np.all(np.isfinite(value)):
-            return (sample_mod.read_rgb(crops, lfp, arm=arm),
-                    {**detail, "refusal": "no_smooth_support",
-                     "register_arm_effective": "committed"})
-        base_offset = (float(value[0]), float(value[1]))
-        detail["smooth_offset_dots_xy"] = base_offset
-
     if arm == "word":
         return word_pose(lane, crops, lfp, frame, target_plane,
-                         unmix_mode=unmix_mode, mix=mix,
+                         unmix_mode=objective, mix=mix,
                          cell_dots=cell_dots, detail=detail, folds=folds)
 
     if arm == "affine":
         return _affine_arm(lane, crops, lfp, frame, target_plane,
-                           unmix_mode, mix, cell_dots, detail, folds)
+                           objective, mix, cell_dots, detail, folds)
 
-    if arm in ("offset", "field+offset", "field2+offset", "field2c+offset"):
+    if arm in ("offset", "field+offset", "field2+offset"):
         base_offset, search_detail = _search_offset(
             crops, lfp, frame, mix, target_plane, unmix_mode, folds,
             base_offset, override,
-            x_range=(NARROW_X_MIN, NARROW_X_MAX) if narrow else None)
+            x_range=(NARROW_X_MIN, NARROW_X_MAX) if narrow else None,
+            spec=spec)
         detail.update(search_detail)
         detail["offset_grid_dots"] = ((NARROW_X_MIN, NARROW_X_MAX) if narrow
                                       else (OFFSET_X_MIN, OFFSET_X_MAX))
@@ -665,7 +864,7 @@ def word_pose(lane: Lane, crops: Any, lfp: LaneFootprint,
         erasures = (np.sort(order[:n_erased]).astype(np.int64)
                     if n_erased else None)
         states = (bits * np.uint8(3)).astype(np.uint8)
-        decoded = pilots.decode_color_word(states, row.seed, erasures)
+        decoded = pilots.decode_color_word(states, row.seed, row, erasures)
         if decoded is not None:
             used_erasures = n_erased
             break
@@ -679,8 +878,8 @@ def word_pose(lane: Lane, crops: Any, lfp: LaneFootprint,
     # the word is now a proven label set: fit the tile's per-plane pose.
     proven_bits = np.asarray(frame.bits[:, target_plane], np.uint8).copy()
     proven_known = np.asarray(frame.known[:, target_plane], bool).copy()
-    site_bits = np.asarray(pilots.color_word_states(row.seed, (counter,))[0],
-                           np.uint8) == 3
+    site_bits = np.asarray(
+        pilots.color_word_states(row.seed, (counter,), row)[0], np.uint8) == 3
     good = sites >= 0
     proven_bits[sites[good]] = site_bits[good].astype(np.uint8)
     proven_known[sites[good]] = True
@@ -731,43 +930,6 @@ def _geometry_of(frame: KnownFrame) -> Any:
 
 def _row_of(frame: KnownFrame) -> Any:
     return frame.detail.get("row") if frame.detail else None
-
-
-# ---------------------------------------------------------- the smoothing
-
-def smooth_offsets(offsets_by_tile: Mapping[tuple[int, int],
-                                            tuple[float, float]],
-                   weights_by_tile: Mapping[tuple[int, int], float],
-                   tiles_yx: tuple[int, int],
-                   bandwidth_tiles: float = plane_field_lib.BANDWIDTH_TILES,
-                   ) -> tuple[np.ndarray, np.ndarray]:
-    """DESIGN §4.6's SUPPORT-NORMALISED smoothing of the offset solutions.
-
-    ``num = smooth(w * offset)``, ``den = smooth(w)``, evaluated only
-    where ``den > 0``.  `plane_field.smooth` is zero-padded, so smoothing
-    the offsets alone would pull every tile at the edge of a sparse band
-    toward zero — the failure DESIGN §4.6 names.  Tiles with no support
-    come back NaN, and `register`'s `smooth` arm collapses to committed
-    there rather than inventing a delta.
-    """
-    height, width = int(tiles_yx[0]), int(tiles_yx[1])
-    weighted = np.zeros((height, width, 2), np.float64)
-    weight = np.zeros((height, width), np.float64)
-    for (ty, tx), value in offsets_by_tile.items():
-        w = float(weights_by_tile.get((ty, tx), 0.0))
-        if w <= 0.0 or not np.all(np.isfinite(value)):
-            continue
-        weighted[int(ty), int(tx)] = np.asarray(value, np.float64) * w
-        weight[int(ty), int(tx)] = w
-    kernel = plane_field_lib.gaussian_kernel(bandwidth_tiles)
-    denominator = plane_field_lib.smooth(weight, kernel)
-    out = np.full((height, width, 2), np.nan, np.float64)
-    live = denominator > 0.0
-    for axis in (0, 1):
-        numerator = plane_field_lib.smooth(weighted[..., axis], kernel)
-        out[..., axis] = np.where(live, numerator / np.where(
-            live, denominator, 1.0), np.nan)
-    return out, denominator
 
 
 # ------------------------------------------- the page-scope context fit
@@ -1026,7 +1188,8 @@ def parse_arm(arm: str) -> tuple[str, str]:
 def evidence_for(inputs: RunInputs, certs: Mapping[Key, Any], key: Key,
                  lane: Lane, arm: str, *, halo_cells: int | None = None,
                  folds: Folds | None = None,
-                 knobs: Mapping[str, Any] | None = None) -> Evidence:
+                 knobs: Mapping[str, Any] | None = None,
+                 crop_memo: dict | None = None) -> Evidence:
     """One (tile-stream, lane, arm) row — the driver's single call.
 
     footprint -> lane footprint -> crops -> known frame -> mix -> register
@@ -1037,6 +1200,16 @@ def evidence_for(inputs: RunInputs, certs: Mapping[Key, Any], key: Key,
     `knobs["ctx_mode"]` defaults to `"production"` (RULED 2026-09-03):
     production's own context correction is part of the default arm, not
     an extra — without it the Y plane re-derived 0 of 5 certified tiles.
+
+    `crop_memo` is the caller's per-key crop memo (`sample.open_crops`'s
+    `memo`, 2026-09-13).  The cut this arm asks for is decided by knobs
+    that are per LANE, so the whole battery resolves to two cuts — three
+    while a standing field grows the `field` arms' bound by its own
+    reach (:func:`field_reach_dots`, F3) — and a memo hands the second
+    arm of a kind the first one's pixels back —
+    the same object, not a copy.  Nothing else about the arm changes: the
+    memo is read where the crop is opened and nowhere else, and a caller
+    that passes none cuts its own crop as before.
     """
     knobs = dict(knobs or {})
     page, ty, tx, stream_id = key
@@ -1053,8 +1226,36 @@ def evidence_for(inputs: RunInputs, certs: Mapping[Key, Any], key: Key,
                              "unmix_mode": unmix_mode,
                              "register_arm": register_arm,
                              "fold_sizes": folds.sizes}
+    # W8 B7: `aperture_cells="auto"` is not a width — the run chooses it
+    # inside `patch_score` and records the choice under `auto_choices`, so
+    # the CROP is opened at production's own aperture (and keeps its raw
+    # pixels, which is what the candidates are re-filtered from).
+    aperture_auto = patch_mod.is_auto(knobs.get("aperture_cells"))
+    aperture_cells = (float(anchor.APERTURE_CELLS) if aperture_auto else
+                      float(knobs.get("aperture_cells",
+                                      anchor.APERTURE_CELLS)))
+    if aperture_auto and unmix_mode not in patch_mod.PATCH_MODES:
+        # A7's choice lives inside `patch_score`; a box arm in the same
+        # profile cannot make it, and used to buy the raw crop for
+        # nothing and say nothing about it (review 2026-09-06)
+        aperture_auto = False
+        blind["auto_refused"] = {"tile": "not_a_patch_mode"}
+    aperture_kind = str(knobs.get("aperture_kind", "box"))
+    if (aperture_cells != float(anchor.APERTURE_CELLS)
+            or aperture_kind != "box"):
+        blind["aperture_cells"] = aperture_cells
+        blind["aperture_kind"] = aperture_kind
     empty = np.zeros(int(inputs.row.payload_cells), np.float64)
     no_observation = np.zeros(int(inputs.row.payload_cells), bool)
+    # W8 B4 (ruling 8): the pseudo-label door accepts ONE type.  Anything
+    # else — a dict, a tuple, an array — is refused here, before a pixel
+    # is read, so no untyped label can ever train a filter or a map.
+    pseudo = knobs.get("pseudo_labels")
+    if pseudo is not None and not isinstance(pseudo, PseudoLabels):
+        blind["refusal"] = "pseudo_labels:not_typed"
+        return Evidence(key=key, lane=lane.lane_id, arm=arm,
+                        llr_sequential=empty, observed=no_observation,
+                        blind=blind)
 
     lfp = sample_mod.lane_footprint(lane, fp)
     if lfp is None or not np.any(lfp.observed):
@@ -1065,9 +1266,34 @@ def evidence_for(inputs: RunInputs, certs: Mapping[Key, Any], key: Key,
     bound = float(knobs.get("bound_dots",
                             max(abs(OFFSET_X_MIN), abs(OFFSET_X_MAX),
                                 float(cell_dots)) + 0.5))
+    # F3 (review 2026-09-13): and by what the STANDING field moves the
+    # points, which is a registration delta the bound never counted.
+    reach = field_reach_dots(register_arm, lfp, plane,
+                             plane_field=knobs.get("plane_field"))
+    if reach:
+        bound += reach
+        blind["field_reach_dots"] = reach
+    # W8: a patch mode keeps the raw crop (ruling 13) and grows the bound by
+    # its half-window so a patch at the search's edge stays inside the crop.
+    is_patch = unmix_mode in patch_mod.PATCH_MODES
+    spec = patch_mod.spec_from_knobs(knobs) if is_patch else None
+    if is_patch:
+        # the BOUNDING window: under `patch_window_cells="auto"` the run
+        # may choose a wider one, and the crop has to reach it (W8 B7)
+        bound += 0.5 * float(spec.bounding_window_cells) * float(cell_dots)
+    # W8 B3 (A7): the aperture is a knob.  At the defaults `open_crops`
+    # takes production's own code path, so every arm reads what it read
+    # before; any other width or kind grows the crop and keeps the raw
+    # pixels so the filtered crop can be re-derived from the ledger's
+    # record of what was asked.
+    non_default_aperture = (aperture_cells != float(anchor.APERTURE_CELLS)
+                            or aperture_kind != "box")
     try:
-        crops = sample_mod.open_crops(lane, lfp, bound_dots=bound,
-                                      cell_dots=cell_dots)
+        crops = sample_mod.open_crops(
+            lane, lfp, bound_dots=bound, cell_dots=cell_dots,
+            keep_raw=is_patch or non_default_aperture or aperture_auto,
+            aperture_cells=aperture_cells, aperture_kind=aperture_kind,
+            memo=crop_memo)
     except sample_mod.SampleError as error:
         blind["refusal"] = f"crop:{error}"
         return Evidence(key=key, lane=lane.lane_id, arm=arm,
@@ -1080,6 +1306,22 @@ def evidence_for(inputs: RunInputs, certs: Mapping[Key, Any], key: Key,
         metadata_bit=knobs.get("metadata_bit"))
     frame = _with_format(frame, inputs)
     blind["frame"] = dict(frame.detail)
+    # The pseudo labels in FOOTPRINT rows, a LABEL beating a pseudo: a row
+    # the frame already knows keeps its known bit.  `frame.known` is never
+    # written — the DESIGN §4.5 assertion above stands exactly as it is —
+    # and the rows travel beside the frame into the two fits below.
+    pseudo_rows: tuple[np.ndarray, np.ndarray, np.ndarray] | None = None
+    pseudo_detail: dict[str, Any] = {}
+    if pseudo is not None:
+        rows, bits, weights = patch_mod.pseudo_rows(fp, pseudo)
+        keep = ~np.asarray(frame.known[rows, plane], bool)
+        pseudo_rows = (rows[keep], bits[keep], weights[keep])
+        pseudo_detail = {
+            "n_pseudo_labels": int(rows[keep].size),
+            "n_pseudo_offered": int(pseudo.size),
+            "pseudo_weight": (float(weights[keep].max())
+                              if rows[keep].size else None),
+            "pseudo_source": str(pseudo.source)}
 
     committed = sample_mod.read_rgb(crops, lfp, arm="reference")
     memo_mix = knobs.get("lane_mix")
@@ -1128,17 +1370,56 @@ def evidence_for(inputs: RunInputs, certs: Mapping[Key, Any], key: Key,
     read, register_detail = register(
         register_arm, lane, crops, lfp, frame, plane, unmix_mode, folds,
         mix=mix, plane_field=knobs.get("plane_field"),
-        smooth_field=knobs.get("smooth_field"), page_field2=page_field2,
-        cell_dots=cell_dots)
+        page_field2=page_field2, cell_dots=cell_dots, spec=spec)
     blind.update(register_detail)
     if read.refusal is not None:
         blind["refusal"] = f"read:{read.refusal}"
         return Evidence(key=key, lane=lane.lane_id, arm=arm,
                         llr_sequential=empty, observed=no_observation,
                         blind=blind)
+    # F3's other half: how far this read sat from the refusal it did not
+    # hit.  Recorded, gating nothing — a pass that never refuses can then
+    # say how much margin it had rather than only that it had some.
+    blind["read_headroom_px"] = sample_mod.read_headroom_px(crops, lfp, read)
 
-    score = unmix_score(unmix_mode, plane, mix, read.values_rgb, frame,
-                        fit_mask=folds.fit)
+    if is_patch:
+        # P1g: the 5x5 neighbourhood's own certified cargo as extra
+        # training rows, memoised per (lane, tile) — a train-SCOPE knob,
+        # off by default (the footprint's own halo is the default scope).
+        local_labels = None
+        if spec.train_scope == "local5":
+            from . import patchlocal as patchlocal_mod
+            # the target FOOTPRINT's cells are handed over so the loader
+            # can drop them: a halo-48 footprint reaches deep into its
+            # neighbours, and a harvested row that is also one of this
+            # footprint's search- or select-fold cells would put the arm
+            # choice and the lane weights partly in-sample (review
+            # 2026-09-06, DESIGN §4.8)
+            local_labels, local_detail = patchlocal_mod.local_patch_labels(
+                inputs, certs, key, lane, spec, unmix_mode=unmix_mode,
+                footprint_cells_yx=fp.page_cells_yx)
+            blind.update(local_detail)
+        score, patch_detail = patch_mod.patch_score(
+            spec, plane, frame, mix, crops, read, lfp, folds,
+            mode=unmix_mode, local_labels=local_labels,
+            extra_labels=pseudo_rows)
+        blind.update(patch_detail)
+    else:
+        score = unmix_score(unmix_mode, plane, mix, read.values_rgb, frame,
+                            fit_mask=folds.fit)
+    # the door's record OVER the patch detail: `pseudo_source` says who
+    # labelled the fit set from outside (`decoder`), `patch_labels_from`
+    # keeps saying `halo+self+bp` when self-training was on as well
+    blind.update(pseudo_detail)
+    # THE MAP-SIDE DOOR (review 2026-09-06).  A PATCH arm's filter has
+    # already absorbed the decoder's rows, so handing the SAME rows to
+    # the PAVA map as training pairs fits the map on the filter's output
+    # at the cells that trained it — ruling 7 one stage down.  OFF by
+    # default for a patch mode; ON for a box arm, where the map is the
+    # only place a pseudo label can act.  An explicit knob still wins.
+    refit_calibration = bool(knobs.get("refit_calibration", not is_patch))
+    if pseudo_rows is not None:
+        blind["refit_calibration"] = refit_calibration
     # `branches` is `cal.DEFAULT_BRANCHES` — "pooled", the ONE map
     # `plane_k.calibrated_rows` fits — unless a caller asks for something
     # else; passing the unmix MODE is what re-arms the two-population split
@@ -1171,12 +1452,31 @@ def evidence_for(inputs: RunInputs, certs: Mapping[Key, Any], key: Key,
             n_tiles=int(knobs.get("ctx_page_tiles", PAGE_CTX_TILES)),
             starved_fallback=starved_fallback)
         blind.update(page_detail)
-    llr, cal_detail = cal.calibrate(
-        score, frame, plane, lfp, folds,
-        branches=str(knobs.get("branches") or cal.DEFAULT_BRANCHES),
-        ctx_mode=ctx_mode, page_context=page_ctx, local_context=local_ctx,
-        starved_fallback=starved_fallback,
-        stream_id=str(stream_id))
+    if pure_mod.is_pure(knobs, unmix_mode):
+        # W8 B6 (P0, the user's ruling of 2026-09-06): the PURE path.  A
+        # discriminant that already separates the classes needs no PAVA,
+        # no context and no Platt between it and BP — only its own
+        # held-out error rate as a log-odds.  ONE dispatch: the whole
+        # calibration stage is replaced and nothing else here changes.
+        # The decoder's pseudo rows are not handed on as LABELS (no map
+        # to refit — they train the FILTER alone) but they travel as ROWS,
+        # so the self price subtracts the cells that trained it (R3).
+        llr, cal_detail = pure_mod.pure_llr(
+            score, frame, plane, lfp, folds,
+            spec=pure_mod.spec_from_knobs(knobs), stream_id=str(stream_id),
+            pseudo_rows=(None if pseudo_rows is None else pseudo_rows[0]))
+    else:
+        llr, cal_detail = cal.calibrate(
+            score, frame, plane, lfp, folds,
+            branches=str(knobs.get("branches") or cal.DEFAULT_BRANCHES),
+            ctx_mode=ctx_mode, page_context=page_ctx,
+            local_context=local_ctx, starved_fallback=starved_fallback,
+            stream_id=str(stream_id),
+            # W8 B2 (C2): the per-state context residual, a knob; B4: the
+            # pseudo rows reach the PAVA fit set unless `refit_calibration`
+            # is off (then the patch filter alone sees them)
+            ctx_state=bool(knobs.get("ctx_state", False)),
+            pseudo=(pseudo_rows if refit_calibration else None))
     blind.update(cal_detail)
     sequential, observed = cal.to_sequential(llr, lfp, inputs.row,
                                             inputs.geometry, key)

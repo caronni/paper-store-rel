@@ -11,6 +11,10 @@ normative than
 [RECEIVE-DESIGN](RECEIVE-DESIGN.md). Those documents win if this overview
 becomes stale.
 
+2026-09-05: the receiver half of this map — all of §4 — went with the v1
+receiver, deleted at `284ae3e`. The generator half (§3) still describes
+the live `src/holo`.
+
 ## 1. What “essential” means here
 
 There are four useful boundaries:
@@ -89,8 +93,9 @@ payload bytes
 
 ### 3.1 Selection and planning
 
-[`devices.profiles.make_spec`](../src/holo/devices/profiles.py) combines a
-coding with printer media and payload-safe margins. The resulting
+A volume is named by `--format` (a v2 identity, or `L:<id>` for a fossil,
+which carries its own page; `devices.profiles.make_spec` and the printer-
+derived geometry retired 2026-10-12, CMY-DESIGN R21). The resulting
 `FormatSpec` is the single geometry and format identity used downstream.
 
 [`gen.plan`](../src/holo/gen/plan.py) computes:
@@ -161,6 +166,16 @@ bookkeeping, but neither is consumed by the receiver. They are logically
 nonessential even though the current driver emits them unconditionally.
 
 ## 4. Receiver
+
+This section maps the v1 receiver, `src/holo/receive`, as it stood
+2026-08-02. That receiver was retired 2026-09-05 at `284ae3e`, so every
+`../src/holo/receive/...` link below is dead; the files read at
+`git show b167b9f:src/holo/receive/<file>`, and cold format discovery
+(§4.1) was archived rather than deleted, at
+`docs/archive/holo1/discovery/`. The receiver now is holo3: its own map
+is `src/holo/receiver/docs/API.md` §1, its stage order and prices `src/holo/receiver/docs/SCHEDULE.md`,
+and the mechanism-by-mechanism correspondence to what is described here
+is `src/holo/receiver/docs/retirement_docs-2026-09/HOLO1-MAP.md`.
 
 The exact-row receiver is assembled by
 [`production_pipeline`](../src/holo/receive/production.py):

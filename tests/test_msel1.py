@@ -24,18 +24,25 @@ Runs under pytest, or standalone: env/bin/python tests/test_msel1.py
 """
 from __future__ import annotations
 
+import atexit
 import hashlib
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
 
 import numpy as np
+import pytest
 from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[1]
 EXP = ROOT / "experiments" / "008-mode-select"
 BUILD = EXP / "build"
+
+# 2026-09-06: every test here reads a build that a test regenerates in place.
+# One xdist worker per build directory (pyproject: --dist loadgroup).
+pytestmark = pytest.mark.xdist_group("build-008-msel1")
 MM_DOT = 600.0 / 25.4
 
 for _p in (str(EXP), str(ROOT / "experiments" / "002-calibration-page")):
@@ -48,6 +55,20 @@ import stripdec  # noqa: E402
 
 Image.MAX_IMAGE_PIXELS = None
 _STATE: dict = {}
+# 2026-09-05: BUILD is shared, so two xdist workers rendering the same
+# preflight_<dpi>_<n>.png raced and one read a half-written file.  The
+# render is unchanged; only the filename is now private to this process.
+_RENDER_TAG = os.getpid()
+
+
+def _render_png(dpi: int, page: int) -> Path:
+    return BUILD / f"preflight_{dpi}_{_RENDER_TAG}_{page}.png"
+
+
+@atexit.register
+def _drop_this_process_renders() -> None:
+    for png in BUILD.glob(f"preflight_*_{_RENDER_TAG}_*.png"):
+        png.unlink(missing_ok=True)
 
 
 def _generate() -> tuple[str, str]:
@@ -76,10 +97,11 @@ def _render_gray(dpi: int) -> tuple[np.ndarray, np.ndarray]:
     if key not in _STATE:
         subprocess.run(["gs", "-dNOPAUSE", "-dBATCH", "-dQUIET",
                         "-sDEVICE=pnggray", f"-r{dpi}",
-                        "-o", str(BUILD / f"preflight_{dpi}_%d.png"),
+                        "-o", str(BUILD / f"preflight_{dpi}_"
+                                  f"{_RENDER_TAG}_%d.png"),
                         str(BUILD / "msel1.ps")], check=True, timeout=600)
         _STATE[key] = tuple(
-            np.asarray(Image.open(BUILD / f"preflight_{dpi}_{n}.png")
+            np.asarray(Image.open(_render_png(dpi, n))
                        .convert("L")) for n in (1, 2))
     return _STATE[key]
 
@@ -280,6 +302,13 @@ def test_gs1200_strips_roundtrip() -> None:
 
 # -- 7. analyzer end-to-end on the clean render --------------------------------
 
+# 2026-09-05: the full analyzer over both 1200-dpi pages is 9.4 s, the
+# module's largest single cost. Slow-gated, not shrunk: the assertions are
+# the e008 pre-registered decision table (robust=c6, dense=c2, CMY needs a
+# colour scan) and they only mean anything on the whole portfolio.
+@pytest.mark.skipif(
+    os.environ.get("HOLO_RUN_SLOW_TESTS") != "1",
+    reason="set HOLO_RUN_SLOW_TESTS=1 for the MSEL-1 analyzer round-trip")
 def test_analyzer_render_roundtrip() -> None:
     """Full real-scan path (corner-mark registration -> strips -> portfolio
     scoring -> decision) on the noise-free 1200 render: a perfect channel
@@ -289,7 +318,7 @@ def test_analyzer_render_roundtrip() -> None:
     _render_gray(1200)
     scans: dict[str, dict | None] = {"p1_color": None, "p2_color": None}
     for page in (1, 2):
-        scan = cc.load_scan(BUILD / f"preflight_1200_{page}.png",
+        scan = cc.load_scan(_render_png(1200, page),
                             compute_sha256=False)
         reg = cc.register(scan, am.page_mf(mf_am, page))
         assert reg["residual_rms_dots"] < 0.2, reg["residual_rms_dots"]

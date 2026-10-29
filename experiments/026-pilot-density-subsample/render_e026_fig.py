@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 """e026 figure: grain-vs-density curves + pooled sites-threshold collapse.
-PIL-only (no matplotlib in env). Output: scratch/e026-grain-vs-density.png
-Run from repo root: env/bin/python experiments/026-pilot-density-subsample/render_e026_fig.py
+PIL-only (no matplotlib in env). Output: this experiment's
+build/e026-grain-vs-density[-c3].png
+Run from repo root: env/bin/python experiments/026-pilot-density-subsample/render_e026_fig.py \\
+    --report <probe_e026.py's e026_report[_c3].json> [--c3]
 """
 import json
 import sys
@@ -9,11 +11,13 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
 
-ROOT = Path(__file__).resolve().parents[2]
+HERE = Path(__file__).resolve().parent
 ARM = "_c3" if "--c3" in sys.argv else ""
-rep = json.loads((ROOT / "experiments/026-pilot-density-subsample/build/"
-                  f"e026_report{ARM}.json").read_text())
-OUT = ROOT / f"scratch/e026-grain-vs-density{ARM.replace('_', '-')}.png"
+if "--report" not in sys.argv[:-1]:
+    sys.exit(__doc__)
+rep = json.loads(Path(sys.argv[sys.argv.index("--report") + 1]).read_text())
+OUT = HERE / "build" / f"e026-grain-vs-density{ARM.replace('_', '-')}.png"
+OUT.parent.mkdir(parents=True, exist_ok=True)
 
 W, H = 1040, 470
 PAD_L, PAD_B, PAD_T = 64, 52, 40

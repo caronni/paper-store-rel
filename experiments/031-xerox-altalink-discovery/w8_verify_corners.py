@@ -1,7 +1,12 @@
 """W8 real-capture regression bars. Read-only, no writes.
 
+Historical record of the W8/W9/W10 campaign; the captures are in the
+evidence archive (shas in the e031 log), joined onto --scan-root.
+
 Run from a tree that carries the W8a fix:
-    PYTHONPATH=src env/bin/python scratch/e031/w8_verify_corners.py
+    PYTHONPATH=src env/bin/python \\
+        experiments/031-xerox-altalink-discovery/w8_verify_corners.py \\
+        --scan-root <evidence>
 
 Bars:
   e031 xerox B/W    must find all four corners (it refused with [3,4])
@@ -12,21 +17,26 @@ The two control sheets are the point: W8a must not move anything that
 already worked.  Expected centres (thumb px, stock 300-dpi thumbnail) are
 pinned below from the pre-fix run.
 """
+import argparse
 import sys
+
+_ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+_ap.add_argument("--scan-root", required=True,
+                 help="evidence dir standing for the old scratch/ root")
 
 sys.path.insert(0, "src")
 from holo.characterize.geometry import (  # noqa: E402
     RasterSource, detect_chiral_corners,
 )
 
-ROOT = "<repo>"
+ROOT = _ap.parse_args().scan_root.rstrip("/")
 CAPS = [
-    ("e031 xerox B/W", f"{ROOT}/scratch/in/xerox-canon-cal-bw.tiff", None),
-    ("e031 xerox colour", f"{ROOT}/scratch/in/xerox-canon-cal-color.tiff",
+    ("e031 xerox B/W", f"{ROOT}/in/xerox-canon-cal-bw.tiff", None),
+    ("e031 xerox colour", f"{ROOT}/in/xerox-canon-cal-color.tiff",
      {1: (151.0000, 172.0000), 2: (150.0000, 2301.0000),
       3: (3305.0000, 2308.0000), 4: (3312.0000, 181.0000)}),
     ("e028 M281 B/W",
-     f"{ROOT}/scratch/e028/e028-m281-20260804-bw-01-canon-4800gray.tiff",
+     f"{ROOT}/e028/e028-m281-20260804-bw-01-canon-4800gray.tiff",
      {1: (158.5043, 187.0000), 2: (171.4643, 2313.0000),
       3: (3326.0000, 2296.0000), 4: (3316.4957, 167.5085)}),
 ]

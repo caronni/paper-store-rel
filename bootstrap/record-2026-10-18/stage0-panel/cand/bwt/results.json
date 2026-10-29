@@ -1,0 +1,269 @@
+{
+ "key": "bwt",
+ "dir": "<tmp>",
+ "variants": [
+  {
+   "name": "bwt+cm (coder ii: direct binary CM, 3-input logistic mixer, recent-symbol match) -- PRIMARY",
+   "file": "<tmp>",
+   "enc_file": "<tmp>",
+   "count_lines_output": "lines=39 chars=1837",
+   "lines": 39,
+   "chars": 1837,
+   "violations": 0,
+   "kav_hex": "0000000a9477d366830daee4f8d33555e1ec9413",
+   "kav_len": 20,
+   "primer_len_bytes": 9883,
+   "T1_unprimed": {
+    "size": 3146,
+    "roundtrip_ok": true,
+    "enc_s": 0.54,
+    "dec_s": 0.34
+   },
+   "T1_primed": {
+    "size": 3121,
+    "roundtrip_ok": true,
+    "enc_s": 0.99,
+    "dec_s": 0.96
+   },
+   "T2_unprimed": {
+    "size": 5186,
+    "roundtrip_ok": true,
+    "enc_s": 0.83,
+    "dec_s": 0.86
+   },
+   "T2_primed": {
+    "size": 5152,
+    "roundtrip_ok": true,
+    "enc_s": 1.2,
+    "dec_s": 1.17
+   },
+   "T3_unprimed": {
+    "size": 8204,
+    "roundtrip_ok": true,
+    "enc_s": 1.89,
+    "dec_s": 1.67
+   },
+   "T3_primed": {
+    "size": 8188,
+    "roundtrip_ok": true,
+    "enc_s": 1.89,
+    "dec_s": 2.74,
+    "cli_dec_s": 2.3,
+    "cli_peak_rss_mb": 62.7,
+    "cli_ok": true
+   },
+   "T4_unprimed": {
+    "size": 135179,
+    "roundtrip_ok": true,
+    "enc_s": 33.21,
+    "dec_s": 26.51
+   },
+   "T4_primed": {
+    "size": 135184,
+    "roundtrip_ok": true,
+    "enc_s": 32.05,
+    "dec_s": 26.33,
+    "cli_dec_s": 25.89,
+    "cli_peak_rss_mb": 188.0,
+    "cli_ok": true
+   }
+  },
+  {
+   "name": "bwt+mtf (coder i: MTF ranks, bit-tree, two averaged adaptive counters)",
+   "file": "<tmp>",
+   "enc_file": "<tmp>",
+   "count_lines_output": "lines=27 chars=1259",
+   "lines": 27,
+   "chars": 1259,
+   "violations": 0,
+   "kav_hex": "0000000a9a695ebc6a9bff12102c6d93dcb5a12dbaa8ef",
+   "kav_len": 23,
+   "primer_len_bytes": 9290,
+   "T1_unprimed": {
+    "size": 3277,
+    "roundtrip_ok": true,
+    "enc_s": 0.22,
+    "dec_s": 0.1
+   },
+   "T1_primed": {
+    "size": 3215,
+    "roundtrip_ok": true,
+    "enc_s": 0.35,
+    "dec_s": 0.31
+   },
+   "T2_unprimed": {
+    "size": 5314,
+    "roundtrip_ok": true,
+    "enc_s": 0.27,
+    "dec_s": 0.29
+   },
+   "T2_primed": {
+    "size": 5267,
+    "roundtrip_ok": true,
+    "enc_s": 0.58,
+    "dec_s": 0.47
+   },
+   "T3_unprimed": {
+    "size": 8370,
+    "roundtrip_ok": true,
+    "enc_s": 0.71,
+    "dec_s": 0.55
+   },
+   "T3_primed": {
+    "size": 8326,
+    "roundtrip_ok": true,
+    "enc_s": 0.69,
+    "dec_s": 0.68,
+    "cli_dec_s": 0.51,
+    "cli_peak_rss_mb": 57.4,
+    "cli_ok": true
+   },
+   "T4_unprimed": {
+    "size": 141126,
+    "roundtrip_ok": true,
+    "enc_s": 18.69,
+    "dec_s": 8.85
+   },
+   "T4_primed": {
+    "size": 141064,
+    "roundtrip_ok": true,
+    "enc_s": 14.87,
+    "dec_s": 9.63,
+    "cli_dec_s": 8.87,
+    "cli_peak_rss_mb": 176.7,
+    "cli_ok": true
+   }
+  },
+  {
+   "name": "bwt+mtf-tiny (coder i, one counter set, no priming)",
+   "file": "<tmp>",
+   "enc_file": "<tmp>",
+   "count_lines_output": "lines=23 chars=905",
+   "lines": 23,
+   "chars": 905,
+   "violations": 0,
+   "kav_hex": "0000000a9a8c1cd742da12fcf39b4aa8134bb947d38a",
+   "kav_len": 22,
+   "primer_len_bytes": 8864,
+   "T1_unprimed": {
+    "size": 3323,
+    "roundtrip_ok": true,
+    "enc_s": 0.12,
+    "dec_s": 0.1
+   },
+   "T1_primed": {
+    "size": 3323,
+    "roundtrip_ok": true,
+    "enc_s": 0.12,
+    "dec_s": 0.09
+   },
+   "T2_unprimed": {
+    "size": 5446,
+    "roundtrip_ok": true,
+    "enc_s": 0.26,
+    "dec_s": 0.2
+   },
+   "T2_primed": {
+    "size": 5446,
+    "roundtrip_ok": true,
+    "enc_s": 0.26,
+    "dec_s": 0.18
+   },
+   "T3_unprimed": {
+    "size": 8652,
+    "roundtrip_ok": true,
+    "enc_s": 0.28,
+    "dec_s": 0.42
+   },
+   "T3_primed": {
+    "size": 8652,
+    "roundtrip_ok": true,
+    "enc_s": 0.41,
+    "dec_s": 0.35,
+    "cli_dec_s": 0.4,
+    "cli_peak_rss_mb": 17.3,
+    "cli_ok": true
+   },
+   "T4_unprimed": {
+    "size": 144321,
+    "roundtrip_ok": true,
+    "enc_s": 14.31,
+    "dec_s": 5.18
+   },
+   "T4_primed": {
+    "size": 144321,
+    "roundtrip_ok": true,
+    "enc_s": 9.62,
+    "dec_s": 4.19,
+    "cli_dec_s": 4.74,
+    "cli_peak_rss_mb": 169.5,
+    "cli_ok": true
+   }
+  }
+ ],
+ "prepend_priming_measured": {
+  "note": "primer prepended to the block before BWT, decoder drops it; total size includes coding the primer, so it LOSES; warm-up priming (model runs over the primer BWT, coder idle) is what dec.py does",
+  "dec.py": {
+   "T1": {
+    "plain": 3146,
+    "warm_primed": 3121,
+    "prepend_joint": 6918,
+    "primer_alone": 3997
+   },
+   "T2": {
+    "plain": 5186,
+    "warm_primed": 5152,
+    "prepend_joint": 8933
+   },
+   "T3": {
+    "plain": 8204,
+    "warm_primed": 8188,
+    "prepend_joint": 11925
+   }
+  },
+  "dec_mtf.py": {
+   "T1": {
+    "plain": 3277,
+    "warm_primed": 3215,
+    "prepend_joint": 6993,
+    "primer_alone": 3971
+   },
+   "T2": {
+    "plain": 5314,
+    "warm_primed": 5267,
+    "prepend_joint": 9012
+   },
+   "T3": {
+    "plain": 8370,
+    "warm_primed": 8326,
+    "prepend_joint": 12063
+   }
+  }
+ },
+ "baselines": {
+  "T4": {
+   "xz": 145264,
+   "bzip2": 142758,
+   "ppmd": 122234,
+   "lpaq1": 110661
+  },
+  "T2": {
+   "xz": 5412,
+   "brotli": 4895,
+   "ppmd": 4667,
+   "lpaq1": 4666
+  },
+  "bzip2_-9_measured_here": {
+   "T1": 3380,
+   "T2": 5473,
+   "T3": 8464
+  },
+  "xz_-9e_measured_here": {
+   "T1": 3336,
+   "T2": 5412,
+   "T3": 8544
+  }
+ },
+ "pythonhashseed_check": "enc output identical (KAV + sha256 of T1 primed) under PYTHONHASHSEED=0,1,777 for all three variants",
+ "fuzz": "2000 random BWTs vs a reference rotation sort; 300 random round-trips per variant incl. random primers; periodic/empty/all-same inputs round-trip"
+}

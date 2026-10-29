@@ -1,13 +1,15 @@
 #!/usr/bin/env python
 """P1-stagea-luma-margin cross-dataset summary table (reads probe17_out/*.json
-written by probe17_stagea_luma.py)."""
+written by probe17_stagea_luma.py: the record beside this file, or the
+directory given as the one argument)."""
 import json
+import sys
 from pathlib import Path
 
 import numpy as np
 from scipy.stats import binom
 
-OUT = Path("scratch/probe17_out")
+OUT = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(__file__).resolve().parent / "probe17_out"
 DATASETS = [
     ("calpage_home", "CAL-1 state8 M281 home (day-1, genie, 2px/dot)"),
     ("calpage_xerox", "CAL-1 state8 AltaLink print (genie, 2px/dot)"),

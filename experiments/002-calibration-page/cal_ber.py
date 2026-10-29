@@ -44,7 +44,8 @@ Report shape (merges into cal_core.report_init skeleton via cc.report_merge):
 
 Smoke run (real scans, ~6-10 min):
   env/bin/python experiments/002-calibration-page/cal_ber.py \
-      scans/test-scan-calpage-bw.png scans/test-scan-calpage-color.png
+      <evidence>/scans/test-scan-calpage-bw.png \
+      <evidence>/scans/test-scan-calpage-color.png
 """
 from __future__ import annotations
 
@@ -61,7 +62,6 @@ if str(_HERE) not in sys.path:
 
 import cal_core as cc  # noqa: E402  (frozen analyzer core — do not edit)
 
-REPO = _HERE.parent.parent
 PLANES: tuple[str, ...] = ("K", "C", "M", "Y")
 CELLS: tuple[int, ...] = (1, 2, 3, 4)
 
@@ -334,10 +334,9 @@ def run(scan_bw: dict | None, scan_color: dict,
 # ---------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    bw_path = sys.argv[1] if len(sys.argv) > 1 else str(
-        REPO / "scans/test-scan-calpage-bw.png")
-    color_path = sys.argv[2] if len(sys.argv) > 2 else str(
-        REPO / "scans/test-scan-calpage-color.png")
+    if len(sys.argv) != 3:
+        sys.exit(__doc__)
+    bw_path, color_path = sys.argv[1], sys.argv[2]
 
     t0 = time.time()
     print(f"loading + registering {color_path}", flush=True)

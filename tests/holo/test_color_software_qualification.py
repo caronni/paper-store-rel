@@ -1,12 +1,22 @@
-"""Historical M281 check and opt-in production emission/receiver gates."""
+"""Historical M281 check and opt-in production emission/receiver gates.
+
+Gate E re-home: the receiver leg is holo3's, addressed by the row's own
+frozen ``L:`` fossil id — the same identity the page is emitted from
+(R21, 2026-10-12: the fossil is the one legacy door).
+The verdict is the CLI's exit code and the bytes it wrote, not a
+receiver session file.
+
+Both gates are opt-in behind HOLO_RUN_GS_TESTS=1 with ghostscript on
+PATH — the one gs flag in tests/holo since 2026-09-20 (it replaced
+HOLO_RUN_GS_COLOR_SEPARATIONS and HOLO_RUN_GS_COLOR_RECEIVER).
+"""
 from __future__ import annotations
 
 import hashlib
-import json
 import os
-import re
 import shutil
 import subprocess
+import warnings
 from pathlib import Path
 
 import numpy as np
@@ -14,16 +24,16 @@ import pytest
 import tifffile
 from PIL import Image
 
-from holo import cli
-from holo.devices.profiles import make_spec
+from holo.format.descriptor import FormatSpec
+from holo.format.fossils import resolve_fossil_spec
 from holo.gen.emit import emit_volume
 from holo.gen.ps import HW_DPI
 from holo.qualification import color_distort
-from holo.receive.session import load_session
+
+from _receive_free import decode_with_holo3
 
 
 _ROOT = Path(__file__).resolve().parents[2]
-_M281_RECORD = _ROOT / "docs" / "COLOR-M281-CAL1-QUALIFICATION.json"
 _COLOR_ROWS = (
     "c2-cmy7-p120-v0",
     "c3-cmy7-p120-v0",
@@ -35,39 +45,15 @@ _COLOR_ROWS = (
     "c2-cmy8-p120-v1",
     "c3-cmy8-p120-v1",
 )
+# Each row's 6 mm A4 fossil, by pitch.
+_FOSSIL_CELLS = {"c2": "3328x2304", "c3": "2240x1536"}
 _PLATE_NAMES = ("Cyan", "Magenta", "Yellow", "Black")
-_SHA256 = re.compile(r"[0-9a-f]{64}\Z")
 _STRIPE_ROWS = 256
 
 
-def test_m281_operational_record_preserves_the_negative_result() -> None:
-    """The full-page tool check must not be mistaken for receiver success."""
-    report = json.loads(_M281_RECORD.read_text(encoding="utf-8"))
-
-    assert report["schema"] == \
-        "holo-color-m281-cal1-operational-check-v1"
-    assert report["paper_qualification"] is False
-    assert report["receiver_success"] is False
-    assert _SHA256.fullmatch(report["tool_source_sha256_at_run"])
-    assert _SHA256.fullmatch(report["simulator_source_sha256"])
-    assert report["transform"]["status"] == "completed"
-    assert report["transform"]["source"]["size_xy"] == [4960, 7016]
-    assert report["transform"]["output"]["size_xy"] == [9920, 14032]
-    receiver = report["receiver"]
-    assert receiver["capture_status"] == "complete; committed"
-    assert receiver["captures"] == 1
-    assert receiver["levels"] == 3
-    assert receiver["regions"] == 3
-    for field in (
-        "poses",
-        "proposals",
-        "attempts",
-        "certificates",
-        "evidence_blocks",
-    ):
-        assert receiver[field] == 0
-    assert receiver["close_status"] == "open"
-    assert "did not demonstrate acquisition" in report["interpretation"]
+def _fossil_spec(coding_id: str) -> FormatSpec:
+    return resolve_fossil_spec(
+        f"{coding_id}@{_FOSSIL_CELLS[coding_id[:2]]}")
 
 
 def _qualification_payload(coding_id: str, length: int) -> bytes:
@@ -224,11 +210,13 @@ def _render_ghostscript(
     )
 
 
+# One flag for every gs-gated slow path (2026-09-20): HOLO_RUN_GS_TESTS,
+# the one test_characterize_gs_report already carried, plus which("gs").
 @pytest.mark.skipif(
     shutil.which("gs") is None
-    or os.environ.get("HOLO_RUN_GS_COLOR_SEPARATIONS") != "1",
+    or os.environ.get("HOLO_RUN_GS_TESTS") != "1",
     reason=(
-        "set HOLO_RUN_GS_COLOR_SEPARATIONS=1 for the all-four-row "
+        "set HOLO_RUN_GS_TESTS=1 with ghostscript for the all-four-row "
         "full-production-page emission gate"
     ),
 )
@@ -238,7 +226,7 @@ def test_q1_full_production_page_separations_match_plane_truth(
     coding_id: str,
 ) -> None:
     """Production PS has exact separated and RGB-thresholded C/M/Y content."""
-    spec = make_spec(coding_id)
+    spec = _fossil_spec(coding_id)
     payload = _qualification_payload(coding_id, 64)
     volume = emit_volume(
         spec,
@@ -285,10 +273,10 @@ def test_q1_full_production_page_separations_match_plane_truth(
 
 @pytest.mark.skipif(
     shutil.which("gs") is None
-    or os.environ.get("HOLO_RUN_GS_COLOR_RECEIVER") != "1",
+    or os.environ.get("HOLO_RUN_GS_TESTS") != "1",
     reason=(
-        "set HOLO_RUN_GS_COLOR_RECEIVER=1 for the slow all-four-row "
-        "production-to-receiver gate"
+        "set HOLO_RUN_GS_TESTS=1 with ghostscript for the slow "
+        "all-four-row production-to-receiver gate"
     ),
 )
 @pytest.mark.parametrize("coding_id", _COLOR_ROWS)
@@ -298,7 +286,7 @@ def test_production_page_closes_through_standalone_tiff_transformer(
 ) -> None:
     """PS -> GS TIFF -> standalone TIFF tool -> receiver -> replayed bytes."""
     payload = _qualification_payload(coding_id, 64)
-    spec = make_spec(coding_id)
+    spec = _fossil_spec(coding_id)
     volume = emit_volume(
         spec, payload, 0.35, tmp_path / f"{coding_id}-volume")
     assert len(volume.pages) == 1
@@ -315,26 +303,16 @@ def test_production_page_closes_through_standalone_tiff_transformer(
         "--output-dpi", "1200",
     ]) == 0
 
-    state_path = tmp_path / f"{coding_id}.receive.json"
-    output_path = tmp_path / f"{coding_id}.payload.bin"
-    assert cli.main([
-        "decode",
-        str(scan),
-        "--scan-dpi",
-        "1200",
-        "--coding",
-        coding_id,
-        "--state",
-        str(state_path),
-        "--out",
-        str(output_path),
-        "--page",
-        "0",
-    ]) == 0
-    assert output_path.read_bytes() == payload
+    # The printed identity is the row's own frozen fossil — the same one
+    # the page was emitted from, spelled the way holo3 takes it.
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        decode = decode_with_holo3(((scan, 1200.0),), "L:" + spec.spec_id,
+                                   tmp_path, f"{coding_id}-receive")
 
-    state = load_session(state_path, format_row_id=spec.spec_id)
-    assert state.status.value == "verified"
-    assert state.close.status.value == "verified"
-    assert state.close.payload_length == len(payload)
-    assert state.close.payload_sha256 == hashlib.sha256(payload).hexdigest()
+    assert decode.exit_code == 0, decode.stdout
+    assert decode.payload == payload
+    assert decode.status == "verified"
+    assert decode.report["run_done"]["n_bytes"] == len(payload)
+    assert decode.report["run_done"]["payload_sha256"] == hashlib.sha256(
+        payload).hexdigest()

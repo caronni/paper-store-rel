@@ -81,3 +81,58 @@ and the fossil seed goldens (`tests/holo/test_fossil_seeds.py`). The residual
 checks are AUTOMATED in `tests/holo/test_dispatch_hygiene.py`: no
 singleton names and no codec-id comparisons outside src/holo/format/,
 and no `scale_plan(codec_id=…)` callers anywhere.
+
+## Amendment 2026-10-11 — a fourth family, `cmy` (FORMAT-SPACE §19)
+
+Legend addition: Cy = `Family.CMY`. docs/CMY-DESIGN.md §6(l) asked for
+this table to be re-derived for a fourth family BEFORE code; that did
+not land at W0 (7bad672c). The build converted the sites below against
+the design's §6 table instead — W1 128ed3cb, W2a 6926f6ef, each refuted
+by an Opus reader — and this note records them as converted. The table
+above is left as authored; its `receive/…` rows name the v1 receiver
+retired 2026-09-05 at `284ae3e` and are history (holo3's cmy dispatch
+is src/holo/receiver/docs/CMY-RECEIVER-PLAN.md's).
+
+| Site (src/holo) | Decides | Predicate on family, 2026-10-11 |
+|---|---|---|
+| format/lattice.py `_RUNG_ARITY`, `parse_coding_id`, `CodingParams` | rung arity; one rung → all streams; rung token required | table {K 1, C7 0, C8 3, Cy 2}; expand when arity > 1; required when arity ≠ 0 |
+| format/lattice.py `_DEFAULT_SITES` | input default p | Cy → 120 |
+| format/lattice.py `_coding_for_id` | the family constructor | explicit K / C7 / C8 / Cy branches, an `else` that refuses (was: bare `else` = C8) |
+| format/lattice.py `_coding_for_id` pooled; format/descriptor.py `Coding._validate_v2` | pooled outer code | in (C8, Cy) |
+| format/profiles.py `CodecProfile.__post_init__`, `state_ids` | alphabet law; word/dust state checks; the dust-cycle requirement | colour alphabet = a subsequence of `STATE_NAMES`; membership in the derived `state_ids`; Cy exempt from the cycle requirement and refusing a cycle |
+| format/pilots.py `color_word_states`, `decode_color_word` | the word's states and lawful set | the codec's `word_states` (now a REQUIRED argument); Cy adds the domain-9-keyed Y at '0' sites and admits Y as lawful |
+| format/pilots.py `dust_state_values` | dust source vector | Cy → the per-tile balance law; others the `dust_base_cycle` fact, unchanged |
+| gen/color_compose.py `COLOR_FAMILIES` (both gates) | colour-only entry | in (C7, C8, Cy) |
+| gen/color_compose.py `_payload_states` | the encode | C7 pack7 branch; one shared branch over `_PER_STREAM_ENCODERS` {C8 → `cmy8_encode_payload`, Cy → `cmy_encode_payload`}, the dither aux = stream ordinal + 1 passed as an integer (C8 bit-identical) |
+| gen/emit.py `_emit_color_volume` | colour emitter gate | in `COLOR_FAMILIES` |
+| gen/emit.py `color_route`, `_put_color_field` | the route | the engine record's `color_route`; no engine → cmyk1; `rgb` only for Cy (C7/C8 refused) |
+| gen/manifest.py `_cmy_law_block`, `_renderer_block`, tier keys | cmy law fields; the route's renderer block; tier wording | is Cy; `rgb_solid` None → the cmyk1 block, byte-identical |
+| gen/plan.py `tier_word` | "plane" vs "stream" tier | is Cy → "stream" |
+| cli_gen.py `_engine`, `_engine_block`; `generate`/`capacity` | engine resolution, route check, record | not K → check the route (`capacity` refuses what `generate` would) |
+| cli.py `--printer` | the flag's meaning beside `--format` | the emission engine for every family (the FORMAT-SPACE §9 fence that refused it beside `--format` is removed) |
+
+Unchanged, and correct for Cy as they stand: `gen/compose.py`'s K-leaf
+gate and `gen/emit.py` `source_packed_for` (refuse if not K);
+`gen/emit.py` `emit_volume`'s colour route and `gen/manifest.py`
+`is_color` (not K → colour); cli_gen's `registry` / `_coding_detail`
+K-vs-colour printing (no cmy row is in CODINGS). Owed: `fit`'s skeleton
+list prints k, cmy7 and cmy8 only (generator plan W2b).
+
+**Selectors W2b retires (CMY-DESIGN R21; generator plan W2b, after
+P1).** `--coding` and `--profile` on `generate`/`capacity`;
+`devices/profiles.py` `make_spec` and `get_printer`; `registry -v`'s
+per-printer derived geometry; the `hp-m281-ink` registry row; the
+legacy meaning of `--printer` (printer margins → page geometry for a
+`--coding`/`--profile` row); `emit_volume(printer_id=)`, kept beside
+`printer=` for the evidence-archive recipes, retired with them or kept
+with a recorded reason (those recipes move only on the owner's word).
+After W2b `--format` (v2, or `L:` for a fossil) is the one identity
+door.
+
+*2026-10-12, W2b part (i) landed:* `fit`'s cmy skeleton line is done;
+`Printer.color_route` None (the `default` engine) makes every colour
+family refuse on both commands; `make_spec`, `get_printer`, `--profile`,
+`--coding` on `capacity` and the derived geometry are gone. RETAINED until
+part (ii), on the owner's ruling, for the evidence recipes only: `--coding`
+on `generate` (opens onto a fossil, nothing else), the `hp-m281-ink` row,
+`emit_volume(printer_id=)`.

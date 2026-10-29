@@ -1,0 +1,70 @@
+%data-page
+VOLUME {V}  R1 LEAF 4  THE DATA. When a.py shows [n], type data line n:
+its 60 glyphs (fewer on the last line) and then its 4-glyph check. The
+spaces may be typed or left out. The glyphs are 0-9 and lowercase a-z
+without i l o u: what looks like i or l is 1, o is 0, u is v. A capital
+is a typo. If [n] comes back, the line was refused: type it again.
+The check of line n: start with the number n; for each glyph g of the
+line, n = ((n + ASCII code of g) x 1000003) mod 1048576. The check is
+n written as 4 glyphs of 5 bits each, highest first (0=0 ... z=31).
+After line 48 the program ends without a word and leaves the file r.py:
+that is success. Any error message means a wrong line slipped through:
+run a.py again and type all data lines again; nothing is kept.
+Next run:  python3 r.py   (in the same folder; never open or re-save
+r.py). It asks for files of the R2 pages, one name a line: photos or
+scans as PGM (P5), whole pages or parts, any way up, or a page's module
+grid typed as rows of 0 and 1. Photograph close up and more than once,
+sharp, the camera square to the page (within 10 degrees), at least
+2 pixels per module (a whole page: 0.75 megapixels or more).
+It asks again until the data is complete, then checks and writes b.py;
+an empty line stops it. An error message there: the frames or r.py are
+wrong; a wrong frame is harmless, start r.py again.
+
+ 1 1vfn6 1jfnb 6kvss kjq73 kfhjx r65nn 3zt1b zcex7 q9nn6 gbfz8 2bqsq r2zyr  2nre
+ 2 pq9a9 tx4gj wx49x n61ah kgqyj 85zxx 9mvnm qt5w4 yms9n jqwah d4r0t yj7xa  2yx4
+ 3 qan25 v1byz p917t nz8k3 hkrw2 hy58q 080em hej79 ddh8w 2x7zt z1n6r b2fnb  jt00
+ 4 0c5h1 e1tk3 xqb40 v0zdr e4qn2 vnns5 pnt0p vv37t bjb6w wxfex tsd6h vw0as  cykq
+ 5 223zr n993d 3yg23 6bvh6 n40nv 4nyc1 wxa2r 0ret8 3r4pe rqevb 9zb4p 8r705  r19w
+ 6 as2j6 3enez nkkts 66whx fgbw4 yqhvg d6349 kq8dk 9p11m zkd0w rcbnb j8ptg  8b2x
+ 7 e5scf h3vb2 ch9zy 326c5 4h028 47k79 mngbh ykwm3 n4gjp jjby0 yywxx rr6st  pwv3
+ 8 nst11 fh8wf d32g3 pn4xg snk9e 4mvbe xd3aa tg3k1 dd92b dtnm4 pjxfk xn4wk  z582
+ 9 93pje zsqf5 3mcrj dvzb6 e9ag2 s8ydx ntmcy 60dte ac0qa pdy6b 2zdjf 952by  s0r6
+10 t9bxg xh365 7c141 cnxks gr0jy sfevk 1cwf4 5fzcq 6hrv3 rr205 7000k xsa7v  z5yx
+11 zrqx6 sbqyv zzzqa 54dfm vs0c6 mkd5m vy0j4 b4dx8 ytw9c z889t fw9s5 xdbyq  1pj3
+12 35xb8 8h8je 4srtq nc9de g2c44 5m6nr dbwnb jnzgs tm00h 08zct zbp6r b1f85  gpfs
+13 ewrsm deyc7 4dtns qz1j4 kapz7 04hrj 0tx5v ya9h7 8h2p7 dgc7r ebwmf qezmn  fff4
+14 z3hh8 rn74b hyg2m 43eyq c71e9 836rt 9qkjk sbr39 92jaw ft26f d9saf nn5w4  9nqj
+15 r9v2p c7tz7 bq456 9bnjx 59b1j njd0j g0736 j2d1t wk4qc mh10k yy282 c514m  ny4e
+16 fjaf6 07yvx 5akds pqfcn pa9bx 5dpma dfnw3 emkwe 2ee4b xj612 b476x v3kcp  eqbt
+17 0g65d 0s14k 5hc03 bqsqz ypye4 tz3kd q1as0 zv76e g794z y468p vknfb w4a5c  2bda
+18 pwc88 74zha f50dc 47b2p 5j0hr afx12 v0b9d j2fqs pvzrm jh3zf cqf4e vx93y  hjnd
+19 61tw0 825bn 4kjbr pw1vq kz5e5 w5j2z fcjan rdney 2dkq0 jxngy 45yr7 0rwks  dc3e
+20 635w0 xnrkn fgfe4 ggk7g np7ex 14nwc 03mye degeb ptvds 3hhpg syeyq 8egbf  z39k
+21 ktrrc 74qgt e1a5z y31vk vakq9 2fzcy r89wj ynd6z 85r3y 4763a pqdcj h1edk  x66r
+22 w487p 37wbg db2ve 251k2 gnst1 w5s61 dph3r 2eg3z d76xm mcvm3 4a8es xy0at  srqy
+23 t52mh 26gnx y5wtn 79f9c afxtj vcgen 998em 38eaf b79c3 bkqhq akt87 c881s  dgcn
+24 62808 q79y6 1j6pn n912e k5ffn 539d1 66g8k rm4t3 brhzt 87rh1 nwycr f21et  e8b1
+25 h3tyx vp7z9 mbzk0 pjy8q jq7dm 3k9fd aqsgd gz4fx zaapy x6aby trcmf r3bhs  r319
+26 0h9z2 awzzq t6g5m 6kw1k 5pq5j gpf0r j8ycw v7kkw x2ax6 36drr smap2 gr4vn  gmxp
+27 dasxf 51hsy hygev f9t1q pmkeb bdaav rm27x b00nh sggzn pxzkk 0dhya 4h5bf  kzry
+28 dktcx 2tzkg qfasj jcq6k z4bv2 ck5db hb5kz txak9 dgjtc 6zenx 9qww7 df3zs  9p5w
+29 kgq0h fk7sm v17zk 3ycbe 9yn6a 9ac63 9b4n0 3pcbx dq8at g2jtp pgga7 qz4tp  1g7v
+30 8ngs3 pk3s4 0yer2 f4vs2 v4w2z ckdv3 9h4dz 0bmqf d57pf h5sf5 xt88r hjgwd  v8ms
+31 qyw3g 9rk72 fer5n zxh7t zc7eb qakze xy82j a8y20 jb01e aqkm6 bgqgr hjr7j  7gqy
+32 h5s90 xem0j 2a52g 1sdw5 j6s9g 641v2 hvjad qx63a 94dxx r8hxn 5f6k0 0dd88  dym9
+33 j07fg 9t3mw wdbwb wkssh rd7x3 nht0p zr0tw kknhz dc5x4 ka5g7 52x20 274er  n9bt
+34 jh103 7pnxy qq2ed ncnzm 3834b net48 6t0ae f6mq6 g7pv4 g9sw3 q62n1 7cn1g  k05v
+35 mndwv tncae vx0hn mmjgr ed4wx h4m2a f03vk vehhf brdgd qwjmy mp8c8 mx6ej  06jq
+36 wpfyx hxgbe 6r44b zwpzm qvxdp 9032s jrmvr wh4tz kveb4 0fk2k vy536 p0eej  34td
+37 ky9aj 0es5n 6jcbq 5zvr4 bp6r9 rc90k 3w92k byent n3zaj 0r912 fdw59 c7epk  5gzp
+38 ebhtb rtbew 9aezn 0nq6s 532fp 35v8e 9fmxm 2nzht 2crng evrv3 tbey4 z5stx  w42r
+39 6qmgk ntvyt 3pg3b 4vfc0 nhsq1 zt0qq t06rp nz8tx p498k z57y8 8js7r xt82s  a3t9
+40 c8vbr sbvr9 2qk5a wwdf1 grdpw vh3tq mz0s3 efe02 rjz09 f00ae p7w7p m86gj  j86v
+41 6s0sb ggp3t rzq7e z3rb6 57xjn 3nssb k8n36 n7sx9 zty7t myc3y cwyy0 ds79h  r45r
+42 4x2ph bq3ev 633rm 18v2j j7z2k 1mwdt a4yjn vertf 7r01a 0sk4y zb4sg g3g6v  mnsj
+43 0dq0v rvxa5 5e843 7tpx4 c50fy 2hd53 6jm07 xm3c9 yj74c 604eb hrdvm v633e  wvqn
+44 e4v6z akj0d 1ygae 65znc k0fr5 xnrd7 1f5zt xneh1 dp11c pxz5b gakf3 ae0hf  qsvs
+45 6rwbf rd4ss kkpmg r7yhj ntk93 1nj5x s6jcp heaf1 fa12v dv7fc d5gpj tf16d  qy1n
+46 x3hkt wkatb 8v1qc 03n2y cd0ad byrqs 1z3y4 pe3cz nc2zy 0cfnd wrs8n nhe4a  b02e
+47 6z2hg ddmgc gk3dt 62b5y s6309 wb9e9 cvm6e sbksk ba5g4 kej4s znt7z dxgs6  b4jn
+48 5zg38 53jy7 0852p cwaa5 m04yt mt8gj 82vrq tgeh8 yarrd 51vdx 4v3ab qv     08cv

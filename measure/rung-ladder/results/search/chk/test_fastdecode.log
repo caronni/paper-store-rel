@@ -1,0 +1,11 @@
+reduceat float-add order model: 0 byte mismatches over degrees 1..40
+ r0547 k=2240 trials=300 ok=196 iters 0..120 zero-iter=14 min-sum-failed(SP ran)=131 compared=1200 mismatches=0
+ r0550 k=2240 trials=300 ok=183 iters 0..120 zero-iter=19 min-sum-failed(SP ran)=141 compared=1200 mismatches=0
+ r0625 k=2560 trials=300 ok=189 iters 0..120 zero-iter=15 min-sum-failed(SP ran)=131 compared=1200 mismatches=0
+ r0700 k=2880 trials=300 ok=192 iters 0..120 zero-iter=18 min-sum-failed(SP ran)=138 compared=1200 mismatches=0
+ r0775 k=3200 trials=300 ok=165 iters 0..120 zero-iter=17 min-sum-failed(SP ran)=153 compared=1200 mismatches=0
+ r0850 k=3520 trials=300 ok=146 iters 0..120 zero-iter=16 min-sum-failed(SP ran)=157 compared=1200 mismatches=0
+ r0406 k=1664 trials=300 ok=189 iters 0..120 zero-iter=16 min-sum-failed(SP ran)=159 compared=1200 mismatches=0
+ r0250 k=1024 trials=300 ok=174 iters 0..120 zero-iter=15 min-sum-failed(SP ran)=222 compared=1200 mismatches=0
+r0391-h14 k=1600 trials=300 ok=192 iters 0..120 zero-iter=19 min-sum-failed(SP ran)=165 compared=1200 mismatches=0
+BIT-EXACT: PASS

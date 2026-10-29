@@ -1,13 +1,20 @@
 """Frozen value types of the analyzer (PLAN.md §1.1).
 
 Values only: scalars, tuples, small ndarrays. No live objects, no truth.
+
+ONE EXCEPTION, named here so the rule above stays readable as a rule:
+:class:`Exposure` is a live ledger and carries the `threading.Lock` its
+`reserve` holds.  It is the only mutable-and-shared type in the module,
+and what makes copying one safe is that the lock rides in the init
+beside the set it guards (M7, 2026-09-13).
 """
 
 from __future__ import annotations
 
+import threading
 from dataclasses import dataclass, field, replace as dc_replace
 from fractions import Fraction
-from typing import Any, Mapping
+from typing import Any, Mapping, Sequence
 
 import numpy as np
 
@@ -34,8 +41,91 @@ VERDICT_REFUSED = "refused"
 DIRECT_RUNGS: tuple[str, ...] = ("L0", "L1", "L2", "L3", "L7")
 LIST_RUNGS: tuple[str, ...] = ("L4", "L5", "L6")
 
+#: Every rung name a `--rungs` list may SPELL (W8 B5).  Dispatch lives in
+#: `ladder._run_rungs`, which raises on an unknown name — inside a worker,
+#: per key, which is how a misspelled rung used to cost a whole pass
+#: before anyone saw it.  This is the one place the spellable set is
+#: written down: the CLI refuses anything else before a run dir is opened,
+#: and the documentation test checks the README's commands against it.
+#: `L7` is the alias `fixedpoint.RUNG_ALIASES` expands to L7a+L7b; `L5`
+#: and `L6` are spellable because they exist as `DeferredRung` stubs and
+#: refusing the name would be a lie about the ladder.
+KNOWN_RUNGS: tuple[str, ...] = (
+    "L0", "L1", "L2", "L3", "L3f", "L4", "L5", "L6",
+    "L7", "L7a", "L7b", "L7c")
+
+#: The calibration BRANCH names of DESIGN §4.7 (blocker B12).  They live
+#: here rather than in `calibrate` because `statecal` needs `BRANCH_OTHER`
+#: to name its own residual population while `calibrate` dispatches INTO
+#: `statecal` — keeping them in `calibrate` would be an import cycle (W8
+#: B2's import-direction ruling).  `calibrate` re-exports all three under
+#: their old names, so every existing caller is unchanged.
+BRANCH_CLEANABLE: str = "cleanable"
+BRANCH_OTHER: str = "other"
+BRANCH_ALL: str = "all"
+
 EXPOSURE_PER_CONSULT = 2.0 ** -32
 EXPOSURE_BOUND_EXPECTED_FALSE = 0.01
+
+#: Knob names the DRIVER derives inside `blind_key` and assigns
+#: unconditionally (W8 ruling 8): a value for one of these arriving through
+#: `AnalyzerConfig.knobs` would be a lie about where it came from, so the
+#: CLI refuses them at parse time and `blind_key` refuses the key.
+RESERVED_KNOBS: tuple[str, ...] = (
+    "pseudo_labels", "refit", "sibling_state", "disagree", "ctx_offsets",
+    "ctx_state_adopted", "state_weighted")
+
+#: The only sources a `PseudoLabels` may name.  P2's self-training labels
+#: are built INSIDE `patch.patch_score` and never leave it, so the door
+#: (`arms.evidence_for`, knob `pseudo_labels`) accepts the decoder's alone.
+PSEUDO_SOURCES: tuple[str, ...] = ("decoder",)
+
+
+@dataclass(frozen=True)
+class PseudoLabels:
+    """The decoder's confident bits as labels, TYPED (W8 ruling 8).
+
+    `cells_yx` are PAGE cells (m, 2) int64; `bits` (m,) uint8 are
+    PRINTED-domain bits — the convention of `KnownFrame.bits` — and
+    `weights` (m,) float64 are the replication weights the fits give
+    them.  This is the ONLY value the `pseudo_labels` knob accepts;
+    anything else is refused at the door as `pseudo_labels:not_typed`.
+    Built by `refit.confident_pseudo_labels` and nowhere else.
+    """
+    source: str
+    cells_yx: np.ndarray
+    bits: np.ndarray
+    weights: np.ndarray
+
+    def __post_init__(self) -> None:
+        if self.source not in PSEUDO_SOURCES:
+            raise ValueError(
+                f"PseudoLabels: source {self.source!r} is not one of "
+                f"{PSEUDO_SOURCES}")
+        cells = np.asarray(self.cells_yx, np.int64).reshape(-1, 2)
+        bits = np.asarray(self.bits, np.uint8).reshape(-1)
+        weights = np.asarray(self.weights, np.float64).reshape(-1)
+        if bits.size != cells.shape[0] or weights.size != cells.shape[0]:
+            raise ValueError(
+                f"PseudoLabels: {cells.shape[0]} cells, {bits.size} bits, "
+                f"{weights.size} weights")
+        if bits.size and (int(bits.max()) > 1 or bool(np.any(weights < 0.0))):
+            raise ValueError("PseudoLabels: bits must be 0/1 and weights "
+                             "non-negative")
+        for array in (cells, bits, weights):
+            array.setflags(write=False)
+        object.__setattr__(self, "cells_yx", cells)
+        object.__setattr__(self, "bits", bits)
+        object.__setattr__(self, "weights", weights)
+
+    @property
+    def size(self) -> int:
+        return int(self.bits.size)
+
+
+#: The footprint-row form `patch.pseudo_rows` returns: ``(rows, bits,
+#: weights)``, rows indexing the footprint the labels were mapped onto.
+PseudoLabelsRows = tuple[np.ndarray, np.ndarray, np.ndarray]
 
 
 @dataclass(frozen=True)
@@ -122,6 +212,18 @@ class Crops:
     bound_dots: float
     halo_px: int
     divisor: float
+    #: W8 addition (B1, ruling 13): the UNFILTERED (h, w, 3) uint8 crop
+    #: the aperture filter was computed from, kept ONLY when the caller
+    #: asked (`open_crops(keep_raw=True)` — the patch modes and the
+    #: aperture path).  Divide by `divisor` lazily; never stored as float.
+    raw_rgb: np.ndarray | None = None
+    #: W8 addition (B3, A7): the aperture `filtered_rgb` was computed
+    #: through.  The defaults are production's
+    #: (`color_region_anchor.APERTURE_CELLS` = 0.7, a uniform box) and
+    #: `sample.open_crops` takes production's own code path for them, so
+    #: a crop opened without asking is the crop every arm always read.
+    aperture_cells: float = 0.7
+    aperture_kind: str = "box"
 
     @property
     def shape_yx(self) -> tuple[int, int]:
@@ -138,6 +240,16 @@ class Read:
     affine_terms: tuple[float, ...] | None
     scope: str
     refusal: str | None
+    #: W8 additions (B1).  `affine_terms` carries the FIRST owner's terms
+    #: only, so a footprint spanning several placements cannot recover its
+    #: per-cell pose from a `Read`; the patch family needs exactly that.
+    #: `points_yx` is the (n, 2) LEVEL-pixel position of every cell centre
+    #: AT THE READ'S POSE (offset and override applied), NaN where
+    #: unobserved; `linear_by_owner` maps an owner index to
+    #: `anchor.pose_linear(terms)`, the 2x2 cell -> level-pixel map in
+    #: (y, x) for that owner.  Both `None` on a refused read.
+    points_yx: np.ndarray | None = None
+    linear_by_owner: Mapping[int, np.ndarray] | None = None
 
 
 @dataclass(frozen=True)
@@ -172,6 +284,18 @@ class Combined:
     #: one-lane rules exactly as it did before.
     agreement: np.ndarray | None = None
     disagree: np.ndarray | None = None
+    #: W8 additions (B2, D1 `platt-state`).  `coefficients` stays the
+    #: POOLED per-lane weight vector — `combine.pooled_ctx_offsets` and
+    #: every reader of the rule's scale keep their contract — and the
+    #: per-sibling-state weights ride beside it, one entry per state
+    #: (`None` where that state fell back to the pooled vector).  ALWAYS
+    #: `None` for every rule but `platt-state`.
+    coefficients_by_state: tuple[tuple[float, ...] | None, ...] | None = None
+    #: W8 (B2, ruling 10): did any CONTRIBUTING lane adopt a per-state
+    #: context correction?  L3's APPLY mode shifts ONE pooled 9-vector
+    #: between bin assignments and is exact only for a pooled correction,
+    #: so it refuses `state_context_adopted` on such a row.
+    ctx_state_adopted: bool = False
 
 
 @dataclass(frozen=True)
@@ -220,6 +344,23 @@ class Exposure:
     # W1c addition: the bound is a value, not a module constant, so a control
     # run (and a test) can state a different one in the ledger header.
     bound_expected_false: float = EXPOSURE_BOUND_EXPECTED_FALSE
+    # The lock `reserve` holds.  Every exposure carries one, shared or not:
+    # a bare `Exposure()` is built in serial callers too, and one object
+    # that is sometimes safe is not a bound.
+    #
+    # IT IS AN INIT FIELD, and that is the whole guard (M7, 2026-09-13).
+    # `consulted` is copied BY REFERENCE, so a copy of an exposure shares
+    # the set; under `init=False` it did not share the lock, and two
+    # locks over one set is the race `reserve` exists to close.
+    # `dataclasses.replace` carries init fields and re-defaults the rest
+    # — and it does NOT dispatch to `__replace__`, measured on 3.14.7 —
+    # so the lock has to ride in the init to come across.  `None` is the
+    # bare construction, which mints one below; nobody passes it by hand.
+    _lock: Any = field(default=None, repr=False, compare=False)
+
+    def __post_init__(self) -> None:
+        if self._lock is None:
+            self._lock = threading.Lock()
 
     @property
     def distinct(self) -> int:
@@ -235,6 +376,30 @@ class Exposure:
     def would_exceed(self, n_new: int) -> bool:
         return ((self.distinct + n_new) * EXPOSURE_PER_CONSULT
                 > self.bound_expected_false)
+
+    def reserve(self, digest: bytes) -> tuple[bool, int]:
+        """Pay for one CRC consultation: `(allowed, n_new)`.
+
+        ONE operation, not three (review F13, 2026-09-13).  `mother.gate`
+        used to ask "is this digest new?", "would the bound break?" and
+        "add it" separately, and two workers could both pass the bound
+        check before either added — measured on the free-threaded build
+        at 8 workers, the run ends over a bound DESIGN §0 calls a
+        correctness bound.  Membership, the check and the insertion are
+        one critical section here; the CRC the caller then computes is
+        not, which is the point of returning rather than holding.
+
+        `n_new` is what THIS call paid: 1 for the first proposal of a
+        digest, 0 for a repeat — including a repeat proposed at the same
+        moment by another worker, which is the rung's honest charge.
+        """
+        with self._lock:
+            if digest in self.consulted:
+                return True, 0
+            if self.would_exceed(1):
+                return False, 0
+            self.consulted.add(digest)
+            return True, 1
 
 
 @dataclass
@@ -312,8 +477,9 @@ class RunInputs:
     """A finished holo3 run dir, typed (DESIGN §2).
 
     `row`/`geometry` are holo3's `FormatRow`/`SiteGeometry`; `certificates`
-    maps a Key to a `holo3.data.Certificate`; `plane_fields` is keyed by
-    (capture_id, level_index, page, plane) and `pooled_ctx` by (page, rung).
+    maps a Key to a `holo.receiver.data.Certificate`; `plane_fields` is keyed by
+    (page, plane) — the receiver's own key, and nothing else belongs in it
+    (docs/PAGE-FIELD-DESIGN.md §2.2) — and `pooled_ctx` by (page, rung).
     `lattice_seeds`, `windows` and `surveys` are kept OPAQUE on purpose —
     W1a reads none of them, and a later wave may.
     """
@@ -332,7 +498,7 @@ class RunInputs:
     lane_policy: str
     rung_ppc: Fraction | None
     certificates: Mapping[Key, Any]
-    plane_fields: Mapping[tuple[str, int, int, int], Any]
+    plane_fields: Mapping[tuple[int, int], Any]
     pooled_ctx: Mapping[tuple[int, str], Any]
     lattice_seeds: tuple[Any, ...]
     windows: Mapping[Any, Any]
@@ -436,10 +602,9 @@ class Folds:
 # spelling either; both are values, so both belong here.
 
 #: DESIGN §4.6's battery, in the order the driver builds it.  The FIRST
-#: entry is the pinned default arm (RULED 2026-09-03); `subtract+smooth`
-#: is Y-only and `subtract+word` is C/M-only (the word field renders
-#: state 0 or 3, so Y is 0 at every word site and has no word pose to
-#: fit) — `battery_for` applies that.
+#: entry is the pinned default arm (RULED 2026-09-03); `subtract+word` is
+#: C/M-only (the word field renders state 0 or 3, so Y is 0 at every word
+#: site and has no word pose to fit) — `battery_for` applies that.
 DEFAULT_ARMS: tuple[str, ...] = (
     "subtract+offset",
     "raw+committed",
@@ -451,13 +616,14 @@ DEFAULT_ARMS: tuple[str, ...] = (
     "head+offset",
     "conditional+offset",
     "subtract+affine",
-    "subtract+smooth",
     "subtract+word",
 )
 
 STREAM_ONLY_ARMS: dict[str, tuple[str, ...]] = {
-    "subtract+smooth": ("Y",),
     "subtract+word": ("C", "M"),
+    # the word arm reads the 100-site colour word, which is C/M only —
+    # the restriction is the ARM's, not the unmix mode's (W8 B3).
+    "patch+word": ("C", "M"),
 }
 
 DEFAULT_RULES: tuple[str, ...] = ("sum", "best", "platt", "corr")
@@ -477,6 +643,8 @@ class AnalyzerConfig:
     workers: int = 4
     seed: int = 20260903
     halo_cells: Mapping[str, int] | None = None
+    #: where that halo came from; `knobs_from` is for KNOBS (2026-09-07)
+    halo_from: str = "defaults"
     cover_fraction: float = 0.9
     max_generations: int = 8
     #: Run EVERY rule's ladder even after one certifies, so the ledger's
@@ -508,11 +676,46 @@ class AnalyzerConfig:
     #: 2026-09-03 measurement (GAPS-2026-09-03.md §10): re-roll at L0+L1
     #: bought +0; at L0+L1+L2 it bought +1 of 8 on the C parity misses.
     reroll_rungs: tuple[str, ...] = ("L0", "L1", "L2")
+    #: W8 B8: arms placed in the RE-ROLL ONLY — see `reroll_battery_for`.
+    #: Added at the end, never renamed; empty is every profile that
+    #: existed before this wave, so nothing changes for them.
+    reroll_only_arms: tuple[str, ...] = ()
+
+    def __post_init__(self) -> None:
+        # R1 (2026-09-06) at the LIBRARY boundary, not only the CLI's
+        # (follow-up review): a cap below one runs ZERO generations, and
+        # the loop's `else` arm would then write a header claiming one
+        # generation ran with every target untouched.  Refused where the
+        # value lives, so `fixedpoint.run` can never be handed it.
+        if int(self.max_generations) < 1:
+            raise ValueError(f"max_generations must be >= 1, got "
+                             f"{self.max_generations!r}")
 
     def battery_for(self, stream_id: str) -> tuple[str, ...]:
         """The arms this stream actually runs."""
+        return self._filter(self.arms, stream_id)
+
+    def reroll_battery_for(self, stream_id: str) -> tuple[str, ...]:
+        """The arms this stream runs ONLY if the battery leaves the key open.
+
+        W8 B8, from the user's ruling of 2026-09-06 ("only run it after
+        the other pass has done its job -- in case it does show
+        incremental gains").  An arm named here is NOT in the battery, so
+        it is not computed for the selection, it cannot be the arm the
+        select fold picks, and it costs nothing on a key the battery
+        closes.  `fixedpoint.blind_key` computes its evidence inside the
+        re-roll, where the ladder has already failed on every rule; the
+        ledger then attributes it exactly, as `certifying_arm =
+        "reroll:<arm>"` and under `reroll.deferred`.  An arm that is
+        already in `arms` is dropped here — a name means one placement.
+        """
+        return tuple(arm for arm in self._filter(self.reroll_only_arms,
+                                                 stream_id)
+                     if arm not in self.arms)
+
+    def _filter(self, arms: Sequence[str], stream_id: str) -> tuple[str, ...]:
         out = []
-        for arm in self.arms:
+        for arm in arms:
             if arm in self.refused_arms:
                 continue
             only = STREAM_ONLY_ARMS.get(arm)
@@ -524,23 +727,31 @@ class AnalyzerConfig:
 
 @dataclass
 class Ledger:
-    """The pass's rows plus the header DESIGN §9 requires."""
+    """The pass's rows plus the header DESIGN §9 requires.
+
+    `rows` is EMPTY on a streamed pass (the memory wave of 2026-09-13):
+    a pass given a `ledger.LedgerWriter` puts each row on disk as its
+    generation folds it and keeps none of them — 1.6 MB a row on the
+    four-capture sheet-J pass, 15-32 GB over a 2,700-target one.  A
+    library caller that hands no writer still gets its rows here, which
+    is what `controls` and the small tests read; the CLI reads the file.
+
+    `mints` is what the driver keeps either way: the certificates this
+    pass produced, which the close needs and which are a few hundred
+    bytes each.
+    """
 
     header: dict = field(default_factory=dict)
     rows: list = field(default_factory=list)
     exposure: Exposure | None = None
     close_row: dict | None = None
     controls: dict = field(default_factory=dict)
+    mints: dict = field(default_factory=dict)
 
     @property
     def certified(self) -> dict:
         """New certificates this pass produced, Key -> user bits."""
-        out = {}
-        for row in self.rows:
-            if row.verdict == VERDICT_CERTIFIED and row.rungs.get("user_bits") \
-                    is not None:
-                out[row.key] = row.rungs["user_bits"]
-        return out
+        return dict(self.mints)
 
 
 # --- page-scope context addition (2026-09-03); see DESIGN §4.7 -----------
@@ -652,19 +863,174 @@ PROFILES: dict[str, dict[str, Any]] = {
                    "rungs": ("L0", "L1", "L2", "L4", "L3", "L7"),
                    "reroll": True, "reroll_rungs": ("L0", "L1", "L2"),
                    "halo_cells": {"C": 48, "M": 48, "Y": 32}},
-    # ... and `everything+field2` adds the CERTIFICATE-anchored per-lane
-    # variant on top, which is the expensive one (a refit per lane per
-    # generation) and is kept behind its own name for that reason.
-    "everything+field2": {
-        "rules": DEFAULT_RULES,
-        "arms": tuple(DEFAULT_ARMS) + ("subtract+field2+offset",
-                                       "head+field2+offset",
-                                       "subtract+field2c+offset",
-                                       "head+field2c+offset"),
-        "rungs": ("L0", "L1", "L2", "L4", "L3", "L7"),
-        "reroll": True, "reroll_rungs": ("L0", "L1", "L2"),
-        "halo_cells": {"C": 48, "M": 48, "Y": 32}},
+    # `everything+field2` stood here until 2026-09-12 (A2): it was
+    # `everything` plus the two CERTIFICATE-anchored per-lane `field2c`
+    # arms, and it retired with them.  Every composition built on it —
+    # `everything+patch`, and `everything+patch+pure` through it — is
+    # rebased on `everything` below.  The rebase alone removes those two
+    # arms (0 first-success on sheet J, `J-CONFETTI-2026-09-10.md`);
+    # counting A3's `subtract+smooth`, which left `DEFAULT_ARMS` in the
+    # same wave and which every one of these profiles inherits, the two
+    # rosters the sheet-J record was minted under lose THREE arms.
 }
+
+# ------------------------------------------------- W8's compositions (§2)
+#
+# X1-X5 of APPROACHES-2026-09-06 §2.  They are assigned AFTER the literal
+# because each one is the previous one plus a little, and a dict literal
+# cannot read itself.  `subtract+offset` stays FIRST in every arm list —
+# it is `calibrate.DEFAULT_ARM`, the pinned default `select_arm` falls back
+# to — and neither W8 rung (`L7c`, `L3f`) joins the `L7` alias or any
+# existing profile, so no profile that existed before this wave changes
+# behaviour.  `L3f` is in `patch-refit`'s MAIN ladder only, never in a
+# `reroll_rungs` (its cost is a re-run of every chosen lane's evidence).
+_PATCH_ARMS: tuple[str, ...] = ("patch+offset", "patch+committed")
+# W8 B7 — the user's SELF-DISCOVERY ruling of 2026-09-06 ("even the
+# existing pins / defaults are not well grounded.  if a run can discover
+# its own truth for the paper-print-scanner-scan object at hand, it
+# should!"): every knob of the patch family a run can decide from the
+# sheet itself is `"auto"` here.  The module constants that used to be
+# these values stay in `analyzer.patch` as the INHERITED FALLBACK — what
+# a run uses where its own select fold cannot tell the candidates apart —
+# and NOTHING is re-pinned from a sheet-H sweep.  The choice is made per
+# (lane, plane, sibling state, tile) on the select fold and recorded in
+# the ledger under `auto_choices` / `auto_losses`; an explicit value in a
+# knob bag still wins, so every isolation run of APPROACHES §3 (and the
+# `patch_min_labels_*=1000000` tier isolations) keeps working unchanged.
+_AUTO_PATCH_KNOBS: dict[str, Any] = {
+    "patch_samples_per_cell": "auto", "patch_window_cells": "auto",
+    "patch_channels": "auto", "patch_features": "auto",
+    "patch_shrinkage": "auto", "patch_min_labels_per_state": "auto",
+    "patch_min_labels_agnostic": "auto", "aperture_cells": "auto"}
+_STATE_KNOBS: dict[str, Any] = {"branches": "state", "ctx_state": True,
+                                **_AUTO_PATCH_KNOBS}
+_PATCH_RUNGS: tuple[str, ...] = ("L0", "L1", "L2", "L4", "L3", "L7", "L7c")
+#: The halo the patch family runs with.  B1 inherited `wide-halo`'s 48
+#: unmeasured; the H48 isolation dropped it (APPROACHES §6.9 — dead-band
+#: three-ink 0.1518 -> 0.1640, 5 of 7 lanes past 2 SE), and the halo x
+#: channel matrix CONFIRMED that at CERTIFICATE level at a fixed channel
+#: set (109 -> 104, 128 -> 127 for 4.3x the CPU; HALO-CHANNEL §3(d)).
+#: An OPERATOR axis (`--halo-cells 48`, or `C=48,M=48,Y=32`): two halo
+#: candidates share no evaluation population, so none is walkable.
+_PATCH_HALO: dict[str, int] = {"C": 16, "M": 16, "Y": 32}
+
+PROFILES["patch"] = {                                          # X1
+    "arms": ("subtract+offset",) + _PATCH_ARMS,
+    "rules": DEFAULT_RULES + ("platt-state",),
+    "rungs": _PATCH_RUNGS,
+    "reroll": True, "reroll_rungs": ("L0", "L1", "L2"),
+    "halo_cells": dict(_PATCH_HALO),
+    "knobs": dict(_STATE_KNOBS)}
+PROFILES["patch-self"] = {                                     # X2
+    **PROFILES["patch"],
+    "knobs": {**_STATE_KNOBS, "patch_selftrain_rounds": 4}}
+PROFILES["patch-refit"] = {                                    # X3
+    **PROFILES["patch-self"],
+    "rungs": ("L0", "L1", "L2", "L4", "L3", "L3f", "L7", "L7c"),
+    "reroll_rungs": ("L0", "L1", "L2"),
+    "knobs": {**_STATE_KNOBS, "patch_selftrain_rounds": 4,
+              "refit_rounds": 2, "refit_max_evidence": 26}}
+PROFILES["patch-affine"] = {                                   # X4
+    **PROFILES["patch-refit"],
+    "arms": ("subtract+offset",) + _PATCH_ARMS + ("patch+affine",
+                                                  "subtract+affine")}
+PROFILES["everything+patch"] = {                               # X5
+    "rules": DEFAULT_RULES + ("platt-state",),
+    "arms": PROFILES["everything"]["arms"] + _PATCH_ARMS
+            + ("patch+field2+offset", "patch+affine", "rings+offset",
+               "mixture+offset"),
+    "rungs": _PATCH_RUNGS,
+    "reroll": True, "reroll_rungs": ("L0", "L1", "L2"),
+    "halo_cells": dict(_PATCH_HALO),
+    "knobs": {**_STATE_KNOBS, "patch_selftrain_rounds": 4}}
+
+# ------------------------------------------------------- W8's pure path
+#
+# P0 of the user's ruling of 2026-09-06: "we already have every tile
+# addressed, the correct page field and mostly correct poses per plane —
+# there is no justification for pushing that through PAVA, ctx, Platt;
+# just try it out either way."  So: the page-field pose with NO search
+# (`patch+field2`, which collapses to the committed placement by itself
+# where no field covers the tile — `patch+committed` is the same pose
+# named explicitly), the B1 filter trained over the 5x5 neighbourhood's
+# certified cells, and `pure.pure_llr` in place of the whole calibration
+# stage.  `subtract+offset` is deliberately ABSENT: the pinned default is
+# measured by every other profile, and the point here is the pure path
+# alone, so `select_arm` falls back to the first arm named.  One rule
+# (`sum`), no re-roll, and `ctx_mode` is a CONFIG field rather than a
+# knob so the ledger header says `none` in its own column.
+#
+# W8 B7: the auto knobs are here too, with ONE exception spelled out.
+# `patch_train_scope="local5"` means the 5x5 neighbourhood's rows are
+# extracted by the loader before any per-population choice exists.  Since
+# the review of 2026-09-06 that extraction is made at the WALK'S WIDEST
+# geometry, so a chosen window, channel set or feature kind is a column
+# SLICE of it and no choice can drop the rows — but a coarser SAMPLING
+# moves every sample position and is a different grid, not a slice.
+# `patch_samples_per_cell` is therefore the one axis left NAMED at B6's
+# 16 in this family, so the neighbourhood's labels always survive; every
+# other axis is the run's to choose.  README §2.4 says the same thing and
+# a drift guard keeps the two together.
+_PURE_ARMS: tuple[str, ...] = ("patch+field2", "patch+committed")
+_PURE_KNOBS: dict[str, Any] = {"calibration": "pure",
+                               "patch_train_scope": "local5",
+                               **_AUTO_PATCH_KNOBS,
+                               "patch_samples_per_cell": 16}
+
+PROFILES["pure"] = {                                           # P0
+    "arms": _PURE_ARMS, "rules": ("sum",),
+    "rungs": ("L0", "L1", "L2"), "reroll": False, "ctx_mode": "none",
+    "halo_cells": dict(_PATCH_HALO), "knobs": dict(_PURE_KNOBS)}
+PROFILES["pure-self"] = {                                      # P0 + P2
+    **PROFILES["pure"],
+    "knobs": {**_PURE_KNOBS, "patch_selftrain_rounds": 4}}
+PROFILES["pure-refit"] = {                                     # P0 + P2 + P3
+    **PROFILES["pure-self"],
+    "rungs": ("L0", "L1", "L2", "L3f")}
+
+# ------------------------------------- W8 B8: the pure path, PLACED LAST
+#
+# THE RULING (Germano, 2026-09-06): "nothing prevents us from a) numpy
+# optimizing and parallelizing the pure pass (which is probably a thing),
+# and b) only run it after the other pass has done its job -- in case it
+# does show incremental gains."  (a) is `analyzer.patchcache`; this is
+# (b).  `pure+committed` and `pure+field2` compute EXACTLY the score
+# `patch+committed` and `patch+field2` compute — same filter, same
+# knobs, same halo, same neighbourhood — and differ from them in one
+# thing only, the calibration (`pure.pure_llr` instead of the PAVA map,
+# the context stage and Platt).  They are `reroll_only_arms`, so on a key
+# the patch battery closes they are never computed, and on a key it
+# leaves open they are one more roll of the same dice, gated by syndrome
+# and CRC like anything else.  It is visible in the ledger as
+# `certifying_arm = "reroll:pure+…"`.
+#
+# WHAT THE PLACEMENT DOES NOT ISOLATE (review 2026-09-06): the placed
+# arms are re-rolled under the PROFILE's full rule list, which for
+# `patch-then-pure` is `sum, best, platt, corr, platt-state` — and
+# `platt`, `platt-state` and `best` are fitted stages of exactly the kind
+# the pure path exists to remove.  A gain here is the pure calibration AS
+# COMBINED BY THOSE RULES.  `PROFILES["pure"]` (`rules: ("sum",)`) and
+# the two-pass form below are the isolations.
+#
+# THE TWO-PASS FORM is the other way to spend the same idea, and it is
+# what an operator should reach for when the pure path wants knobs of its
+# own (`patch_train_scope="local5"`, a coarser or finer sampling): run
+# the patch profile, then
+#
+#     analyzer ladder --run-dir … --profile pure \
+#         --targets "open-after <the patch pass's ledger.jsonl>"
+#
+# which puts the pure family on exactly the keys the first pass left
+# open.  The single-profile placement below is the cheaper form: one
+# pass, one exposure ledger, one row per key.
+_PURE_REROLL_ARMS: tuple[str, ...] = ("pure+committed", "pure+field2")
+
+PROFILES["patch-then-pure"] = {                                # X7
+    **PROFILES["patch-refit"],
+    "reroll_only_arms": _PURE_REROLL_ARMS}
+PROFILES["everything+patch+pure"] = {                          # X8
+    **PROFILES["everything+patch"],
+    "reroll_only_arms": _PURE_REROLL_ARMS}
 
 
 def with_profile(config: AnalyzerConfig, name: str) -> AnalyzerConfig:

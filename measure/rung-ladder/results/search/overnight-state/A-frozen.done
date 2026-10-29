@@ -1,0 +1,1 @@
+env/bin/python scratch/rung-ladder-20260930/search/recipe_search.py --overnight --primary off --frozen-rungs on --out scratch/rung-ladder-20260930/search/overnight-AF --workers 14 --decoder fast

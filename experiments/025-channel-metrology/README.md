@@ -132,3 +132,40 @@ area.
 
 See [HOWTO.md](HOWTO.md) for commands and [DESIGN.md](DESIGN.md) for the full
 reasoning record.
+
+2026-10-09: the Phase A decisive test (`phase-a/plot_field_maps.py`, `shift_recovery_test.py`,
+`perband_phase_probe.py`; RESULTS.md) was retired from scratch/e025/ into `phase-a/`; it reads
+`e025/` (traces, reports, captures) under `--evidence-root` and writes `build/phase-a/`.
+
+2026-10-09: inputs renamed to the published archive paths. `perband_phase_probe.py` reads, under
+`--evidence-root` (the archive root), `paper-store-evidence-paperholo-era/025-channel-metrology/`
+`bw-01/captures/bw-01-canon-4800grey-rot180.tiff`, `color-01/captures/color-01-canon-4800rgb.tiff`
+(both published as `.tiff.jxl`, rebuilt by the release's `tools/unpack.sh`) and
+`records/analysis/rerun-{bw,color}-report.json`; `plot_field_maps.py` reads the two reports. The
+detector traces (`trace-bw/`, `trace-color/`) are NOT in the published archive (tier delete,
+regenerable): `plot_field_maps.py` and `shift_recovery_test.py` read them from
+`build/trace-{bw,color}/` and refuse by name until they are regenerated with `analyze_e025.py
+--trace-dir build/trace-{bw,color}` on the published captures, every other option mirrored from the
+published rerun report's metadata (WORKPLAN-analyzer-v2.md §3 step 1).
+
+## 2026-10-22 — the superseded `-v1` atlas pair regenerates at main
+
+The two jobs of the first E025 layout (`hp-m281-bw-v1.ps`, `hp-m281-color-v1.ps`
+and their manifests; printed once on 2026-07-16, never scanned into the record,
+superseded the next day; published in the paperholo-era evidence release under
+`025-channel-metrology/{bw-v1,color-v1}/jobs/`) are remade from the current tree
+by the first version of this directory's two emitter files run against main's
+library (measured 2026-10-22, `docs/evidence-archive/REGENERATION-2026-10-22.md` §4.4):
+
+```text
+git show 9df37bf1:experiments/025-channel-metrology/emit_e025.py   > build/v1/emit_e025.py
+git show 9df37bf1:experiments/025-channel-metrology/e025_common.py > build/v1/e025_common.py
+PYTHONPATH=src:. env/bin/python build/v1/emit_e025.py --preset hp-m281-bw-v1    --out build/v1/hp-m281-bw-v1
+PYTHONPATH=src:. env/bin/python build/v1/emit_e025.py --preset hp-m281-color-v1 --out build/v1/hp-m281-color-v1
+```
+
+PS `88f96b6d…` / `7e9a7edf…` and manifests `8c3f2f6c…` / `5b423f11…` come out
+byte-identical. Nothing decodes those two sheets, by design (RESULTS.md, "the
+previously printed LDPC-atlas pair belongs to the superseded implementation").
+The live pair, `bw-01` / `color-01`, is `emit_e025.py --preset hp-m281-bw` /
+`hp-m281-color` at main, byte-identical from `dac54673` (2026-07-17) on.

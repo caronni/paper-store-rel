@@ -8,14 +8,14 @@ analyzer's mmap reads are too slow to use (sheet I's four captures are
 ~9 GB of `.npy`).
 
 This module reconstructs those directories LOCALLY, from the capture
-TIFFs, by calling `holo3.plugins.intake.ingest_capture` — the same
+TIFFs, by calling `holo.receiver.plugins.intake.ingest_capture` — the same
 function production called — so the products are byte-identical to the
 originals rather than merely equivalent.  Nothing here decodes: the
 placements, certificates and close all come from the source
 `facts.npz`/`report.json` unchanged.
 
 WHAT IT TRUSTS.  The source `argv` names the captures and their `--dpi`
-(holo3 requires exactly one `--dpi` per scan, `holo3/cli.py:71`); the
+(holo3 requires exactly one `--dpi` per scan, `src/holo/receiver/cli.py:85`); the
 format row gives `pitch_in` and the family, which is all
 `ingest_capture` needs beyond the pixels.  `report.json` is the
 CHECKED-AGAINST truth: the capture ids, their declared `levels_ppc` and
@@ -46,8 +46,8 @@ from typing import Any, Callable, Sequence
 
 import numpy as np
 
-from holo3.format import identity
-from holo3.plugins import intake
+from holo.receiver.format import identity
+from holo.receiver.plugins import intake
 
 from .inputs import InputsError, read_report, read_run_open
 
@@ -65,7 +65,7 @@ IDENTITY_FILES: tuple[str, ...] = ("argv", "report.json")
 #: What a capture positional looks like (`intake.load_native` reads all).
 IMAGE_SUFFIXES: tuple[str, ...] = (".tif", ".tiff", ".png", ".jpg", ".jpeg")
 
-#: `holo3/cli.py` decode options that consume the following token, plus
+#: `src/holo/receiver/cli.py` decode options that consume the following token, plus
 #: `--pages`, which older run dirs' argv carry (sheet J's does) and the
 #: current parser no longer has — hence this table rather than holo3's
 #: own parser, which would refuse to read its own history.

@@ -24,7 +24,7 @@ address must never certify.
 
 Usage:
 
-    PYTHONPATH=. env/bin/python measure/planek_existence.py \
+    PYTHONPATH=src:. env/bin/python measure/planek_existence.py \
         <page000_gt.npy> [plane] [shift_px] [noise_sd] [jitter_sd]
 """
 
@@ -38,7 +38,7 @@ from pathlib import Path
 
 import numpy as np
 
-from holo3.plugins import plane_k
+from holo.receiver.plugins import plane_k
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
@@ -59,31 +59,31 @@ def lane_plan(channel: fixture.PlaneChannel, windows, places, planes,
 
 
 def band_field(channel: fixture.PlaneChannel, delta_dots: float):
-    """A standing plane field that already knows the band's displacement.
+    """A standing page field that already knows the band's displacement.
 
-    Support is published on the BAND tiles only, so the clean windows
-    fall through to the blind estimator and the band windows take the
-    standing fit — the row's declared "the field speaks first, the blind
-    estimator covers where it is silent".
+    The delta and its support are published on the BAND tiles only,
+    which is the shape a real solve produces: a tile no evidence ever
+    reached reads exactly zero, and zero means "sample at the pose".
+    So the band windows sweep AROUND the fit and the clean ones sweep
+    around zero, which is the order the row declares since 2026-09-07.
     """
-    from holo3.data import PlaneField
+    from holo.receiver.data import PlaneField
 
     side = channel.tiles_side
     delta = np.zeros((side, side, 2), np.float64)
-    delta[..., 0] = delta_dots
     support = np.zeros((side, side), np.float64)
     for ty, tx in fixture.band_tiles(channel):
+        delta[ty, tx, 0] = delta_dots
         support[ty, tx] = 1.0
     return PlaneField(
-        capture_id=fixture.CAPTURE_ID, level_index=fixture.LEVEL_INDEX,
         page=0, plane=channel.plane, delta_dots_xy=delta, support=support,
-        n_certificates=0, n_sites=0, residual=0.0,
-        median_delta_dots=float(abs(delta_dots)))
+        uncertainty_dots=np.zeros_like(support),
+        n_observations=int(support.sum()), n_captures=1, ordinal=1)
 
 
 def true_delta_dots(row: object, channel: fixture.PlaneChannel) -> float:
     """The fixture's displacement expressed in printed dots."""
-    from holo3.plugins import color_region
+    from holo.receiver.plugins import color_region
 
     return (float(channel.shift_px) / fixture.PPC
             * color_region.cell_dots_of(row))
@@ -160,7 +160,8 @@ def probe(gt_path: Path, channel: fixture.PlaneChannel,
     with tempfile.TemporaryDirectory() as tmp:
         planes = fixture.plane_rasters(image, Path(tmp))
         frontier, _v, _i, _s = ordinary.run_tier(
-            row, geometry, windows, planes, {}, every, ordinary.ARM_OFF)
+            row, geometry, windows, planes, {}, every, ordinary.ARM_OFF,
+            None)
         residue_streams = tuple(
             entry for entry in (
                 (ty, tx, tuple(name for name in streams
@@ -169,7 +170,7 @@ def probe(gt_path: Path, channel: fixture.PlaneChannel,
             if entry[2])
         control, _v, _i, _s = ordinary.run_tier(
             row, geometry, windows, planes, dict(frontier), residue_streams,
-            ordinary.ARM_OFF)
+            ordinary.ARM_OFF, None)
         field = (band_field(channel, true_delta_dots(row, channel))
                  if with_field else None)
         plan = lane_plan(channel, windows, places, planes, field)
@@ -241,7 +242,7 @@ def main() -> int:
           f"(must be 0)")
     print(f"wrong certified bits     {report['wrong']}")
     for ordinal, source, shift in report["offset_sources"]:
-        print(f"  window {ordinal} offset {source:<8} {shift:+.2f} dots")
+        print(f"  window {ordinal} offset {source:<12} {shift:+.2f} dots")
     if report["gained"]:
         print("planek certificates: "
               + ", ".join(f"({ty},{tx})" for _p, ty, tx, _s

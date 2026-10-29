@@ -2,7 +2,7 @@
 
 Filter a colour scan for yellow, render the residue as black on white,
 read it with the black-and-white machinery, and address it from
-outside. An instrument under `measure/`; nothing in `holo3/` is
+outside. An instrument under `measure/`; nothing in `src/holo/receiver/` is
 touched, and no production arm exists until the lead rules on this.
 
 ---
@@ -323,26 +323,42 @@ Always from the worktree root, always `PYTHONPATH=.`:
 
 ```sh
 # the battery: five counted arms + the null, over the marginal blocks
-PYTHONPATH=. env/bin/python -m measure.yask.harness \
+PYTHONPATH=src:. env/bin/python -m measure.yask.harness \
     --case H-m1 --case H-m2 --case H-m3 --case H-m4 \
     --arms A0,A1,C0,C1,N0
 
 # the seven-capture union (minutes per case, not seconds)
-PYTHONPATH=. env/bin/python -m measure.yask.harness --case H-d --arms A2
+PYTHONPATH=src:. env/bin/python -m measure.yask.harness --case H-d --arms A2
 
 # the two ablations of section 4.3
-PYTHONPATH=. env/bin/python -m measure.yask.harness --case H-d \
+PYTHONPATH=src:. env/bin/python -m measure.yask.harness --case H-d \
     --arms A0,A1 --siblings furniture
-PYTHONPATH=. env/bin/python -m measure.yask.harness --case H-d \
+PYTHONPATH=src:. env/bin/python -m measure.yask.harness --case H-d \
     --arms A0,A1 --labels furniture
 
 # roll several reports into one table + the registration map
-PYTHONPATH=. env/bin/python -m measure.yask.summarize \
-    scratch/yask/reports/*.json
+PYTHONPATH=src:. env/bin/python -m measure.yask.summarize \
+    build/yask/*.json
 ```
 
-Exit code 2 on any wrong certificate. Reports land in
-`scratch/yask/reports/` (gitignored), named for their cases AND their
+Every harness and `_cases` invocation also takes `--evidence-root`
+(or `$PAPER_EVIDENCE_ROOT`, refused by name when neither is given —
+`measure/_evidence.py`; the captures, the overnight harvest and the e033
+generation set — the published evidence archive, the 2026-10-09 note
+below) and a required `--out`; the dated commands above are records.
+
+2026-10-09: inputs renamed to the published archive paths — sheet H's seven captures
+`paper-store-evidence-holo-2026-10/033-xerox-rung-experiments/H/captures/H-canon-{1200rgb-a,1200rgb-b,2400rgb-a,2400rgb-b,4800rgb-a,4800rgb-b,4800rgb-c}.tiff`
+(published as `.tiff.jxl`, rebuilt by the release's `tools/unpack.sh`), its emission directory
+`…/H/emission/` (manifest + payload) and the harvest's certificate map
+`paper-store-evidence-holo-2026-10/036-sheet-h-full-readout/records/overnight-20260830/sheetH-maxstack-certified-tiles.json`.
+The overnight harvest's event log (`holo3-overnight-events/sheetH-maxstack-events.jsonl.xz`, the
+archived poses every read is taken at) is NOT in the published archive (tier delete: event journals
+excluded by rule) and nothing rebuilds it, so `_cases`, `harness` and `measure/planek_parity.py`
+(which reads through them) now refuse by name at the harvest. Sheet H's `page000_gt.npy` is not
+published either; it regenerates with `util/ps_gt.py …/H/jobs/page000.ps --out … --expect-sha256
+1ec255e74992a758e55658a058a79c7a013d9f4e31e6a1f7c88fab0670c92075` (the manifest's `gt_sha256`).
+Exit code 2 on any wrong certificate. Reports land in `--out`, named for their cases AND their
 arms and ablations so two invocations never overwrite each other.
 
 **Cost and memory.** Nothing is decoded and no sheet is loaded: poses
@@ -356,7 +372,7 @@ The first version of this harness took the obvious route: cut a crop,
 run an ordinary `holo3 decode` on it, harvest the poses. It does not
 work on an interior crop of a colour sheet. Case `H-smoke`
 (4143×5156 px at 2400 dpi, 64 MB, cut with
-`python -m measure.yask._cases --case H-smoke`) surveys into **21
+`python -m measure.yask._cases --case H-smoke --out DIR`) surveys into **21
 fragments totalling 12,221 support cells** and places nothing, in ~3
 minutes at 3 workers — against ONE region of 8,053,285 cells on the
 same capture whole.
