@@ -14,9 +14,10 @@ evidence release yet.
 |---|---|---:|---|---|
 | HP Color LaserJet Pro M281fdw | c2 K, r0700 | 465,580 B | VERIFIED, one 4800 dpi scan; first holo-format print | `experiments/029-holo-v1-first-print.md` |
 | Canon imageRUNNER ADVANCE | c4, c3, c2 K (e039 A to D) | 122,892 to 657,042 B | four sheets VERIFIED | `experiments/040-canon-iradv.md` |
+| HP Color LaserJet MFP M681 | c4 and c2 K (e039 A, C) | 122,892 B, 532,882 B | VERIFIED, one scan each (1200 and 2400 dpi) | `experiments/039-xerox-versalink-candidate-set.md` |
 | Xerox VersaLink C7130 | c2 K, r0850 (e039 D) | 657,042 B | VERIFIED, one 1200 dpi scan | `experiments/039-xerox-versalink-candidate-set.md` |
 | Xerox AltaLink C8245 | c2 cmy8 | 718,413 B | VERIFIED; first CMY8 volume read from paper | `experiments/032-xerox-altalink-payload-volumes.md` |
-| Xerox AltaLink C8245 | c2 cmy8 r0700 (e033 sheet I) | 1,798,761 B | VERIFIED by the receiver alone from one 2400 dpi scan; 5,883 of 5,883 tile-streams with the analyzer; 230.7 b/mm2 | `experiments/037-sheet-i-single-capture.md` |
+| Xerox AltaLink C8245 | c2 cmy8 r0700 (e033 sheet I) | 1,798,761 B | VERIFIED by the receiver alone from one 2400 dpi scan; 5,883 of 5,883 tile-streams with the analyzer; 230.7 b/mm2 | `src/holo/receiver/docs/LIFECYCLE-MEASURED-2026-09-21.md` (receiver alone), `experiments/037-sheet-i-single-capture.md` (every tile-stream) |
 | Xerox AltaLink C8245 | c2 cmy8 r0850 (e033 sheet H) | 2,220,921 B | 5,883 of 5,883, receiver plus analyzer; 284.9 b/mm2, the densest in the record | `experiments/036-sheet-h-full-readout.md` |
 | Xerox AltaLink C8245 | c2 cmy8, a different rung per plane | 1,782,790 B | receiver alone closed * | `experiments/046-altalink-cmy8-three-width.md` |
 | Canon imageRUNNER ADVANCE | c2 cmy8 r0700, r0775 (e039 G, H) | 1,598,326 B, 1,785,886 B | VERIFIED, receiver plus analyzer, six captures each; r0850 (e039 I) NOT RECOVERED | `experiments/040-canon-iradv.md` |
@@ -27,8 +28,10 @@ What the rows rest on, and what failed:
 
 - Experiment 033's sheet H closed byte-exact from seven scans with the analyzer; the full
   5,883 of 5,883 used 13 scans, from the receiver's stall at 4,883
-  (`experiments/036-sheet-h-full-readout.md`). Its sheet I reached 5,883 of 5,883 from one
-  2400 dpi scan, and 0 of 1,046 analyzer certificates scored wrong
+  (`experiments/036-sheet-h-full-readout.md`). Its sheet I closed with the receiver alone from
+  one 2400 dpi scan in 2,005 s at twelve workers
+  (`src/holo/receiver/docs/LIFECYCLE-MEASURED-2026-09-21.md`), and reached 5,883 of 5,883 from
+  that scan with the analyzer, 0 of 1,046 analyzer certificates scoring wrong
   (`experiments/037-sheet-i-single-capture.md`).
 - On the Canon both colour closes (e039 G and H) needed the analyzer and six captures each;
   the r0850 sheet (e039 I) was NOT RECOVERED (e040 sections 040.4f, 040.4g, 040.4i). The

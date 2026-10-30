@@ -105,4 +105,4 @@ verified by rid: 0 missing), `overnight-CONF/TABLES-confirm.md` (= the first 185
 `c1/sweep_progress*.log`), `tables.json` / `c1/tables-c1.json` (regenerable), the c1 duplicates (`_dump.txt`,
 `headline.md`, `results-c1-raw.json`, `results-c1-smoke.json`) and `results_smoke.json`.
 
-Export note (2026-10-29): the public export rewrote the private paths inside `search/overnight-ALL/results.jsonl.xz` 1,634,376 -> 1,634,252 bytes with its substitution rules (D12) and recompressed them (xz -9, CRC64); the table shows the new sizes.
+Export note (2026-10-30): the public export rewrote the private paths inside `search/overnight-ALL/results.jsonl.xz` 1,634,376 -> 1,634,252 bytes with its substitution rules (D12) and recompressed them (xz -9, CRC64); the table shows the new sizes.

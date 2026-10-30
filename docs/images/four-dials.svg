@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="480" viewBox="0 0 960 480" font-family="-apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif">
+<rect width="960" height="480" fill="#ffffff"/>
+<text x="40" y="42" font-size="22" font-weight="700" fill="#111">One format, four dials</text>
+<text x="40" y="66" font-size="15" fill="#555">The three uses are three settings of the same sheet.</text>
+<text x="40" y="124" font-size="15" font-weight="700" fill="#111">Cell pitch</text>
+<text x="40" y="142" font-size="12" fill="#666">how fine the cells are</text>
+<line x1="250" y1="130" x2="820" y2="130" stroke="#999" stroke-width="1.5"/>
+<text x="330" y="106" font-size="12.5" fill="#333" text-anchor="middle">c4 · 1/150 in</text>
+<line x1="330" y1="125" x2="330" y2="135" stroke="#999" stroke-width="1.5"/>
+<text x="480" y="106" font-size="12.5" fill="#333" text-anchor="middle">c3 · 1/200 in</text>
+<line x1="480" y1="125" x2="480" y2="135" stroke="#999" stroke-width="1.5"/>
+<text x="630" y="106" font-size="12.5" fill="#333" text-anchor="middle">c2 · 1/300 in</text>
+<line x1="630" y1="125" x2="630" y2="135" stroke="#999" stroke-width="1.5"/>
+<text x="780" y="106" font-size="12.5" fill="#333" text-anchor="middle">c1 · 1/600 in, no printer yet</text>
+<line x1="780" y1="125" x2="780" y2="135" stroke="#999" stroke-width="1.5"/>
+<text x="250" y="162" font-size="11.5" font-style="italic" fill="#777">coarser, safer</text>
+<text x="820" y="162" font-size="11.5" font-style="italic" fill="#777" text-anchor="end">finer, denser</text>
+<rect x="474" y="114" width="12" height="12" fill="#111111"/>
+<polygon points="630,127 623,139 637,139" fill="#d9541e"/>
+<circle cx="630" cy="147" r="6.5" fill="#1f77b4"/>
+<text x="40" y="209" font-size="15" font-weight="700" fill="#111">Ink</text>
+<text x="40" y="227" font-size="12" fill="#666">which toners carry data</text>
+<line x1="250" y1="215" x2="820" y2="215" stroke="#999" stroke-width="1.5"/>
+<text x="330" y="191" font-size="12.5" fill="#333" text-anchor="middle">k · black only</text>
+<line x1="330" y1="210" x2="330" y2="220" stroke="#999" stroke-width="1.5"/>
+<text x="555" y="191" font-size="12.5" fill="#333" text-anchor="middle">cmy · one toner per cell</text>
+<line x1="555" y1="210" x2="555" y2="220" stroke="#999" stroke-width="1.5"/>
+<text x="780" y="191" font-size="12.5" fill="#333" text-anchor="middle">cmy8 · three colour planes</text>
+<line x1="780" y1="210" x2="780" y2="220" stroke="#999" stroke-width="1.5"/>
+<text x="250" y="247" font-size="11.5" font-style="italic" fill="#777">lasts longest</text>
+<text x="820" y="247" font-size="11.5" font-style="italic" fill="#777" text-anchor="end">holds most</text>
+<rect x="324" y="199" width="12" height="12" fill="#111111"/>
+<polygon points="780,212 773,224 787,224" fill="#d9541e"/>
+<circle cx="780" cy="232" r="6.5" fill="#1f77b4"/>
+<text x="40" y="294" font-size="15" font-weight="700" fill="#111">Code rate</text>
+<text x="40" y="312" font-size="12" fill="#666">how much of each tile is data</text>
+<line x1="250" y1="300" x2="820" y2="300" stroke="#999" stroke-width="1.5"/>
+<text x="330" y="276" font-size="12.5" fill="#333" text-anchor="middle">r0547 · 55% data</text>
+<line x1="330" y1="295" x2="330" y2="305" stroke="#999" stroke-width="1.5"/>
+<text x="480" y="276" font-size="12.5" fill="#333" text-anchor="middle">r0700 · 70%</text>
+<line x1="480" y1="295" x2="480" y2="305" stroke="#999" stroke-width="1.5"/>
+<text x="630" y="276" font-size="12.5" fill="#333" text-anchor="middle">r0775 · 78%</text>
+<line x1="630" y1="295" x2="630" y2="305" stroke="#999" stroke-width="1.5"/>
+<text x="780" y="276" font-size="12.5" fill="#333" text-anchor="middle">r0850 · 85%</text>
+<line x1="780" y1="295" x2="780" y2="305" stroke="#999" stroke-width="1.5"/>
+<text x="250" y="332" font-size="11.5" font-style="italic" fill="#777">survives more damage</text>
+<text x="820" y="332" font-size="11.5" font-style="italic" fill="#777" text-anchor="end">carries more payload</text>
+<rect x="324" y="284" width="12" height="12" fill="#111111"/>
+<polygon points="330,297 323,309 337,309" fill="#d9541e"/>
+<circle cx="780" cy="317" r="6.5" fill="#1f77b4"/>
+<text x="40" y="379" font-size="15" font-weight="700" fill="#111">Share that must come back</text>
+<text x="40" y="397" font-size="12" fill="#666">the fountain dial, set when you print</text>
+<line x1="250" y1="385" x2="820" y2="385" stroke="#999" stroke-width="1.5"/>
+<text x="440" y="361" font-size="12.5" fill="#333" text-anchor="middle">a third</text>
+<line x1="440" y1="380" x2="440" y2="390" stroke="#999" stroke-width="1.5"/>
+<text x="535" y="361" font-size="12.5" fill="#333" text-anchor="middle">a half</text>
+<line x1="535" y1="380" x2="535" y2="390" stroke="#999" stroke-width="1.5"/>
+<text x="763" y="361" font-size="12.5" fill="#333" text-anchor="middle">nine in ten</text>
+<line x1="763" y1="380" x2="763" y2="390" stroke="#999" stroke-width="1.5"/>
+<text x="250" y="417" font-size="11.5" font-style="italic" fill="#777">survives losing most of itself</text>
+<text x="820" y="417" font-size="11.5" font-style="italic" fill="#777" text-anchor="end">holds the most</text>
+<rect x="529" y="369" width="12" height="12" fill="#111111"/>
+<polygon points="440,382 433,394 447,394" fill="#d9541e"/>
+<circle cx="763" cy="402" r="6.5" fill="#1f77b4"/>
+<rect x="40" y="440" width="12" height="12" fill="#111111"/>
+<text x="60" y="444" font-size="13" fill="#222"><tspan font-weight="700">Deep time</tspan>: the bootstrap archive, 15 black pages, half of them enough</text>
+<polygon points="46,458 39,470 53,470" fill="#d9541e"/>
+<text x="60" y="466" font-size="13" fill="#222"><tspan font-weight="700">Confetti</tspan>: sheet J, 1 MiB on both sides, a third of its tiles enough</text>
+<circle cx="586" cy="440" r="6.5" fill="#1f77b4"/>
+<text x="600" y="444" font-size="13" fill="#222"><tspan font-weight="700">Transport</tspan>: sheet H, 2.2 MB on one side, nine tiles in ten</text>
+</svg>
